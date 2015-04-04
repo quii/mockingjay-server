@@ -1,53 +1,37 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"github.com/quii/mockingjay"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 )
 
 func main() {
-	testJSON := `
-[
-    {
-        "Request":{
-            "URI" : "/hello",
-            "Method": "GET"
-        },
-        "Response":{
-            "Code": 200,
-            "Body": "hello, world"
-        }
-    },
-    {
-        "Request":{
-            "URI" : "/world",
-            "Method": "POST",
-            "Headers":
-                {
-                    "Content-Type": "application/json"
-                }
-        },
-        "Response":{
-            "Code": 201,
-            "Body": "hello, world"
-        }
-    }
-]`
-	endpoints, err := mockingjay.NewFakeEndpoints(testJSON)
+	var port = flag.Int("port", 9090, "Port to listen on")
 
-	port := os.Getenv("PORT")
+	var configPath = flag.String("config", "", "Path to config json")
+	flag.Parse()
+
+	config, err := ioutil.ReadFile(*configPath)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("Serving %d endpoints on port %s", len(endpoints), port)
+	endpoints, err := mockingjay.NewFakeEndpoints(string(config))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), *configPath, *port)
 
 	server := mockingjay.NewServer(endpoints)
 
 	// Mount it just like any other server
 	http.Handle("/", server)
-	http.ListenAndServe(":"+port, nil)
+	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
 }

@@ -1,0 +1,26 @@
+[
+    {
+        "Request":{
+            "URI" : "/hello",
+            "Method": "GET"
+        },
+        "Response":{
+            "Code": 200,
+            "Body": "hello, world"
+        }
+    },
+    {
+        "Request":{
+            "URI" : "/world",
+            "Method": "POST",
+            "Headers":
+                {
+                    "Content-Type": "application/json"
+                }
+        },
+        "Response":{
+            "Code": 201,
+            "Body": "hello, world"
+        }
+    }
+]

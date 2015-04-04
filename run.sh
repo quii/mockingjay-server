@@ -1,3 +1,3 @@
 #!/bin/bash
 
-PORT=9090 mockingjay-server
+mockingjay-server -config=example.json

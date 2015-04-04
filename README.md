@@ -6,7 +6,6 @@ Mockingjay is fast, requires no coding and is better than other solutions becaus
 
 ## TODO
 
-- Basically everything
 - Pretty diagrams explaining it all (interations between fakes, CDCs et al.)
-- Not hard code JSON, instead get file path from stdin
 - Fail gracefully
+- Take a base url and compare them with the fake
