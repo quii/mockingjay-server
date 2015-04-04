@@ -18,13 +18,13 @@ func main() {
 	config, err := ioutil.ReadFile(*configPath)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Problem occured when trying to open the config file: %v", err)
 	}
 
 	endpoints, err := mockingjay.NewFakeEndpoints(string(config))
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Problem occured when trying to create a server from the config %v ", err)
 	}
 
 	log.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), *configPath, *port)
