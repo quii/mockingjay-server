@@ -14,7 +14,7 @@ Mockingjay is fast, requires no coding and is better than other solutions becaus
 
 ## Running
 
-* See "run.sh" for an example *
+* See "run.sh" for an example
 
 ## TODO
 
