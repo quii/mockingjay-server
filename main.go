@@ -24,7 +24,7 @@ func main() {
 	endpoints, err := mockingjay.NewFakeEndpoints(string(config))
 
 	if err != nil {
-		log.Fatalf("Problem occured when trying to create a server from the config %v ", err)
+		log.Fatalf("Problem occured when trying to create a server from the config: %v ", err)
 	}
 
 	log.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), *configPath, *port)
