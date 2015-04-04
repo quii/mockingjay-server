@@ -7,5 +7,7 @@ Mockingjay is fast, requires no coding and is better than other solutions becaus
 ## TODO
 
 - Pretty diagrams explaining it all (interations between fakes, CDCs et al.)
+- Instructions
 - Fail gracefully
 - Take a base url and compare them with the fake
+- Get the binaries built somewhere
