@@ -11,8 +11,9 @@ import (
 
 func main() {
 	var port = flag.Int("port", 9090, "Port to listen on")
-
 	var configPath = flag.String("config", "", "Path to config json")
+	var realURL = flag.String("realURL", "", "Optional: Set this to a URL to check your config against a real server for compatibility")
+
 	flag.Parse()
 
 	config, err := ioutil.ReadFile(*configPath)
@@ -27,11 +28,33 @@ func main() {
 		log.Fatalf("Problem occured when trying to create a server from the config: %v ", err)
 	}
 
-	log.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), *configPath, *port)
+	if *realURL != "" {
+		checkEndpoints(endpoints, *realURL)
+	} else {
+		log.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), *configPath, *port)
+		makeFakeServer(endpoints, *port)
+	}
 
+}
+
+func checkEndpoints(endpoints []mockingjay.FakeEndpoint, realURL string) {
+	failure := false
+	for _, endpoint := range endpoints {
+		msg, compatible := CheckCompatability(&endpoint, realURL)
+		log.Println(msg)
+		if !compatible {
+			failure = true
+		}
+	}
+	if failure {
+		log.Fatal("At least one endpoint was incompatible with the real URL supplied")
+	} else {
+		log.Println("All endpoints are compatible")
+	}
+}
+
+func makeFakeServer(endpoints []mockingjay.FakeEndpoint, port int) {
 	server := mockingjay.NewServer(endpoints)
-
-	// Mount it just like any other server
 	http.Handle("/", server)
-	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
+	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 }
