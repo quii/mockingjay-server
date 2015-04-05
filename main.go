@@ -38,18 +38,12 @@ func main() {
 }
 
 func checkEndpoints(endpoints []mockingjay.FakeEndpoint, realURL string) {
-	failure := false
-	for _, endpoint := range endpoints {
-		msg, compatible := CheckCompatability(&endpoint, realURL)
-		log.Println(msg)
-		if !compatible {
-			failure = true
-		}
-	}
-	if failure {
-		log.Fatal("At least one endpoint was incompatible with the real URL supplied")
-	} else {
+	checker := NewCompatabilityChecker(endpoints)
+
+	if checker.CheckCompatability(realURL) {
 		log.Println("All endpoints are compatible")
+	} else {
+		log.Fatal("At least one endpoint was incompatible with the real URL supplied")
 	}
 }
 
