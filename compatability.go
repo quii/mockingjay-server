@@ -23,15 +23,15 @@ func NewCompatabilityChecker(endpoints []mockingjay.FakeEndpoint) *Compatability
 
 // CheckCompatability checks the endpoints against a "real" URL
 func (c *CompatabilityChecker) CheckCompatability(realURL string) bool {
-	failure := false
+	allCompatible := true
 	for _, endpoint := range c.endpoints {
 		msg, compatible := c.check(&endpoint, realURL)
 		log.Println(msg)
 		if !compatible {
-			failure = true
+			allCompatible = false
 		}
 	}
-	return failure
+	return allCompatible
 }
 
 func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL string) (string, bool) {
