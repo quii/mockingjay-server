@@ -4,17 +4,12 @@ import (
 	"fmt"
 	"github.com/quii/mockingjay"
 	"net/http"
-	"strings"
 )
 
 // CheckCompatability determines whether an endpoint is compatible with an equivalent server
 func CheckCompatability(endpoint *mockingjay.FakeEndpoint, realURL string) (string, bool) {
 
-	request, err := http.NewRequest(endpoint.Request.Method, realURL+endpoint.Request.URI, makeRequestBody(endpoint))
-
-	for headerName, headerValue := range endpoint.Request.Headers {
-		request.Header.Add(headerName, headerValue)
-	}
+	request, err := endpoint.Request.AsHTTPRequest(realURL)
 
 	errorMsg := fmt.Sprintf("Endpoint %s is incompatible with %s", endpoint, realURL)
 
@@ -35,14 +30,4 @@ func CheckCompatability(endpoint *mockingjay.FakeEndpoint, realURL string) (stri
 	}
 
 	return fmt.Sprintf("%s Tentatively compatible", endpoint), true
-}
-
-func makeRequestBody(endpoint *mockingjay.FakeEndpoint) *strings.Reader {
-	var body *strings.Reader
-	if endpoint.Request.Body != "" {
-		body = strings.NewReader(endpoint.Request.Body)
-	} else {
-		body = strings.NewReader("")
-	}
-	return body
 }
