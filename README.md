@@ -18,7 +18,7 @@ Mockingjay is fast, requires no coding and is better than other solutions becaus
 
 ## Comparing it against a real server
 
-    TODO
+    mockingjay-server -config=example.json -realURL=http://localhost:1234
 
 ### TODO
 
