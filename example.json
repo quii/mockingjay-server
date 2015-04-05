@@ -1,5 +1,6 @@
 [
     {
+        "Name": "Example hello",
         "Request":{
             "URI" : "/hello",
             "Method": "GET"
@@ -10,6 +11,7 @@
         }
     },
     {
+        "Name": "Another example",
         "Request":{
             "URI" : "/world",
             "Method": "POST",
