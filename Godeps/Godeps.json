@@ -1,0 +1,10 @@
+{
+	"ImportPath": "github.com/quii/mockingjay-server",
+	"GoVersion": "go1.3.3",
+	"Deps": [
+		{
+			"ImportPath": "github.com/quii/mockingjay",
+			"Rev": "dd784237332e49bba9d05974f7fd4ef09e164025"
+		}
+	]
+}
