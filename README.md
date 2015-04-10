@@ -28,12 +28,17 @@ Mockingjay is fast, requires no coding and is better than other solutions becaus
 - godep https://github.com/tools/godep
 - golint https://github.com/golang/lint
 
-    ./build.sh	
+     ./build.sh
 
 ### TODO
 
 - Pretty diagrams explaining it all (interations between fakes, CDCs et al.)
-- Take a base url and compare them with the fake
+- Currently the CDC part only checks status codes. Now need to check structure of content
 - Get the binaries built somewhere
 - Code is a mess and hacky right now, needs tests.
 - Performance tests needed too. Pretty sure it can be sped up by checking the endpoints concurrenty.
+
+### Things to figure out
+
+- Still somewhat reliaint on golden data. i.e fake /user/2 - does user 2 exist on the real server? What can be done?
+- Is it possible to do chains of requests for more complicated tests but still keep it nice and simple. Should we?
