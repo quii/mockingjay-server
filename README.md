@@ -6,7 +6,7 @@ Mockingjay is fast, requires no coding and is better than other solutions becaus
 
 ## Installation
 
-     go install github.com/quii/mockingjay-server
+     go get github.com/quii/mockingjay-server
 
 ### Non go-centric install
 
@@ -19,6 +19,16 @@ Mockingjay is fast, requires no coding and is better than other solutions becaus
 ## Comparing it against a real server
 
     mockingjay-server -config=example.json -realURL=http://localhost:1234
+
+## Building
+
+### Requirements
+
+- Go 1.3+ installed ($GOPATH set, et al)
+- godep https://github.com/tools/godep
+- golint https://github.com/golang/lint
+
+    ./build.sh	
 
 ### TODO
 
