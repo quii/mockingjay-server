@@ -28,12 +28,15 @@ Mockingjay is fast, requires no coding and is better than other solutions becaus
 - godep https://github.com/tools/godep
 - golint https://github.com/golang/lint
 
-     ./build.sh
+
+    ./build.sh
 
 ### TODO
 
 - Pretty diagrams explaining it all (interations between fakes, CDCs et al.)
-- Currently the CDC part only checks status codes. Now need to check structure of content
+- Currently the CDC part only checks status codes. Now need to check structure of content.
+	- JSON
+	- XML
 - Get the binaries built somewhere
 - Code is a mess and hacky right now, needs tests.
 - Performance tests needed too. Pretty sure it can be sped up by checking the endpoints concurrenty.
