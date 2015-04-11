@@ -4,7 +4,7 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/quii/mockingjay",
-			"Rev": "dd784237332e49bba9d05974f7fd4ef09e164025"
+			"Rev": "bc9ef9cd79d8af0662d6cef7ac6c5854dd6bf8c0"
 		}
 	]
 }

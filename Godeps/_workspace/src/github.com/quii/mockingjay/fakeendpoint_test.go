@@ -4,64 +4,49 @@ import (
 	"testing"
 )
 
-const testJSON = `
-[
-	{
-		"Name": "Test endpoint",
-		"Request":{
-	    	"URI" : "/hello",
-	    	"Method": "GET",
-	    	"Headers":
-	    		{
-	    			"Content-Type": "application/json"
-	    		}
+const testYAML = `
+---
+ - name: Test endpoint
+   request:
+     uri: /hello
+     method: GET
+     headers:
+       content-type: application/json
+     body: foobar
+   response:
+     code: 200
+     body: '{"message": "hello, world"}'
+     headers:
+       content-type: text/json
 
-		},
-		"Response":{
-			"Code": 200,
-			"Body": "hello, world",
-	    	"Headers":
-	    		{
-	    			"Content-Type": "text/plain"
-	    		}
-		}
-	},
-	{
-		"Name": "Test endpoint 2",
-		"Request":{
-	    	"URI" : "/world",
-	    	"Method": "DELETE"
-		},
-		"Response":{
-			"Code": 200,
-			"Body": "hello, world"
-		}
-	},
-	{
-		"Request":{
-	    	"URI" : "/card",
-	    	"Method": "POST",
-	    	"Body": "Greetings"
-		},
-		"Response":{
-			"Code": 500,
-			"Body": "Oh bugger"
-		}
-	}
+ - name: Test endpoint 2
+   request:
+     uri: /world
+     method: DELETE
+   response:
+     code: 200
+     body: hello, world
 
-]
-`
+ - name: Failing endpoint
+   request:
+     uri: /card
+     method: POST
+     body: Greetings
+   response:
+     code: 500
+     body: Oh bugger
+ `
 
-func TestItCreatesAServerConfigFromJSON(t *testing.T) {
-	endpoints, err := NewFakeEndpoints(testJSON)
+func TestItCreatesAServerConfigFromYAML(t *testing.T) {
+	endpoints, err := NewFakeEndpoints([]byte(testYAML))
 
 	if err != nil {
-		t.Fatalf("Shouldn't have got an error for valid JSON %v", err)
+		t.Fatalf("Shouldn't have got an error for valid YAML [%v]", err)
 	}
 	firstEndpoint := endpoints[0]
 
 	if len(endpoints) != 3 {
-		t.Error("There should be 3 endpoints found in json")
+		t.Fatalf("There should be 3 endpoints found in YAML")
 	}
 
 	if firstEndpoint.Name != "Test endpoint" {
@@ -72,11 +57,11 @@ func TestItCreatesAServerConfigFromJSON(t *testing.T) {
 		t.Error("Request URI was not properly set")
 	}
 
-	if firstEndpoint.Request.Headers["Content-Type"] != "application/json" {
+	if firstEndpoint.Request.Headers["content-type"] != "application/json" {
 		t.Error("Request headers were not parsed")
 	}
 
-	if firstEndpoint.Response.Headers["Content-Type"] != "text/plain" {
+	if firstEndpoint.Response.Headers["content-type"] != "text/json" {
 		t.Errorf("Response headers were not parsed, got %s", firstEndpoint.Response.Headers["Content-Type"])
 	}
 
@@ -88,8 +73,8 @@ func TestItCreatesAServerConfigFromJSON(t *testing.T) {
 		t.Error("Response code was not properly set")
 	}
 
-	if firstEndpoint.Response.Body != "hello, world" {
-		t.Error("Response body was not properly set")
+	if firstEndpoint.Response.Body != `{"message": "hello, world"}` {
+		t.Errorf("Response body was not properly set got [%s]", firstEndpoint.Response.Body)
 	}
 
 	if endpoints[1].Request.Method != "DELETE" {
@@ -105,51 +90,35 @@ func TestItCreatesAServerConfigFromJSON(t *testing.T) {
 	}
 }
 
-func TestItReturnsAnErrorWhenNotValidJSON(t *testing.T) {
-	_, err := NewFakeEndpoints("not real json")
+func TestItReturnsAnErrorWhenNotValidYAML(t *testing.T) {
+	_, err := NewFakeEndpoints([]byte("not real YAML"))
 	if err == nil {
-		t.Error("Expected an error to be returned because the JSON is bad")
+		t.Error("Expected an error to be returned because the YAML is bad")
 	}
 
 }
 
-const badJSON = `
-[
-	{
-		"Request":{
-	    	"URI" : "/hello",
-	    	"Method": "GET",
-	    	"Headers":
-	    		{
-	    			"Content-Type": "application/json"
-	    		}
+const badYAML = `
+---
+ - name: Test endpoint
+   roquest:
+     internet: /hello
+     cats: GET
+     headers:
+       content-type: application/json
+     body: foobar
+   response:
+     code: 200
+     body: hello, world
+     headers:
+       content-type: text/plain
 
-		},
-		"Response":{
-			"Code": 200,
-			"Body": "hello, world",
-	    	"Headers":
-	    		{
-	    			"Content-Type": "text/plain"
-	    		}
-		}
-	},
-	{
-		"foo":{
-	    	"URIBABARBABR" : "/world",
-	    	"Method": "DELETE"
-		},
-		"Bummer":{
-			"Code": 200,
-			"Body": "hello, world"
-		}
-	}
-]
-`
+ - name: Test endpoint 2
+ `
 
-func TestItReturnsAnErrorWhenStructureOfJSONIsWrong(t *testing.T) {
-	_, err := NewFakeEndpoints(badJSON)
+func TestItReturnsAnErrorWhenStructureOfYAMLIsWrong(t *testing.T) {
+	_, err := NewFakeEndpoints([]byte(badYAML))
 	if err == nil {
-		t.Error("Expected an error to be returned because the JSON is bad")
+		t.Error("Expected an error to be returned because the YAML is bad")
 	}
 }

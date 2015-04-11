@@ -22,7 +22,7 @@ func main() {
 		log.Fatalf("Problem occured when trying to open the config file: %v", err)
 	}
 
-	endpoints, err := mockingjay.NewFakeEndpoints(string(config))
+	endpoints, err := mockingjay.NewFakeEndpoints(config)
 
 	if err != nil {
 		log.Fatalf("Problem occured when trying to create a server from the config: %v ", err)

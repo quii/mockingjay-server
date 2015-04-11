@@ -1,9 +1,9 @@
 package mockingjay
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
+	"gopkg.in/yaml.v2"
 )
 
 type response struct {
@@ -29,22 +29,22 @@ func (f *FakeEndpoint) String() string {
 
 const fakeEndpointStringerFormat = "%s (%s)"
 
-// NewFakeEndpoints returns an array of Endpoints from a JSON string. Returns an error if JSON cannot be parsed
-func NewFakeEndpoints(data string) ([]FakeEndpoint, error) {
-	var config []FakeEndpoint
-	err := json.Unmarshal([]byte(data), &config)
+// NewFakeEndpoints returns an array of Endpoints from a YAML byte array. Returns an error if YAML cannot be parsed
+func NewFakeEndpoints(data []byte) ([]FakeEndpoint, error) {
+	var endpoints []FakeEndpoint
+	err := yaml.Unmarshal(data, &endpoints)
 
 	if err != nil {
 		return nil, err
 	}
 
-	for _, endPoint := range config {
+	for _, endPoint := range endpoints {
 		if !endPoint.isValid() {
-			return nil, errors.New("JSON was invalid")
+			return nil, errors.New("YAML was invalid")
 		}
 	}
 
-	return config, nil
+	return endpoints, nil
 }
 
 func (f FakeEndpoint) isValid() bool {
@@ -59,6 +59,6 @@ type notFoundResponse struct {
 
 func newNotFound(method string, url string, endpoints []FakeEndpoint) *response {
 	notFound := notFoundResponse{"Endpoint not found", request{url, method, nil, ""}, endpoints}
-	j, _ := json.Marshal(notFound)
+	j, _ := yaml.Marshal(notFound)
 	return &response{404, string(j), nil}
 }

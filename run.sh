@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mockingjay-server -config=example.json -port=1234
+mockingjay-server -config=example.yaml -port=1234

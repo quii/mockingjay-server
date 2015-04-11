@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mockingjay-server -config=example.json -realURL=http://localhost:1234
+mockingjay-server -config=example.yaml -realURL=http://localhost:1234

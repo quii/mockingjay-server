@@ -2,7 +2,7 @@
 
 [![GoDoc](https://godoc.org/github.com/quii/mockingjay?status.svg)](https://godoc.org/github.com/quii/mockingjay)
 
-Create a server based on json configuration. Useful for integration tests, hopefully.
+Create a server from configuration. Useful for integration tests, hopefully.
 
 ## Example
 
@@ -16,36 +16,36 @@ import (
 )
 
 func main() {
-	testJSON := `
-[
-	{
-		"Name": "A descriptive name useful for when stuff is logged",
-		"Request":{
-	    	"URI" : "/hello",
-	    	"Method": "GET"
-		},
-		"Response":{
-			"Code": 200,
-			"Body": "hello, world"
-		}
-	},
-	{
-		"Name": "Amazing endpoint",
-		"Request":{
-	    	"URI" : "/world",
-	    	"Method": "POST",
-	    	"Headers":
-	    		{
-	    			"Content-Type": "application/json"
-	    		}
-		},
-		"Response":{
-			"Code": 201,
-			"Body": "hello, world"
-		}
-	}
-]`
-	endpoints, err := mockingjay.NewFakeEndpoints(testJSON)
+	const testYAML = `
+---
+ - name: Test endpoint
+   request:
+     uri: /hello
+     method: GET
+   response:
+     code: 200
+     body: hello, world
+     headers:
+       content-type: text/plain
+
+ - name: Test endpoint 2
+   request:
+     uri: /world
+     method: DELETE
+   response:
+     code: 200
+     body: hello, world
+
+ - name: Failing endpoint
+   request:
+     uri: /card
+     method: POST
+     body: Greetings
+   response:
+     code: 500
+     body: Oh bugger
+ `
+	endpoints, err := mockingjay.NewFakeEndpoints([]byte(testYAML))
 
 	if err != nil {
 		log.Fatal(err)
@@ -58,7 +58,10 @@ func main() {
 	http.ListenAndServe(":9090", nil)
 }
 ```
+## Building
 
+- Requires Go 1.3+
+- godeps
 
 ## Todo
 

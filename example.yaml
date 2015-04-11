@@ -1,0 +1,27 @@
+---
+ - name: Test endpoint
+   request:
+     uri: /hello
+     method: GET
+   response:
+     code: 200
+     body: '{"message": "hello, world"}'
+     headers:
+       content-type: text/json
+
+ - name: Test endpoint 2
+   request:
+     uri: /world
+     method: DELETE
+   response:
+     code: 200
+     body: hello, world
+
+ - name: Failing endpoint
+   request:
+     uri: /card
+     method: POST
+     body: Greetings
+   response:
+     code: 500
+     body: Oh bugger

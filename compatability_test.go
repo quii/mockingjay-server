@@ -12,7 +12,7 @@ func TestItChecksAValidEndpointsJSON(t *testing.T) {
 	body := `{"foo":"bar"}`
 	realServer := makeRealServer(body)
 
-	fakeEndPoints, _ := mockingjay.NewFakeEndpoints(testJSON(body))
+	fakeEndPoints, _ := mockingjay.NewFakeEndpoints([]byte(testJSON(body)))
 
 	checker := NewCompatabilityChecker(fakeEndPoints)
 
