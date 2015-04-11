@@ -16,9 +16,9 @@ Mockingjay is fast, requires no coding and is better than other solutions becaus
 
     mockingjay-server -config=example.yaml -port=1234
 
-## Comparing it against a real server
+## Check your configuration is compatible with a real server
 
-    mockingjay-server -config=example.yaml -realURL=http://localhost:1234
+    mockingjay-server -config=example.yaml -realURL=http://some-real-api.com
 
 ## Building
 
