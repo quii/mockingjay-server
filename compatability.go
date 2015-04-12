@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/quii/jsonequaliser"
 	"github.com/quii/mockingjay"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -54,5 +56,34 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 		return fmt.Sprintf("%s - Got %d expected %d", errorMsg, response.StatusCode, endpoint.Response.Code), false
 	}
 
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+
+	if err != nil {
+		return fmt.Sprintln("Couldn't read response body [%s]", err), false
+	}
+
+	bodyCompatible, err := checkBody(string(body), endpoint.Response.Body)
+
+	if err != nil {
+		return fmt.Sprintf("There was a problem checking the compatibility of the body", err), false
+	}
+
+	if !bodyCompatible {
+		return fmt.Sprintf("Body [%s] was not compatible with config body [%s]", string(body), endpoint.Response.Body), false
+	}
+
 	return fmt.Sprintf("%s Tentatively compatible", endpoint), true
+}
+
+func checkBody(downstreamBody string, expectedBody string) (bool, error) {
+	if isJSON(downstreamBody) {
+		return jsonequaliser.IsCompatible(expectedBody, downstreamBody)
+	}
+	return true, nil
+}
+
+//todo: This is clearly flaky and stupid
+func isJSON(x string) bool {
+	return x[0] == '{'
 }

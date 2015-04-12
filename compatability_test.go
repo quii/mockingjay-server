@@ -12,7 +12,11 @@ func TestItChecksAValidEndpointsJSON(t *testing.T) {
 	body := `{"foo":"bar"}`
 	realServer := makeRealServer(body)
 
-	fakeEndPoints, _ := mockingjay.NewFakeEndpoints([]byte(testJSON(body)))
+	fakeEndPoints, err := mockingjay.NewFakeEndpoints([]byte(testYAML(body)))
+
+	if err != nil {
+		t.Fatalf("Couldn't make mockingjay endpoints, is your data correct? [%v]", err)
+	}
 
 	checker := NewCompatabilityChecker(fakeEndPoints)
 
@@ -21,37 +25,36 @@ func TestItChecksAValidEndpointsJSON(t *testing.T) {
 	}
 }
 
-// func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
-// 	serverResponseBody := `{"foo": "bar"}`
-// 	fakeResponseBody := `{"baz": "boo"}`
+func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
+	serverResponseBody := `{"foo": "bar"}`
+	fakeResponseBody := `{"baz": "boo"}`
 
-// 	realServer := makeRealServer(serverResponseBody)
+	realServer := makeRealServer(serverResponseBody)
 
-// 	fakeEndPoints, _ := mockingjay.NewFakeEndpoints(testJSON(fakeResponseBody))
+	fakeEndPoints, err := mockingjay.NewFakeEndpoints([]byte(testYAML(fakeResponseBody)))
 
-// 	checker := NewCompatabilityChecker(fakeEndPoints)
+	if err != nil {
+		t.Fatalf("Couldn't make mockingjay endpoints, is your data correct? [%v]", err)
+	}
 
-// 	if checker.CheckCompatability(realServer.URL) {
-// 		t.Error("Checker should've found this endpoint to be incorrect")
-// 	}
-// }
+	checker := NewCompatabilityChecker(fakeEndPoints)
+
+	if checker.CheckCompatability(realServer.URL) {
+		t.Error("Checker should've found this endpoint to be incorrect")
+	}
+}
 
 const defaultRequestURI = "/hello"
 
-const jsonFormat = `
-[
-    {
-        "Name": "Example hello",
-        "Request":{
-            "URI" : %s,
-            "Method": "GET"
-        },
-        "Response":{
-            "Code": 200,
-            "Body": "%s"
-        }
-    }
-]
+const yamlFormat = `
+---
+ - name: Test endpoint
+   request:
+     uri: %s
+     method: GET
+   response:
+     code: 200
+     body: '%s'
 `
 
 func makeRealServer(responseBody string) *httptest.Server {
@@ -64,6 +67,6 @@ func makeRealServer(responseBody string) *httptest.Server {
 	}))
 }
 
-func testJSON(responseBody string) string {
-	return fmt.Sprintf(jsonFormat, defaultRequestURI, responseBody)
+func testYAML(responseBody string) string {
+	return fmt.Sprintf(yamlFormat, defaultRequestURI, responseBody)
 }
