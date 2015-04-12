@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/quii/jsonequaliser"
 	"github.com/quii/mockingjay"
@@ -93,7 +94,7 @@ func checkBody(downstreamBody string, expectedBody string) (bool, error) {
 	return true, nil
 }
 
-//todo: This is clearly flaky and stupid
-func isJSON(x string) bool {
-	return x[0] == '{'
+func isJSON(s string) bool {
+	var js interface{}
+	return json.Unmarshal([]byte(s), &js) == nil
 }

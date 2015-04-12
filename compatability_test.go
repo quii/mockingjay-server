@@ -45,7 +45,7 @@ func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
 	}
 }
 
-const noSleep = 0
+const noSleep = 1
 
 const defaultRequestURI = "/hello"
 
@@ -60,9 +60,9 @@ const yamlFormat = `
      body: '%s'
 `
 
-func makeRealServer(responseBody string, sleepTime int) *httptest.Server {
+func makeRealServer(responseBody string, sleepTime time.Duration) *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(sleepTime * time.Millisecond)
 		if r.URL.RequestURI() == defaultRequestURI {
 			fmt.Fprint(w, responseBody)
 		} else {
