@@ -1,10 +1,12 @@
 # mockingjay server
 
-Mockingjay lets you define the contract between a consumer and producer with a configuration file. This gives you fake services to write integration tests against and consumer driven contracts to run against your real downstream services.
+Mockingjay lets you define the contract between a consumer and producer with a simple configuration file. 
+
+Mockingjay will then give you fake services to write integration tests against and [consumer driven contracts](http://martinfowler.com/articles/consumerDrivenContracts.html) to run against your real downstream services.
 
 Mockingjay is fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent.
 
-## Rationale
+## Rationale
 
 In the hip exciting world of SOA/microservices with heavy investment in PaaS/IaaS you want to be able to quickly iterate over small services and deploy to live quickly and without fear of breaking things. 
 
