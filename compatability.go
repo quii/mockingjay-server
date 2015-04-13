@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 )
 
 // CompatabilityChecker is responsible for checking endpoints are compatible
@@ -21,6 +22,7 @@ func NewCompatabilityChecker(endpoints []mockingjay.FakeEndpoint) *Compatability
 	c := new(CompatabilityChecker)
 	c.endpoints = endpoints
 	c.client = &http.Client{}
+	c.client.Timeout = 5 * time.Second
 	return c
 }
 
