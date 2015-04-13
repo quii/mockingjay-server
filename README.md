@@ -28,14 +28,18 @@ Mockingjay is fast, requires no coding and is better than other solutions becaus
 
 ## Running a fake server
 
-    $ mockingjay-server -config=example.yaml -port=1234 &
-    $ 2015/04/13 14:27:54 Serving 3 endpoints defined from example.yaml on port 1234
-    $ curl http://localhost:1234/hello
-    $ {"message": "hello, world"}
+````bash
+$ mockingjay-server -config=example.yaml -port=1234 &
+$ 2015/04/13 14:27:54 Serving 3 endpoints defined from example.yaml on port 1234
+$ curl http://localhost:1234/hello
+$ {"message": "hello, world"}
+````
 
 ## Check configuration is compatible with a real server
 
-    $ mockingjay-server -config=example.yaml -realURL=http://some-real-api.
+````bash
+$ mockingjay-server -config=example.yaml -realURL=http://some-real-api.
+````
 
 ## Building
 
