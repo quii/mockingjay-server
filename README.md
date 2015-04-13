@@ -17,7 +17,7 @@ Mockingjay creates two artifacts from a given configuration file.
 # define as many as you need...
 ````
 
-- A program to check that a downstream service responds with a compatible response given each request
+- A program to check that a service responds with a compatible response given each request
 - A HTTP server which serves the configured request for each response 
 
 Mockingjay is fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent.
@@ -25,10 +25,6 @@ Mockingjay is fast, requires no coding and is better than other solutions becaus
 ## Installation
 
      go get github.com/quii/mockingjay-server
-
-### Non go-centric install
-
-    TODO - Need to make cross platform binaries and stick them somewhere.
 
 ## Running a fake server
 
@@ -57,7 +53,7 @@ There are example files inside the examples directory.
 - Currently the CDC part only checks status codes. Now need to check structure of content.
 	- JSON
 	- XML
-- Get the binaries built somewhere
+- Get the binaries built somewhere for non gophers
 - Code is a mess and hacky right now, needs tests.
 - Performance tests needed too. Pretty sure it can be sped up by checking the endpoints concurrenty.
 
