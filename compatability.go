@@ -51,8 +51,6 @@ func (c *CompatabilityChecker) CheckCompatability(realURL string) bool {
 
 func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL string) (string, bool) {
 
-	log.Println(endpoint)
-
 	request, err := endpoint.Request.AsHTTPRequest(realURL)
 
 	errorMsg := fmt.Sprintf("%s is incompatible with %s", endpoint, realURL)
