@@ -24,17 +24,18 @@ Mockingjay is fast, requires no coding and is better than other solutions becaus
 
 ## Installation
 
-     go get github.com/quii/mockingjay-server
+     $ go get github.com/quii/mockingjay-server
 
 ## Running a fake server
 
-    mockingjay-server -config=example.yaml -port=1234
+    $ mockingjay-server -config=example.yaml -port=1234 &
+    $ 2015/04/13 14:27:54 Serving 3 endpoints defined from example.yaml on port 1234
+    $ curl http://localhost:1234/hello
+    $ {"message": "hello, world"}
 
 ## Check configuration is compatible with a real server
 
-    mockingjay-server -config=example.yaml -realURL=http://some-real-api.
-
-There are example files inside the examples directory.
+    $ mockingjay-server -config=example.yaml -realURL=http://some-real-api.
 
 ## Building
 
@@ -53,7 +54,7 @@ There are example files inside the examples directory.
 - Currently the CDC part only checks status codes. 
 - Check XML structure when applicable
 - Get the binaries built somewhere for non gophers
-- Investigate a more standard test output
+- Investigate a more standard test output (http://windyroad.com.au/2011/02/07/apache-ant-junit-xml-schema/)
 
 ### Things to figure out
 
