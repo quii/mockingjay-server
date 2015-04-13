@@ -53,6 +53,7 @@ There are example files inside the examples directory.
 - Currently the CDC part only checks status codes. 
 - Check XML structure when applicable
 - Get the binaries built somewhere for non gophers
+- Investigate a more standard test output
 
 ### Things to figure out
 
