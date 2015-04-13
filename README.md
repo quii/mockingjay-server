@@ -1,6 +1,24 @@
 # mockingjay server
 
-Mockingjay server creates HTTP web servers for integration tests from YAML configuration and then compares them against real servers to ensure they are valid to test against.
+Mockingjay creates two artifacts from a given configuration file.
+
+````yaml
+---
+ - name: Test endpoint
+   request:
+     uri: /hello
+     method: GET
+   response:
+     code: 200
+     body: hello, world
+     headers:
+       content-type: text/plain
+
+# define as many as you need...
+````
+
+- A program to check that a downstream service responds with a compatible response given each request
+- A HTTP server which serves the configured request for each response 
 
 Mockingjay is fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent.
 
