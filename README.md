@@ -85,8 +85,6 @@ $ 2015/04/13 21:06:06 At least one endpoint was incompatible with the real URL s
 
 ### TODO
 
-- Pretty diagrams explaining it all (interations between fakes, CDCs et al.)
-- Currently the CDC part only checks status codes. 
 - Check XML structure when applicable
 - Get the binaries built somewhere for non gophers
 - Investigate a more standard test output (http://windyroad.com.au/2011/02/07/apache-ant-junit-xml-schema/)
