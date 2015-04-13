@@ -32,11 +32,11 @@ func (c *CompatabilityChecker) CheckCompatability(realURL string) bool {
 	results := make(chan bool, len(c.endpoints))
 
 	for _, endpoint := range c.endpoints {
-		go func() {
-			msg, compatible := c.check(&endpoint, realURL)
+		go func(ep mockingjay.FakeEndpoint) {
+			msg, compatible := c.check(&ep, realURL)
 			log.Println(msg)
 			results <- compatible
-		}()
+		}(endpoint)
 	}
 
 	allCompatible := true
@@ -50,6 +50,8 @@ func (c *CompatabilityChecker) CheckCompatability(realURL string) bool {
 }
 
 func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL string) (string, bool) {
+
+	log.Println(endpoint)
 
 	request, err := endpoint.Request.AsHTTPRequest(realURL)
 
