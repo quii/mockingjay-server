@@ -32,17 +32,27 @@ func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
 
 	realServer := makeRealServer(serverResponseBody, noSleep)
 
-	fakeEndPoints, err := mockingjay.NewFakeEndpoints([]byte(testYAML(fakeResponseBody)))
+	fakeEndpoints, err := mockingjay.NewFakeEndpoints([]byte(testYAML(fakeResponseBody)))
 
 	if err != nil {
 		t.Fatalf("Couldn't make mockingjay endpoints, is your data correct? [%v]", err)
 	}
 
-	checker := NewCompatabilityChecker(fakeEndPoints)
+	checker := NewCompatabilityChecker(fakeEndpoints)
 
 	if checker.CheckCompatability(realServer.URL) {
 		t.Error("Checker should've found this endpoint to be incorrect")
 	}
+}
+
+func TestItIsIncompatibleWhenRealServerIsntReachable(t *testing.T) {
+	fakeEndpoints, _ := mockingjay.NewFakeEndpoints([]byte(testYAML("doesnt matter")))
+	checker := NewCompatabilityChecker(fakeEndpoints)
+
+	if checker.CheckCompatability("http://localhost:12344") {
+		t.Error("Checker shouldve found this to be an error as the real server isnt reachable")
+	}
+
 }
 
 const noSleep = 1
