@@ -64,7 +64,7 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 	}
 
 	if response.StatusCode != endpoint.Response.Code {
-		return fmt.Sprintf("%s - Got %d expected %d", errorMsg, response.StatusCode, endpoint.Response.Code), false
+		return fmt.Sprintf("%s - Got %d expected %d (%s)", errorMsg, response.StatusCode, endpoint.Response.Code, request.URL), false
 	}
 
 	defer response.Body.Close()
