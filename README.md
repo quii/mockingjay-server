@@ -2,6 +2,9 @@
 
 Mockingjay creates two artifacts from a given configuration file.
 
+- A program to check that a service responds with a compatible response given each request
+- A HTTP server which serves the configured request for each response 
+
 ````yaml
 ---
  - name: Test endpoint
@@ -16,9 +19,6 @@ Mockingjay creates two artifacts from a given configuration file.
 
 # define as many as you need...
 ````
-
-- A program to check that a service responds with a compatible response given each request
-- A HTTP server which serves the configured request for each response 
 
 Mockingjay is fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent.
 
@@ -50,12 +50,9 @@ There are example files inside the examples directory.
 ### TODO
 
 - Pretty diagrams explaining it all (interations between fakes, CDCs et al.)
-- Currently the CDC part only checks status codes. Now need to check structure of content.
-	- JSON
-	- XML
+- Currently the CDC part only checks status codes. 
+- Check XML structure when applicable
 - Get the binaries built somewhere for non gophers
-- Code is a mess and hacky right now, needs tests.
-- Performance tests needed too. Pretty sure it can be sped up by checking the endpoints concurrenty.
 
 ### Things to figure out
 
