@@ -39,7 +39,7 @@ From this you can create a fake server to write integration tests with and also 
 
 #### Main advantages
 
-- No coding whatsoever, so no naughtiness in fake servers overcomplicating things. Even non developers can add new scenarios to test with to your configuration.
+- No coding whatsoever, so no naughtiness in fake servers overcomplicating things. Even non developers can add new scenarios to test with.
 - The contract is defined once, rather than dispersed across different scripts which you have to keep in sync. 
 - Entirely language agnostic. If you speak HTTP you can use mockingjay.
 - Checks the structure of the data (currently JSON is the only type checked) rather than the contents, which will reduce flakiness of your builds.
