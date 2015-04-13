@@ -43,7 +43,7 @@ From this you can create a fake server to write integration tests with and also 
 - The contract is defined once, rather than dispersed across different scripts which you have to keep in sync. 
 - Entirely language agnostic. If you speak HTTP you can use mockingjay.
 - Checks the structure of the data (currently JSON is the only type checked) rather than the contents, which will reduce flakiness of your builds.
-- Efforts have been made to make sure mockingjay is fast, to help you keep your feedback loops tight. 
+- Both the fake server and CDCs are really fast to run, to help keep your builds fast. 
 
 #### Drawbacks/constraints
 
