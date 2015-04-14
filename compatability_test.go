@@ -33,14 +33,20 @@ func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
 
 func TestItIsIncompatibleWhenRealServerIsntReachable(t *testing.T) {
 	yaml := testYAML("doesnt matter")
-	checker, err := makeChecker(yaml)
-
-	if err != nil {
-		t.Fatalf("Error returned when making checker: %v", err)
-	}
+	checker, _ := makeChecker(yaml)
 
 	if checker.CheckCompatability("http://localhost:12344") {
 		t.Error("Checker shouldve found this to be an error as the real server isnt reachable")
+	}
+}
+
+func TestItHandlesBadURLsInConfig(t *testing.T) {
+	yaml := fmt.Sprintf(yamlFormat, "not a real url", "foobar")
+	fakeEndPoints, _ := mockingjay.NewFakeEndpoints([]byte(yaml))
+	checker := NewCompatabilityChecker(fakeEndPoints)
+
+	if checker.CheckCompatability("also not a real url") {
+		t.Error("Checker should've found that the URL in the YAML cannot be made into a request")
 	}
 }
 
