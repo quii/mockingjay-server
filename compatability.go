@@ -13,8 +13,9 @@ import (
 
 // CompatabilityChecker is responsible for checking endpoints are compatible
 type CompatabilityChecker struct {
-	client    *http.Client
-	endpoints []mockingjay.FakeEndpoint
+	client            *http.Client
+	endpoints         []mockingjay.FakeEndpoint
+	numberOfEndpoints int
 }
 
 // NewCompatabilityChecker creates a new CompatabilityChecker
@@ -23,13 +24,14 @@ func NewCompatabilityChecker(endpoints []mockingjay.FakeEndpoint) *Compatability
 	c.endpoints = endpoints
 	c.client = &http.Client{}
 	c.client.Timeout = 5 * time.Second
+	c.numberOfEndpoints = len(endpoints)
 	return c
 }
 
 // CheckCompatability checks the endpoints against a "real" URL
 func (c *CompatabilityChecker) CheckCompatability(realURL string) bool {
 
-	results := make(chan bool, len(c.endpoints))
+	results := make(chan bool, c.numberOfEndpoints)
 
 	for _, endpoint := range c.endpoints {
 		go func(ep mockingjay.FakeEndpoint) {
@@ -40,7 +42,7 @@ func (c *CompatabilityChecker) CheckCompatability(realURL string) bool {
 	}
 
 	allCompatible := true
-	for i := 0; i < len(c.endpoints); i++ {
+	for i := 0; i < c.numberOfEndpoints; i++ {
 		compatible := <-results
 		if !compatible {
 			allCompatible = false
@@ -73,17 +75,17 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
-		return fmt.Sprintln("Couldn't read response body [%s]", err), false
+		return fmt.Sprintln("%s - Couldn't read response body [%s]", errorMsg, err), false
 	}
 
 	bodyCompatible, err := checkBody(string(body), endpoint.Response.Body)
 
 	if err != nil {
-		return fmt.Sprintf("There was a problem checking the compatibility of the body", err), false
+		return fmt.Sprintf("%s - There was a problem checking the compatibility of the body", errorMsg, err), false
 	}
 
 	if !bodyCompatible {
-		return fmt.Sprintf("Body [%s] was not compatible with config body [%s]", string(body), endpoint.Response.Body), false
+		return fmt.Sprintf("%s - Body [%s] was not compatible with config body [%s]", errorMsg, string(body), endpoint.Response.Body), false
 	}
 
 	return fmt.Sprintf("%s Tentatively compatible", endpoint), true
