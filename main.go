@@ -12,7 +12,7 @@ import (
 
 func main() {
 	var port = flag.Int("port", 9090, "Port to listen on")
-	var configPath = flag.String("config", "", "Path to config json")
+	var configPath = flag.String("config", "", "Path to config YAML")
 	var realURL = flag.String("realURL", "", "Optional: Set this to a URL to check your config against a real server for compatibility")
 
 	flag.Parse()
@@ -56,5 +56,8 @@ func checkEndpoints(endpoints []mockingjay.FakeEndpoint, realURL string) {
 func makeFakeServer(endpoints []mockingjay.FakeEndpoint, port int) {
 	server := mockingjay.NewServer(endpoints)
 	http.Handle("/", server)
-	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	if err != nil {
+		log.Fatalf("There was a problem starting the mockingjay server on port %d: %v", port, err)
+	}
 }
