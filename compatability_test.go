@@ -12,7 +12,7 @@ import (
 func TestItChecksAValidEndpointsJSON(t *testing.T) {
 	body := `{"foo":"bar"}`
 	realServer := makeFakeDownstreamServer(body, noSleep)
-	checker := makeChecker(body)
+	checker, _ := makeChecker(testYAML(body))
 
 	if !checker.CheckCompatability(realServer.URL) {
 		t.Error("Checker should've found this endpoint to be correct")
@@ -24,7 +24,7 @@ func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
 	fakeResponseBody := `{"baz": "boo"}`
 
 	realServer := makeFakeDownstreamServer(serverResponseBody, noSleep)
-	checker := makeChecker(fakeResponseBody)
+	checker, _ := makeChecker(testYAML(fakeResponseBody))
 
 	if checker.CheckCompatability(realServer.URL) {
 		t.Error("Checker should've found this endpoint to be incorrect")
@@ -32,7 +32,14 @@ func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
 }
 
 func TestItIsIncompatibleWhenRealServerIsntReachable(t *testing.T) {
-	if !makeChecker("doesn't matter").CheckCompatability("http://localhost:12344") {
+	yaml := testYAML("doesnt matter")
+	checker, err := makeChecker(yaml)
+
+	if err != nil {
+		t.Fatalf("Error returned when making checker: %v", err)
+	}
+
+	if checker.CheckCompatability("http://localhost:12344") {
 		t.Error("Checker shouldve found this to be an error as the real server isnt reachable")
 	}
 }
@@ -63,9 +70,13 @@ func makeFakeDownstreamServer(responseBody string, sleepTime time.Duration) *htt
 	}))
 }
 
-func makeChecker(responseBody string) *CompatabilityChecker {
-	fakeEndPoints, _ := mockingjay.NewFakeEndpoints([]byte(testYAML(responseBody)))
-	return NewCompatabilityChecker(fakeEndPoints)
+func makeChecker(responseBody string) (*CompatabilityChecker, error) {
+	fakeEndPoints, err := mockingjay.NewFakeEndpoints([]byte(responseBody))
+
+	if err != nil {
+		return nil, err
+	}
+	return NewCompatabilityChecker(fakeEndPoints), nil
 }
 
 func testYAML(responseBody string) string {
