@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -15,6 +16,11 @@ func main() {
 	var realURL = flag.String("realURL", "", "Optional: Set this to a URL to check your config against a real server for compatibility")
 
 	flag.Parse()
+
+	if *configPath == "" {
+		flag.Usage()
+		os.Exit(1)
+	}
 
 	config, err := ioutil.ReadFile(*configPath)
 

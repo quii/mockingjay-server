@@ -6,6 +6,7 @@ import (
 
 const sleepyTime = 500
 
+// 501118059 ns
 func BenchmarkCompatabilityChecking(b *testing.B) {
 	body := "hello, world"
 	realServer := makeFakeDownstreamServer(body, sleepyTime)
