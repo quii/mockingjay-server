@@ -11,15 +11,8 @@ import (
 
 func TestItChecksAValidEndpointsJSON(t *testing.T) {
 	body := `{"foo":"bar"}`
-	realServer := makeRealServer(body, noSleep)
-
-	fakeEndPoints, err := mockingjay.NewFakeEndpoints([]byte(testYAML(body)))
-
-	if err != nil {
-		t.Fatalf("Couldn't make mockingjay endpoints, is your data correct? [%v]", err)
-	}
-
-	checker := NewCompatabilityChecker(fakeEndPoints)
+	realServer := makeFakeDownstreamServer(body, noSleep)
+	checker := makeChecker(body)
 
 	if !checker.CheckCompatability(realServer.URL) {
 		t.Error("Checker should've found this endpoint to be correct")
@@ -30,15 +23,8 @@ func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
 	serverResponseBody := `{"foo": "bar"}`
 	fakeResponseBody := `{"baz": "boo"}`
 
-	realServer := makeRealServer(serverResponseBody, noSleep)
-
-	fakeEndpoints, err := mockingjay.NewFakeEndpoints([]byte(testYAML(fakeResponseBody)))
-
-	if err != nil {
-		t.Fatalf("Couldn't make mockingjay endpoints, is your data correct? [%v]", err)
-	}
-
-	checker := NewCompatabilityChecker(fakeEndpoints)
+	realServer := makeFakeDownstreamServer(serverResponseBody, noSleep)
+	checker := makeChecker(fakeResponseBody)
 
 	if checker.CheckCompatability(realServer.URL) {
 		t.Error("Checker should've found this endpoint to be incorrect")
@@ -46,13 +32,9 @@ func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
 }
 
 func TestItIsIncompatibleWhenRealServerIsntReachable(t *testing.T) {
-	fakeEndpoints, _ := mockingjay.NewFakeEndpoints([]byte(testYAML("doesnt matter")))
-	checker := NewCompatabilityChecker(fakeEndpoints)
-
-	if checker.CheckCompatability("http://localhost:12344") {
+	if !makeChecker("doesn't matter").CheckCompatability("http://localhost:12344") {
 		t.Error("Checker shouldve found this to be an error as the real server isnt reachable")
 	}
-
 }
 
 const noSleep = 1
@@ -70,7 +52,7 @@ const yamlFormat = `
      body: '%s'
 `
 
-func makeRealServer(responseBody string, sleepTime time.Duration) *httptest.Server {
+func makeFakeDownstreamServer(responseBody string, sleepTime time.Duration) *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		time.Sleep(sleepTime * time.Millisecond)
 		if r.URL.RequestURI() == defaultRequestURI {
@@ -79,6 +61,11 @@ func makeRealServer(responseBody string, sleepTime time.Duration) *httptest.Serv
 			http.Error(w, "Not found", http.StatusNotFound)
 		}
 	}))
+}
+
+func makeChecker(responseBody string) *CompatabilityChecker {
+	fakeEndPoints, _ := mockingjay.NewFakeEndpoints([]byte(testYAML(responseBody)))
+	return NewCompatabilityChecker(fakeEndPoints)
 }
 
 func testYAML(responseBody string) string {
