@@ -58,7 +58,7 @@ From this you can create a fake server to write integration tests with and also 
 ````bash
 $ mockingjay-server -config=example.yaml -port=1234 &
 2015/04/13 14:27:54 Serving 3 endpoints defined from example.yaml on port 1234
-curl http://localhost:1234/hello
+$ curl http://localhost:1234/hello
 {"message": "hello, world"}
 ````
 
