@@ -1,0 +1,10 @@
+---
+- delay: 2000
+  frequency: 0.5
+
+- delay: 1000
+  frequency: 0.2
+
+- status: 404
+  frequency: 0.3
+
