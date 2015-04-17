@@ -22,17 +22,16 @@ func NewMonkeyServer(server http.Handler, behaviours []behaviour) http.Handler {
 }
 
 func (s *MonkeyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	chosenBehaviour := getBehaviour(s.behaviours)
 
-	var resp http.ResponseWriter
-	if chosenBehaviour != nil {
+	var responseWriter http.ResponseWriter
+	if chosenBehaviour := getBehaviour(s.behaviours); chosenBehaviour != nil {
 		s.misbehave(*chosenBehaviour, w)
-		resp = monkeyWriter{w, []byte(chosenBehaviour.Body)}
+		responseWriter = monkeyWriter{w, []byte(chosenBehaviour.Body), chosenBehaviour.Garbage}
 	} else {
-		resp = w
+		responseWriter = w
 	}
 
-	s.delegate.ServeHTTP(resp, r)
+	s.delegate.ServeHTTP(responseWriter, r)
 }
 
 func (s *MonkeyServer) misbehave(behaviour behaviour, w http.ResponseWriter) {
@@ -91,9 +90,12 @@ type behaviour struct {
 	Frequency float64
 	Status    int
 	Body      string
+	Garbage   int
 }
 
 func (b behaviour) String() string {
+
+	frequency := fmt.Sprintf("%2.0f%% of the time |", b.Frequency*100)
 
 	delay := ""
 	if b.Delay != 0 {
@@ -110,15 +112,30 @@ func (b behaviour) String() string {
 		body = fmt.Sprintf("Body: %v ", b.Body)
 	}
 
-	return fmt.Sprintf("Frequency: %v | %v%v%v", b.Frequency, delay, status, body)
+	garbage := ""
+	if b.Garbage != 0 {
+		garbage = fmt.Sprintf("Garbage bytes: %d ", b.Garbage)
+	}
+
+	return fmt.Sprintf("%v %v%v%v%v", frequency, delay, status, body, garbage)
 }
 
 type monkeyWriter struct {
 	http.ResponseWriter
-	newBody []byte
+	newBody      []byte
+	garbageCount int
 }
 
 func (w monkeyWriter) Write(data []byte) (int, error) {
+
+	if w.garbageCount > 0 {
+		content := []byte{}
+		for i := 0; i < w.garbageCount; i++ {
+			content = append(content, byte('a'))
+		}
+		return w.ResponseWriter.Write(content)
+	}
+
 	if len(w.newBody) > 0 {
 		return w.ResponseWriter.Write(w.newBody)
 	}

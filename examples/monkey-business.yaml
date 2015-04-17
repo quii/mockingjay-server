@@ -11,3 +11,7 @@
 - status: 404
   frequency: 0.3
 
+# Write 10,000,000 garbage bytes 10% of the time
+- garbage: 10000000
+  frequency: 0.09
+
