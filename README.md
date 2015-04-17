@@ -93,11 +93,12 @@ Mockingjay has an annoying friend, a monkey. Given a monkey configuration you ca
 
 ````bash
 $ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-business.yaml 
-2015/04/17 13:53:35 Serving 3 endpoints defined from examples/example.yaml on port 9090
-2015/04/17 13:53:35 Monkey config loaded
-2015/04/17 13:53:35 Frequency: 0.5 | Body: This is wrong :(  
-2015/04/17 13:53:35 Frequency: 0.2 | Delay: 1s 
-2015/04/17 13:53:35 Frequency: 0.3 | Status: 404 
+2015/04/17 14:19:53 Serving 3 endpoints defined from examples/example.yaml on port 9090
+2015/04/17 14:19:53 Monkey config loaded
+2015/04/17 14:19:53 50% of the time | Body: This is wrong :(  
+2015/04/17 14:19:53 20% of the time | Delay: 1s 
+2015/04/17 14:19:53 30% of the time | Status: 404 
+2015/04/17 14:19:53  9% of the time | Garbage bytes: 10000000 
 ````
 
 ## Building
