@@ -14,6 +14,7 @@ func main() {
 	var port = flag.Int("port", 9090, "Port to listen on")
 	var configPath = flag.String("config", "", "Path to config YAML")
 	var realURL = flag.String("realURL", "", "Optional: Set this to a URL to check your config against a real server for compatibility")
+	var monkeyConfigPath = flag.String("monkeyConfigPath", "", "Optional: Set this to add some monkey business")
 
 	flag.Parse()
 
@@ -38,7 +39,7 @@ func main() {
 		checkEndpoints(endpoints, *realURL)
 	} else {
 		log.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), *configPath, *port)
-		makeFakeServer(endpoints, *port)
+		makeFakeServer(endpoints, *port, loadMonkeyConfig(*monkeyConfigPath))
 	}
 
 }
@@ -53,8 +54,15 @@ func checkEndpoints(endpoints []mockingjay.FakeEndpoint, realURL string) {
 	}
 }
 
-func makeFakeServer(endpoints []mockingjay.FakeEndpoint, port int) {
-	server := mockingjay.NewServer(endpoints)
+func makeFakeServer(endpoints []mockingjay.FakeEndpoint, port int, monkeyConfig []behaviour) {
+
+	var server http.Handler
+	if len(monkeyConfig) > 0 {
+		server = NewMonkeyServer(mockingjay.NewServer(endpoints), monkeyConfig)
+	} else {
+		server = mockingjay.NewServer(endpoints)
+	}
+
 	http.Handle("/", server)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {

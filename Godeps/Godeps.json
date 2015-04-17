@@ -1,10 +1,18 @@
 {
-	"ImportPath": "github.com/quii/mockingjay-server",
-	"GoVersion": "go1.3.3",
+	"ImportPath": "github.com/boocockp/mockingjay-server",
+	"GoVersion": "go1.4.2",
 	"Deps": [
+		{
+			"ImportPath": "github.com/quii/jsonequaliser",
+			"Rev": "cc63843b22740d88126ce42338f29fd2b2a072b0"
+		},
 		{
 			"ImportPath": "github.com/quii/mockingjay",
 			"Rev": "bc9ef9cd79d8af0662d6cef7ac6c5854dd6bf8c0"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Rev": "49c95bdc21843256fb6c4e0d370a05f24a0bf213"
 		}
 	]
 }
