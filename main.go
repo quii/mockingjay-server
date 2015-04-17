@@ -14,7 +14,7 @@ func main() {
 	var port = flag.Int("port", 9090, "Port to listen on")
 	var configPath = flag.String("config", "", "Path to config YAML")
 	var realURL = flag.String("realURL", "", "Optional: Set this to a URL to check your config against a real server for compatibility")
-	var monkeyConfigPath = flag.String("monkeyConfigPath", "", "Optional: Set this to add some monkey business")
+	var monkeyConfigPath = flag.String("monkeyConfig", "", "Optional: Set this to add some monkey business")
 
 	flag.Parse()
 
