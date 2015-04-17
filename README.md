@@ -57,19 +57,47 @@ From this you can create a fake server to write integration tests with and also 
 
 ````bash
 $ mockingjay-server -config=example.yaml -port=1234 &
-$ 2015/04/13 14:27:54 Serving 3 endpoints defined from example.yaml on port 1234
-$ curl http://localhost:1234/hello
-$ {"message": "hello, world"}
+2015/04/13 14:27:54 Serving 3 endpoints defined from example.yaml on port 1234
+curl http://localhost:1234/hello
+{"message": "hello, world"}
 ````
 
 ## Check configuration is compatible with a real server
 
 ````bash
 $ mockingjay-server -config=example.yaml -realURL=http://some-real-api.com
-$ 2015/04/13 21:06:06 Test endpoint (GET /hello) is incompatible with http://some-real-api - Couldn't reach real server
-$ 2015/04/13 21:06:06 Test endpoint 2 (DELETE /world) is incompatible with http://some-real-api - Couldn't reach real server
-$ 2015/04/13 21:06:06 Failing endpoint (POST /card) is incompatible with http://some-real-api - Couldn't reach real server
-$ 2015/04/13 21:06:06 At least one endpoint was incompatible with the real URL supplied
+2015/04/13 21:06:06 Test endpoint (GET /hello) is incompatible with http://some-real-api - Couldn't reach real server
+2015/04/13 21:06:06 Test endpoint 2 (DELETE /world) is incompatible with http://some-real-api - Couldn't reach real server
+2015/04/13 21:06:06 Failing endpoint (POST /card) is incompatible with http://some-real-api - Couldn't reach real server
+2015/04/13 21:06:06 At least one endpoint was incompatible with the real URL supplied
+````
+
+## Make your fake server flaky
+
+Mockingjay has an annoying friend, a monkey. Given a monkey configuration you can make your fake service misbehave. This can be useful for performance tests where you want to simulate a more realistic scenario (i.e all integration points are painful).
+
+````yaml
+---
+# Writes a different body 50% of the time
+- body: "This is wrong :( "
+  frequency: 0.5
+
+# Delays initial writing of response by a second 20% of the time
+- delay: 1000
+  frequency: 0.2
+
+# Returns a 404 30% of the time
+- status: 404
+  frequency: 0.3
+````
+
+````bash
+$ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-business.yaml 
+2015/04/17 13:53:35 Serving 3 endpoints defined from examples/example.yaml on port 9090
+2015/04/17 13:53:35 Monkey config loaded
+2015/04/17 13:53:35 Frequency: 0.5 | Body: This is wrong :(  
+2015/04/17 13:53:35 Frequency: 0.2 | Delay: 1s 
+2015/04/17 13:53:35 Frequency: 0.3 | Status: 404 
 ````
 
 ## Building
