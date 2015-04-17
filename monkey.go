@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -77,17 +78,39 @@ func loadMonkeyConfig(path string) []behaviour {
 		log.Fatalf("Problem occured when trying to parse the config file: %v", err)
 	}
 
-	log.Println(result)
+	log.Println("Monkey config loaded")
+	for _, b := range result {
+		log.Println(b)
+	}
 
 	return result
 }
 
 type behaviour struct {
-	Delay      time.Duration
-	Frequency  float64
-	Status     int
-	WriteDelay time.Duration
-	Body       string
+	Delay     time.Duration
+	Frequency float64
+	Status    int
+	Body      string
+}
+
+func (b behaviour) String() string {
+
+	delay := ""
+	if b.Delay != 0 {
+		delay = fmt.Sprintf("Delay: %v ", b.Delay*time.Millisecond)
+	}
+
+	status := ""
+	if b.Status != 0 {
+		status = fmt.Sprintf("Status: %v ", b.Status)
+	}
+
+	body := ""
+	if b.Body != "" {
+		body = fmt.Sprintf("Body: %v ", b.Body)
+	}
+
+	return fmt.Sprintf("Frequency: %v | %v%v%v", b.Frequency, delay, status, body)
 }
 
 type monkeyWriter struct {
@@ -98,7 +121,6 @@ type monkeyWriter struct {
 func (w monkeyWriter) Write(data []byte) (int, error) {
 	if len(w.newBody) > 0 {
 		return w.ResponseWriter.Write(w.newBody)
-	} else {
-		return w.ResponseWriter.Write(data)
 	}
+	return w.ResponseWriter.Write(data)
 }
