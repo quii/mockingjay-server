@@ -9,6 +9,51 @@ import (
 	"time"
 )
 
+// MonkeyServer wraps around a http.Handler and adds destructive behaviour (monkey business) based on the behaviours passed in
+type MonkeyServer struct {
+	delegate   http.Handler
+	behaviours []behaviour
+}
+
+// NewMonkeyServer creates http.Handler which wraps it's monkey business around it, to return a new http.Handler
+func NewMonkeyServer(server http.Handler, behaviours []behaviour) http.Handler {
+	return &MonkeyServer{server, behaviours}
+}
+
+func (s *MonkeyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	chosenBehaviour := getBehaviour(s.behaviours)
+
+	if chosenBehaviour != nil {
+		s.misbehave(*chosenBehaviour, w)
+	}
+
+	s.delegate.ServeHTTP(w, r)
+}
+
+func (s *MonkeyServer) misbehave(behaviour behaviour, w http.ResponseWriter) {
+	time.Sleep(behaviour.Delay * time.Millisecond)
+	if behaviour.Status != 0 {
+		w.WriteHeader(behaviour.Status)
+	}
+}
+
+func getBehaviour(behaviours []behaviour) *behaviour {
+	randnum := rand.Float64()
+	lower := 0.0
+	var upper float64
+	for _, behaviour := range behaviours {
+		upper = lower + behaviour.Frequency
+		if randnum > lower && randnum <= upper {
+			return &behaviour
+		}
+
+		lower = upper
+	}
+
+	return nil
+
+}
+
 func loadMonkeyConfig(path string) []behaviour {
 
 	if path == "" {
@@ -31,44 +76,6 @@ func loadMonkeyConfig(path string) []behaviour {
 	log.Println(result)
 
 	return result
-}
-
-func NewMonkeyServer(server http.Handler, behaviours []behaviour) http.Handler {
-	return &MonkeyServer{server, behaviours}
-}
-
-type MonkeyServer struct {
-	delegate   http.Handler
-	behaviours []behaviour
-}
-
-func (s *MonkeyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	chosenBehaviour := getBehaviour(s.behaviours)
-	if chosenBehaviour != nil {
-		time.Sleep(chosenBehaviour.Delay * time.Millisecond)
-		if chosenBehaviour.Status != 0 {
-			w.WriteHeader(chosenBehaviour.Status)
-		}
-	}
-
-	s.delegate.ServeHTTP(w, r)
-}
-
-func getBehaviour(behaviours []behaviour) *behaviour {
-	randnum := rand.Float64()
-	lower := 0.0
-	var upper float64
-	for _, behaviour := range behaviours {
-		upper = lower + behaviour.Frequency
-		if randnum > lower && randnum <= upper {
-			return &behaviour
-		}
-
-		lower = upper
-	}
-
-	return nil
-
 }
 
 type behaviour struct {
