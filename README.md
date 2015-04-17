@@ -89,6 +89,10 @@ Mockingjay has an annoying friend, a monkey. Given a monkey configuration you ca
 # Returns a 404 30% of the time
 - status: 404
   frequency: 0.3
+
+# Write 10,000,000 garbage bytes 9% of the time
+- garbage: 10000000
+  frequency: 0.09
 ````
 
 ````bash
