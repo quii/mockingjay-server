@@ -23,11 +23,15 @@ func NewMonkeyServer(server http.Handler, behaviours []behaviour) http.Handler {
 func (s *MonkeyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	chosenBehaviour := getBehaviour(s.behaviours)
 
+	var resp http.ResponseWriter
 	if chosenBehaviour != nil {
 		s.misbehave(*chosenBehaviour, w)
+		resp = monkeyWriter{w, []byte(chosenBehaviour.Body)}
+	} else {
+		resp = w
 	}
 
-	s.delegate.ServeHTTP(w, r)
+	s.delegate.ServeHTTP(resp, r)
 }
 
 func (s *MonkeyServer) misbehave(behaviour behaviour, w http.ResponseWriter) {
@@ -79,7 +83,22 @@ func loadMonkeyConfig(path string) []behaviour {
 }
 
 type behaviour struct {
-	Delay     time.Duration
-	Frequency float64
-	Status    int
+	Delay      time.Duration
+	Frequency  float64
+	Status     int
+	WriteDelay time.Duration
+	Body       string
+}
+
+type monkeyWriter struct {
+	http.ResponseWriter
+	newBody []byte
+}
+
+func (w monkeyWriter) Write(data []byte) (int, error) {
+	if len(w.newBody) > 0 {
+		return w.ResponseWriter.Write(w.newBody)
+	} else {
+		return w.ResponseWriter.Write(data)
+	}
 }
