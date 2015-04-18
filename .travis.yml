@@ -9,10 +9,12 @@ before_install:
   - go get github.com/tools/godep
   - gox -build-toolchain
   - go get github.com/tcnksm/ghr
+  - go get -u github.com/golang/lint/golint
   # - go get github.com/axw/gocov/gocov
   # - go get github.com/mattn/goveralls
   # - go get code.google.com/p/go.tools/cmd/cover
 script:
+  - golint .
   - godep go test
   # - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
 after_success:
