@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/quii/mockingjay-server.svg?branch=master)](https://travis-ci.org/quii/mockingjay-server)[![Coverage Status](https://coveralls.io/repos/quii/mockingjay-server/badge.svg?branch=master)](https://coveralls.io/r/quii/mockingjay-server?branch=master)
 
-Mockingjay lets you define the contract between a consumer and producer with a simple configuration file.
+Mockingjay lets you define the contract between a consumer and producer with just a configuration file.
 
 Mockingjay will then give you fake services to write integration tests against and [consumer driven contracts](http://martinfowler.com/articles/consumerDrivenContracts.html) to run against your real downstream services.
 
-Mockingjay is fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent.
+Mockingjay is fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent so your builds are more reliable without having to write any code.
 
 ## Rationale
 
@@ -14,11 +14,11 @@ In the hip exciting world of SOA/microservices with heavy investment in PaaS/Iaa
 
 You will probably employ things like versioning to help but you might also be spending time writing consumer driven contracts (CDCs) to ensure your integration points are working.
 
-In addition you might be writing integration tests against fakes/stubs to ensure your code can send the correct requests and be able to parse responses.
+In addition you might be writing integration tests against fakes/stubs to check your code can send the correct requests and be able to parse responses.
 
 ![alt tag](http://i.imgur.com/oC6BjGn.png)
 
-If you squint hard enough, you can imagine that the requirements for both CDCs and fake servers are the same. *Given a particular request, I expect a particular kind of response*. Yet with this set up you are duplicating this information with code in two different files which obviously isn't ideal.
+If you squint hard enough, you can imagine that the requirements for both CDCs and fake servers are the same. *Given a particular request, I expect a particular kind of response*. Yet with this set up you are duplicating this information _with code_ in two different files which obviously isn't ideal.
 
 What mockingjay enables you to do is to capture these requirements in one configuration file.
 
