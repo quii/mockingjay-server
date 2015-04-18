@@ -118,6 +118,10 @@ $ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-
 - golint https://github.com/golang/lint
 
 ````bash
+$ mkdir -p $GOPATH/src/github.com/quii
+$ cd $GOPATH/src/github.com/quii
+$ git clone https://github.com/quii/mockingjay-server.git
+$ cd mockingjay-server
 $ ./build.sh
 ````
 
