@@ -13,7 +13,7 @@ before_install:
   # - go get github.com/mattn/goveralls
   # - go get code.google.com/p/go.tools/cmd/cover
 script:
-  - godep go test ./...
+  - godep go test
   # - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
 after_success:
   - gox -output "dist/{{.OS}}_{{.Arch}}_{{.Dir}}"
