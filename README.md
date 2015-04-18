@@ -2,15 +2,19 @@
 
 [![Build Status](https://travis-ci.org/quii/mockingjay-server.svg?branch=master)](https://travis-ci.org/quii/mockingjay-server)[![Coverage Status](https://coveralls.io/repos/quii/mockingjay-server/badge.svg?branch=master)](https://coveralls.io/r/quii/mockingjay-server?branch=master)
 
-Mockingjay lets you define the contract between a consumer and producer with just a configuration file.
+Mockingjay lets you define the contract between a consumer and producer and with just a configuration file you get:
 
-Mockingjay will then give you fake services to write integration tests against and [consumer driven contracts](http://martinfowler.com/articles/consumerDrivenContracts.html) to run against your real downstream services.
+- A fast to launch Fake server for your integration tests
+ - You can configure the server to be flaky to simulate the eratic nature of calling other services
+- [Consumer driven contracts (CDCs)](http://martinfowler.com/articles/consumerDrivenContracts.html) to run against your real downstream services.
 
-Mockingjay is fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent so your builds are more reliable without having to write any code.
+**Mockingjay makes it really easy to check your integration points**. It's fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent
 
 ## Rationale
 
-In the hip exciting world of SOA/microservices with heavy investment in PaaS/IaaS you want to be able to quickly iterate over small services and deploy to live quickly and without fear of breaking things.
+In the hip exciting world of SOA/microservices with heavy investment in PaaS/IaaS you want to be able to quickly iterate over small services and deploy to live quickly and without fear of breaking things. 
+
+If you are using this kind of architecture you will be faced with the challenge of ensuring that your huge numbers of services can actually talk to each other. 
 
 You will probably employ things like versioning to help but you might also be spending time writing consumer driven contracts (CDCs) to ensure your integration points are working.
 
