@@ -45,6 +45,29 @@ func TestItChecksStatusCodes(t *testing.T) {
 	}
 }
 
+func TestIfItsNotJSONItDoesAStringMatch(t *testing.T) {
+	serverResponseBody := "hello world"
+	fakeResponseBody := "hello bob"
+
+	realServer := makeFakeDownstreamServer(serverResponseBody, noSleep)
+	checker, _ := makeChecker(testYAML(fakeResponseBody))
+
+	if checker.CheckCompatability(realServer.URL) {
+		t.Error("Checker should've found this endpoint to be incorrect")
+	}
+}
+
+func TestIfItsNotJSONItKnowsItsCompatable(t *testing.T) {
+	body := "hello world"
+
+	realServer := makeFakeDownstreamServer(body, noSleep)
+	checker, _ := makeChecker(testYAML(body))
+
+	if !checker.CheckCompatability(realServer.URL) {
+		t.Error("Checker should've found this endpoint to be incorrect")
+	}
+}
+
 func TestItIsIncompatibleWhenRealServerIsntReachable(t *testing.T) {
 	yaml := testYAML("doesnt matter")
 	checker, _ := makeChecker(yaml)
