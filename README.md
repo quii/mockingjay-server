@@ -1,6 +1,8 @@
 # mockingjay server
 
-Mockingjay lets you define the contract between a consumer and producer with a simple configuration file. 
+[![Build Status](https://travis-ci.org/quii/mockingjay-server.svg?branch=master)](https://travis-ci.org/quii/mockingjay-server)
+
+Mockingjay lets you define the contract between a consumer and producer with a simple configuration file.
 
 Mockingjay will then give you fake services to write integration tests against and [consumer driven contracts](http://martinfowler.com/articles/consumerDrivenContracts.html) to run against your real downstream services.
 
@@ -8,17 +10,17 @@ Mockingjay is fast, requires no coding and is better than other solutions becaus
 
 ## Rationale
 
-In the hip exciting world of SOA/microservices with heavy investment in PaaS/IaaS you want to be able to quickly iterate over small services and deploy to live quickly and without fear of breaking things. 
+In the hip exciting world of SOA/microservices with heavy investment in PaaS/IaaS you want to be able to quickly iterate over small services and deploy to live quickly and without fear of breaking things.
 
-You will probably employ things like versioning to help but you might also be spending time writing consumer driven contracts (CDCs) to ensure your integration points are working. 
+You will probably employ things like versioning to help but you might also be spending time writing consumer driven contracts (CDCs) to ensure your integration points are working.
 
-In addition you might be writing integration tests against fakes/stubs to ensure your code can send the correct requests and be able to parse responses. 
+In addition you might be writing integration tests against fakes/stubs to ensure your code can send the correct requests and be able to parse responses.
 
 ![alt tag](http://i.imgur.com/oC6BjGn.png)
 
-If you squint hard enough, you can imagine that the requirements for both CDCs and fake servers are the same. *Given a particular request, I expect a particular kind of response*. Yet with this set up you are duplicating this information with code in two different files which obviously isn't ideal. 
+If you squint hard enough, you can imagine that the requirements for both CDCs and fake servers are the same. *Given a particular request, I expect a particular kind of response*. Yet with this set up you are duplicating this information with code in two different files which obviously isn't ideal.
 
-What mockingjay enables you to do is to capture these requirements in one configuration file. 
+What mockingjay enables you to do is to capture these requirements in one configuration file.
 
 ````yaml
 ---
@@ -35,15 +37,15 @@ What mockingjay enables you to do is to capture these requirements in one config
 # define as many as you need...
 ````
 
-From this you can create a fake server to write integration tests with and also check the service you are dependant on is consistent with what you expect. 
+From this you can create a fake server to write integration tests with and also check the service you are dependant on is consistent with what you expect.
 
 #### Main advantages
 
 - No coding whatsoever, so no naughtiness in fake servers overcomplicating things. Even non developers can add new scenarios to test with.
-- The contract is defined once, rather than dispersed across different scripts which you have to keep in sync. 
+- The contract is defined once, rather than dispersed across different scripts which you have to keep in sync.
 - Entirely language agnostic. If you speak HTTP you can use mockingjay.
 - Checks the structure of the data (currently JSON is the only type checked) rather than the contents, which will reduce flakiness of your builds.
-- Both the fake server and CDCs are really fast to run, to help keep your builds fast. 
+- Both the fake server and CDCs are really fast to run, to help keep your builds fast.
 
 #### Drawbacks/constraints
 
@@ -96,13 +98,13 @@ Mockingjay has an annoying friend, a monkey. Given a monkey configuration you ca
 ````
 
 ````bash
-$ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-business.yaml 
+$ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-business.yaml
 2015/04/17 14:19:53 Serving 3 endpoints defined from examples/example.yaml on port 9090
 2015/04/17 14:19:53 Monkey config loaded
-2015/04/17 14:19:53 50% of the time | Body: This is wrong :(  
-2015/04/17 14:19:53 20% of the time | Delay: 1s 
-2015/04/17 14:19:53 30% of the time | Status: 404 
-2015/04/17 14:19:53  9% of the time | Garbage bytes: 10000000 
+2015/04/17 14:19:53 50% of the time | Body: This is wrong :(
+2015/04/17 14:19:53 20% of the time | Delay: 1s
+2015/04/17 14:19:53 30% of the time | Status: 404
+2015/04/17 14:19:53  9% of the time | Garbage bytes: 10000000
 ````
 
 ## Building
