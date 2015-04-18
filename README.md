@@ -117,13 +117,14 @@ $ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-
 - godep https://github.com/tools/godep
 - golint https://github.com/golang/lint
 
-
-    ./build.sh
+````bash
+$ ./build.sh
+````
 
 ### TODO
 
+- Need some tests for the monkey business
 - Check XML structure when applicable
-- Get the binaries built somewhere for non gophers
 - Investigate a more standard test output (http://windyroad.com.au/2011/02/07/apache-ant-junit-xml-schema/)
 
 ### Things to figure out
