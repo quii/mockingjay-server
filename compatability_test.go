@@ -31,6 +31,20 @@ func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
 	}
 }
 
+func TestItChecksStatusCodes(t *testing.T) {
+	body := `{"foo": "bar"}`
+
+	realServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(body))
+	}))
+	checker, _ := makeChecker(testYAML(body))
+
+	if checker.CheckCompatability(realServer.URL) {
+		t.Error("Checker should've found this endpoint to be incorrect")
+	}
+}
+
 func TestItIsIncompatibleWhenRealServerIsntReachable(t *testing.T) {
 	yaml := testYAML("doesnt matter")
 	checker, _ := makeChecker(yaml)
