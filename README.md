@@ -1,6 +1,6 @@
 # mockingjay server
 
-[![Build Status](https://travis-ci.org/quii/mockingjay-server.svg?branch=master)](https://travis-ci.org/quii/mockingjay-server)
+[![Build Status](https://travis-ci.org/quii/mockingjay-server.svg?branch=master)](https://travis-ci.org/quii/mockingjay-server)[![Coverage Status](https://coveralls.io/repos/quii/mockingjay-server/badge.svg?branch=master)](https://coveralls.io/r/quii/mockingjay-server?branch=master)
 
 Mockingjay lets you define the contract between a consumer and producer with a simple configuration file.
 
