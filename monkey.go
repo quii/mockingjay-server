@@ -70,16 +70,22 @@ func loadMonkeyConfig(path string) []behaviour {
 		log.Fatalf("Problem occured when trying to read the config file: %v", err)
 	}
 
+	behaviours := monkeyConfigFromYAML(config)
+
+	log.Println("Monkey config loaded")
+	for _, b := range behaviours {
+		log.Println(b)
+	}
+
+	return behaviours
+}
+
+func monkeyConfigFromYAML(data []byte) []behaviour {
 	var result []behaviour
-	err = yaml.Unmarshal([]byte(config), &result)
+	err := yaml.Unmarshal([]byte(data), &result)
 
 	if err != nil {
 		log.Fatalf("Problem occured when trying to parse the config file: %v", err)
-	}
-
-	log.Println("Monkey config loaded")
-	for _, b := range result {
-		log.Println(b)
 	}
 
 	return result
