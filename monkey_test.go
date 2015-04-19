@@ -7,6 +7,7 @@ import (
 )
 
 const alwaysMonkeyingAround = 1.0
+const neverMonkeyAround = 0.0
 const cannedResponse = "hello, world"
 
 func TestItMonkeysWithStatusCodesAndBodies(t *testing.T) {
@@ -47,6 +48,24 @@ func TestItReturnsGarbage(t *testing.T) {
 
 	if len(w.Body.Bytes()) != monkeyBehaviour.Garbage {
 		t.Error("Server shouldve returned garbage")
+	}
+}
+
+func TestItDoesntMonkeyAroundWhenFrequencyIsNothing(t *testing.T) {
+	monkeyBehaviour := new(behaviour)
+	monkeyBehaviour.Frequency = neverMonkeyAround
+	monkeyBehaviour.Garbage = 1984
+
+	testServer, request := makeTestServerAndRequest()
+
+	monkeyServer := NewMonkeyServer(testServer.Config.Handler, []behaviour{*monkeyBehaviour})
+
+	w := httptest.NewRecorder()
+
+	monkeyServer.ServeHTTP(w, request)
+
+	if len(w.Body.String()) != len(cannedResponse) {
+		t.Error("Server shouldn't have been monkeyed with ")
 	}
 }
 
