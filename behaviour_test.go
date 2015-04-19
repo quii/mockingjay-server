@@ -34,6 +34,13 @@ func TestItGetsRandomBehaviours(t *testing.T) {
 	}
 }
 
+func TestItLoadsFromFile(t *testing.T) {
+	config := loadMonkeyConfig("examples/monkey-business.yaml")
+	if len(config) != 4 {
+		t.Error("It didnt load all the behaviours from YAML")
+	}
+}
+
 func TestItReturnsAnErrorForBadYAML(t *testing.T) {
 	yaml := "lol not yaml"
 
