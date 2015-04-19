@@ -54,7 +54,7 @@ func TestItReturnsGarbage(t *testing.T) {
 func TestItDoesntMonkeyAroundWhenFrequencyIsNothing(t *testing.T) {
 	monkeyBehaviour := new(behaviour)
 	monkeyBehaviour.Frequency = neverMonkeyAround
-	monkeyBehaviour.Garbage = 1984
+	monkeyBehaviour.Body = "blah blah"
 
 	testServer, request := makeTestServerAndRequest()
 
@@ -64,7 +64,7 @@ func TestItDoesntMonkeyAroundWhenFrequencyIsNothing(t *testing.T) {
 
 	monkeyServer.ServeHTTP(w, request)
 
-	if len(w.Body.String()) != len(cannedResponse) {
+	if w.Body.String() != cannedResponse {
 		t.Error("Server shouldn't have been monkeyed with ")
 	}
 }
