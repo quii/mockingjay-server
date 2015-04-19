@@ -7,9 +7,11 @@ import (
 func TestItGetsRandomBehaviours(t *testing.T) {
 	behaviour1 := new(behaviour)
 	behaviour1.Frequency = 0.15
+	behaviour1.Status = 123
 
 	behaviour2 := new(behaviour)
 	behaviour2.Frequency = 0.2
+	behaviour2.Status = 456
 
 	allBehaviours := []behaviour{*behaviour1, *behaviour2}
 
@@ -19,15 +21,15 @@ func TestItGetsRandomBehaviours(t *testing.T) {
 		t.Error("There shouldnt have been a behaviour returned, but there was", result)
 	}
 
-	result = getBehaviour(allBehaviours, fakeRandomiser{0.16})
+	result = getBehaviour(allBehaviours, fakeRandomiser{0.13})
 
-	if result != behaviour1 {
-		t.Error("It shouldve found behaviour 1", result)
+	if result.Status != behaviour1.Status {
+		t.Error("It shouldve found behaviour 1", result, behaviour1)
 	}
 
-	result = getBehaviour(allBehaviours, fakeRandomiser{0.22})
+	result = getBehaviour(allBehaviours, fakeRandomiser{0.19})
 
-	if result != behaviour2 {
+	if result.Status != behaviour2.Status {
 		t.Error("It should've found behaviour 2", result)
 	}
 }
