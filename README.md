@@ -4,8 +4,8 @@
 
 Mockingjay lets you define the contract between a consumer and producer and with just a configuration file you get:
 
-- A fast to launch Fake server for your integration tests
- - You can configure the server to be flaky to simulate the eratic nature of calling other services
+- A fast to launch fake server for your integration tests
+ - Configurable to simulate the eratic nature of calling other services
 - [Consumer driven contracts (CDCs)](http://martinfowler.com/articles/consumerDrivenContracts.html) to run against your real downstream services.
 
 **Mockingjay makes it really easy to check your integration points**. It's fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent
