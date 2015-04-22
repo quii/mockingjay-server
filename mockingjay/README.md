@@ -1,6 +1,6 @@
 # mockingjay
 
-[![GoDoc](https://godoc.org/github.com/quii/mockingjay?status.svg)](https://godoc.org/github.com/quii/mockingjay)
+[![GoDoc](https://godoc.org/github.com/quii/mockingjay-server/mockingjay?status.svg)](https://godoc.org/github.com/quii/mockingjay)
 
 Create a server from configuration. Useful for integration tests, hopefully.
 
@@ -10,7 +10,7 @@ Create a server from configuration. Useful for integration tests, hopefully.
 package main
 
 import (
-	"github.com/quii/mockingjay"
+	"github.com/quii/mockingjay-server/mockingjay"
 	"log"
 	"net/http"
 )
