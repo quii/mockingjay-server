@@ -52,14 +52,19 @@ func TestItReturnsCannedResponses(t *testing.T) {
 func TestItReturns404WhenUriIsWrong(t *testing.T) {
 	endpoint := FakeEndpoint{testEndpointName, request{testURL, "GET", nil, ""}, response{http.StatusCreated, cannedResponse, nil}}
 	server := NewServer([]FakeEndpoint{endpoint})
+	requestBody := "some body"
 
-	request, _ := http.NewRequest("GET", "/bums", nil)
+	request, _ := http.NewRequest("GET", "/bums", strings.NewReader(requestBody))
 	responseReader := httptest.NewRecorder()
 
 	server.ServeHTTP(responseReader, request)
 
 	if responseReader.Code != http.StatusNotFound {
 		t.Error("Expected to get a 404")
+	}
+
+	if !strings.Contains(responseReader.Body.String(), requestBody) {
+		t.Errorf("Expected request body to be returned %v", responseReader.Body.String())
 	}
 }
 
