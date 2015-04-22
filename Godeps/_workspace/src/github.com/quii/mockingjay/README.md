@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	const testYAML = `
+	testYAML := `
 ---
  - name: Test endpoint
    request:

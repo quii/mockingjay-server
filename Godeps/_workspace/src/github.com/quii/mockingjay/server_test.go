@@ -129,3 +129,20 @@ func TestItSendsRequestBodies(t *testing.T) {
 		t.Error("Expected request to succeed but it didnt")
 	}
 }
+
+func TestItMatchesWildcardBodies(t *testing.T) {
+	wildcardBody := "*"
+	expectedStatus := http.StatusOK
+
+	config := FakeEndpoint{testEndpointName, request{testURL, "POST", nil, wildcardBody}, response{expectedStatus, "", nil}}
+	server := NewServer([]FakeEndpoint{config})
+
+	requestWithDifferentBody, _ := http.NewRequest("POST", testURL, strings.NewReader("This body isnt what we said but it should match"))
+	responseReader := httptest.NewRecorder()
+
+	server.ServeHTTP(responseReader, requestWithDifferentBody)
+
+	if responseReader.Code != expectedStatus {
+		t.Errorf("Expected code %v but got %v", expectedStatus, responseReader.Code)
+	}
+}

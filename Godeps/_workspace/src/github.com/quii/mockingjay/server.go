@@ -49,7 +49,7 @@ func (s *Server) getResponse(r *http.Request) *response {
 	return newNotFound(r.Method, r.URL.String(), s.endpoints)
 }
 
-func requestMatches(a request, b *http.Request, body string) bool {
+func requestMatches(a request, b *http.Request, receivedBody string) bool {
 
 	for key, value := range a.Headers {
 		if b.Header[key] == nil || b.Header.Get(key) != value {
@@ -57,9 +57,9 @@ func requestMatches(a request, b *http.Request, body string) bool {
 		}
 	}
 
-	if (body != "" || a.Body != "") && body != a.Body {
-		return false
-	}
+	bodyOk := a.Body == "*" || receivedBody == a.Body
+	urlOk := a.URI == b.URL.String()
+	methodOk := a.Method == b.Method
 
-	return a.URI == b.URL.String() && a.Method == b.Method
+	return bodyOk && urlOk && methodOk
 }
