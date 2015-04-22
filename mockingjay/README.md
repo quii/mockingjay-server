@@ -1,6 +1,6 @@
 # mockingjay
 
-[![GoDoc](https://godoc.org/github.com/quii/mockingjay-server/mockingjay?status.svg)](https://godoc.org/github.com/quii/mockingjay)
+[![GoDoc](https://godoc.org/github.com/quii/mockingjay-server/mockingjay?status.svg)](https://godoc.org/github.com/quii/mockingjay-server/mockingjay)
 
 Create a server from configuration. Useful for integration tests, hopefully.
 
