@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/quii/mockingjay"
+	"github.com/quii/mockingjay-server/mockingjay"
 	"net/http"
 	"net/http/httptest"
 	"testing"

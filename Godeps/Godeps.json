@@ -7,10 +7,6 @@
 			"Rev": "cc63843b22740d88126ce42338f29fd2b2a072b0"
 		},
 		{
-			"ImportPath": "github.com/quii/mockingjay",
-			"Rev": "5c99ac26b9b41e7511b0c2a015ed2e0b88ee397a"
-		},
-		{
 			"ImportPath": "gopkg.in/yaml.v2",
 			"Rev": "49c95bdc21843256fb6c4e0d370a05f24a0bf213"
 		}

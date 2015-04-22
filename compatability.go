@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/quii/jsonequaliser"
-	"github.com/quii/mockingjay"
+	"github.com/quii/mockingjay-server/mockingjay"
 	"io/ioutil"
 	"log"
 	"net/http"
