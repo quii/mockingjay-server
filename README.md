@@ -31,10 +31,11 @@ What mockingjay enables you to do is to capture these requirements in one config
  - name: My very important integration point
    request:
      uri: /hello
-     method: GET
+     method: POST
+     body: "Chris" # * matches any body
    response:
      code: 200
-     body: '{"message": "hello, world"}'
+     body: '{"message": "hello, Chris"}'
      headers:
        content-type: application/json
 
