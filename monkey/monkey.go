@@ -9,14 +9,14 @@ import (
 	"time"
 )
 
-// Server wraps around a http.Handler and adds destructive behaviour (monkey business) based on the behaviours passed in
-type Server struct {
+// server wraps around a http.Handler and adds destructive behaviour (monkey business) based on the behaviours passed in
+type server struct {
 	delegate   http.Handler
 	behaviours []behaviour
 	randomiser randomiser
 }
 
-// NewServerFromYAML creates a http.Handler which wraps it's monkey business around it, to return a new http.Handler. If no behaviours are defined in the config it will return the original handler, otherwise an error
+// NewServerFromYAML creates a http.Handler which wraps monkey business defined from YAML around it, to return a new http.Handler. If the YAML is invalid, it will return an error.
 func NewServerFromYAML(server http.Handler, YAML []byte) (http.Handler, error) {
 	behaviours, err := monkeyConfigFromYAML(YAML)
 
@@ -48,11 +48,11 @@ func NewServer(server http.Handler, configPath string) (http.Handler, error) {
 
 }
 
-func newServerFromBehaviour(server http.Handler, behaviours []behaviour) http.Handler {
-	return &Server{server, behaviours, new(defaultRandomiser)}
+func newServerFromBehaviour(degegate http.Handler, behaviours []behaviour) http.Handler {
+	return &server{degegate, behaviours, new(defaultRandomiser)}
 }
 
-func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	var responseWriter http.ResponseWriter
 	if chosenBehaviour := getBehaviour(s.behaviours, s.randomiser); chosenBehaviour != nil {
@@ -65,7 +65,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.delegate.ServeHTTP(responseWriter, r)
 }
 
-func (s *Server) misbehave(behaviour behaviour, w http.ResponseWriter) {
+func (s *server) misbehave(behaviour behaviour, w http.ResponseWriter) {
 	time.Sleep(behaviour.Delay * time.Millisecond)
 	if behaviour.Status != 0 {
 		w.WriteHeader(behaviour.Status)
