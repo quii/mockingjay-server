@@ -1,4 +1,4 @@
-package main
+package monkey
 
 import (
 	"net/http"
@@ -10,6 +10,29 @@ const alwaysMonkeyingAround = 1.0
 const neverMonkeyAround = 0.0
 const cannedResponse = "hello, world"
 
+func TestItLoadsFromFile(t *testing.T) {
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	monkeyServer, err := NewServer(server.Config.Handler, "monkey-business.yaml")
+
+	if err != nil {
+		t.Fatalf("It didnt return a server from the YAML: %v", err)
+	}
+
+	if len(monkeyServer.(*Server).behaviours) != 4 {
+		t.Error("It didnt load all the behaviours from YAML")
+	}
+
+	monkeyServer, _ = NewServer(server.Config.Handler, "")
+
+	if monkeyServer != server.Config.Handler {
+		t.Error("It should just return the server as is if the config path is empty")
+	}
+}
+
 func TestItMonkeysWithStatusCodesAndBodies(t *testing.T) {
 	monkeyBehaviour := new(behaviour)
 	monkeyBehaviour.Frequency = alwaysMonkeyingAround
@@ -18,7 +41,7 @@ func TestItMonkeysWithStatusCodesAndBodies(t *testing.T) {
 
 	testServer, request := makeTestServerAndRequest()
 
-	monkeyServer := NewMonkeyServer(testServer.Config.Handler, []behaviour{*monkeyBehaviour})
+	monkeyServer := newServerFromBehaviour(testServer.Config.Handler, []behaviour{*monkeyBehaviour})
 
 	w := httptest.NewRecorder()
 
@@ -40,7 +63,7 @@ func TestItReturnsGarbage(t *testing.T) {
 
 	testServer, request := makeTestServerAndRequest()
 
-	monkeyServer := NewMonkeyServer(testServer.Config.Handler, []behaviour{*monkeyBehaviour})
+	monkeyServer := newServerFromBehaviour(testServer.Config.Handler, []behaviour{*monkeyBehaviour})
 
 	w := httptest.NewRecorder()
 
@@ -58,7 +81,7 @@ func TestItDoesntMonkeyAroundWhenFrequencyIsNothing(t *testing.T) {
 
 	testServer, request := makeTestServerAndRequest()
 
-	monkeyServer := NewMonkeyServer(testServer.Config.Handler, []behaviour{*monkeyBehaviour})
+	monkeyServer := newServerFromBehaviour(testServer.Config.Handler, []behaviour{*monkeyBehaviour})
 
 	w := httptest.NewRecorder()
 

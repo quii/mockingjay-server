@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/quii/mockingjay-server/mockingjay"
+	"github.com/quii/mockingjay-server/monkey"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -39,7 +40,8 @@ func main() {
 		checkEndpoints(endpoints, *realURL)
 	} else {
 		log.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), *configPath, *port)
-		makeFakeServer(endpoints, *port, loadMonkeyConfig(*monkeyConfigPath))
+
+		makeFakeServer(endpoints, *port, *monkeyConfigPath)
 	}
 
 }
@@ -54,17 +56,17 @@ func checkEndpoints(endpoints []mockingjay.FakeEndpoint, realURL string) {
 	}
 }
 
-func makeFakeServer(endpoints []mockingjay.FakeEndpoint, port int, monkeyConfig []behaviour) {
+func makeFakeServer(endpoints []mockingjay.FakeEndpoint, port int, monkeyConfigPath string) {
 
-	var server http.Handler
-	if len(monkeyConfig) > 0 {
-		server = NewMonkeyServer(mockingjay.NewServer(endpoints), monkeyConfig)
-	} else {
-		server = mockingjay.NewServer(endpoints)
+	mockingjayServer := mockingjay.NewServer(endpoints)
+	monkeyServer, err := monkey.NewServer(mockingjayServer, monkeyConfigPath)
+
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	http.Handle("/", server)
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	http.Handle("/", monkeyServer)
+	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
 		log.Fatalf("There was a problem starting the mockingjay server on port %d: %v", port, err)
 	}

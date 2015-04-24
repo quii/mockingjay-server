@@ -1,10 +1,8 @@
-package main
+package monkey
 
 import (
 	"fmt"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	"log"
 	"math/rand"
 	"time"
 )
@@ -69,32 +67,6 @@ func (b behaviour) String() string {
 	}
 
 	return fmt.Sprintf("%v %v%v%v%v", frequency, delay, status, body, garbage)
-}
-
-func loadMonkeyConfig(path string) []behaviour {
-
-	if path == "" {
-		return []behaviour{}
-	}
-
-	config, err := ioutil.ReadFile(path)
-
-	if err != nil {
-		log.Fatalf("Problem occured when trying to read the config file: %v", err)
-	}
-
-	behaviours, err := monkeyConfigFromYAML(config)
-
-	if err != nil {
-		log.Fatalf("Problem occured when trying to parse the config file: %v", err)
-	}
-
-	log.Println("Monkey config loaded")
-	for _, b := range behaviours {
-		log.Println(b)
-	}
-
-	return behaviours
 }
 
 func monkeyConfigFromYAML(data []byte) ([]behaviour, error) {

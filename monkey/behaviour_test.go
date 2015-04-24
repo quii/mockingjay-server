@@ -1,4 +1,4 @@
-package main
+package monkey
 
 import (
 	"testing"
@@ -31,17 +31,6 @@ func TestItGetsRandomBehaviours(t *testing.T) {
 
 	if result.Status != behaviour2.Status {
 		t.Error("It should've found behaviour 2", result)
-	}
-}
-
-func TestItLoadsFromFile(t *testing.T) {
-	config := loadMonkeyConfig("examples/monkey-business.yaml")
-	if len(config) != 4 {
-		t.Error("It didnt load all the behaviours from YAML")
-	}
-
-	if len(loadMonkeyConfig("")) > 0 {
-		t.Error("It shouldnt have found any config from an empty path")
 	}
 }
 
