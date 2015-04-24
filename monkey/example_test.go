@@ -5,8 +5,8 @@ import (
 	"net/http"
 )
 
-// ExampleNewServer is an example as to how use monkey to wrap around a http.Handler and change it's behaviour
-func ExampleNewServer() {
+// ExampleWrapMonkeyBusinessAroundAServer shows how use monkey to wrap around a http.Handler and change it's behaviour from configuration
+func ExampleWrapMonkeyBusinessAroundAServer() {
 
 	// Create a fake server from YAML
 	testYAML := `
