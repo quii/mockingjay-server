@@ -16,19 +16,9 @@ type Server struct {
 	randomiser randomiser
 }
 
-// NewServer creates http.Handler which wraps it's monkey business around it, to return a new http.Handler. If no behaviours are defined in the config it will return the original handler, otherwise an error
-func NewServer(server http.Handler, configPath string) (http.Handler, error) {
-	if configPath == "" {
-		return server, nil
-	}
-
-	config, err := ioutil.ReadFile(configPath)
-
-	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Problem occured when trying to read the config file: %v", err))
-	}
-
-	behaviours, err := monkeyConfigFromYAML(config)
+// NewServerFromYAML creates a http.Handler which wraps it's monkey business around it, to return a new http.Handler. If no behaviours are defined in the config it will return the original handler, otherwise an error
+func NewServerFromYAML(server http.Handler, YAML []byte) (http.Handler, error) {
+	behaviours, err := monkeyConfigFromYAML(YAML)
 
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Problem occured when trying to parse the config file: %v", err))
@@ -40,6 +30,22 @@ func NewServer(server http.Handler, configPath string) (http.Handler, error) {
 	}
 
 	return newServerFromBehaviour(server, behaviours), nil
+}
+
+// NewServer creates a http.Handler which wraps it's monkey business around it, to return a new http.Handler. If no behaviours are defined in the config it will return the original handler, otherwise an error
+func NewServer(server http.Handler, configPath string) (http.Handler, error) {
+	if configPath == "" {
+		return server, nil
+	}
+
+	data, err := ioutil.ReadFile(configPath)
+
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("Problem occured when trying to read the config file: %v", err))
+	}
+
+	return NewServerFromYAML(server, data)
+
 }
 
 func newServerFromBehaviour(server http.Handler, behaviours []behaviour) http.Handler {

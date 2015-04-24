@@ -10,13 +10,31 @@ const alwaysMonkeyingAround = 1.0
 const neverMonkeyAround = 0.0
 const cannedResponse = "hello, world"
 
-func TestItLoadsFromFile(t *testing.T) {
+func TestItLoadsFromYAML(t *testing.T) {
 
+	yaml := `
+---
+# Writes a different body 50% of the time
+- body: "This is wrong :( "
+  frequency: 0.5
+
+# Delays initial writing of response by a second 20% of the time
+- delay: 1000
+  frequency: 0.2
+
+# Returns a 404 30% of the time
+- status: 404
+  frequency: 0.3
+
+# Write 10,000,000 garbage bytes 10% of the time
+- garbage: 10000000
+  frequency: 0.09
+`
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
-	monkeyServer, err := NewServer(server.Config.Handler, "monkey-business.yaml")
+	monkeyServer, err := NewServerFromYAML(server.Config.Handler, []byte(yaml))
 
 	if err != nil {
 		t.Fatalf("It didnt return a server from the YAML: %v", err)
