@@ -1,3 +1,4 @@
+// Package monkey lets you wrap bad behaviour, such as request delays, incorrect responses, bodies and returning garbage from configuration. By using monkey you can simulate the unpredictable nature of calling services over HTTP.
 package monkey
 
 import (

@@ -2,7 +2,11 @@
 
 [![GoDoc](https://godoc.org/github.com/quii/mockingjay-server/mockingjay?status.svg)](https://godoc.org/github.com/quii/mockingjay-server/mockingjay)
 
-Create a server from configuration. Useful for integration tests, hopefully.
+Create a server from configuration. Can be useful for:
+
+- Integration tests
+- Consumer driven contracts
+- Performance tests when combined with [monkey](https://godoc.org/github.com/quii/mockingjay-server/monkey)
 
 ## Example
 

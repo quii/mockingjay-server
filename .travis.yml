@@ -15,7 +15,7 @@ before_install:
   - go get code.google.com/p/go.tools/cmd/cover
 script:
   - golint .
-  - godep go test  -coverprofile=coverage.out
+  - godep go test -coverprofile=coverage.out
   - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
 after_success:
   - gox -output "dist/{{.OS}}_{{.Arch}}_{{.Dir}}"
