@@ -2,12 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"github.com/quii/mockingjay-server/mockingjay"
-	"github.com/quii/mockingjay-server/monkey"
-	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 )
 
@@ -24,50 +19,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	config, err := ioutil.ReadFile(*configPath)
+	app := defaultApplication()
 
-	if err != nil {
-		log.Fatalf("Problem occured when trying to open the config file: %v", err)
-	}
-
-	endpoints, err := mockingjay.NewFakeEndpoints(config)
-
-	if err != nil {
-		log.Fatalf("Problem occured when trying to create a server from the config: %v ", err)
-	}
-
-	if *realURL != "" {
-		checkEndpoints(endpoints, *realURL)
-	} else {
-		log.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), *configPath, *port)
-
-		makeFakeServer(endpoints, *port, *monkeyConfigPath)
-	}
-
-}
-
-func checkEndpoints(endpoints []mockingjay.FakeEndpoint, realURL string) {
-	checker := NewCompatabilityChecker(endpoints)
-
-	if checker.CheckCompatability(realURL) {
-		log.Println("All endpoints are compatible")
-	} else {
-		log.Fatal("At least one endpoint was incompatible with the real URL supplied")
-	}
-}
-
-func makeFakeServer(endpoints []mockingjay.FakeEndpoint, port int, monkeyConfigPath string) {
-
-	mockingjayServer := mockingjay.NewServer(endpoints)
-	monkeyServer, err := monkey.NewServer(mockingjayServer, monkeyConfigPath)
+	err := app.Run(*configPath, *port, *realURL, *monkeyConfigPath)
 
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	http.Handle("/", monkeyServer)
-	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
-	if err != nil {
-		log.Fatalf("There was a problem starting the mockingjay server on port %d: %v", port, err)
 	}
 }

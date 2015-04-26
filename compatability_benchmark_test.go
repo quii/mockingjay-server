@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/quii/mockingjay-server/mockingjay"
 	"testing"
 )
 
@@ -13,7 +14,8 @@ const numberOfEndpoints = 3
 func BenchmarkCompatabilityChecking(b *testing.B) {
 	body := "hello, world"
 	realServer := makeFakeDownstreamServer(body, sleepyTime)
-	checker, err := makeChecker(multipleEndpointYAML(numberOfEndpoints))
+	checker := NewCompatabilityChecker()
+	endpoints, err := mockingjay.NewFakeEndpoints([]byte(multipleEndpointYAML(numberOfEndpoints)))
 
 	if err != nil {
 		b.Fatalf("Unable to create checker from YAML %v", err)
@@ -21,7 +23,7 @@ func BenchmarkCompatabilityChecking(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		checker.CheckCompatability(realServer.URL)
+		checker.CheckCompatability(endpoints, realServer.URL)
 	}
 }
 

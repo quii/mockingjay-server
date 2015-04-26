@@ -13,27 +13,25 @@ import (
 
 // CompatabilityChecker is responsible for checking endpoints are compatible
 type CompatabilityChecker struct {
-	client            *http.Client
-	endpoints         []mockingjay.FakeEndpoint
-	numberOfEndpoints int
+	client *http.Client
 }
 
 // NewCompatabilityChecker creates a new CompatabilityChecker
-func NewCompatabilityChecker(endpoints []mockingjay.FakeEndpoint) *CompatabilityChecker {
+func NewCompatabilityChecker() *CompatabilityChecker {
 	c := new(CompatabilityChecker)
-	c.endpoints = endpoints
 	c.client = &http.Client{}
 	c.client.Timeout = 5 * time.Second
-	c.numberOfEndpoints = len(endpoints)
 	return c
 }
 
 // CheckCompatability checks the endpoints against a "real" URL
-func (c *CompatabilityChecker) CheckCompatability(realURL string) bool {
+func (c *CompatabilityChecker) CheckCompatability(endpoints []mockingjay.FakeEndpoint, realURL string) bool {
 
-	results := make(chan bool, c.numberOfEndpoints)
+	numberOfEndpoints := len(endpoints)
 
-	for _, endpoint := range c.endpoints {
+	results := make(chan bool, numberOfEndpoints)
+
+	for _, endpoint := range endpoints {
 		go func(ep mockingjay.FakeEndpoint) {
 			msg, compatible := c.check(&ep, realURL)
 			log.Println(msg)
@@ -42,7 +40,7 @@ func (c *CompatabilityChecker) CheckCompatability(realURL string) bool {
 	}
 
 	allCompatible := true
-	for i := 0; i < c.numberOfEndpoints; i++ {
+	for i := 0; i < numberOfEndpoints; i++ {
 		compatible := <-results
 		if !compatible {
 			allCompatible = false
