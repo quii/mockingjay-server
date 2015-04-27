@@ -13,7 +13,7 @@ type response struct {
 }
 
 func (r response) isValid() bool {
-	return r.Code != 0 && r.Body != ""
+	return r.Code != 0
 }
 
 // FakeEndpoint represents the information required to listen to a particular request and respond to it

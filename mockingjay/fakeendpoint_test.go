@@ -2,6 +2,7 @@ package mockingjay
 
 import (
 	"testing"
+    "strings"
 )
 
 const testYAML = `
@@ -25,7 +26,7 @@ const testYAML = `
      method: DELETE
    response:
      code: 200
-     body: hello, world
+     body: ''
 
  - name: Failing endpoint
    request:
@@ -77,11 +78,17 @@ func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 		t.Errorf("Response body was not properly set got [%s]", firstEndpoint.Response.Body)
 	}
 
-	if endpoints[1].Request.Method != "DELETE" {
+    endpoint2 := endpoints[1]
+
+	if endpoint2.Request.Method != "DELETE" {
 		t.Error("Request method for second fake was not properly set")
 	}
 
-	if endpoints[1].String() != "Test endpoint 2 (DELETE /world)" {
+	if endpoint2.Response.Body != "" {
+		t.Error("Response body for second fake was not properly set")
+	}
+
+	if endpoint2.String() != "Test endpoint 2 (DELETE /world)" {
 		t.Errorf("Fake didnt have correct Stringer, got %s", endpoints[1].String())
 	}
 
@@ -92,9 +99,15 @@ func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 
 func TestItReturnsAnErrorWhenNotValidYAML(t *testing.T) {
 	_, err := NewFakeEndpoints([]byte("not real YAML"))
-	if err == nil {
-		t.Error("Expected an error to be returned because the YAML is bad")
-	}
+
+
+    if err == nil {
+        t.Error("Expected an error to be returned because the YAML is bad")
+    }
+
+    if !strings.HasPrefix(err.Error(), "yaml: unmarshal errors:") {
+        t.Errorf("Expected unmarshal error actual: %v", err.Error())
+    }
 
 }
 
