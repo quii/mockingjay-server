@@ -40,7 +40,7 @@ func NewFakeEndpoints(data []byte) ([]FakeEndpoint, error) {
 
 	for _, endPoint := range endpoints {
 		if !endPoint.isValid() {
-			return nil, errors.New("YAML was invalid")
+			return nil, errors.New("config YAML structure is invalid")
 		}
 	}
 

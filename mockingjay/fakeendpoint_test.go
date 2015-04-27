@@ -130,8 +130,35 @@ const badYAML = `
  `
 
 func TestItReturnsAnErrorWhenStructureOfYAMLIsWrong(t *testing.T) {
-	_, err := NewFakeEndpoints([]byte(badYAML))
+    _, err := NewFakeEndpoints([]byte(badYAML))
+    if err == nil {
+        t.Error("Expected an error to be returned because the YAML is bad")
+    }
+
+    if err.Error() !=  "config YAML structure is invalid" {
+        t.Errorf("Expected YAML was invalid error actual: %v", err.Error())
+    }
+}
+
+const incompleteYAML = `
+---
+ - name: Test endpoint
+   request:
+     uri: /world
+     method: GET
+   response:
+     body: 'A body'
+ `
+
+func TestItReturnsAnErrorWhenYAMLIsIncomplete(t *testing.T) {
+	_, err := NewFakeEndpoints([]byte(incompleteYAML))
 	if err == nil {
-		t.Error("Expected an error to be returned because the YAML is bad")
+		t.Error("Expected an error to be returned because the YAML has missing fields")
 	}
+
+    if err.Error() !=  "config YAML structure is invalid" {
+        t.Errorf("Expected YAML was incomplete error actual: %v", err.Error())
+    }
+
+
 }
