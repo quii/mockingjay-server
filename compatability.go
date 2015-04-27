@@ -93,6 +93,11 @@ func checkBody(downstreamBody string, expectedBody string) (bool, error) {
 	if isJSON(downstreamBody) {
 		return jsonequaliser.IsCompatible(expectedBody, downstreamBody)
 	}
+
+    if expectedBody == "*" {
+        return true, nil
+    }
+
 	if downstreamBody != expectedBody {
 		return false, nil
 	}

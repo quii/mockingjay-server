@@ -70,9 +70,24 @@ func TestIfItsNotJSONItKnowsItsCompatable(t *testing.T) {
 	endpoints := makeEndpoints(body)
 
 	if !checker.CheckCompatability(endpoints, realServer.URL) {
-		t.Error("Checker should've found this endpoint to be incorrect")
+		t.Error("Checker should've found this endpoint to be correct")
 	}
 }
+
+
+func TestIfItsNotJSONItAllowsAnyBody(t *testing.T) {
+    body := "hello world"
+
+    realServer := makeFakeDownstreamServer(body, noSleep)
+    checker := NewCompatabilityChecker()
+    endpoints := makeEndpoints("*")
+
+    if !checker.CheckCompatability(endpoints, realServer.URL) {
+        t.Error("Checker should've found this endpoint to be correct")
+    }
+}
+
+
 
 func TestItIsIncompatibleWhenRealServerIsntReachable(t *testing.T) {
 	body := "doesnt matter"
@@ -129,3 +144,4 @@ func makeEndpoints(body string) []mockingjay.FakeEndpoint {
 func testYAML(responseBody string) string {
 	return fmt.Sprintf(yamlFormat, defaultRequestURI, responseBody)
 }
+

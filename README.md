@@ -35,7 +35,7 @@ What mockingjay enables you to do is to capture these requirements in one config
      body: "Chris" # * matches any body
    response:
      code: 200
-     body: '{"message": "hello, Chris"}'
+     body: '{"message": "hello, Chris"}'   # * matches any body
      headers:
        content-type: application/json
 
