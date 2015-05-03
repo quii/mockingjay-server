@@ -90,13 +90,13 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 }
 
 func checkBody(downstreamBody string, expectedBody string) (bool, error) {
-	if isJSON(downstreamBody) {
+	if isJSON(expectedBody) {
 		return jsonequaliser.IsCompatible(expectedBody, downstreamBody)
 	}
 
-    if expectedBody == "*" {
-        return true, nil
-    }
+	if expectedBody == "*" {
+		return true, nil
+	}
 
 	if downstreamBody != expectedBody {
 		return false, nil
