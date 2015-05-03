@@ -114,6 +114,16 @@ func TestItDoesContentNegotiation(t *testing.T) {
 	if responseReader.Code != http.StatusNotFound {
 		t.Error("Expected to get a 404 because we didnt set a content type header when it was expected")
 	}
+
+	requestWithDifferentCasedHeader, _ := http.NewRequest("GET", testURL, nil)
+	requestWithDifferentCasedHeader.Header.Add("Content-TYPE", "application/json")
+	responseReader = httptest.NewRecorder()
+
+	server.ServeHTTP(responseReader, requestWithDifferentCasedHeader)
+
+	if responseReader.Code != http.StatusCreated {
+		t.Errorf("Expected request to match even though the header name was differently cased : \n%s", responseReader.Code)
+	}
 }
 
 func TestItSendsRequestBodies(t *testing.T) {
