@@ -57,8 +57,8 @@ type notFoundResponse struct {
 	EndpointsAvailable []FakeEndpoint `json:"Endpoints available"`
 }
 
-func newNotFound(method string, url string, body string, endpoints []FakeEndpoint) *response {
-	notFound := notFoundResponse{"Endpoint not found", request{url, method, nil, body}, endpoints}
+func newNotFound(method string, url string, body string, headers map[string]string, endpoints []FakeEndpoint) *response {
+	notFound := notFoundResponse{"Endpoint not found", request{url, method, headers, body}, endpoints}
 	j, _ := yaml.Marshal(notFound)
 	return &response{404, string(j), nil}
 }

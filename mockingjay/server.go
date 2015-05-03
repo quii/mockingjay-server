@@ -3,6 +3,7 @@ package mockingjay
 import (
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 // Server allows you to configure a request and a corresponding response. It implements http.ServeHTTP so you can bind it to a port.
@@ -28,13 +29,18 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) getResponse(r *http.Request) *response {
 
+	requestHeaders := make(map[string]string)
+	for key, val := range r.Header {
+		requestHeaders[key] = strings.Join(val, ",")
+	}
+
 	requestBody := ""
 
 	if r.Body != nil {
 		body, err := ioutil.ReadAll(r.Body)
 
 		if err != nil {
-			return newNotFound(r.Method, r.URL.String(), "", s.endpoints)
+			return newNotFound(r.Method, r.URL.String(), "", requestHeaders, s.endpoints)
 		}
 
 		requestBody = string(body)
@@ -46,7 +52,7 @@ func (s *Server) getResponse(r *http.Request) *response {
 		}
 	}
 
-	return newNotFound(r.Method, r.URL.String(), requestBody, s.endpoints)
+	return newNotFound(r.Method, r.URL.String(), requestBody, requestHeaders, s.endpoints)
 }
 
 func requestMatches(a request, b *http.Request, receivedBody string) bool {

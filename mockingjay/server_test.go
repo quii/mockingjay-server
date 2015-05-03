@@ -73,12 +73,19 @@ func TestItReturns404WhenMethodIsWrong(t *testing.T) {
 	server := NewServer([]FakeEndpoint{endpoint})
 
 	request, _ := http.NewRequest("POST", "/hello", nil)
+	request.Header.Set("content-type", "application/bob")
+
 	responseReader := httptest.NewRecorder()
 
 	server.ServeHTTP(responseReader, request)
 
 	if responseReader.Code != http.StatusNotFound {
 		t.Error("Expected to get a 404")
+	}
+
+	if !strings.Contains(responseReader.Body.String(), "application/bob") {
+		t.Log(responseReader.Body.String())
+		t.Error("Request headers were not added to the response info")
 	}
 }
 
