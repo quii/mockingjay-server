@@ -53,7 +53,7 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 
 	request, err := endpoint.Request.AsHTTPRequest(realURL)
 
-	errorMsg := fmt.Sprintf("%s is incompatible with %s", endpoint, realURL)
+	errorMsg := fmt.Sprintf("✗ %s is incompatible with %s", endpoint, realURL)
 
 	if err != nil {
 		return "Unable to create request from config, maybe try again?", false
@@ -62,7 +62,7 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 	response, err := c.client.Do(request)
 
 	if err != nil {
-		return fmt.Sprintf("%s - Couldn't reach real server", errorMsg), false
+		return fmt.Sprintf("✗ %s - Couldn't reach real server", errorMsg), false
 	}
 
 	if response.StatusCode != endpoint.Response.Code {
@@ -73,17 +73,17 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
-		return fmt.Sprintln("%s - Couldn't read response body [%s]", errorMsg, err), false
+		return fmt.Sprintln("✗ %s - Couldn't read response body [%s]", errorMsg, err), false
 	}
 
 	bodyCompatible, err := checkBody(string(body), endpoint.Response.Body)
 
 	if err != nil {
-		return fmt.Sprintf("%s - There was a problem checking the compatibility of the body", errorMsg, err), false
+		return fmt.Sprintf("✗ %s - There was a problem checking the compatibility of the body", errorMsg, err), false
 	}
 
 	if !bodyCompatible {
-		return fmt.Sprintf("%s - Body [%s] was not compatible with config body [%s]", errorMsg, string(body), endpoint.Response.Body), false
+		return fmt.Sprintf("✗ %s - Body [%s] was not compatible with config body [%s]", errorMsg, string(body), endpoint.Response.Body), false
 	}
 
 	return fmt.Sprintf("%s  ✔", endpoint), true
