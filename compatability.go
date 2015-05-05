@@ -86,7 +86,7 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 		return fmt.Sprintf("✗ %s - Body [%s] was not compatible with config body [%s]", errorMsg, string(body), endpoint.Response.Body), false
 	}
 
-	return fmt.Sprintf("%s  ✔", endpoint), true
+	return fmt.Sprintf("✔ %s", endpoint), true
 }
 
 func checkBody(downstreamBody string, expectedBody string) (bool, error) {
