@@ -168,3 +168,24 @@ func TestItMatchesWildcardBodies(t *testing.T) {
 		t.Errorf("Expected code %v but got %v", expectedStatus, responseReader.Code)
 	}
 }
+
+func TestItRecordsIncomingRequests(t *testing.T) {
+	wildcardBody := "*"
+	expectedStatus := http.StatusOK
+
+	config := FakeEndpoint{testEndpointName, request{testURL, "POST", nil, wildcardBody}, response{expectedStatus, "", nil}}
+	server := NewServer([]FakeEndpoint{config})
+
+	requestWithDifferentBody, _ := http.NewRequest("POST", testURL, strings.NewReader("This body isnt what we said but it should match"))
+	responseReader := httptest.NewRecorder()
+
+	server.ServeHTTP(responseReader, requestWithDifferentBody)
+
+	if len(server.requests) != 1 {
+		t.Fatalf("Expected one request to be recorded but got %d", len(server.requests))
+	}
+
+	if server.requests[0].Method != "POST" {
+		t.Error("It doesnt look like it recorded the request properly")
+	}
+}

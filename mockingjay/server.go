@@ -9,16 +9,19 @@ import (
 // Server allows you to configure a request and a corresponding response. It implements http.ServeHTTP so you can bind it to a port.
 type Server struct {
 	endpoints []FakeEndpoint
+	requests  []http.Request
 }
 
 // NewServer creates a new Server instance
 func NewServer(endpoints []FakeEndpoint) *Server {
 	s := new(Server)
 	s.endpoints = endpoints
+	s.requests = make([]http.Request, 0)
 	return s
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	s.requests = append(s.requests, *r)
 	cannedResponse := s.getResponse(r)
 	for name, value := range cannedResponse.Headers {
 		w.Header().Set(name, value)
