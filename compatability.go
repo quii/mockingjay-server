@@ -73,13 +73,13 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
-		return fmt.Sprintln("✗ %s - Couldn't read response body [%s]", errorMsg, err), false
+		return fmt.Sprintf("✗ %s - Couldn't read response body [%s]\n", errorMsg, err), false
 	}
 
 	bodyCompatible, err := checkBody(string(body), endpoint.Response.Body)
 
 	if err != nil {
-		return fmt.Sprintf("✗ %s - There was a problem checking the compatibility of the body", errorMsg, err), false
+		return fmt.Sprintf("✗ %s - There was a problem checking the compatibility of the body %s", errorMsg, err), false
 	}
 
 	if !bodyCompatible {
