@@ -1,6 +1,7 @@
 package mockingjay
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -21,13 +22,29 @@ func NewServer(endpoints []FakeEndpoint) *Server {
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	s.requests = append(s.requests, *r)
-	cannedResponse := s.getResponse(r)
-	for name, value := range cannedResponse.Headers {
-		w.Header().Set(name, value)
+
+	if r.RequestURI == "/requests" {
+		s.returnRequests(w)
+	} else {
+		s.requests = append(s.requests, *r)
+		cannedResponse := s.getResponse(r)
+		for name, value := range cannedResponse.Headers {
+			w.Header().Set(name, value)
+		}
+		w.WriteHeader(cannedResponse.Code)
+		w.Write([]byte(cannedResponse.Body))
 	}
-	w.WriteHeader(cannedResponse.Code)
-	w.Write([]byte(cannedResponse.Body))
+}
+
+func (s *Server) returnRequests(w http.ResponseWriter) {
+	payload, err := json.Marshal(s.requests)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		w.Write(payload)
+	}
 }
 
 func (s *Server) getResponse(r *http.Request) *response {

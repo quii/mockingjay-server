@@ -81,6 +81,12 @@ $ mockingjay-server -config=example.yaml -realURL=http://some-real-api.com
 2015/04/13 21:06:06 At least one endpoint was incompatible with the real URL supplied
 ````
 
+### Inspect what requests mockingjay has received
+
+     http://{mockingjayhost}:{port}/requests
+
+Calling this will return you a JSON list of requests
+
 ## Make your fake server flaky
 
 Mockingjay has an annoying friend, a monkey. Given a monkey configuration you can make your fake service misbehave. This can be useful for performance tests where you want to simulate a more realistic scenario (i.e all integration points are painful).
