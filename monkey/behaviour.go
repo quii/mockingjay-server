@@ -69,13 +69,7 @@ func (b behaviour) String() string {
 	return fmt.Sprintf("%v %v%v%v%v", frequency, delay, status, body, garbage)
 }
 
-func monkeyConfigFromYAML(data []byte) ([]behaviour, error) {
-	var result []behaviour
-	err := yaml.Unmarshal([]byte(data), &result)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return result, nil
+func monkeyConfigFromYAML(data []byte) (result []behaviour, err error) {
+	err = yaml.Unmarshal(data, &result)
+	return
 }
