@@ -55,14 +55,11 @@ func newServerFromBehaviour(degegate http.Handler, behaviours []behaviour) http.
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
-	var responseWriter http.ResponseWriter
 	if chosenBehaviour := getBehaviour(s.behaviours, s.randomiser); chosenBehaviour != nil {
-		responseWriter = monkeyWriter{w, chosenBehaviour}
-	} else {
-		responseWriter = w
+		w = monkeyWriter{w, chosenBehaviour}
 	}
 
-	s.delegate.ServeHTTP(responseWriter, r)
+	s.delegate.ServeHTTP(w, r)
 }
 
 type monkeyWriter struct {
@@ -90,8 +87,7 @@ func (w monkeyWriter) Write(data []byte) (int, error) {
 
 func (w monkeyWriter) WriteHeader(code int) {
 	if w.behaviour.Status != 0 {
-		w.ResponseWriter.WriteHeader(w.behaviour.Status)
-	} else {
-		w.ResponseWriter.WriteHeader(code)
+		code = w.behaviour.Status
 	}
+	w.ResponseWriter.WriteHeader(code)
 }
