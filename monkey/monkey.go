@@ -57,8 +57,7 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	var responseWriter http.ResponseWriter
 	if chosenBehaviour := getBehaviour(s.behaviours, s.randomiser); chosenBehaviour != nil {
-		s.misbehave(*chosenBehaviour, w)
-		responseWriter = monkeyWriter{w, []byte(chosenBehaviour.Body), chosenBehaviour.Garbage}
+		responseWriter = monkeyWriter{w, chosenBehaviour}
 	} else {
 		responseWriter = w
 	}
@@ -66,31 +65,33 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.delegate.ServeHTTP(responseWriter, r)
 }
 
-func (s *server) misbehave(behaviour behaviour, w http.ResponseWriter) {
-	time.Sleep(behaviour.Delay * time.Millisecond)
-	if behaviour.Status != 0 {
-		w.WriteHeader(behaviour.Status)
-	}
-}
-
 type monkeyWriter struct {
 	http.ResponseWriter
-	newBody      []byte
-	garbageCount int
+	behaviour *behaviour
 }
 
 func (w monkeyWriter) Write(data []byte) (int, error) {
 
-	if w.garbageCount > 0 {
+	time.Sleep(w.behaviour.Delay * time.Millisecond)
+
+	if w.behaviour.Garbage > 0 {
 		content := []byte{}
-		for i := 0; i < w.garbageCount; i++ {
+		for i := 0; i < w.behaviour.Garbage; i++ {
 			content = append(content, byte('a'))
 		}
 		return w.ResponseWriter.Write(content)
 	}
 
-	if len(w.newBody) > 0 {
-		return w.ResponseWriter.Write(w.newBody)
+	if len(w.behaviour.Body) > 0 {
+		return w.ResponseWriter.Write([]byte(w.behaviour.Body))
 	}
 	return w.ResponseWriter.Write(data)
+}
+
+func (w monkeyWriter) WriteHeader(code int) {
+	if w.behaviour.Status != 0 {
+		w.ResponseWriter.WriteHeader(w.behaviour.Status)
+	} else {
+		w.ResponseWriter.WriteHeader(code)
+	}
 }
