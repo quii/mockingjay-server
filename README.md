@@ -56,11 +56,11 @@ From this you can create a fake server to write integration tests with and also 
 
 - You can only express your consumer-producer interaction in terms of isolated request/responses. Sometimes you might need to test a number of requests which are dependant on each other.
 
+[See how mockingjay can easily fit into your workflow to make integration testing really easy and robust](https://github.com/quii/mockingjay-server/wiki/Suggested-workflow)
+
 ## Installation
 
-     $ go get github.com/quii/mockingjay-server
-
-If you don't have Go installed you can find a binary for your platform in the [releases tab](https://github.com/quii/mockingjay-server/releases)
+[See the wiki page](https://github.com/quii/mockingjay-server/wiki/Installing)
 
 ## Running a fake server
 
