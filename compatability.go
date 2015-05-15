@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"github.com/johnmuth/xmlcompare"
 	"github.com/quii/jsonequaliser"
 	"github.com/quii/mockingjay-server/mockingjay"
 	"io/ioutil"
@@ -94,6 +96,11 @@ func checkBody(downstreamBody string, expectedBody string) (bool, error) {
 		return jsonequaliser.IsCompatible(expectedBody, downstreamBody)
 	}
 
+	if isXML(expectedBody) {
+		log.Println("wat", expectedBody, downstreamBody)
+		return xmlcompare.IsCompatible(expectedBody, downstreamBody)
+	}
+
 	if expectedBody == "*" {
 		return true, nil
 	}
@@ -107,4 +114,9 @@ func checkBody(downstreamBody string, expectedBody string) (bool, error) {
 func isJSON(s string) bool {
 	var js interface{}
 	return json.Unmarshal([]byte(s), &js) == nil
+}
+
+func isXML(s string) bool {
+	var x interface{}
+	return xml.Unmarshal([]byte(s), &x) == nil
 }

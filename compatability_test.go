@@ -20,6 +20,18 @@ func TestItChecksAValidEndpointsJSON(t *testing.T) {
 	}
 }
 
+func TestItChecksAValidEndpointsXML(t *testing.T) {
+	body := `<foo><bar>x</bar></foo>`
+	realServerBody := `<foo><bar>y</bar></foo>`
+	realServer := makeFakeDownstreamServer(realServerBody, noSleep)
+	checker := NewCompatabilityChecker()
+	endpoints := makeEndpoints(body)
+
+	if !checker.CheckCompatability(endpoints, realServer.URL) {
+		t.Error("Checker should've found this endpoint to be correct")
+	}
+}
+
 func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
 	serverResponseBody := `{"foo": "bar"}`
 	fakeResponseBody := `{"baz": "boo"}`

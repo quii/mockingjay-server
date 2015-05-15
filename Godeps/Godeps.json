@@ -1,7 +1,19 @@
 {
-	"ImportPath": "github.com/boocockp/mockingjay-server",
+	"ImportPath": "github.com/quii/mockingjay-server",
 	"GoVersion": "go1.4.2",
 	"Deps": [
+		{
+			"ImportPath": "github.com/clbanning/mxj",
+			"Rev": "e4cb9d324e36a3fec6f879ad4657d88130736bb3"
+		},
+		{
+			"ImportPath": "github.com/fatih/structs",
+			"Rev": "b4641b79cf37cd07961c25c5460be637ab27da76"
+		},
+		{
+			"ImportPath": "github.com/johnmuth/xmlcompare",
+			"Rev": "3799f36de9529484c704727d0c25c53accb85db2"
+		},
 		{
 			"ImportPath": "github.com/quii/jsonequaliser",
 			"Rev": "cc63843b22740d88126ce42338f29fd2b2a072b0"
