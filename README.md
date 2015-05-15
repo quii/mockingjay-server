@@ -12,9 +12,9 @@ Mockingjay lets you define the contract between a consumer and producer and with
 
 ## Rationale
 
-In the hip exciting world of SOA/microservices with heavy investment in PaaS/IaaS you want to be able to quickly iterate over small services and deploy to live quickly and without fear of breaking things. 
+In the hip exciting world of SOA/microservices with heavy investment in PaaS/IaaS you want to be able to quickly iterate over small services and deploy to live quickly and without fear of breaking things.
 
-If you are using this kind of architecture you will be faced with the challenge of ensuring that your huge numbers of services can actually talk to each other. 
+If you are using this kind of architecture you will be faced with the challenge of ensuring that your huge numbers of services can actually talk to each other.
 
 You will probably employ things like versioning to help but you might also be spending time writing consumer driven contracts (CDCs) to ensure your integration points are working.
 
@@ -54,7 +54,7 @@ From this you can create a fake server to write integration tests with and also 
 
 #### Drawbacks/constraints
 
-- You can only express your consumer-producer interaction in terms of isolated request/responses. Sometimes you might need to test a number of requests which are dependant on each other. 
+- You can only express your consumer-producer interaction in terms of isolated request/responses. Sometimes you might need to test a number of requests which are dependant on each other.
 
 ## Installation
 
@@ -129,20 +129,7 @@ $ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-
 - golint https://github.com/golang/lint
 
 ````bash
-$ mkdir -p $GOPATH/src/github.com/quii
-$ cd $GOPATH/src/github.com/quii
-$ git clone https://github.com/quii/mockingjay-server.git
-$ cd mockingjay-server
+$ go get https://github.com/quii/mockingjay-server.git
+$ cd $GOPATH/src/github.com/quii/mockingjay-server
 $ ./build.sh
 ````
-
-### TODO
-
-- Need some tests for the monkey business
-- Check XML structure when applicable
-- Investigate a more standard test output (http://windyroad.com.au/2011/02/07/apache-ant-junit-xml-schema/)
-
-### Things to figure out
-
-- Still somewhat reliaint on golden data. i.e fake /user/2 - does user 2 exist on the real server? What can be done?
-- Is it possible to do chains of requests for more complicated tests but still keep it nice and simple. Should we?
