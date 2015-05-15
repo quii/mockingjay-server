@@ -10,21 +10,12 @@ Mockingjay lets you define the contract between a consumer and producer and with
 
 **Mockingjay makes it really easy to check your integration points**. It's fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent
 
-## Rationale
+- [Installation](https://github.com/quii/mockingjay-server/wiki/Installing) (I promise it's really easy)
+- [Rationale](https://github.com/quii/mockingjay-server/wiki/Rationale)
+- [See how mockingjay can easily fit into your workflow to make integration testing really easy and robust](https://github.com/quii/mockingjay-server/wiki/Suggested-workflow)
 
-In the hip exciting world of SOA/microservices with heavy investment in PaaS/IaaS you want to be able to quickly iterate over small services and deploy to live quickly and without fear of breaking things.
 
-If you are using this kind of architecture you will be faced with the challenge of ensuring that your huge numbers of services can actually talk to each other.
-
-You will probably employ things like versioning to help but you might also be spending time writing consumer driven contracts (CDCs) to ensure your integration points are working.
-
-In addition you might be writing integration tests against fakes/stubs to check your code can send the correct requests and be able to parse responses.
-
-![alt tag](http://i.imgur.com/oC6BjGn.png)
-
-If you squint hard enough, you can imagine that the requirements for both CDCs and fake servers are the same. *Given a particular request, I expect a particular kind of response*. Yet with this set up you are duplicating this information _with code_ in two different files which obviously isn't ideal.
-
-What mockingjay enables you to do is to capture these requirements in one configuration file.
+## Running a fake server
 
 ````yaml
 ---
@@ -41,28 +32,6 @@ What mockingjay enables you to do is to capture these requirements in one config
 
 # define as many as you need...
 ````
-
-From this you can create a fake server to write integration tests with and also check the service you are dependant on is consistent with what you expect.
-
-#### Main advantages
-
-- No coding whatsoever, so no naughtiness in fake servers overcomplicating things. Even non developers can add new scenarios to test with.
-- The contract is defined once, rather than dispersed across different scripts which you have to keep in sync.
-- Entirely language agnostic. If you speak HTTP you can use mockingjay.
-- Checks the structure of the data (currently JSON is the only type checked) rather than the contents, which will reduce flakiness of your builds.
-- Both the fake server and CDCs are really fast to run, to help keep your builds fast.
-
-#### Drawbacks/constraints
-
-- You can only express your consumer-producer interaction in terms of isolated request/responses. Sometimes you might need to test a number of requests which are dependant on each other.
-
-[See how mockingjay can easily fit into your workflow to make integration testing really easy and robust](https://github.com/quii/mockingjay-server/wiki/Suggested-workflow)
-
-## Installation
-
-[See the wiki page](https://github.com/quii/mockingjay-server/wiki/Installing)
-
-## Running a fake server
 
 ````bash
 $ mockingjay-server -config=example.yaml -port=1234 &
