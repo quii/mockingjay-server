@@ -97,7 +97,6 @@ func checkBody(downstreamBody string, expectedBody string) (bool, error) {
 	}
 
 	if isXML(expectedBody) {
-		log.Println("wat", expectedBody, downstreamBody)
 		return xmlcompare.IsCompatible(expectedBody, downstreamBody)
 	}
 
