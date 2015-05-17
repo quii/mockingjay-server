@@ -1,0 +1,14 @@
+{
+	"ImportPath": "github.com/johnmuth/xmlcompare",
+	"GoVersion": "go1.3.3",
+	"Deps": [
+		{
+			"ImportPath": "github.com/clbanning/mxj",
+			"Rev": "e4cb9d324e36a3fec6f879ad4657d88130736bb3"
+		},
+		{
+			"ImportPath": "github.com/fatih/structs",
+			"Rev": "b4641b79cf37cd07961c25c5460be637ab27da76"
+		}
+	]
+}

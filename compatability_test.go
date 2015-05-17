@@ -119,6 +119,28 @@ func TestItHandlesBadURLsInConfig(t *testing.T) {
 	}
 }
 
+// https://github.com/quii/mockingjay-server/issues/3
+func TestWhitespaceSensitivity(t *testing.T) {
+	y := `
+---
+- name: Testing whitespace sensitivity
+  request:
+    uri: /hello
+    method: POST
+    body: '{"email":"foo@bar.com","password":"xxx"}'
+  response:
+    code: 200
+    body: '{"token": "1234abc"}'
+        `
+	fakeEndPoints, _ := mockingjay.NewFakeEndpoints([]byte(y))
+	checker := NewCompatabilityChecker()
+	realServer := makeFakeDownstreamServer(`{"token":    "1234abc"}`, noSleep)
+
+	if !checker.CheckCompatability(fakeEndPoints, realServer.URL) {
+		t.Error("Checker should've found that the two JSONs are compatible despite having different whitespace")
+	}
+}
+
 const noSleep = 1
 
 const defaultRequestURI = "/hello"
