@@ -1,3 +1,4 @@
+[![GoDoc](https://godoc.org/github.com/quii/jsonequaliser?status.svg)](https://godoc.org/github.com/quii/jsonequaliser)
 # jsonequaliser
 
 Checks that two json strings (A and B) are compatible or not.

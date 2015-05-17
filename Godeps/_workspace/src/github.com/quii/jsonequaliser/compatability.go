@@ -7,40 +7,40 @@ import (
 )
 
 // IsCompatible checks that two json strings are structurally the same so that they are compatible. The first string should be your "correct" json, if there are extra fields in B then they will still be seen as compatible
-func IsCompatible(a, b string) (bool, error) {
+func IsCompatible(a, b string) (compatible bool, err error) {
 
 	aMap := make(map[string]interface{})
-	if err := json.Unmarshal([]byte(a), &aMap); err != nil {
-		return false, err
+	if err = json.Unmarshal([]byte(a), &aMap); err != nil {
+		return
 	}
 
 	bMap := make(map[string]interface{})
-	if err := json.Unmarshal([]byte(b), &bMap); err != nil {
-		return false, err
+	if err = json.Unmarshal([]byte(b), &bMap); err != nil {
+		return
 	}
 
 	return isStructurallyTheSame(aMap, bMap)
 }
 
-func isStructurallyTheSame(a, b map[string]interface{}) (bool, error) {
+func isStructurallyTheSame(a, b map[string]interface{}) (compatible bool, err error) {
 	for keyInA, v := range a {
 
 		if b[keyInA] == nil {
-			return false, nil
+			return
 		}
 
 		switch v.(type) {
 		case string:
 			if _, isString := b[keyInA].(string); !isString {
-				return false, nil
+				return
 			}
 		case bool:
 			if _, isBool := b[keyInA].(bool); !isBool {
-				return false, nil
+				return
 			}
 		case float64:
 			if _, isFloat := b[keyInA].(float64); !isFloat {
-				return false, nil
+				return
 			}
 
 		case interface{}:
@@ -48,8 +48,8 @@ func isStructurallyTheSame(a, b map[string]interface{}) (bool, error) {
 
 			bArr, bIsArray := b[keyInA].([]interface{})
 
-			if !bIsArray {
-				return false, nil
+			if !bIsArray || len(bArr) == 0 {
+				return
 			}
 
 			aLeaf, aIsMap := aArr[0].(map[string]interface{})
@@ -58,13 +58,15 @@ func isStructurallyTheSame(a, b map[string]interface{}) (bool, error) {
 			if aIsMap && bIsMap {
 				return isStructurallyTheSame(aLeaf, bLeaf)
 			} else if aIsMap && !bIsMap {
-				return false, nil
+				return
 			} else if reflect.TypeOf(aArr[0]) != reflect.TypeOf(bArr[0]) {
-				return false, nil
+				return
 			}
 		default:
-			return false, fmt.Errorf("Unmatched type of json found, got a %v", reflect.TypeOf(v))
+			err = fmt.Errorf("Unmatched type of json found, got a %v", reflect.TypeOf(v))
+			return
 		}
 	}
-	return true, nil
+	compatible = true
+	return
 }

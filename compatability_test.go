@@ -141,6 +141,28 @@ func TestWhitespaceSensitivity(t *testing.T) {
 	}
 }
 
+func TestErrorReportingOfEmptyJSONArrays(t *testing.T) {
+	y := `
+---
+- name: Testing whitespace sensitivity
+  request:
+    uri: /hello
+    method: POST
+    body: '{"email":"foo@bar.com","password":"xxx"}'
+  response:
+    code: 200
+    body: '{"stuff": [{"foo":"bar"}]}'
+    `
+
+	fakeEndPoints, _ := mockingjay.NewFakeEndpoints([]byte(y))
+	checker := NewCompatabilityChecker()
+	realServer := makeFakeDownstreamServer(`{"stuff":[]}`, noSleep)
+
+	if checker.CheckCompatability(fakeEndPoints, realServer.URL) {
+		t.Error("Checker shouldn't have found it compatible because its got an empty array downstream")
+	}
+}
+
 const noSleep = 1
 
 const defaultRequestURI = "/hello"

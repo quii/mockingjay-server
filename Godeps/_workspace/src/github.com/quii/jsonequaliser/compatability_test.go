@@ -1,8 +1,17 @@
 package jsonequaliser
 
 import (
+	"fmt"
 	"testing"
 )
+
+func ExampleIsCompatible() {
+	A := `{"firstname": "chris", "lastname": "james", "age": 30}`
+	B := `{"firstname": "Bob", "lastname": "Smith", "age": 25, "favourite-colour": "blue"}`
+
+	fmt.Println(IsCompatible(A, B))
+	// Output: true <nil>
+}
 
 const simpleJSON = `{"firstname": "chris", "lastname": "james", "age": 30}`
 const comparableJSON = `{"firstname": "christopher", "lastname": "james", "age": 15}`
@@ -75,6 +84,12 @@ func TestNestedStructures(t *testing.T) {
 	assertIncompatible(t, a, c)
 	assertIncompatible(t, a, d)
 	assertIncompatible(t, a, e)
+}
+
+func TestEmptyArrayInB(t *testing.T) {
+	a := `{"foo":["bar", "baz"]}`
+	b := `{"foo":[]}`
+	assertIncompatible(t, a, b)
 }
 
 func assertCompatible(t *testing.T, a, b string) {
