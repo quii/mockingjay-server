@@ -5,6 +5,7 @@ import (
 )
 
 const baseXML = `<human><firstname>chris</firstname><lastname>james</lastname><age>30</age></human>`
+const extraAttributeXML = `<human><firstname really="yes">chris</firstname><lastname>james</lastname><age>30</age></human>`
 const compatibleXML = `<human><firstname>christopher</firstname><lastname>james</lastname><age>15</age></human>`
 const differentOrderXML = `<human><age>30</age><firstname>chris</firstname><lastname>james</lastname></human>`
 const differentElementNamesXML = `<wildebeest><name>Blue</name></wildebeest>`
@@ -15,12 +16,24 @@ func TestIdenticalXMLIsCompatible(t *testing.T) {
 	assertCompatible(t, baseXML, baseXML)
 }
 
+func TestSimpleXML(t *testing.T) {
+	assertCompatible(t, `<foo>bar</foo>`, `<foo>baz</foo>`)
+}
+
+func TestSimpleXMLNumeric(t *testing.T) {
+	assertCompatible(t, `<foo>1</foo>`, `<foo>2</foo>`)
+}
+
 func TestXMLWithSameElementNamesAndValueTypesIsCompatible(t *testing.T) {
 	assertCompatible(t, baseXML, compatibleXML)
 }
 
 func TestXMLWithSameElementsInDifferentOrderIsCompatible(t *testing.T) {
 	assertCompatible(t, baseXML, differentOrderXML)
+}
+
+func TestXMLWithAddedAttributesIsCompatible(t *testing.T) {
+	assertCompatible(t, baseXML, extraAttributeXML)
 }
 
 func TestXMLWithDifferentElementNamesIsIncompatible(t *testing.T) {

@@ -26,11 +26,21 @@ func IsCompatible(a, b string) (compatible bool, err error) {
 func isStructurallyTheSame(a, b map[string]interface{}) (compatible bool, err error) {
 	for keyInA, v := range a {
 		switch v.(type) {
+		case string:
+			_, bIsString := b[keyInA].(string)
+			if bIsString {
+				compatible = true
+			}
+		case float64:
+			_, bIsFloat := b[keyInA].(float64)
+			if bIsFloat {
+				compatible = true
+			}
 		case map[string]interface{}:
 			bMap, bIsMap := b[keyInA].(map[string]interface{})
 			if bIsMap {
 				for vKey, vValue := range v.(map[string]interface{}) {
-					if reflect.TypeOf(vValue) != reflect.TypeOf(bMap[vKey]) {
+					if elementValueType(vValue) != elementValueType(bMap[vKey]) {
 						return
 					}
 				}
@@ -39,6 +49,16 @@ func isStructurallyTheSame(a, b map[string]interface{}) (compatible bool, err er
 		default:
 			err = fmt.Errorf("Unmatched datatype in XML found, got a %v", reflect.TypeOf(v))
 		}
+	}
+	return
+}
+
+func elementValueType(elem interface{}) (valueType reflect.Type) {
+	switch elem.(type) {
+	case map[string]interface{}:
+		valueType = reflect.TypeOf(elem.(map[string]interface{})["#text"])
+	default:
+		valueType = reflect.TypeOf(elem)
 	}
 	return
 }
