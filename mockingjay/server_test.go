@@ -189,3 +189,20 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 		t.Error("It doesnt look like it recorded the request properly")
 	}
 }
+
+func TestItRespectsURLencoding(t *testing.T) {
+	escapedURL := "/document/10.1007%2Fs00414-006-0114-x"
+	body := "some body"
+	expectedStatus := http.StatusOK
+	config := FakeEndpoint{testEndpointName, request{escapedURL, "POST", nil, body}, response{expectedStatus, "", nil}}
+	server := NewServer([]FakeEndpoint{config})
+
+	request, _ := http.NewRequest("POST", escapedURL, strings.NewReader(body))
+	responseReader := httptest.NewRecorder()
+
+	server.ServeHTTP(responseReader, request)
+
+	if responseReader.Code != expectedStatus {
+		t.Errorf("It looks like it didnt respect the escaped url, got a %d", responseReader.Code)
+	}
+}

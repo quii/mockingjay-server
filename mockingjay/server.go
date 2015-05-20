@@ -3,7 +3,9 @@ package mockingjay
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -83,8 +85,15 @@ func requestMatches(a request, b *http.Request, receivedBody string) bool {
 		}
 	}
 
+	aURL, err := url.QueryUnescape(a.URI)
+	bURL, err := url.QueryUnescape(b.URL.String())
+
+	if err != nil {
+		log.Fatalf("Unescaping the query string failed horribly, crashing and burning %v", err)
+	}
+
 	bodyOk := a.Body == "*" || receivedBody == a.Body
-	urlOk := a.URI == b.URL.String()
+	urlOk := aURL == bURL
 	methodOk := a.Method == b.Method
 
 	return bodyOk && urlOk && methodOk
