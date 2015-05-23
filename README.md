@@ -98,7 +98,7 @@ $ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-
 - golint https://github.com/golang/lint
 
 ````bash
-$ go get https://github.com/quii/mockingjay-server.git
+$ go get github.com/quii/mockingjay-server
 $ cd $GOPATH/src/github.com/quii/mockingjay-server
 $ ./build.sh
 ````
