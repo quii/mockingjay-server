@@ -21,6 +21,18 @@ func TestItMatchesBodiesAsStrings(t *testing.T) {
 	}
 }
 
+func TestItFailsIncompatibleStrings(t *testing.T) {
+	body := "Chris"
+	downstreamBody := "Pixies"
+	realServer := makeFakeDownstreamServer(downstreamBody, noSleep)
+	checker := NewCompatabilityChecker()
+	endpoints := makeEndpoints(body)
+
+	if checker.CheckCompatability(endpoints, realServer.URL) {
+		t.Error("Checker should've found this endpoint to be incompatible")
+	}
+}
+
 func TestItChecksAValidEndpointsJSON(t *testing.T) {
 	body := `{"foo":"bar"}`
 	realServer := makeFakeDownstreamServer(body, noSleep)
