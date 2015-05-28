@@ -9,6 +9,18 @@ import (
 	"time"
 )
 
+func TestItMatchesBodiesAsStrings(t *testing.T) {
+	body := "Chris"
+	downstreamBody := "Christopher"
+	realServer := makeFakeDownstreamServer(downstreamBody, noSleep)
+	checker := NewCompatabilityChecker()
+	endpoints := makeEndpoints(body)
+
+	if !checker.CheckCompatability(endpoints, realServer.URL) {
+		t.Error("Checker should've found this endpoint to be correct")
+	}
+}
+
 func TestItChecksAValidEndpointsJSON(t *testing.T) {
 	body := `{"foo":"bar"}`
 	realServer := makeFakeDownstreamServer(body, noSleep)
@@ -141,6 +153,7 @@ func TestWhitespaceSensitivity(t *testing.T) {
 	}
 }
 
+// this is panicing in goconvey?
 func TestErrorReportingOfEmptyJSONArrays(t *testing.T) {
 	y := `
 ---

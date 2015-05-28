@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -104,9 +105,10 @@ func checkBody(downstreamBody string, expectedBody string) (bool, error) {
 		return true, nil
 	}
 
-	if downstreamBody != expectedBody {
+	if !strings.Contains(downstreamBody, expectedBody) {
 		return false, nil
 	}
+
 	return true, nil
 }
 
