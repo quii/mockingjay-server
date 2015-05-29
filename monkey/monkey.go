@@ -2,7 +2,6 @@
 package monkey
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -22,7 +21,7 @@ func NewServerFromYAML(server http.Handler, YAML []byte) (http.Handler, error) {
 	behaviours, err := monkeyConfigFromYAML(YAML)
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Problem occured when trying to parse the config file: %v", err))
+		return nil, fmt.Errorf("Problem occured when trying to parse the config file: %v", err)
 	}
 
 	log.Println("Monkey config loaded")
@@ -42,7 +41,7 @@ func NewServer(server http.Handler, configPath string) (http.Handler, error) {
 	data, err := ioutil.ReadFile(configPath)
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Problem occured when trying to read the config file: %v", err))
+		return nil, fmt.Errorf("Problem occured when trying to read the config file: %v", err)
 	}
 
 	return NewServerFromYAML(server, data)

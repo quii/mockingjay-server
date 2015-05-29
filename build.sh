@@ -1,6 +1,6 @@
 #!/bin/bash
 
-golint .
+golint ./...
 godep go vet ./...
 godep go test ./...  -cover
 # go tool cover -html=coverage.out
