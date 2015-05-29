@@ -26,7 +26,7 @@ func NewServer(endpoints []FakeEndpoint) *Server {
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if r.RequestURI == "/requests" {
-		s.returnRequests(w)
+		s.listAvailableRequests(w)
 	} else {
 		s.requests = append(s.requests, *r)
 		cannedResponse := s.getResponse(r)
@@ -38,7 +38,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) returnRequests(w http.ResponseWriter) {
+func (s *Server) listAvailableRequests(w http.ResponseWriter) {
 	payload, err := json.Marshal(s.requests)
 
 	if err != nil {

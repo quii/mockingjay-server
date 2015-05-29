@@ -30,21 +30,21 @@ func (f *FakeEndpoint) String() string {
 const fakeEndpointStringerFormat = "%s (%s)"
 
 // NewFakeEndpoints returns an array of Endpoints from a YAML byte array. Returns an error if YAML cannot be parsed
-func NewFakeEndpoints(data []byte) ([]FakeEndpoint, error) {
-	var endpoints []FakeEndpoint
-	err := yaml.Unmarshal(data, &endpoints)
+func NewFakeEndpoints(data []byte) (endpoints []FakeEndpoint, err error) {
+	err = yaml.Unmarshal(data, &endpoints)
 
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	for _, endPoint := range endpoints {
 		if !endPoint.isValid() {
-			return nil, errors.New("config YAML structure is invalid")
+			err = errors.New("config YAML structure is invalid")
+			return
 		}
 	}
 
-	return endpoints, nil
+	return
 }
 
 func (f FakeEndpoint) isValid() bool {
