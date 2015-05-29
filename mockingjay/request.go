@@ -1,9 +1,11 @@
 package mockingjay
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"net/http"
-	"strings"
+	"net/url"
 )
 
 type request struct {
@@ -18,22 +20,33 @@ func (r request) isValid() bool {
 }
 
 // AsHTTPRequest tries to create a http.Request from a given baseURL
-func (r request) AsHTTPRequest(baseURL string) (*http.Request, error) {
+func (r request) AsHTTPRequest(baseURL string) (req *http.Request, err error) {
 
-	var body *strings.Reader
-	if r.Body != "" {
-		body = strings.NewReader(r.Body)
-	} else {
-		body = strings.NewReader("")
+	urlParsed, err := url.Parse(baseURL)
+
+	if err != nil {
+		return
 	}
 
-	request, err := http.NewRequest(r.Method, baseURL+r.URI, body)
+	req, err = http.NewRequest(r.Method, baseURL, nil)
+
+	if err != nil {
+		return
+	}
+
+	req.URL = &url.URL{
+		Scheme: urlParsed.Scheme,
+		Host:   urlParsed.Host,
+		Opaque: fmt.Sprintf("//%s%s", urlParsed.Host, r.URI),
+	}
+
+	req.Body = nopCloser{bytes.NewBufferString(r.Body)}
 
 	for headerName, headerValue := range r.Headers {
-		request.Header.Add(headerName, headerValue)
+		req.Header.Add(headerName, headerValue)
 	}
 
-	return request, err
+	return
 }
 
 const stringerFormat = "%s %s"
@@ -41,3 +54,9 @@ const stringerFormat = "%s %s"
 func (r request) String() string {
 	return fmt.Sprintf(stringerFormat, r.Method, r.URI)
 }
+
+type nopCloser struct {
+	io.Reader
+}
+
+func (nopCloser) Close() error { return nil }

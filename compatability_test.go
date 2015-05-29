@@ -177,9 +177,14 @@ func TestErrorReportingOfEmptyJSONArrays(t *testing.T) {
   response:
     code: 200
     body: '{"stuff": [{"foo":"bar"}]}'
-    `
+`
 
-	fakeEndPoints, _ := mockingjay.NewFakeEndpoints([]byte(y))
+	fakeEndPoints, err := mockingjay.NewFakeEndpoints([]byte(y))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	checker := NewCompatabilityChecker()
 	realServer := makeFakeDownstreamServer(`{"stuff":[]}`, noSleep)
 
