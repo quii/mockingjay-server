@@ -122,7 +122,7 @@ func TestItDoesContentNegotiation(t *testing.T) {
 	server.ServeHTTP(responseReader, requestWithDifferentCasedHeader)
 
 	if responseReader.Code != http.StatusCreated {
-		t.Errorf("Expected request to match even though the header name was differently cased : \n%s", responseReader.Code)
+		t.Errorf("Expected request to match even though the header name was differently cased : \n%d", responseReader.Code)
 	}
 }
 
