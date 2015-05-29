@@ -1,0 +1,24 @@
+---
+ - name: Some article on link.springer.com should have a title
+   request:
+     uri: /article/10.1007/s12239-015-0085-3
+     method: GET
+   response:
+     code: 200
+     body: '<h1 id="title" itemprop="headline">Optimizing the performance of vehicle-to-grid (V2G) enabled battery electric vehicles through a smart charge scheduling model'
+
+ # - name: Some article on content api should have a download pdf link
+ #   request:
+ #     uri: /article/10.1007/s12239-015-0085-3
+ #     method: GET
+ #   response:
+ #     code: 200
+ #     body: 'abstract-actions-download-article-pdf-link'
+
+ # - name: Some article on content api should references
+ #   request:
+ #     uri: /article/10.1007/s12239-015-0085-3
+ #     method: GET
+ #   response:
+ #     code: 200
+ #     body: 'References (29)'

@@ -3,8 +3,10 @@
    request:
      uri: /document/10.1007%2Fs00414-006-0114-x
      method: GET
+     headers:
+       cONtent-type: text/xml
    response:
      code: 200
      body: '<Publisher><meta:Info xmlns:meta="http://www.springer.com/app/meta"><meta:Date>2006-09-01</meta:Date></meta:Info></Publisher>'
      headers:
-       content-type: text/json
+       content-type: text/xml

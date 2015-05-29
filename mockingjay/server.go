@@ -80,7 +80,7 @@ func (s *Server) getResponse(r *http.Request) *response {
 func requestMatches(a request, b *http.Request, receivedBody string) bool {
 
 	for key, value := range a.Headers {
-		if b.Header[key] == nil || strings.ToLower(b.Header.Get(key)) != strings.ToLower(value) {
+		if b.Header.Get(key) != value {
 			return false
 		}
 	}

@@ -1,8 +1,8 @@
 package mockingjay
 
 import (
+	"strings"
 	"testing"
-    "strings"
 )
 
 const testYAML = `
@@ -63,7 +63,7 @@ func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 	}
 
 	if firstEndpoint.Response.Headers["content-type"] != "text/json" {
-		t.Errorf("Response headers were not parsed, got %s", firstEndpoint.Response.Headers["Content-Type"])
+		t.Errorf("Response headers were not parsed, got %s", firstEndpoint.Response.Headers)
 	}
 
 	if firstEndpoint.Request.Method != "GET" {
@@ -78,7 +78,7 @@ func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 		t.Errorf("Response body was not properly set got [%s]", firstEndpoint.Response.Body)
 	}
 
-    endpoint2 := endpoints[1]
+	endpoint2 := endpoints[1]
 
 	if endpoint2.Request.Method != "DELETE" {
 		t.Error("Request method for second fake was not properly set")
@@ -100,14 +100,13 @@ func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 func TestItReturnsAnErrorWhenNotValidYAML(t *testing.T) {
 	_, err := NewFakeEndpoints([]byte("not real YAML"))
 
+	if err == nil {
+		t.Error("Expected an error to be returned because the YAML is bad")
+	}
 
-    if err == nil {
-        t.Error("Expected an error to be returned because the YAML is bad")
-    }
-
-    if !strings.HasPrefix(err.Error(), "yaml: unmarshal errors:") {
-        t.Errorf("Expected unmarshal error actual: %v", err.Error())
-    }
+	if !strings.HasPrefix(err.Error(), "yaml: unmarshal errors:") {
+		t.Errorf("Expected unmarshal error actual: %v", err.Error())
+	}
 
 }
 
@@ -130,14 +129,14 @@ const badYAML = `
  `
 
 func TestItReturnsAnErrorWhenStructureOfYAMLIsWrong(t *testing.T) {
-    _, err := NewFakeEndpoints([]byte(badYAML))
-    if err == nil {
-        t.Error("Expected an error to be returned because the YAML is bad")
-    }
+	_, err := NewFakeEndpoints([]byte(badYAML))
+	if err == nil {
+		t.Error("Expected an error to be returned because the YAML is bad")
+	}
 
-    if err.Error() !=  "config YAML structure is invalid" {
-        t.Errorf("Expected YAML was invalid error actual: %v", err.Error())
-    }
+	if err.Error() != "config YAML structure is invalid" {
+		t.Errorf("Expected YAML was invalid error actual: %v", err.Error())
+	}
 }
 
 const incompleteYAML = `
@@ -156,9 +155,8 @@ func TestItReturnsAnErrorWhenYAMLIsIncomplete(t *testing.T) {
 		t.Error("Expected an error to be returned because the YAML has missing fields")
 	}
 
-    if err.Error() !=  "config YAML structure is invalid" {
-        t.Errorf("Expected YAML was incomplete error actual: %v", err.Error())
-    }
-
+	if err.Error() != "config YAML structure is invalid" {
+		t.Errorf("Expected YAML was incomplete error actual: %v", err.Error())
+	}
 
 }
