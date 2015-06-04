@@ -74,7 +74,7 @@ func (s *Server) getResponse(r *http.Request) *response {
 		}
 	}
 
-	return newNotFound(r.Method, r.URL.String(), requestBody, requestHeaders, s.endpoints)
+	return newNotFound(r.Method, r.URL.RequestURI(), requestBody, requestHeaders, s.endpoints)
 }
 
 func requestMatches(a request, b *http.Request, receivedBody string) bool {
@@ -86,7 +86,7 @@ func requestMatches(a request, b *http.Request, receivedBody string) bool {
 	}
 
 	aURL, err := url.QueryUnescape(a.URI)
-	bURL, err := url.QueryUnescape(b.URL.String())
+	bURL, err := url.QueryUnescape(b.URL.RequestURI())
 
 	if err != nil {
 		log.Fatalf("Unescaping the query string failed horribly, crashing and burning %v", err)

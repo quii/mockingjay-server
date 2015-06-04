@@ -19,7 +19,7 @@ const yaml = `
     body: '{"token": "1234abc"}'
 `
 
-func IgnoreTestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {
+func TestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {
 	endpoints, err := mockingjay.NewFakeEndpoints([]byte(yaml))
 
 	if err != nil {
@@ -29,11 +29,11 @@ func IgnoreTestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {
 
 	server := mockingjay.NewServer(endpoints)
 	http.Handle("/", server)
-	go http.ListenAndServe(":9092", nil)
+	go http.ListenAndServe(":9094", nil)
 
 	checker := NewCompatabilityChecker()
 
-	if !checker.CheckCompatability(endpoints, "http://localhost:9092") {
+	if !checker.CheckCompatability(endpoints, "http://localhost:9094") {
 		t.Log("Endpoints were not seen as compatible and they should've been.")
 		t.Fail()
 	}
