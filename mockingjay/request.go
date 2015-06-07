@@ -22,7 +22,7 @@ func (r request) isValid() bool {
 // AsHTTPRequest tries to create a http.Request from a given baseURL
 func (r request) AsHTTPRequest(baseURL string) (req *http.Request, err error) {
 
-	req, err = http.NewRequest(r.Method, baseURL, nil)
+	req, err = http.NewRequest(r.Method, baseURL, ioutil.NopCloser(bytes.NewBufferString(r.Body)))
 
 	if err != nil {
 		return
@@ -33,8 +33,6 @@ func (r request) AsHTTPRequest(baseURL string) (req *http.Request, err error) {
 		Host:   req.URL.Host,
 		Opaque: fmt.Sprintf("//%s%s", req.URL.Host, r.URI),
 	}
-
-	req.Body = ioutil.NopCloser(bytes.NewBufferString(r.Body))
 
 	for headerName, headerValue := range r.Headers {
 		req.Header.Add(headerName, headerValue)
