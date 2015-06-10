@@ -9,6 +9,45 @@ import (
 	"time"
 )
 
+func TestItMatchesHeaders(t *testing.T) {
+	yaml := `
+---
+ - name: Endpoint with response headers
+   request:
+     uri: /hello
+     method: GET
+   response:
+     code: 200
+     body: 'ok'
+     headers:
+       content-type: text/json
+`
+	checker := NewCompatabilityChecker()
+
+	endpoints, err := mockingjay.NewFakeEndpoints([]byte(yaml))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	realServerWithoutHeaders := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "ok")
+	}))
+
+	realServerWithHeaders := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-TYPE", "text/json")
+		fmt.Fprint(w, "ok")
+	}))
+
+	if checker.CheckCompatability(endpoints, realServerWithoutHeaders.URL) {
+		t.Error("Checker should've found downstream server to be incompatible as it did not include the response headers we expected")
+	}
+
+	if !checker.CheckCompatability(endpoints, realServerWithHeaders.URL) {
+		t.Error("Checker shouldve found downstream server to be compatible")
+	}
+}
+
 func TestItMatchesBodiesAsStrings(t *testing.T) {
 	body := "Chris"
 	downstreamBody := "Christopher"

@@ -89,7 +89,22 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 		return fmt.Sprintf("✗ %s - Body [%s] was not compatible with config body [%s]", errorMsg, string(body), endpoint.Response.Body), false
 	}
 
+	missingHeaders := findMissingHeaders(endpoint.Response.Headers, response)
+	if len(missingHeaders) > 0 {
+		return fmt.Sprintf("%s Some headers were missing from the downstream server %v", errorMsg, missingHeaders), false
+	}
+
 	return fmt.Sprintf("✔ %s", endpoint), true
+}
+
+func findMissingHeaders(expectedHeaders map[string]string, response *http.Response) (missing []string) {
+	for name, value := range expectedHeaders {
+		actualResponseHeader := response.Header.Get(name)
+		if actualResponseHeader == "" || actualResponseHeader != value {
+			missing = append(missing, name)
+		}
+	}
+	return
 }
 
 func checkBody(downstreamBody string, expectedBody string) (bool, error) {
