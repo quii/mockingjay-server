@@ -1,0 +1,10 @@
+---
+ - name: Endpoint with response headers
+   request:
+     uri: /hello
+     method: GET
+   response:
+     code: 200
+     body: '{"message": "hello, world"}'
+     headers:
+       content-type: text/json

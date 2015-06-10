@@ -1,0 +1,8 @@
+---
+ - name: Real endpoint without response header
+   request:
+     uri: /hello
+     method: GET
+   response:
+     code: 200
+     body: '{"message": "hello, world"}'
