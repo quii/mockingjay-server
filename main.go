@@ -10,15 +10,11 @@ import (
 func main() {
 
 	envPort := 9090
-	envPortRaw := os.Getenv("PORT")
-	if envPortRaw != "" {
-		i, err := strconv.Atoi(envPortRaw)
 
-		if err != nil {
-			log.Println("Your PORT environment variable isn't an int, defaulting to 9090")
-		} else {
-			envPort = i
-		}
+	if i, err := strconv.Atoi(os.Getenv("PORT")); err == nil {
+		envPort = i
+	} else {
+		log.Println("Your PORT environment variable isn't an int, defaulting to 9090")
 	}
 
 	var port = flag.Int("port", envPort, "Port to listen on")
