@@ -69,7 +69,11 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 	}
 
 	if response.StatusCode != endpoint.Response.Code {
-		return fmt.Sprintf("%s - Got %d expected %d (%s)", errorMsg, response.StatusCode, endpoint.Response.Code, request.URL), false
+		body, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			body = []byte(fmt.Sprintf("Problem reading response body %v", err))
+		}
+		return fmt.Sprintf("%s - Got %d expected %d (%s)\n%s", errorMsg, response.StatusCode, endpoint.Response.Code, request.URL, body), false
 	}
 
 	defer response.Body.Close()

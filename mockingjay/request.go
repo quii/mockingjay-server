@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
+	// "net/url"
 )
 
 type request struct {
@@ -22,16 +22,10 @@ func (r request) isValid() bool {
 // AsHTTPRequest tries to create a http.Request from a given baseURL
 func (r request) AsHTTPRequest(baseURL string) (req *http.Request, err error) {
 
-	req, err = http.NewRequest(r.Method, baseURL, ioutil.NopCloser(bytes.NewBufferString(r.Body)))
+	req, err = http.NewRequest(r.Method, baseURL+r.URI, ioutil.NopCloser(bytes.NewBufferString(r.Body)))
 
 	if err != nil {
 		return
-	}
-
-	req.URL = &url.URL{
-		Scheme: req.URL.Scheme,
-		Host:   req.URL.Host,
-		Opaque: fmt.Sprintf("//%s%s", req.URL.Host, r.URI),
 	}
 
 	for headerName, headerValue := range r.Headers {

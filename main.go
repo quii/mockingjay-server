@@ -13,8 +13,6 @@ func main() {
 
 	if i, err := strconv.Atoi(os.Getenv("PORT")); err == nil {
 		envPort = i
-	} else {
-		log.Println("Your PORT environment variable isn't an int, defaulting to 9090")
 	}
 
 	var port = flag.Int("port", envPort, "Port to listen on")
