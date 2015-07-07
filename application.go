@@ -25,15 +25,17 @@ type application struct {
 	compatabilityChecker  compatabilityChecker
 	mockingjayServerMaker serverMaker
 	monkeyServerMaker     monkeyServerMaker
+	logger                *log.Logger
 }
 
-func defaultApplication() *application {
+func defaultApplication(logger *log.Logger) *application {
 	app := new(application)
 	app.configLoader = ioutil.ReadFile
 	app.mockingjayLoader = mockingjay.NewFakeEndpoints
 	app.compatabilityChecker = NewCompatabilityChecker()
 	app.mockingjayServerMaker = mockingjay.NewServer
 	app.monkeyServerMaker = monkey.NewServer
+	app.logger = logger
 
 	return app
 }
@@ -54,9 +56,9 @@ func (a *application) Run(configPath string, port int, realURL string, monkeyCon
 
 	if realURL != "" {
 		if a.compatabilityChecker.CheckCompatability(endpoints, realURL) {
-			log.Println("All endpoints are compatible")
+			a.logger.Println("All endpoints are compatible")
 		} else {
-			log.Fatal("At least one endpoint was incompatible with the real URL supplied")
+			a.logger.Fatal("At least one endpoint was incompatible with the real URL supplied")
 		}
 	} else {
 		server := a.mockingjayServerMaker(endpoints)
@@ -67,7 +69,7 @@ func (a *application) Run(configPath string, port int, realURL string, monkeyCon
 		}
 
 		http.Handle("/", monkeyServer)
-		log.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), configPath, port)
+		a.logger.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), configPath, port)
 		err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 		if err != nil {
 			return fmt.Errorf("There was a problem starting the mockingjay server on port %d: %v", port, err)

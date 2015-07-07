@@ -7,6 +7,12 @@ import (
 	"strconv"
 )
 
+var logger *log.Logger
+
+func init() {
+	logger = log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime)
+}
+
 func main() {
 
 	envPort := 9090
@@ -27,7 +33,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	app := defaultApplication()
+	app := defaultApplication(logger)
 
 	err := app.Run(*configPath, *port, *realURL, *monkeyConfigPath)
 
