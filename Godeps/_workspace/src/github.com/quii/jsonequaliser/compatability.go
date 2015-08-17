@@ -11,12 +11,26 @@ func IsCompatible(a, b string) (compatible bool, err error) {
 
 	aMap := make(map[string]interface{})
 	if err = json.Unmarshal([]byte(a), &aMap); err != nil {
-		return
+
+		//todo: Fix repetition here
+
+		// Could be a top level array, in which case lets take the first item from it
+		var anArr []map[string]interface{}
+		if err = json.Unmarshal([]byte(a), &anArr); err != nil {
+			return
+		}
+		aMap = anArr[0]
 	}
 
 	bMap := make(map[string]interface{})
 	if err = json.Unmarshal([]byte(b), &bMap); err != nil {
-		return
+
+		// Could be a top level array, in which case lets take the first item from it
+		var anArr []map[string]interface{}
+		if err = json.Unmarshal([]byte(a), &anArr); err != nil {
+			return
+		}
+		bMap = anArr[0]
 	}
 
 	return isStructurallyTheSame(aMap, bMap)
