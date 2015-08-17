@@ -5,6 +5,16 @@ import (
 	"testing"
 )
 
+func TestItWithSomethingRealish(t *testing.T) {
+	A := `[{"MaterialID":"1234","ContentDate":{"From":"2005-04-20","To":"2015-12-01"},"AccessDate":{"From":"1987-04-20","To":"1990-12-01"}}]`
+	B := `[{"MaterialID":"1234","ContentDate":{"From":"2005-04-20","To":"2015-12-01"},"AccessDate":{"From":"1987-04-20","To":"1990-12-01"}}]`
+
+	if compat, err := IsCompatible(A, B); !compat {
+		t.Log("Err", err)
+		t.Error("NOT COMPATIBLE")
+	}
+}
+
 func ExampleIsCompatible() {
 	A := `[{"firstname": "chris", "lastname": "james", "age": 30}]`
 	B := `[{"firstname": "Bob", "lastname": "Smith", "age": 25, "favourite-colour": "blue"}]`
