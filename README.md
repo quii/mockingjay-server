@@ -102,3 +102,5 @@ $ go get github.com/quii/mockingjay-server
 $ cd $GOPATH/src/github.com/quii/mockingjay-server
 $ ./build.sh
 ````
+
+MIT license
