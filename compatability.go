@@ -68,6 +68,8 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 		return fmt.Sprintf("✗ %s - Couldn't reach real server", errorMsg), false
 	}
 
+        defer response.Body.Close()
+
 	if response.StatusCode != endpoint.Response.Code {
 		body, err := ioutil.ReadAll(response.Body)
 		if err != nil {
@@ -76,7 +78,6 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 		return fmt.Sprintf("%s - Got %d expected %d (%s)\n%s", errorMsg, response.StatusCode, endpoint.Response.Code, request.URL, body), false
 	}
 
-	defer response.Body.Close()
 	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
