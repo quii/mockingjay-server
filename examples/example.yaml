@@ -25,3 +25,13 @@
    response:
      code: 500
      body: Oh bugger
+
+ - name: Endpoint not used for CDC
+   cdcdisabled: true
+   request:
+     uri: /burp
+     method: POST
+     body: Belch
+   response:
+     code: 500
+     body: Oh no

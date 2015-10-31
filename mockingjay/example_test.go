@@ -11,6 +11,7 @@ func ExampleNewServer() {
 	testYAML := `
 ---
  - name: Test endpoint
+   doCDC: true
    request:
      uri: /hello
      method: GET

@@ -18,9 +18,10 @@ func (r response) isValid() bool {
 
 // FakeEndpoint represents the information required to listen to a particular request and respond to it
 type FakeEndpoint struct {
-	Name     string
-	Request  request
-	Response response
+	Name        string //A description of what this endpoint is.
+	CDCDisabled bool   // When set to true it will not be included in the consumer driven contract tests against real server
+	Request     request
+	Response    response
 }
 
 func (f *FakeEndpoint) String() string {

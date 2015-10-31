@@ -35,6 +35,13 @@ func (c *CompatabilityChecker) CheckCompatability(endpoints []mockingjay.FakeEnd
 	results := make(chan bool, numberOfEndpoints)
 
 	for _, endpoint := range endpoints {
+
+		if endpoint.CDCDisabled {
+			log.Println("IGNORED", endpoint.Name)
+			results <- true
+			continue
+		}
+
 		go func(ep mockingjay.FakeEndpoint) {
 			msg, compatible := c.check(&ep, realURL)
 			log.Println(msg)
@@ -68,7 +75,7 @@ func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 		return fmt.Sprintf("✗ %s - Couldn't reach real server", errorMsg), false
 	}
 
-        defer response.Body.Close()
+	defer response.Body.Close()
 
 	if response.StatusCode != endpoint.Response.Code {
 		body, err := ioutil.ReadAll(response.Body)

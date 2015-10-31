@@ -21,6 +21,7 @@ const testYAML = `
        content-type: text/json
 
  - name: Test endpoint 2
+   cdcdisabled: true
    request:
      uri: /world
      method: DELETE
@@ -78,6 +79,10 @@ func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 		t.Errorf("Response body was not properly set got [%s]", firstEndpoint.Response.Body)
 	}
 
+	if firstEndpoint.CDCDisabled {
+		t.Error("First endpoint doesnt define cdc preference so it should be enabled by default")
+	}
+
 	endpoint2 := endpoints[1]
 
 	if endpoint2.Request.Method != "DELETE" {
@@ -94,6 +99,10 @@ func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 
 	if endpoints[2].Request.Body != "Greetings" {
 		t.Errorf("Request body for third fake was not properly set, got [%s]", endpoints[2].Request.Body)
+	}
+
+	if !endpoint2.CDCDisabled {
+		t.Error("Second endpoint should have CDC disabled")
 	}
 }
 

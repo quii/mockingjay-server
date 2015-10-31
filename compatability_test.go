@@ -13,6 +13,29 @@ var (
 	checker = NewCompatabilityChecker()
 )
 
+func TestItIgnoresEndpointsNotSetToCDC(t *testing.T) {
+	yaml := `
+---
+ - name: Endpoint doesnt matter so much as its ignored
+   cdcdisabled: true
+   request:
+     uri: /hello
+     method: GET
+   response:
+     code: 200
+     body: 'ok'
+`
+	endpoints, _ := mockingjay.NewFakeEndpoints([]byte(yaml))
+
+	realServerThatsNotCompatible := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, ":(")
+	}))
+
+	if !checker.CheckCompatability(endpoints, realServerThatsNotCompatible.URL) {
+		t.Error(`Checker shouldve found downstream server to be "compatible" as the endpoint is ignored`)
+	}
+}
+
 func TestItMatchesHeaders(t *testing.T) {
 	yaml := `
 ---
