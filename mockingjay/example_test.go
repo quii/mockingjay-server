@@ -11,7 +11,6 @@ func ExampleNewServer() {
 	testYAML := `
 ---
  - name: Test endpoint
-   doCDC: true
    request:
      uri: /hello
      method: GET
@@ -40,6 +39,16 @@ func ExampleNewServer() {
    response:
      code: 500
      body: Oh bugger
+
+ - name: Endpoint not used for CDC
+   cdcdisabled: true
+   request:
+     uri: /burp
+     method: POST
+     body: Belch
+   response:
+     code: 500
+     body: Oh no
  `
 
 	endpoints, _ := NewFakeEndpoints([]byte(testYAML))
