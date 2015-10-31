@@ -28,8 +28,8 @@ type application struct {
 	logger                *log.Logger
 }
 
-func defaultApplication(logger *log.Logger) *application {
-	app := new(application)
+func defaultApplication(logger *log.Logger) (app *application) {
+	app = new(application)
 	app.configLoader = ioutil.ReadFile
 	app.mockingjayLoader = mockingjay.NewFakeEndpoints
 	app.compatabilityChecker = NewCompatabilityChecker()
@@ -37,7 +37,7 @@ func defaultApplication(logger *log.Logger) *application {
 	app.monkeyServerMaker = monkey.NewServer
 	app.logger = logger
 
-	return app
+	return
 }
 
 // Run will create a fake server from the configuration found in configPath with optional performance constraints from configutation found in monkeyConfigPath. If the realURL is supplied then it will not launch as a server and instead will check the config against the URL to see if it is structurally compatible (CDC mode)
