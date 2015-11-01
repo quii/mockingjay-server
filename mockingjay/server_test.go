@@ -24,7 +24,7 @@ func TestItReturnsCannedResponses(t *testing.T) {
 	endpoint := FakeEndpoint{
 		Name:        "Fake 1",
 		CDCDisabled: cdcDisabled,
-		Request: request{
+		Request: Request{
 			URI:     testURL,
 			Method:  "GET",
 			Headers: nil,
@@ -39,7 +39,7 @@ func TestItReturnsCannedResponses(t *testing.T) {
 	secondEndpoint := FakeEndpoint{
 		Name:        "Fake 2",
 		CDCDisabled: cdcDisabled,
-		Request: request{
+		Request: Request{
 			URI:     testURL2,
 			Method:  "GET",
 			Headers: nil,
@@ -60,7 +60,7 @@ func TestItReturnsCannedResponses(t *testing.T) {
 	server.ServeHTTP(responseReader, request)
 
 	if responseReader.Code != http.StatusCreated {
-		t.Error("Expected a 201 (status created)")
+		t.Fatal("Expected a 201 (status created) but got", responseReader.Code)
 	}
 
 	if responseReader.Body.String() != cannedResponse {
@@ -82,7 +82,7 @@ func TestItReturnsCannedResponses(t *testing.T) {
 }
 
 func TestItReturns404WhenUriIsWrong(t *testing.T) {
-	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, request{testURL, "GET", nil, ""}, response{http.StatusCreated, cannedResponse, nil}}
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "GET", nil, ""}, response{http.StatusCreated, cannedResponse, nil}}
 	server := NewServer([]FakeEndpoint{endpoint})
 	requestBody := "some body"
 
@@ -101,7 +101,7 @@ func TestItReturns404WhenUriIsWrong(t *testing.T) {
 }
 
 func TestItReturns404WhenMethodIsWrong(t *testing.T) {
-	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, request{testURL, "GET", nil, ""}, response{http.StatusCreated, cannedResponse, nil}}
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "GET", nil, ""}, response{http.StatusCreated, cannedResponse, nil}}
 	server := NewServer([]FakeEndpoint{endpoint})
 
 	request, _ := http.NewRequest("POST", "/hello", nil)
@@ -125,7 +125,7 @@ func TestItDoesContentNegotiation(t *testing.T) {
 	contentTypes := make(map[string]string)
 	contentTypes["Content-Type"] = "application/json"
 
-	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, request{testURL, "GET", contentTypes, ""}, response{http.StatusCreated, cannedResponse, nil}}
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "GET", contentTypes, ""}, response{http.StatusCreated, cannedResponse, nil}}
 	server := NewServer([]FakeEndpoint{endpoint})
 
 	requestWithIncorrectHeaderValue, _ := http.NewRequest("GET", testURL, nil)
@@ -162,7 +162,7 @@ func TestItSendsRequestBodies(t *testing.T) {
 	body := "some body"
 	expectedStatus := http.StatusInternalServerError
 
-	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, request{testURL, "POST", nil, body}, response{expectedStatus, "", nil}}
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "POST", nil, body}, response{expectedStatus, "", nil}}
 	server := NewServer([]FakeEndpoint{endpoint})
 
 	requestWithoutBody, _ := http.NewRequest("POST", testURL, nil)
@@ -188,7 +188,7 @@ func TestItMatchesWildcardBodies(t *testing.T) {
 	wildcardBody := "*"
 	expectedStatus := http.StatusOK
 
-	config := FakeEndpoint{testEndpointName, cdcDisabled, request{testURL, "POST", nil, wildcardBody}, response{expectedStatus, "", nil}}
+	config := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "POST", nil, wildcardBody}, response{expectedStatus, "", nil}}
 	server := NewServer([]FakeEndpoint{config})
 
 	requestWithDifferentBody, _ := http.NewRequest("POST", testURL, strings.NewReader("This body isnt what we said but it should match"))
@@ -205,7 +205,7 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 	wildcardBody := "*"
 	expectedStatus := http.StatusOK
 
-	config := FakeEndpoint{testEndpointName, cdcDisabled, request{testURL, "POST", nil, wildcardBody}, response{expectedStatus, "", nil}}
+	config := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "POST", nil, wildcardBody}, response{expectedStatus, "", nil}}
 	server := NewServer([]FakeEndpoint{config})
 
 	requestWithDifferentBody, _ := http.NewRequest("POST", testURL, strings.NewReader("This body isnt what we said but it should match"))
@@ -226,7 +226,7 @@ func TestItRespectsURLencoding(t *testing.T) {
 	escapedURL := "/document/10.1007%2Fs00414-006-0114-x"
 	body := "some body"
 	expectedStatus := http.StatusOK
-	config := FakeEndpoint{testEndpointName, cdcDisabled, request{escapedURL, "POST", nil, body}, response{expectedStatus, "", nil}}
+	config := FakeEndpoint{testEndpointName, cdcDisabled, Request{escapedURL, "POST", nil, body}, response{expectedStatus, "", nil}}
 	server := NewServer([]FakeEndpoint{config})
 
 	request, _ := http.NewRequest("POST", escapedURL, strings.NewReader(body))

@@ -2,24 +2,22 @@ package mockingjay
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
-	"strings"
+	"reflect"
 )
 
 // Server allows you to configure a request and a corresponding response. It implements http.ServeHTTP so you can bind it to a port.
 type Server struct {
 	endpoints []FakeEndpoint
-	requests  []http.Request
+	requests  []Request
 }
 
 // NewServer creates a new Server instance
 func NewServer(endpoints []FakeEndpoint) *Server {
 	s := new(Server)
 	s.endpoints = endpoints
-	s.requests = make([]http.Request, 0)
+	s.requests = make([]Request, 0)
 	return s
 }
 
@@ -28,8 +26,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.RequestURI == "/requests" {
 		s.listAvailableRequests(w)
 	} else {
-		s.requests = append(s.requests, *r)
-		cannedResponse := s.getResponse(r)
+		mjRequest := NewRequest(r)
+		s.requests = append(s.requests, mjRequest)
+		cannedResponse := s.getResponse(mjRequest)
 		for name, value := range cannedResponse.Headers {
 			w.Header().Set(name, value)
 		}
@@ -42,6 +41,7 @@ func (s *Server) listAvailableRequests(w http.ResponseWriter) {
 	payload, err := json.Marshal(s.requests)
 
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
 		w.WriteHeader(http.StatusOK)
@@ -49,52 +49,23 @@ func (s *Server) listAvailableRequests(w http.ResponseWriter) {
 	}
 }
 
-func (s *Server) getResponse(r *http.Request) *response {
-
-	requestHeaders := make(map[string]string)
-	for key, val := range r.Header {
-		requestHeaders[key] = strings.Join(val, ",")
-	}
-
-	requestBody := ""
-
-	if r.Body != nil {
-		body, err := ioutil.ReadAll(r.Body)
-
-		if err != nil {
-			return newNotFound(r.Method, r.URL.String(), "", requestHeaders, s.endpoints)
-		}
-
-		requestBody = string(body)
-	}
+func (s *Server) getResponse(r Request) *response {
 
 	for _, endpoint := range s.endpoints {
-		if requestMatches(endpoint.Request, r, requestBody) {
+		if requestMatches(endpoint.Request, r) {
 			return &endpoint.Response
 		}
 	}
 
-	return newNotFound(r.Method, r.URL.RequestURI(), requestBody, requestHeaders, s.endpoints)
+	return newNotFound(r.Method, r.URI, r.Body, r.Headers, s.endpoints)
 }
 
-func requestMatches(a request, b *http.Request, receivedBody string) bool {
+func requestMatches(a Request, b Request) bool {
 
-	for key, value := range a.Headers {
-		if b.Header.Get(key) != value {
-			return false
-		}
-	}
-
-	aURL, err := url.QueryUnescape(a.URI)
-	bURL, err := url.QueryUnescape(b.URL.RequestURI())
-
-	if err != nil {
-		log.Fatalf("Unescaping the query string failed horribly, crashing and burning %v", err)
-	}
-
-	bodyOk := a.Body == "*" || receivedBody == a.Body
-	urlOk := aURL == bURL
+	headersOk := !(a.Headers != nil && !reflect.DeepEqual(a.Headers, b.Headers))
+	bodyOk := a.Body == "*" || a.Body == b.Body
+	urlOk := a.URI == b.URI
 	methodOk := a.Method == b.Method
 
-	return bodyOk && urlOk && methodOk
+	return bodyOk && urlOk && methodOk && headersOk
 }

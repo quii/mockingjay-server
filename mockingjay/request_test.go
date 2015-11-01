@@ -13,7 +13,7 @@ func TestItCreatesHTTPRequests(t *testing.T) {
 	body := "Body body body"
 	baseURL := "http://localhost:1234"
 
-	mockingJayRequest := request{uri, method, headers, body}
+	mockingJayRequest := Request{uri, method, headers, body}
 
 	httpRequest, _ := mockingJayRequest.AsHTTPRequest(baseURL)
 
@@ -37,19 +37,19 @@ func TestItCreatesHTTPRequests(t *testing.T) {
 }
 
 func TestItValidatesRequests(t *testing.T) {
-	noURIRequest := request{"", "POST", nil, ""}
+	noURIRequest := Request{"", "POST", nil, ""}
 
 	if noURIRequest.isValid() {
 		t.Error("A request without a URI is seen as valid")
 	}
 
-	noMethodRequest := request{"/", "", nil, ""}
+	noMethodRequest := Request{"/", "", nil, ""}
 
 	if noMethodRequest.isValid() {
 		t.Error("A request without a method is seen as valid")
 	}
 
-	validRequest := request{"/", "POST", nil, ""}
+	validRequest := Request{"/", "POST", nil, ""}
 
 	if !validRequest.isValid() {
 		t.Error("A valid request is seen as not valid")

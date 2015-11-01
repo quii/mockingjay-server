@@ -20,7 +20,7 @@ func (r response) isValid() bool {
 type FakeEndpoint struct {
 	Name        string //A description of what this endpoint is.
 	CDCDisabled bool   // When set to true it will not be included in the consumer driven contract tests against real server
-	Request     request
+	Request     Request
 	Response    response
 }
 
@@ -54,12 +54,12 @@ func (f FakeEndpoint) isValid() bool {
 
 type notFoundResponse struct {
 	Message            string
-	Request            request        `json:"Request received"`
+	Request            Request        `json:"Request received"`
 	EndpointsAvailable []FakeEndpoint `json:"Endpoints available"`
 }
 
 func newNotFound(method string, url string, body string, headers map[string]string, endpoints []FakeEndpoint) *response {
-	notFound := notFoundResponse{"Endpoint not found", request{url, method, headers, body}, endpoints}
+	notFound := notFoundResponse{"Endpoint not found", Request{url, method, headers, body}, endpoints}
 	j, _ := yaml.Marshal(notFound)
 	return &response{404, string(j), nil}
 }

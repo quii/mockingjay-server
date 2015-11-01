@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/quii/mockingjay-server/mockingjay"
+	"log"
 	"net/http"
 	"testing"
 )
@@ -19,22 +20,42 @@ const yaml = `
     body: '{"token": "1234abc"}'
 `
 
-func TestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {
+var (
+	endpoints []mockingjay.FakeEndpoint
+)
+
+func init() {
 	endpoints, err := mockingjay.NewFakeEndpoints([]byte(yaml))
 
 	if err != nil {
-		t.Log(err)
-		t.Fatal("Couldnt make endpoints from YAML")
+		log.Fatal("Couldn't make endpoints for test", endpoints)
 	}
 
 	server := mockingjay.NewServer(endpoints)
 	http.Handle("/", server)
 	go http.ListenAndServe(":9094", nil)
+}
+
+func TestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {
 
 	checker := NewCompatabilityChecker()
 
 	if !checker.CheckCompatability(endpoints, "http://localhost:9094") {
 		t.Log("Endpoints were not seen as compatible and they should've been.")
 		t.Fail()
+	}
+}
+
+func TestItListsRequestsItHasReceived(t *testing.T) {
+	http.Get("http://localhost:9094/hello")
+
+	res, err := http.Get("http://localhost:9094/requests")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if res.StatusCode != http.StatusOK {
+		t.Error("Expected a 200 but got", res.StatusCode)
 	}
 }
