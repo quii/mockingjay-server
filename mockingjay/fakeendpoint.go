@@ -1,6 +1,7 @@
 package mockingjay
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"gopkg.in/yaml.v2"
@@ -54,12 +55,12 @@ func (f FakeEndpoint) isValid() bool {
 
 type notFoundResponse struct {
 	Message            string
-	Request            Request        `json:"Request received"`
-	EndpointsAvailable []FakeEndpoint `json:"Endpoints available"`
+	Request            Request        `json:"RequestReceived"`
+	EndpointsAvailable []FakeEndpoint `json:"EndpointsAvailable"`
 }
 
 func newNotFound(method string, url string, body string, headers map[string]string, endpoints []FakeEndpoint) *response {
 	notFound := notFoundResponse{"Endpoint not found", Request{url, method, headers, body}, endpoints}
-	j, _ := yaml.Marshal(notFound)
+	j, _ := json.Marshal(notFound)
 	return &response{404, string(j), nil}
 }
