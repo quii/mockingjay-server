@@ -21,11 +21,16 @@ func NewServer(endpoints []FakeEndpoint) *Server {
 	return s
 }
 
-func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+const requestsURL = "/requests"
+const endpointsURL = "/mj-endpoints"
 
-	if r.RequestURI == "/requests" {
+func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	switch r.URL.String() {
+	case endpointsURL:
+		s.serveEndpoints(w)
+	case requestsURL:
 		s.listAvailableRequests(w)
-	} else {
+	default:
 		mjRequest := NewRequest(r)
 		s.requests = append(s.requests, mjRequest)
 		cannedResponse := s.getResponse(mjRequest)
@@ -68,4 +73,15 @@ func requestMatches(a Request, b Request) bool {
 	methodOk := a.Method == b.Method
 
 	return bodyOk && urlOk && methodOk && headersOk
+}
+
+func (s *Server) serveEndpoints(w http.ResponseWriter) {
+	endpointsBody, err := json.Marshal(s.endpoints)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	w.Write(endpointsBody)
+	w.Header().Set("Content-Type", "application/json")
 }

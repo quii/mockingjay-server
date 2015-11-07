@@ -1,8 +1,10 @@
 package mockingjay
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -236,5 +238,34 @@ func TestItRespectsURLencoding(t *testing.T) {
 
 	if responseReader.Code != expectedStatus {
 		t.Errorf("It looks like it didnt respect the escaped url, got a %d", responseReader.Code)
+	}
+}
+
+func TestItReturnsListOfEndpoints(t *testing.T) {
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "GET", nil, ""}, response{http.StatusCreated, cannedResponse, nil}}
+	server := NewServer([]FakeEndpoint{endpoint})
+
+	request, _ := http.NewRequest("GET", endpointsURL, nil)
+	responseReader := httptest.NewRecorder()
+
+	server.ServeHTTP(responseReader, request)
+
+	if responseReader.Code != http.StatusOK {
+		t.Error("Didnt get a 200 from the endpoints url, got", responseReader.Code)
+	}
+
+	if responseReader.HeaderMap["Content-Type"][0] != "application/json" {
+		t.Error("Expected content type header to be set to json")
+	}
+
+	var endpointResponse []FakeEndpoint
+	err := json.Unmarshal(responseReader.Body.Bytes(), &endpointResponse)
+
+	if err != nil {
+		t.Fatal("Unable to parse JSON from endpoints URL", err)
+	}
+
+	if !reflect.DeepEqual(endpointResponse[0], endpoint) {
+		t.Error("The endpoint returned doesnt match what the server was set up with, got", endpointResponse, "expected", endpoint)
 	}
 }
