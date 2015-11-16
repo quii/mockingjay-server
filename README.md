@@ -91,8 +91,7 @@ $ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-
 
 ## Building with Docker
 
-    docker build -t mj .
-    docker run mj
+todo
 
 ## Building
 
