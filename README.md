@@ -89,6 +89,11 @@ $ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-
 2015/04/17 14:19:53  9% of the time | Garbage bytes: 10000000
 ````
 
+## Building with Docker
+
+    docker build -t mj .
+    docker run mj
+
 ## Building
 
 ### Requirements
