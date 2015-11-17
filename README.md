@@ -10,7 +10,7 @@ Mockingjay lets you define the contract between a consumer and producer and with
 
 **Mockingjay makes it really easy to check your integration points**. It's fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent
 
-- [Installation](https://github.com/quii/mockingjay-server/wiki/Installing) (I promise it's really easy)
+- [Installation](https://github.com/quii/mockingjay-server/wiki/Installing) (Download a binary, Docker image or `go get`)
 - [Rationale](https://github.com/quii/mockingjay-server/wiki/Rationale)
 - [See how mockingjay can easily fit into your workflow to make integration testing really easy and robust](https://github.com/quii/mockingjay-server/wiki/Suggested-workflow)
 
@@ -88,10 +88,6 @@ $ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-
 2015/04/17 14:19:53 30% of the time | Status: 404
 2015/04/17 14:19:53  9% of the time | Garbage bytes: 10000000
 ````
-
-## Building with Docker
-
-todo
 
 ## Building
 
