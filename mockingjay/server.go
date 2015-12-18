@@ -2,6 +2,7 @@ package mockingjay
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"reflect"
@@ -23,11 +24,14 @@ func NewServer(endpoints []FakeEndpoint) *Server {
 
 const requestsURL = "/requests"
 const endpointsURL = "/mj-endpoints"
+const newEndpointURL = "/mj-new-endpoint"
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.String() {
 	case endpointsURL:
 		s.serveEndpoints(w)
+	case newEndpointURL:
+		s.createEndpoint(w, r)
 	case requestsURL:
 		s.listAvailableRequests(w)
 	default:
@@ -84,4 +88,26 @@ func (s *Server) serveEndpoints(w http.ResponseWriter) {
 
 	w.Write(endpointsBody)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func (s *Server) createEndpoint(w http.ResponseWriter, r *http.Request) {
+	var newEndpoint FakeEndpoint
+
+	defer r.Body.Close()
+
+	endpointBody, err := ioutil.ReadAll(r.Body)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	err = json.Unmarshal(endpointBody, &newEndpoint)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	s.endpoints = append(s.endpoints, newEndpoint)
+
+	w.WriteHeader(http.StatusCreated)
 }

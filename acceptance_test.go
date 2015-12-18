@@ -1,10 +1,13 @@
 package main
 
 import (
-	"github.com/quii/mockingjay-server/mockingjay"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"testing"
+
+	"github.com/quii/mockingjay-server/mockingjay"
 )
 
 const yaml = `
@@ -57,5 +60,53 @@ func TestItListsRequestsItHasReceived(t *testing.T) {
 
 	if res.StatusCode != http.StatusOK {
 		t.Error("Expected a 200 but got", res.StatusCode)
+	}
+}
+
+func TestANewEndpointCanBeAdded(t *testing.T) {
+	newEndpointJSON := `
+	{
+	  "Name": "Test endpoint",
+	  "CDCDisabled": false,
+	  "Request": {
+	    "URI": "/hello",
+	    "Method": "GET",
+	    "Headers": null,
+	    "Body": ""
+	  },
+	  "Response": {
+	    "Code": 200,
+	    "Body": "{\"message\": \"hello, world\"}",
+	    "Headers": {
+	      "content-type": "text\/json"
+	    }
+	  }
+	}
+	`
+	newEndpointURL := "http://localhost:9094/mj-new-endpoint"
+	res, err := http.Post(newEndpointURL, "application/json", strings.NewReader(newEndpointJSON))
+
+	if err != nil {
+		t.Fatal("Problem calling new endpoint URL", newEndpointURL, err)
+	}
+
+	if res.StatusCode != http.StatusCreated {
+		t.Error("Create endpoint didnt return created - got", res.Status)
+	}
+
+	newEndPointResponse, err := http.Get("http://localhost:9094/hello")
+
+	if err != nil {
+		t.Fatal("Problem requesting newly created endpoint", err)
+	}
+
+	if newEndPointResponse.StatusCode != http.StatusOK {
+		t.Error("Didnt get a 200 from newly created endpoint, got", newEndPointResponse.StatusCode)
+	}
+
+	newEndpointBody, _ := ioutil.ReadAll(newEndPointResponse.Body)
+
+	if string(newEndpointBody) != `{"message": "hello, world"}` {
+		t.Error("New endpoint didnt return the correct body, got", newEndpointBody)
 	}
 }

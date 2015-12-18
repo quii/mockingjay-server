@@ -1,6 +1,7 @@
 package mockingjay
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -80,6 +81,57 @@ func TestItReturnsCannedResponses(t *testing.T) {
 
 	if responseReader.Body.String() != cannedResponse2 {
 		t.Errorf("Expected second endpoint's canned response, got %s", responseReader.Body.String())
+	}
+}
+
+func TestItCanCreateEndpoints(t *testing.T) {
+	server := NewServer([]FakeEndpoint{})
+
+	newEndpoint := FakeEndpoint{
+		Name: "New endpoint",
+		Request: Request{
+			URI:    "/foo",
+			Method: "GET",
+			Body:   "Blah blah",
+		},
+		Response: response{
+			Code: 200,
+			Body: "SUPER",
+		},
+	}
+
+	newEndpointJSON, _ := json.Marshal(newEndpoint)
+
+	req, _ := http.NewRequest("POST", newEndpointURL, bytes.NewReader(newEndpointJSON))
+
+	responseReader := httptest.NewRecorder()
+
+	server.ServeHTTP(responseReader, req)
+
+	if responseReader.Code != http.StatusCreated {
+		t.Fatal("Didnt create new endpoint", responseReader.Code, responseReader.Body.String())
+	}
+
+	if len(server.endpoints) != 1 {
+		t.Fatal("The number of endpoints didnt increate after creating")
+	}
+
+	if !reflect.DeepEqual(server.endpoints[0], newEndpoint) {
+		t.Errorf("New endpoint was not correctly added to the server %v", server.endpoints[0])
+	}
+}
+
+func TestItReturnsBadRequestWhenMakingABadNewEndpoint(t *testing.T) {
+	server := NewServer([]FakeEndpoint{})
+
+	badBody := []byte("blah")
+	req, _ := http.NewRequest("POST", newEndpointURL, bytes.NewReader(badBody))
+	responseReader := httptest.NewRecorder()
+
+	server.ServeHTTP(responseReader, req)
+
+	if responseReader.Code != http.StatusBadRequest {
+		t.Error("Expected to get a bad request but got", responseReader.Code)
 	}
 }
 
