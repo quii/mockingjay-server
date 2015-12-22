@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
 	"gopkg.in/yaml.v2"
 )
 
@@ -31,6 +32,10 @@ func (f *FakeEndpoint) String() string {
 
 const fakeEndpointStringerFormat = "%s (%s)"
 
+var (
+	invalidConfigError = errors.New("Config YAML structure is invalid")
+)
+
 // NewFakeEndpoints returns an array of Endpoints from a YAML byte array. Returns an error if YAML cannot be parsed
 func NewFakeEndpoints(data []byte) (endpoints []FakeEndpoint, err error) {
 	err = yaml.Unmarshal(data, &endpoints)
@@ -41,8 +46,7 @@ func NewFakeEndpoints(data []byte) (endpoints []FakeEndpoint, err error) {
 
 	for _, endPoint := range endpoints {
 		if !endPoint.isValid() {
-			err = errors.New("config YAML structure is invalid")
-			return
+			return nil, invalidConfigError
 		}
 	}
 

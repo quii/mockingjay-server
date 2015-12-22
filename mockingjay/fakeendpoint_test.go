@@ -143,7 +143,7 @@ func TestItReturnsAnErrorWhenStructureOfYAMLIsWrong(t *testing.T) {
 		t.Error("Expected an error to be returned because the YAML is bad")
 	}
 
-	if err.Error() != "config YAML structure is invalid" {
+	if err != invalidConfigError {
 		t.Errorf("Expected YAML was invalid error actual: %v", err.Error())
 	}
 }
@@ -164,8 +164,34 @@ func TestItReturnsAnErrorWhenYAMLIsIncomplete(t *testing.T) {
 		t.Error("Expected an error to be returned because the YAML has missing fields")
 	}
 
-	if err.Error() != "config YAML structure is invalid" {
+	if err != invalidConfigError {
 		t.Errorf("Expected YAML was incomplete error actual: %v", err.Error())
 	}
 
+}
+
+const duplicatedRequest = `
+---
+ - name: Test endpoint
+   request:
+     uri: /hello
+     method: GET
+   response:
+     code: 200
+     body: '{"message": "hello, world"}'
+
+ - name: Duplicated test endpoint
+   request:
+     uri: /hello
+     method: GET
+   response:
+     code: 404
+ `
+
+func ignoreTestItReturnsErrorWhenRequestsAreDuplicated(t *testing.T) {
+	_, err := NewFakeEndpoints([]byte(duplicatedRequest))
+
+	if err == nil {
+		t.Error("Expected an error to be returned for duplicated requests")
+	}
 }
