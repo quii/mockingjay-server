@@ -64,3 +64,7 @@ const stringerFormat = "%s %s"
 func (r Request) String() string {
 	return fmt.Sprintf(stringerFormat, r.Method, r.URI)
 }
+
+func (r Request) hash() string {
+	return fmt.Sprintf("%v%v%v%v", r.URI, r.Method, r.Headers, r.Body)
+}

@@ -33,7 +33,8 @@ func (f *FakeEndpoint) String() string {
 const fakeEndpointStringerFormat = "%s (%s)"
 
 var (
-	invalidConfigError = errors.New("Config YAML structure is invalid")
+	errInvalidConfigError     = errors.New("Config YAML structure is invalid")
+	errDuplicateRequestsError = errors.New("There were duplicated requests in YAML")
 )
 
 // NewFakeEndpoints returns an array of Endpoints from a YAML byte array. Returns an error if YAML cannot be parsed
@@ -46,8 +47,12 @@ func NewFakeEndpoints(data []byte) (endpoints []FakeEndpoint, err error) {
 
 	for _, endPoint := range endpoints {
 		if !endPoint.isValid() {
-			return nil, invalidConfigError
+			return nil, errInvalidConfigError
 		}
+	}
+
+	if isDuplicates(endpoints) {
+		return nil, errDuplicateRequestsError
 	}
 
 	return
@@ -67,4 +72,14 @@ func newNotFound(method string, url string, body string, headers map[string]stri
 	notFound := notFoundResponse{"Endpoint not found", Request{url, method, headers, body}, endpoints}
 	j, _ := json.Marshal(notFound)
 	return &response{404, string(j), nil}
+}
+
+func isDuplicates(endpoints []FakeEndpoint) bool {
+	requests := make(map[string]bool)
+
+	for _, e := range endpoints {
+		requests[e.Request.hash()] = true
+	}
+
+	return len(requests) != len(endpoints)
 }
