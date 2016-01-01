@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/quii/mockingjay-server/mockingjay"
-	"github.com/quii/mockingjay-server/monkey"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/quii/mockingjay-server/mockingjay"
+	"github.com/quii/mockingjay-server/monkey"
 )
 
 type configLoader func(string) ([]byte, error)
@@ -54,28 +55,37 @@ func (a *application) Run(configPath string, port int, realURL string, monkeyCon
 		return err
 	}
 
-	if realURL != "" {
-		if a.compatabilityChecker.CheckCompatability(endpoints, realURL) {
-			a.logger.Println("All endpoints are compatible")
-		} else {
-			a.logger.Fatal("At least one endpoint was incompatible with the real URL supplied")
-		}
-	} else {
-		server := a.mockingjayServerMaker(endpoints)
-		monkeyServer, err := a.monkeyServerMaker(server, monkeyConfigPath)
+	inCheckCompatabilityMode := realURL != ""
 
-		if err != nil {
-			return err
-		}
-
-		http.Handle("/", monkeyServer)
-		a.logger.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), configPath, port)
-		err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
-		if err != nil {
-			return fmt.Errorf("There was a problem starting the mockingjay server on port %d: %v", port, err)
-		}
+	if inCheckCompatabilityMode {
+		a.checkCompatability(endpoints, realURL)
+		return nil
 	}
 
-	return nil
+	return a.runFakeServer(endpoints, configPath, port, monkeyConfigPath)
+}
 
+func (a *application) checkCompatability(endpoints []mockingjay.FakeEndpoint, realURL string) {
+	if a.compatabilityChecker.CheckCompatability(endpoints, realURL) {
+		a.logger.Println("All endpoints are compatible")
+	} else {
+		a.logger.Fatal("At least one endpoint was incompatible with the real URL supplied")
+	}
+}
+
+func (a *application) runFakeServer(endpoints []mockingjay.FakeEndpoint, configPath string, port int, monkeyConfigPath string) error {
+	server := a.mockingjayServerMaker(endpoints)
+	monkeyServer, err := a.monkeyServerMaker(server, monkeyConfigPath)
+
+	if err != nil {
+		return err
+	}
+
+	http.Handle("/", monkeyServer)
+	a.logger.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), configPath, port)
+	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	if err != nil {
+		return fmt.Errorf("There was a problem starting the mockingjay server on port %d: %v", port, err)
+	}
+	return nil
 }

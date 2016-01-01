@@ -8,7 +8,7 @@ import (
 	"reflect"
 )
 
-// Server allows you to configure a request and a corresponding response. It implements http.ServeHTTP so you can bind it to a port.
+// Server allows you to configure a HTTP server for a slice of fake endpoints
 type Server struct {
 	endpoints []FakeEndpoint
 	requests  []Request
@@ -37,10 +37,13 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	default:
 		mjRequest := NewRequest(r)
 		s.requests = append(s.requests, mjRequest)
+
 		cannedResponse := s.getResponse(mjRequest)
+
 		for name, value := range cannedResponse.Headers {
 			w.Header().Set(name, value)
 		}
+
 		w.WriteHeader(cannedResponse.Code)
 		w.Write([]byte(cannedResponse.Body))
 	}

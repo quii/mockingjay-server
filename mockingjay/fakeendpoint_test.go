@@ -113,7 +113,7 @@ func TestItReturnsAnErrorWhenNotValidYAML(t *testing.T) {
 		t.Error("Expected an error to be returned because the YAML is bad")
 	}
 
-	if !strings.HasPrefix(err.Error(), "yaml: unmarshal errors:") {
+	if !strings.Contains(err.Error(), "The structure of the supplied YAML is wrong") {
 		t.Errorf("Expected unmarshal error actual: %v", err.Error())
 	}
 
