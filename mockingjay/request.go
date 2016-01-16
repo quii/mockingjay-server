@@ -6,15 +6,17 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"regexp"
 	"strings"
 )
 
 // Request is a simplified version of a http.Request
 type Request struct {
-	URI     string
-	Method  string
-	Headers map[string]string
-	Body    string
+	URI      string
+	RegexURI *regexp.Regexp
+	Method   string
+	Headers  map[string]string
+	Body     string
 }
 
 func (r Request) isValid() bool {

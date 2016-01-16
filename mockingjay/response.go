@@ -19,7 +19,14 @@ type notFoundResponse struct {
 }
 
 func newNotFound(method string, url string, body string, headers map[string]string, endpoints []FakeEndpoint) *response {
-	notFound := notFoundResponse{"Endpoint not found", Request{url, method, headers, body}, endpoints}
+	notFound := notFoundResponse{
+		"Endpoint not found",
+		Request{
+			URI:     url,
+			Method:  method,
+			Headers: headers,
+			Body:    body},
+		endpoints}
 	j, _ := json.Marshal(notFound)
 	return &response{404, string(j), nil}
 }
