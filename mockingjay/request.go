@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"reflect"
 	"regexp"
 	"strings"
 )
@@ -69,4 +70,23 @@ func (r Request) String() string {
 
 func (r Request) hash() string {
 	return fmt.Sprintf("%v%v%v%v", r.URI, r.Method, r.Headers, r.Body)
+}
+
+func requestMatches(a, b Request) bool {
+
+	headersOk := !(a.Headers != nil && !reflect.DeepEqual(a.Headers, b.Headers))
+	bodyOk := a.Body == "*" || a.Body == b.Body
+	urlOk := matchURI(a.URI, a.RegexURI, b.URI)
+	methodOk := a.Method == b.Method
+
+	return bodyOk && urlOk && methodOk && headersOk
+}
+
+func matchURI(serverURI string, serverRegex *regexp.Regexp, incomingURI string) bool {
+	if serverURI == incomingURI {
+		return true
+	} else if serverRegex != nil {
+		return serverRegex.MatchString(incomingURI)
+	}
+	return false
 }

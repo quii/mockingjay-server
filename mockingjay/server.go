@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"reflect"
 )
 
 // Server allows you to configure a HTTP server for a slice of fake endpoints
@@ -70,16 +69,6 @@ func (s *Server) getResponse(r Request) *response {
 	}
 
 	return newNotFound(r.Method, r.URI, r.Body, r.Headers, s.endpoints)
-}
-
-func requestMatches(a Request, b Request) bool {
-
-	headersOk := !(a.Headers != nil && !reflect.DeepEqual(a.Headers, b.Headers))
-	bodyOk := a.Body == "*" || a.Body == b.Body
-	urlOk := a.URI == b.URI
-	methodOk := a.Method == b.Method
-
-	return bodyOk && urlOk && methodOk && headersOk
 }
 
 func (s *Server) serveEndpoints(w http.ResponseWriter) {
