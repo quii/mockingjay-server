@@ -1,0 +1,11 @@
+---
+ - name: Regex example
+   request:
+     uri: /hello
+     regexURI: \/hello\/[a-z]+
+     method: GET
+   response:
+     code: 200
+     body: '{"message": "hello, there"}'
+     headers:
+       content-type: text/json
