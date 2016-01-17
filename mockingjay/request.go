@@ -7,14 +7,13 @@ import (
 	"log"
 	"net/http"
 	"reflect"
-	"regexp"
 	"strings"
 )
 
 // Request is a simplified version of a http.Request
 type Request struct {
 	URI      string
-	RegexURI *regexp.Regexp
+	RegexURI *RegexYAML
 	Method   string
 	Headers  map[string]string
 	Body     string
@@ -82,7 +81,7 @@ func requestMatches(a, b Request) bool {
 	return bodyOk && urlOk && methodOk && headersOk
 }
 
-func matchURI(serverURI string, serverRegex *regexp.Regexp, incomingURI string) bool {
+func matchURI(serverURI string, serverRegex *RegexYAML, incomingURI string) bool {
 	if serverURI == incomingURI {
 		return true
 	} else if serverRegex != nil {

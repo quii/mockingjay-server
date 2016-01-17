@@ -15,6 +15,7 @@ var (
 func TestMatchingWithRegex(t *testing.T) {
 
 	uriPathRegex, err := regexp.Compile(`\/hello\/[a-z]+`)
+	regexURI := &RegexYAML{Regexp: *uriPathRegex}
 
 	if err != nil {
 		t.Fatal(err)
@@ -22,7 +23,7 @@ func TestMatchingWithRegex(t *testing.T) {
 
 	serverConfig := Request{
 		URI:      "/hello/world",
-		RegexURI: uriPathRegex,
+		RegexURI: regexURI,
 		Method:   "GET",
 	}
 

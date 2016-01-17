@@ -11,6 +11,7 @@ const testYAML = `
    request:
      uri: /hello
      method: GET
+     regexuri: "\\/hello\\/[a-z]+"
      headers:
        content-type: application/json
      body: foobar
@@ -81,6 +82,10 @@ func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 
 	if firstEndpoint.CDCDisabled {
 		t.Error("First endpoint doesnt define cdc preference so it should be enabled by default")
+	}
+
+	if firstEndpoint.Request.RegexURI == nil {
+		t.Error("First endpoint should have a regex defined")
 	}
 
 	endpoint2 := endpoints[1]

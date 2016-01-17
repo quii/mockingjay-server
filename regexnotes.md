@@ -1,13 +1,13 @@
 # Implementing regex matching
 
 ## Done
+- Parsing regex field in YAML
 - If a request has a regexURI configured then it will use it to match if the URI does not match
 
 ## To do
-- Isn't working end-to-end! Need to parse YAML field into struct. Validation required:
-  - Is a valid regex (regexp.Compile should cover this)
-  - Is valid against the defined URI.
+- Check regex is valid against the defined URI.
 - With multiple requests defined you could run into a scenario where regex "wins" over an exact match, depending on the other. That should never happen.
+- With multiple regexURIs a given request might match more than one. That should result in a conflict.
 - Acceptance test
 - Update documentation
 

@@ -1,6 +1,9 @@
 package mockingjay
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"log"
+)
 
 type response struct {
 	Code    int
@@ -27,6 +30,9 @@ func newNotFound(method string, url string, body string, headers map[string]stri
 			Headers: headers,
 			Body:    body},
 		endpoints}
-	j, _ := json.Marshal(notFound)
+	j, err := json.Marshal(notFound)
+	if err != nil {
+		log.Println(err)
+	}
 	return &response{404, string(j), nil}
 }
