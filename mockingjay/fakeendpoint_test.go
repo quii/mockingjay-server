@@ -9,7 +9,7 @@ const testYAML = `
 ---
  - name: Test endpoint
    request:
-     uri: /hello
+     uri: /hello/chris
      method: GET
      regexuri: "\\/hello\\/[a-z]+"
      headers:
@@ -56,7 +56,7 @@ func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 		t.Error("There should be a name set for the endpoint")
 	}
 
-	if firstEndpoint.Request.URI != "/hello" {
+	if firstEndpoint.Request.URI != "/hello/chris" {
 		t.Error("Request URI was not properly set")
 	}
 
@@ -148,7 +148,7 @@ func TestItReturnsAnErrorWhenStructureOfYAMLIsWrong(t *testing.T) {
 		t.Error("Expected an error to be returned because the YAML is bad")
 	}
 
-	if err != errInvalidConfigError {
+	if err != errEmptyURI {
 		t.Errorf("Expected YAML was invalid error actual: %v", err.Error())
 	}
 }
@@ -169,7 +169,7 @@ func TestItReturnsAnErrorWhenYAMLIsIncomplete(t *testing.T) {
 		t.Error("Expected an error to be returned because the YAML has missing fields")
 	}
 
-	if err != errInvalidConfigError {
+	if err != errResponseInvalid {
 		t.Errorf("Expected YAML was incomplete error actual: %v", err.Error())
 	}
 
@@ -197,10 +197,35 @@ func TestItReturnsErrorWhenRequestsAreDuplicated(t *testing.T) {
 	_, err := NewFakeEndpoints([]byte(duplicatedRequest))
 
 	if err == nil {
-		t.Error("Expected an error to be returned for duplicated requests")
+		t.Fatal("Expected an error to be returned for duplicated requests")
 	}
 
 	if err != errDuplicateRequestsError {
 		t.Error("Expected", errDuplicateRequestsError, "but got", err)
+	}
+}
+
+const badRegex = `
+---
+-
+  name: "This doesn't make sense"
+  request:
+    method: GET
+    regexuri: "\\/hello\\/[a-z]+"
+    uri: /goodbye/chris
+  response:
+    body: WOOT
+    code: 200
+`
+
+func TestItReturnsErrorWhenRegexDoesntMatchURI(t *testing.T) {
+	_, err := NewFakeEndpoints([]byte(badRegex))
+
+	if err == nil {
+		t.Fatal("Expected an error to be returned")
+	}
+
+	if err != errBadRegex {
+		t.Error("Didnt get the correct type of error returned, expected", errBadRegex, "but got", err)
 	}
 }
