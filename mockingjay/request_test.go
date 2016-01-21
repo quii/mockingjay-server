@@ -40,13 +40,12 @@ func TestItCreatesHTTPRequests(t *testing.T) {
 	}
 }
 
-//todo: Refactor tests to reflect the improved error handling (from bool to err values)
 func TestItValidatesRequests(t *testing.T) {
 	noURIRequest := Request{
 		URI:    "",
 		Method: "POST"}
 
-	if noURIRequest.isValid() == nil {
+	if noURIRequest.isValid() != errEmptyURI {
 		t.Error("A request without a URI is seen as valid")
 	}
 
@@ -54,7 +53,7 @@ func TestItValidatesRequests(t *testing.T) {
 		URI:    "/",
 		Method: ""}
 
-	if noMethodRequest.isValid() == nil {
+	if noMethodRequest.isValid() != errEmptyMethod {
 		t.Error("A request without a method is seen as valid")
 	}
 
