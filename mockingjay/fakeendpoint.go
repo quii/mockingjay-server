@@ -21,12 +21,18 @@ func (f *FakeEndpoint) String() string {
 	return fmt.Sprintf(fakeEndpointStringerFormat, f.Name, f.Request)
 }
 
-func (f FakeEndpoint) isValid() bool {
-	return f.Request.isValid() && f.Response.isValid()
+func (f FakeEndpoint) isValid() error {
+	if reqError := f.Request.isValid(); reqError != nil {
+		return reqError
+	}
+	if !f.Response.isValid() {
+		return errResponseInvalid
+	}
+	return nil
 }
 
 var (
-	errInvalidConfigError = errors.New("Config YAML structure is invalid")
+	errResponseInvalid = errors.New("Response is not configured correctly")
 )
 
 func errDuplicateRequestsError(duplicates []string) error {
@@ -44,8 +50,8 @@ func NewFakeEndpoints(data []byte) (endpoints []FakeEndpoint, err error) {
 	}
 
 	for _, endPoint := range endpoints {
-		if !endPoint.isValid() {
-			return nil, errInvalidConfigError
+		if endpointErr := endPoint.isValid(); endpointErr != nil {
+			return nil, endpointErr
 		}
 	}
 

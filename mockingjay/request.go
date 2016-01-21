@@ -2,23 +2,44 @@ package mockingjay
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"reflect"
 	"strings"
 )
 
 // Request is a simplified version of a http.Request
 type Request struct {
-	URI     string
-	Method  string
-	Headers map[string]string
-	Body    string
+	URI      string
+	RegexURI *RegexYAML
+	Method   string
+	Headers  map[string]string
+	Body     string
 }
 
-func (r Request) isValid() bool {
-	return r.URI != "" && r.Method != ""
+var (
+	errBadRegex    = errors.New("A regex defined in the request does not pass against it's defined URI")
+	errEmptyURI    = errors.New("Cannot have an empty URI")
+	errEmptyMethod = errors.New("Cannot have an empty HTTP method")
+)
+
+func (r Request) isValid() error {
+	regexPassed := r.RegexURI == nil || r.RegexURI.MatchString(r.URI)
+	if !regexPassed {
+		return errBadRegex
+	}
+
+	if r.URI == "" {
+		return errEmptyURI
+	}
+
+	if r.Method == "" {
+		return errEmptyMethod
+	}
+	return nil
 }
 
 // AsHTTPRequest tries to create a http.Request from a given baseURL
@@ -67,4 +88,23 @@ func (r Request) String() string {
 
 func (r Request) hash() string {
 	return fmt.Sprintf("URI: %v | METHOD: %v | HEADERS: %v | BODY: %v", r.URI, r.Method, r.Headers, r.Body)
+}
+
+func requestMatches(a, b Request) bool {
+
+	headersOk := !(a.Headers != nil && !reflect.DeepEqual(a.Headers, b.Headers))
+	bodyOk := a.Body == "*" || a.Body == b.Body
+	urlOk := matchURI(a.URI, a.RegexURI, b.URI)
+	methodOk := a.Method == b.Method
+
+	return bodyOk && urlOk && methodOk && headersOk
+}
+
+func matchURI(serverURI string, serverRegex *RegexYAML, incomingURI string) bool {
+	if serverURI == incomingURI {
+		return true
+	} else if serverRegex != nil {
+		return serverRegex.MatchString(incomingURI)
+	}
+	return false
 }

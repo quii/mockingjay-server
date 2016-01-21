@@ -136,7 +136,10 @@ func TestItReturnsBadRequestWhenMakingABadNewEndpoint(t *testing.T) {
 }
 
 func TestItReturns404WhenUriIsWrong(t *testing.T) {
-	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "GET", nil, ""}, response{http.StatusCreated, cannedResponse, nil}}
+	mjReq := Request{
+		URI:    testURL,
+		Method: "GET"}
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
 	server := NewServer([]FakeEndpoint{endpoint})
 	requestBody := "some body"
 
@@ -155,7 +158,8 @@ func TestItReturns404WhenUriIsWrong(t *testing.T) {
 }
 
 func TestItReturns404WhenMethodIsWrong(t *testing.T) {
-	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "GET", nil, ""}, response{http.StatusCreated, cannedResponse, nil}}
+	mjReq := Request{URI: testURL, Method: "GET"}
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
 	server := NewServer([]FakeEndpoint{endpoint})
 
 	request, _ := http.NewRequest("POST", "/hello", nil)
@@ -179,7 +183,8 @@ func TestItDoesContentNegotiation(t *testing.T) {
 	contentTypes := make(map[string]string)
 	contentTypes["Content-Type"] = "application/json"
 
-	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "GET", contentTypes, ""}, response{http.StatusCreated, cannedResponse, nil}}
+	mjReq := Request{URI: testURL, Method: "GET", Headers: contentTypes}
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
 	server := NewServer([]FakeEndpoint{endpoint})
 
 	requestWithIncorrectHeaderValue, _ := http.NewRequest("GET", testURL, nil)
@@ -216,7 +221,8 @@ func TestItSendsRequestBodies(t *testing.T) {
 	body := "some body"
 	expectedStatus := http.StatusInternalServerError
 
-	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "POST", nil, body}, response{expectedStatus, "", nil}}
+	mjReq := Request{URI: testURL, Method: "POST", Body: body}
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{expectedStatus, "", nil}}
 	server := NewServer([]FakeEndpoint{endpoint})
 
 	requestWithoutBody, _ := http.NewRequest("POST", testURL, nil)
@@ -238,28 +244,12 @@ func TestItSendsRequestBodies(t *testing.T) {
 	}
 }
 
-func TestItMatchesWildcardBodies(t *testing.T) {
-	wildcardBody := "*"
-	expectedStatus := http.StatusOK
-
-	config := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "POST", nil, wildcardBody}, response{expectedStatus, "", nil}}
-	server := NewServer([]FakeEndpoint{config})
-
-	requestWithDifferentBody, _ := http.NewRequest("POST", testURL, strings.NewReader("This body isnt what we said but it should match"))
-	responseReader := httptest.NewRecorder()
-
-	server.ServeHTTP(responseReader, requestWithDifferentBody)
-
-	if responseReader.Code != expectedStatus {
-		t.Errorf("Expected code %v but got %v", expectedStatus, responseReader.Code)
-	}
-}
-
 func TestItRecordsIncomingRequests(t *testing.T) {
 	wildcardBody := "*"
 	expectedStatus := http.StatusOK
 
-	config := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "POST", nil, wildcardBody}, response{expectedStatus, "", nil}}
+	mjReq := Request{URI: testURL, Method: "POST", Body: wildcardBody}
+	config := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{expectedStatus, "", nil}}
 	server := NewServer([]FakeEndpoint{config})
 
 	requestWithDifferentBody, _ := http.NewRequest("POST", testURL, strings.NewReader("This body isnt what we said but it should match"))
@@ -280,7 +270,9 @@ func TestItRespectsURLencoding(t *testing.T) {
 	escapedURL := "/document/10.1007%2Fs00414-006-0114-x"
 	body := "some body"
 	expectedStatus := http.StatusOK
-	config := FakeEndpoint{testEndpointName, cdcDisabled, Request{escapedURL, "POST", nil, body}, response{expectedStatus, "", nil}}
+
+	mjReq := Request{URI: escapedURL, Method: "POST", Body: body}
+	config := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{expectedStatus, "", nil}}
 	server := NewServer([]FakeEndpoint{config})
 
 	request, _ := http.NewRequest("POST", escapedURL, strings.NewReader(body))
@@ -294,7 +286,8 @@ func TestItRespectsURLencoding(t *testing.T) {
 }
 
 func TestItReturnsListOfEndpoints(t *testing.T) {
-	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, Request{testURL, "GET", nil, ""}, response{http.StatusCreated, cannedResponse, nil}}
+	mjReq := Request{URI: testURL, Method: "GET"}
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
 	server := NewServer([]FakeEndpoint{endpoint})
 
 	request, _ := http.NewRequest("GET", endpointsURL, nil)
