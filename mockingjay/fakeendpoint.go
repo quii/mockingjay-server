@@ -32,9 +32,12 @@ func (f FakeEndpoint) isValid() error {
 }
 
 var (
-	errDuplicateRequestsError = errors.New("There were duplicated requests in YAML")
-	errResponseInvalid        = errors.New("Response is not configured correctly")
+	errResponseInvalid = errors.New("Response is not configured correctly")
 )
+
+func errDuplicateRequestsError(duplicates []string) error {
+	return fmt.Errorf("There were duplicated requests in YAML %v", duplicates)
+}
 
 // NewFakeEndpoints returns an array of Endpoints from a YAML byte array. Returns an error if YAML cannot be parsed
 func NewFakeEndpoints(data []byte) (endpoints []FakeEndpoint, err error) {
@@ -52,19 +55,27 @@ func NewFakeEndpoints(data []byte) (endpoints []FakeEndpoint, err error) {
 		}
 	}
 
-	if isDuplicates(endpoints) {
-		return nil, errDuplicateRequestsError
+	if duplicates := findDuplicates(endpoints); len(duplicates) > 0 {
+		return nil, errDuplicateRequestsError(duplicates)
 	}
 
 	return
 }
 
-func isDuplicates(endpoints []FakeEndpoint) bool {
-	requests := make(map[string]bool)
+func findDuplicates(endpoints []FakeEndpoint) []string {
+	requests := make(map[string]int)
 
 	for _, e := range endpoints {
-		requests[e.Request.hash()] = true
+		requests[e.Request.hash()] = requests[e.Request.hash()] + 1
 	}
 
-	return len(requests) != len(endpoints)
+	var duplicates []string
+
+	for k, v := range requests {
+		if v > 1 {
+			duplicates = append(duplicates, k)
+		}
+	}
+
+	return duplicates
 }

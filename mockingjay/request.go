@@ -87,7 +87,7 @@ func (r Request) String() string {
 }
 
 func (r Request) hash() string {
-	return fmt.Sprintf("%v%v%v%v", r.URI, r.Method, r.Headers, r.Body)
+	return fmt.Sprintf("URI: %v | METHOD: %v | HEADERS: %v | BODY: %v", r.URI, r.Method, r.Headers, r.Body)
 }
 
 func requestMatches(a, b Request) bool {

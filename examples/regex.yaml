@@ -1,7 +1,7 @@
 ---
  - name: Regex example
    request:
-     uri: /hello
+     uri: /hello/chris
      regexuri: "\\/hello\\/[a-z]+"
      method: GET
    response:

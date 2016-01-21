@@ -200,8 +200,8 @@ func TestItReturnsErrorWhenRequestsAreDuplicated(t *testing.T) {
 		t.Fatal("Expected an error to be returned for duplicated requests")
 	}
 
-	if err != errDuplicateRequestsError {
-		t.Error("Expected", errDuplicateRequestsError, "but got", err)
+	if !strings.Contains(err.Error(), "duplicated") {
+		t.Error("Unexpeted error message", err)
 	}
 }
 
