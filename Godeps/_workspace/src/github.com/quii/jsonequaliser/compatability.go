@@ -39,8 +39,8 @@ func IsCompatible(a, b string) (compatible bool, err error) {
 func isStructurallyTheSame(a, b map[string]interface{}) (compatible bool, err error) {
 	for keyInA, v := range a {
 
-		if b[keyInA] == nil {
-			return
+		if a[keyInA] == nil && b[keyInA] == nil {
+			return true, nil
 		}
 
 		switch v.(type) {
