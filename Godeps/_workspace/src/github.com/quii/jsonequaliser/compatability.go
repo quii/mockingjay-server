@@ -43,6 +43,10 @@ func isStructurallyTheSame(a, b map[string]interface{}) (compatible bool, err er
 			return true, nil
 		}
 
+		if b[keyInA] == nil {
+			return
+		}
+
 		switch v.(type) {
 		case string:
 			if _, isString := b[keyInA].(string); !isString {
