@@ -16,7 +16,7 @@
 		},
 		{
 			"ImportPath": "github.com/quii/jsonequaliser",
-			"Rev": "7cf596bba97501a4906ac56f80f9b2d5644e2090"
+			"Rev": "cbee96c2bf13f2d11fcbb941d12ef63b216c5aef"
 		},
 		{
 			"ImportPath": "gopkg.in/yaml.v2",

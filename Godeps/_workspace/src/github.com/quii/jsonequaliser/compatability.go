@@ -62,9 +62,14 @@ func isStructurallyTheSame(a, b map[string]interface{}) (compatible bool, err er
 			}
 
 		case interface{}:
+
 			aArr, aIsArray := a[keyInA].([]interface{})
 
 			bArr, bIsArray := b[keyInA].([]interface{})
+
+			if aIsArray && len(aArr) == 0 {
+				return true, nil
+			}
 
 			if !bIsArray && aIsArray || aIsArray && len(bArr) == 0 {
 				return
