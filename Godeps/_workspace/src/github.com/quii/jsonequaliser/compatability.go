@@ -1,71 +1,55 @@
 package jsonequaliser
 
 import (
-	"encoding/json"
 	"fmt"
 	"reflect"
 )
 
+type jsonNode map[string]interface{}
+
 // IsCompatible checks that two json strings are structurally the same so that they are compatible. The first string should be your "correct" json, if there are extra fields in B then they will still be seen as compatible
 func IsCompatible(a, b string) (compatible bool, err error) {
 
-	aMap := make(map[string]interface{})
-	if err = json.Unmarshal([]byte(a), &aMap); err != nil {
+	aMap, err := getJSONNodeFromString(a)
+	bMap, err := getJSONNodeFromString(b)
 
-		//todo: Fix repetition here
-
-		// Could be a top level array, in which case lets take the first item from it
-		var anArr []map[string]interface{}
-		if err = json.Unmarshal([]byte(a), &anArr); err != nil {
-			return
-		}
-		aMap = anArr[0]
-	}
-
-	bMap := make(map[string]interface{})
-	if err = json.Unmarshal([]byte(b), &bMap); err != nil {
-
-		// Could be a top level array, in which case lets take the first item from it
-		var anArr []map[string]interface{}
-		if err = json.Unmarshal([]byte(a), &anArr); err != nil {
-			return
-		}
-		bMap = anArr[0]
+	if err != nil {
+		return
 	}
 
 	return isStructurallyTheSame(aMap, bMap)
 }
 
-func isStructurallyTheSame(a, b map[string]interface{}) (compatible bool, err error) {
-	for keyInA, v := range a {
+func isStructurallyTheSame(a, b jsonNode) (compatible bool, err error) {
+	for jsonFieldName, v := range a {
 
-		if a[keyInA] == nil && b[keyInA] == nil {
-			return true, nil
+		if fieldMissingIn(b, jsonFieldName) {
+			return false, nil
 		}
 
-		if b[keyInA] == nil {
-			return
+		if a[jsonFieldName] == nil {
+			return true, nil
 		}
 
 		switch v.(type) {
 		case string:
-			if _, isString := b[keyInA].(string); !isString {
+			if !isString(b, jsonFieldName) {
 				return
 			}
 		case bool:
-			if _, isBool := b[keyInA].(bool); !isBool {
+			if !isBool(b, jsonFieldName) {
 				return
 			}
 		case float64:
-			if _, isFloat := b[keyInA].(float64); !isFloat {
+			if !isFloat(b, jsonFieldName) {
 				return
 			}
 
 		case interface{}:
 
-			aArr, aIsArray := a[keyInA].([]interface{})
+			aArr, aIsArray := a[jsonFieldName].([]interface{})
 
-			bArr, bIsArray := b[keyInA].([]interface{})
+			bArr, bIsArray := b[jsonFieldName].([]interface{})
 
 			if aIsArray && len(aArr) == 0 {
 				return true, nil
@@ -75,15 +59,15 @@ func isStructurallyTheSame(a, b map[string]interface{}) (compatible bool, err er
 				return
 			}
 
-			var aLeaf, bLeaf map[string]interface{}
+			var aLeaf, bLeaf jsonNode
 			var aIsMap, bIsMap bool
 
 			if aIsArray && bIsArray {
 				aLeaf, aIsMap = aArr[0].(map[string]interface{})
 				bLeaf, bIsMap = bArr[0].(map[string]interface{})
 			} else {
-				aLeaf, aIsMap = a[keyInA].(map[string]interface{})
-				bLeaf, bIsMap = b[keyInA].(map[string]interface{})
+				aLeaf, aIsMap = a[jsonFieldName].(map[string]interface{})
+				bLeaf, bIsMap = b[jsonFieldName].(map[string]interface{})
 			}
 
 			if aIsMap && bIsMap {
