@@ -137,7 +137,7 @@ func checkBody(downstreamBody string, expectedBody string) (errors []string) {
 		}
 
 		for k, v := range errMessages {
-			errors = append(errors, fmt.Sprintf("JSON err on field %s : %s", k, v))
+			errors = append(errors, fmt.Sprintf("JSON err on field '%s' : %s", k, v))
 		}
 
 		return

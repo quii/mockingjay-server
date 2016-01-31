@@ -5,7 +5,7 @@
      method: GET
    response:
      code: 200
-     body: '{"proclomation": "hello, world"}' # this json is incompatible with "example.yaml"
+     body: '{"proclomation": "hello, world", "message": 2.0}' # this json is incompatible with "example.yaml"
      headers:
        content-type: text/json
 
