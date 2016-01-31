@@ -34,7 +34,7 @@ func defaultApplication(logger *log.Logger) (app *application) {
 	app = new(application)
 	app.configLoader = ioutil.ReadFile
 	app.mockingjayLoader = mockingjay.NewFakeEndpoints
-	app.compatabilityChecker = NewCompatabilityChecker()
+	app.compatabilityChecker = NewCompatabilityChecker(logger)
 	app.mockingjayServerMaker = mockingjay.NewServer
 	app.monkeyServerMaker = monkey.NewServer
 	app.logger = logger

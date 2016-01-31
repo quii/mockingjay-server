@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/quii/mockingjay-server/mockingjay"
+	"log"
+	"os"
 	"testing"
+
+	"github.com/quii/mockingjay-server/mockingjay"
 )
 
 const sleepyTime = 500
@@ -14,7 +17,7 @@ const numberOfEndpoints = 3
 func BenchmarkCompatabilityChecking(b *testing.B) {
 	body := "hello, world"
 	realServer := makeFakeDownstreamServer(body, sleepyTime)
-	checker := NewCompatabilityChecker()
+	checker := NewCompatabilityChecker(log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime))
 	endpoints, err := mockingjay.NewFakeEndpoints([]byte(multipleEndpointYAML(numberOfEndpoints)))
 
 	if err != nil {

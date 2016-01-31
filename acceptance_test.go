@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 
@@ -41,7 +42,7 @@ func init() {
 
 func TestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {
 
-	checker := NewCompatabilityChecker()
+	checker := NewCompatabilityChecker(log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime))
 
 	if !checker.CheckCompatability(endpoints, "http://localhost:9094") {
 		t.Log("Endpoints were not seen as compatible and they should've been.")

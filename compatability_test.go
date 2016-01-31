@@ -2,15 +2,18 @@ package main
 
 import (
 	"fmt"
-	"github.com/quii/mockingjay-server/mockingjay"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 	"time"
+
+	"github.com/quii/mockingjay-server/mockingjay"
 )
 
 var (
-	checker = NewCompatabilityChecker()
+	checker = NewCompatabilityChecker(log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime))
 )
 
 func TestItIgnoresEndpointsNotSetToCDC(t *testing.T) {

@@ -18,12 +18,14 @@ import (
 // CompatabilityChecker is responsible for checking endpoints are compatible
 type CompatabilityChecker struct {
 	client *http.Client
+	logger *log.Logger
 }
 
 // NewCompatabilityChecker creates a new CompatabilityChecker
-func NewCompatabilityChecker() *CompatabilityChecker {
+func NewCompatabilityChecker(logger *log.Logger) *CompatabilityChecker {
 	c := new(CompatabilityChecker)
 	c.client = &http.Client{}
+	c.logger = logger
 	c.client.Timeout = 5 * time.Second
 	return c
 }
@@ -38,7 +40,7 @@ func (c *CompatabilityChecker) CheckCompatability(endpoints []mockingjay.FakeEnd
 	for _, endpoint := range endpoints {
 
 		if endpoint.CDCDisabled {
-			log.Println("IGNORED", endpoint.Name)
+			c.logger.Println("IGNORED", endpoint.Name)
 			results <- true
 			continue
 		}
@@ -47,9 +49,9 @@ func (c *CompatabilityChecker) CheckCompatability(endpoints []mockingjay.FakeEnd
 			errorMessages := c.check(&ep, realURL)
 
 			if len(errorMessages) > 0 {
-				log.Println(fmt.Sprintf("✗ %s is incompatible with %s", ep.String(), realURL))
+				c.logger.Println(fmt.Sprintf("✗ %s is incompatible with %s", ep.String(), realURL))
 				for _, msg := range errorMessages {
-					log.Println(msg)
+					c.logger.Println(msg)
 				}
 			}
 			results <- len(errorMessages) == 0
