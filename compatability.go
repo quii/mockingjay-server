@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"github.com/johnmuth/xmlcompare"
-	"github.com/quii/jsonequaliser"
-	"github.com/quii/mockingjay-server/mockingjay"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/johnmuth/xmlcompare"
+	"github.com/quii/jsonequaliser"
+	"github.com/quii/mockingjay-server/mockingjay"
 )
 
 // CompatabilityChecker is responsible for checking endpoints are compatible
@@ -43,9 +44,15 @@ func (c *CompatabilityChecker) CheckCompatability(endpoints []mockingjay.FakeEnd
 		}
 
 		go func(ep mockingjay.FakeEndpoint) {
-			msg, compatible := c.check(&ep, realURL)
-			log.Println(msg)
-			results <- compatible
+			errorMessages := c.check(&ep, realURL)
+
+			if len(errorMessages) > 0 {
+				log.Println(fmt.Sprintf("✗ %s is incompatible with %s", ep.String(), realURL))
+				for _, msg := range errorMessages {
+					log.Println(msg)
+				}
+			}
+			results <- len(errorMessages) == 0
 		}(endpoint)
 	}
 
@@ -59,89 +66,97 @@ func (c *CompatabilityChecker) CheckCompatability(endpoints []mockingjay.FakeEnd
 	return allCompatible
 }
 
-func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL string) (string, bool) {
+func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL string) (errors []string) {
 
 	request, err := endpoint.Request.AsHTTPRequest(realURL)
 
-	errorMsg := fmt.Sprintf("✗ %s is incompatible with %s", endpoint, realURL)
-
 	if err != nil {
-		return "Unable to create request from config, maybe try again?", false
+		errors = append(errors, "Unable to create request from config, maybe try again?")
+		return
 	}
 
 	response, err := c.client.Do(request)
 
 	if err != nil {
-		return fmt.Sprintf("✗ %s - Couldn't reach real server", errorMsg), false
+		errors = append(errors, "Couldn't reach real server")
+		return
 	}
 
 	defer response.Body.Close()
 
 	if response.StatusCode != endpoint.Response.Code {
-		body, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			body = []byte(fmt.Sprintf("Problem reading response body %v", err))
-		}
-		return fmt.Sprintf("%s - Got %d expected %d (%s)\n%s", errorMsg, response.StatusCode, endpoint.Response.Code, request.URL, body), false
+		errors = append(errors, fmt.Sprintf("Got %d expected %d", response.StatusCode, endpoint.Response.Code))
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
-		return fmt.Sprintf("✗ %s - Couldn't read response body [%s]\n", errorMsg, err), false
+		errors = append(errors, fmt.Sprintf("Couldn't read response body [%s]", err))
+		return
 	}
 
-	bodyCompatible, err := checkBody(string(body), endpoint.Response.Body)
+	errors = append(errors, checkBody(string(body), endpoint.Response.Body)...)
+	errors = append(errors, findMissingHeaders(endpoint.Response.Headers, response)...)
 
-	if err != nil {
-		return fmt.Sprintf("✗ %s - There was a problem checking the compatibility of the body %s", errorMsg, err), false
-	}
-
-	if !bodyCompatible {
-		return fmt.Sprintf("✗ %s - Body [%s] was not compatible with config body [%s]", errorMsg, string(body), endpoint.Response.Body), false
-	}
-
-	missingHeaders := findMissingHeaders(endpoint.Response.Headers, response)
-	if len(missingHeaders) > 0 {
-		return fmt.Sprintf("%s Some headers were missing from the downstream server %v", errorMsg, missingHeaders), false
-	}
-
-	return fmt.Sprintf("✔ %s", endpoint), true
+	return
 }
 
 func findMissingHeaders(expectedHeaders map[string]string, response *http.Response) (missing []string) {
 	for name, value := range expectedHeaders {
 		actualResponseHeader := response.Header.Get(name)
 		if actualResponseHeader == "" || actualResponseHeader != value {
-			missing = append(missing, name)
+			missing = append(missing, fmt.Sprintf("Missing or incorrect header value for %s", name))
 		}
 	}
 	return
 }
 
-func checkBody(downstreamBody string, expectedBody string) (bool, error) {
+var (
+	msgNotJSON          = "Expected JSON to be returned"
+	msgXMLNotCompatible = "XML is not compatible"
+	msgExactMatchFailed = "Exact body match did not pass"
+)
+
+func checkBody(downstreamBody string, expectedBody string) (errors []string) {
+
+	if expectedBody == "*" {
+		return
+	}
+
 	if isJSON(expectedBody) {
 
 		if !isJSON(downstreamBody) {
-			return false, nil
+			return []string{msgNotJSON}
+		}
+		errMessages, err := jsonequaliser.IsCompatible(expectedBody, downstreamBody)
+
+		if err != nil {
+			errors = append(errors, err.Error())
 		}
 
-		return jsonequaliser.IsCompatible(expectedBody, downstreamBody)
+		for k, v := range errMessages {
+			errors = append(errors, fmt.Sprintf("JSON err on field %s : %s", k, v))
+		}
+
+		return
 	}
 
 	if isXML(expectedBody) {
-		return xmlcompare.IsCompatible(expectedBody, downstreamBody)
-	}
-
-	if expectedBody == "*" {
-		return true, nil
+		compatible, err := xmlcompare.IsCompatible(expectedBody, downstreamBody)
+		if err != nil {
+			return []string{err.Error()}
+		}
+		if !compatible {
+			return []string{msgXMLNotCompatible}
+		}
+		return
 	}
 
 	if !strings.Contains(downstreamBody, expectedBody) {
-		return false, nil
+		return []string{msgExactMatchFailed}
 	}
 
-	return true, nil
+	return
 }
 
 func isJSON(s string) bool {

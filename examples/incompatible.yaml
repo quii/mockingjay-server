@@ -5,7 +5,7 @@
      method: GET
    response:
      code: 200
-     body: '{"proclomation": "hello, world"}' # this json is incompatible with "example/yaml"
+     body: '{"proclomation": "hello, world"}' # this json is incompatible with "example.yaml"
      headers:
        content-type: text/json
 
@@ -14,7 +14,7 @@
      uri: /world
      method: DELETE
    response:
-     code: 200
+     code: 400
      body: hello, world
 
  - name: Failing endpoint
@@ -24,4 +24,4 @@
      body: Greetings
    response:
      code: 500
-     body: Oh bugger
+     body: Oh no

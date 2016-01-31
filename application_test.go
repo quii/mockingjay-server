@@ -2,10 +2,11 @@ package main
 
 import (
 	"errors"
-	"github.com/quii/mockingjay-server/mockingjay"
 	"log"
 	"net/http"
 	"testing"
+
+	"github.com/quii/mockingjay-server/mockingjay"
 )
 
 const someMonkeyConfigString = "Hello, world"
@@ -79,6 +80,5 @@ func passingMockingjayLoader([]byte) ([]mockingjay.FakeEndpoint, error) {
 }
 
 func failingMonkeyServerMaker(http.Handler, string) (http.Handler, error) {
-	log.Println("what")
 	return nil, errors.New("Couldn't load monkey config")
 }
