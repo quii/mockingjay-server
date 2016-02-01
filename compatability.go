@@ -40,7 +40,7 @@ func (c *CompatabilityChecker) CheckCompatability(endpoints []mockingjay.FakeEnd
 	for _, endpoint := range endpoints {
 
 		if endpoint.CDCDisabled {
-			c.logger.Println("IGNORED", endpoint.Name)
+			c.logger.Println("! IGNORED", endpoint.Name)
 			results <- true
 			continue
 		}
@@ -53,8 +53,11 @@ func (c *CompatabilityChecker) CheckCompatability(endpoints []mockingjay.FakeEnd
 				for _, msg := range errorMessages {
 					c.logger.Println(msg)
 				}
+				results <- false
+			} else {
+				c.logger.Println(fmt.Sprintf("✓ %s is compatible with %s", ep.String(), realURL))
+				results <- true
 			}
-			results <- len(errorMessages) == 0
 		}(endpoint)
 	}
 
