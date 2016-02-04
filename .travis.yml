@@ -22,6 +22,7 @@ before_deploy:
 
 deploy:
   provider: releases
+  file_glob: true
   api_key: $GITHUB_TOKEN
   file: "dist/*"
   skip_cleanup: true
