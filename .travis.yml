@@ -18,7 +18,6 @@ script:
   # - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
 before_deploy:
   - gox -output "dist/{{.OS}}_{{.Arch}}_{{.Dir}}"
-  - ls -a
 
 deploy:
   provider: releases
