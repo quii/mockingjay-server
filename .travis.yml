@@ -18,4 +18,6 @@ script:
   - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
 after_success:
   - gox -output "dist/{{.OS}}_{{.Arch}}_{{.Dir}}"
-  - ghr --username quii --token $GITHUB_TOKEN --replace --prerelease --debug pre-release dist/
+  - ghr --username quii --token $GITHUB_TOKEN --debug $TRAVIS_BRANCH dist/
+  on:
+    tags: true
