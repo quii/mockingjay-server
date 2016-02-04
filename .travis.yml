@@ -15,7 +15,7 @@ before_install:
 script:
   - golint .
   - godep go test -coverprofile=coverage.out
-  - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
+  # - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
 after_success:
   - gox -output "dist/{{.OS}}_{{.Arch}}_{{.Dir}}"
   - ghr --username quii --token $GITHUB_TOKEN --debug $TRAVIS_BRANCH dist/
