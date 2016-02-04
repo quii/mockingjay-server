@@ -16,7 +16,7 @@ script:
   - golint .
   - godep go test -coverprofile=coverage.out
   # - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
-after_success:
+before_deploy:
   - gox -output "dist/{{.OS}}_{{.Arch}}_{{.Dir}}"
 
 deploy:
