@@ -1,3 +1,4 @@
+# another try!
 # https://raw.githubusercontent.com/kofj/travis-golang/master/.travis.yml
 language: go
 go:
