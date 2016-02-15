@@ -45,20 +45,7 @@ func (c *CompatabilityChecker) CheckCompatability(endpoints []mockingjay.FakeEnd
 			continue
 		}
 
-		go func(ep mockingjay.FakeEndpoint) {
-			errorMessages := c.check(&ep, realURL)
-
-			if len(errorMessages) > 0 {
-				c.logger.Println(fmt.Sprintf("✗ %s is incompatible with %s", ep.String(), realURL))
-				for _, msg := range errorMessages {
-					c.logger.Println(msg)
-				}
-				results <- false
-			} else {
-				c.logger.Println(fmt.Sprintf("✓ %s is compatible with %s", ep.String(), realURL))
-				results <- true
-			}
-		}(endpoint)
+		go c.compatabilityWorker(endpoint, realURL, results)
 	}
 
 	allCompatible := true
@@ -69,6 +56,21 @@ func (c *CompatabilityChecker) CheckCompatability(endpoints []mockingjay.FakeEnd
 		}
 	}
 	return allCompatible
+}
+
+func (c *CompatabilityChecker) compatabilityWorker(endpoint mockingjay.FakeEndpoint, realURL string, results chan<- bool) {
+	errorMessages := c.check(&endpoint, realURL)
+
+	if len(errorMessages) > 0 {
+		c.logger.Println(fmt.Sprintf("✗ %s is incompatible with %s", endpoint.String(), realURL))
+		for _, msg := range errorMessages {
+			c.logger.Println(msg)
+		}
+		results <- false
+	} else {
+		c.logger.Println(fmt.Sprintf("✓ %s is compatible with %s", endpoint.String(), realURL))
+		results <- true
+	}
 }
 
 func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL string) (errors []string) {
