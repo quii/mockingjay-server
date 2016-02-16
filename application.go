@@ -1,11 +1,13 @@
 package main
 
 import (
+	"crypto/md5"
 	_ "expvar"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/quii/mockingjay-server/mockingjay"
 	"github.com/quii/mockingjay-server/monkey"
@@ -31,6 +33,7 @@ type application struct {
 	mjServer              *mockingjay.Server
 	configPath            string
 	monkeyConfigPath      string
+	yamlMD5               [md5.Size]byte
 }
 
 func defaultApplication(logger *log.Logger) (app *application) {
@@ -45,6 +48,14 @@ func defaultApplication(logger *log.Logger) (app *application) {
 	return
 }
 
+func (a *application) PollConfig() {
+	ticker := time.NewTicker(time.Millisecond * 500)
+
+	for range ticker.C {
+		a.updateServer()
+	}
+}
+
 // Run will create a fake server from the configuration found in configPath with optional performance constraints from configutation found in monkeyConfigPath. If the realURL is supplied then it will not launch as a server and instead will check the config against the URL to see if it is structurally compatible (CDC mode)
 func (a *application) Run(configPath string, port int, realURL string, monkeyConfigPath string) error {
 	a.configPath = configPath
@@ -55,6 +66,10 @@ func (a *application) Run(configPath string, port int, realURL string, monkeyCon
 	if err != nil {
 		return err
 	}
+
+	a.yamlMD5 = md5.Sum(configData)
+
+	go a.PollConfig()
 
 	endpoints, err := a.mockingjayLoader(configData)
 
@@ -80,14 +95,26 @@ func (a *application) checkCompatability(endpoints []mockingjay.FakeEndpoint, re
 	}
 }
 
-func (a *application) UpdateServer() {
+//TODO: refactor the duplication in here and in Run
+func (a *application) updateServer() {
 	configData, err := a.configLoader(a.configPath)
-	endpoints, err := a.mockingjayLoader(configData)
 
 	if err != nil {
-		log.Println("New config is wrong!", err)
-	} else {
-		a.mjServer.Endpoints = endpoints
+		log.Println("New config couldnt be loaded", err)
+		return
+	}
+
+	if newMD5 := md5.Sum(configData); newMD5 != a.yamlMD5 {
+		a.yamlMD5 = newMD5
+
+		endpoints, err := a.mockingjayLoader(configData)
+
+		if err != nil {
+			log.Println("New config is wrong!", err)
+		} else {
+			log.Println("Loaded new config")
+			a.mjServer.Endpoints = endpoints
+		}
 	}
 }
 

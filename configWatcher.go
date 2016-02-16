@@ -16,7 +16,7 @@ func (a *application) WatchForConfigChanges(configPath string) {
 			for {
 				select {
 				case <-watcher.Event:
-					a.UpdateServer()
+					a.updateServer()
 				case err := <-watcher.Error:
 					log.Println("error:", err)
 				}
