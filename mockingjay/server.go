@@ -9,14 +9,14 @@ import (
 
 // Server allows you to configure a HTTP server for a slice of fake endpoints
 type Server struct {
-	endpoints []FakeEndpoint
+	Endpoints []FakeEndpoint
 	requests  []Request
 }
 
 // NewServer creates a new Server instance
 func NewServer(endpoints []FakeEndpoint) *Server {
 	s := new(Server)
-	s.endpoints = endpoints
+	s.Endpoints = endpoints
 	s.requests = make([]Request, 0)
 	return s
 }
@@ -62,17 +62,17 @@ func (s *Server) listAvailableRequests(w http.ResponseWriter) {
 
 func (s *Server) getResponse(r Request) *response {
 
-	for _, endpoint := range s.endpoints {
+	for _, endpoint := range s.Endpoints {
 		if requestMatches(endpoint.Request, r) {
 			return &endpoint.Response
 		}
 	}
 
-	return newNotFound(r.Method, r.URI, r.Body, r.Headers, s.endpoints)
+	return newNotFound(r.Method, r.URI, r.Body, r.Headers, s.Endpoints)
 }
 
 func (s *Server) serveEndpoints(w http.ResponseWriter) {
-	endpointsBody, err := json.Marshal(s.endpoints)
+	endpointsBody, err := json.Marshal(s.Endpoints)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -99,7 +99,7 @@ func (s *Server) createEndpoint(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
-	s.endpoints = append(s.endpoints, newEndpoint)
+	s.Endpoints = append(s.Endpoints, newEndpoint)
 
 	w.WriteHeader(http.StatusCreated)
 }

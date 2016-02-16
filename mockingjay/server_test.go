@@ -112,12 +112,12 @@ func TestItCanCreateEndpoints(t *testing.T) {
 		t.Fatal("Didnt create new endpoint", responseReader.Code, responseReader.Body.String())
 	}
 
-	if len(server.endpoints) != 1 {
+	if len(server.Endpoints) != 1 {
 		t.Fatal("The number of endpoints didnt increate after creating")
 	}
 
-	if !reflect.DeepEqual(server.endpoints[0], newEndpoint) {
-		t.Errorf("New endpoint was not correctly added to the server %v", server.endpoints[0])
+	if !reflect.DeepEqual(server.Endpoints[0], newEndpoint) {
+		t.Errorf("New endpoint was not correctly added to the server %v", server.Endpoints[0])
 	}
 }
 

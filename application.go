@@ -28,6 +28,9 @@ type application struct {
 	mockingjayServerMaker serverMaker
 	monkeyServerMaker     monkeyServerMaker
 	logger                *log.Logger
+	mjServer              *mockingjay.Server
+	configPath            string
+	monkeyConfigPath      string
 }
 
 func defaultApplication(logger *log.Logger) (app *application) {
@@ -44,6 +47,9 @@ func defaultApplication(logger *log.Logger) (app *application) {
 
 // Run will create a fake server from the configuration found in configPath with optional performance constraints from configutation found in monkeyConfigPath. If the realURL is supplied then it will not launch as a server and instead will check the config against the URL to see if it is structurally compatible (CDC mode)
 func (a *application) Run(configPath string, port int, realURL string, monkeyConfigPath string) error {
+	a.configPath = configPath
+	a.monkeyConfigPath = monkeyConfigPath
+
 	configData, err := a.configLoader(configPath)
 
 	if err != nil {
@@ -63,7 +69,7 @@ func (a *application) Run(configPath string, port int, realURL string, monkeyCon
 		return nil
 	}
 
-	return a.runFakeServer(endpoints, configPath, port, monkeyConfigPath)
+	return a.runFakeServer(endpoints, port)
 }
 
 func (a *application) checkCompatability(endpoints []mockingjay.FakeEndpoint, realURL string) {
@@ -74,16 +80,29 @@ func (a *application) checkCompatability(endpoints []mockingjay.FakeEndpoint, re
 	}
 }
 
-func (a *application) runFakeServer(endpoints []mockingjay.FakeEndpoint, configPath string, port int, monkeyConfigPath string) error {
-	server := a.mockingjayServerMaker(endpoints)
-	monkeyServer, err := a.monkeyServerMaker(server, monkeyConfigPath)
+func (a *application) UpdateServer() {
+	configData, err := a.configLoader(a.configPath)
+	endpoints, err := a.mockingjayLoader(configData)
+
+	if err != nil {
+		log.Println("New config is wrong!", err)
+	} else {
+		a.mjServer.Endpoints = endpoints
+	}
+}
+
+func (a *application) runFakeServer(endpoints []mockingjay.FakeEndpoint, port int) error {
+	a.mjServer = a.mockingjayServerMaker(endpoints)
+	monkeyServer, err := a.monkeyServerMaker(a.mjServer, a.monkeyConfigPath)
 
 	if err != nil {
 		return err
 	}
 
+	a.WatchForConfigChanges(a.configPath)
+
 	http.Handle("/", monkeyServer)
-	a.logger.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), configPath, port)
+	a.logger.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), a.configPath, port)
 	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
 		return fmt.Errorf("There was a problem starting the mockingjay server on port %d: %v", port, err)
