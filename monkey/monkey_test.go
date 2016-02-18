@@ -30,11 +30,11 @@ func TestItLoadsFromYAML(t *testing.T) {
 - garbage: 10000000
   frequency: 0.09
 `
-	degegate := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	delegate := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
-	monkeyServer, err := NewServerFromYAML(degegate.Config.Handler, []byte(yaml))
+	monkeyServer, err := NewServerFromYAML(delegate.Config.Handler, []byte(yaml))
 
 	if err != nil {
 		t.Fatalf("It didnt return a server from the YAML: %v", err)
@@ -42,12 +42,6 @@ func TestItLoadsFromYAML(t *testing.T) {
 
 	if len(monkeyServer.(*server).behaviours) != 4 {
 		t.Error("It didnt load all the behaviours from YAML")
-	}
-
-	monkeyServer, _ = NewServer(degegate.Config.Handler, "")
-
-	if monkeyServer != degegate.Config.Handler {
-		t.Error("It should just return the server as is if the config path is empty")
 	}
 }
 
