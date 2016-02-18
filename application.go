@@ -69,8 +69,6 @@ func (a *application) Run(configPath string, port int, realURL string, monkeyCon
 
 	a.yamlMD5 = md5.Sum(configData)
 
-	go a.PollConfig()
-
 	endpoints, err := a.mockingjayLoader(configData)
 
 	if err != nil {
@@ -119,14 +117,13 @@ func (a *application) updateServer() {
 }
 
 func (a *application) runFakeServer(endpoints []mockingjay.FakeEndpoint, port int) error {
+	go a.PollConfig()
 	a.mjServer = a.mockingjayServerMaker(endpoints)
 	monkeyServer, err := a.monkeyServerMaker(a.mjServer, a.monkeyConfigPath)
 
 	if err != nil {
 		return err
 	}
-
-	a.WatchForConfigChanges(a.configPath)
 
 	http.Handle("/", monkeyServer)
 	a.logger.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), a.configPath, port)
