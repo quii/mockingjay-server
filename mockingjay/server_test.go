@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -62,29 +63,19 @@ func TestItReturnsCannedResponses(t *testing.T) {
 
 	server.ServeHTTP(responseReader, request)
 
-	if responseReader.Code != http.StatusCreated {
-		t.Fatal("Expected a 201 (status created) but got", responseReader.Code)
-	}
-
-	if responseReader.Body.String() != cannedResponse {
-		t.Errorf("Expected canned response to be returned, got [%s] ", responseReader.Body.String())
-	}
-
-	if responseReader.Header().Get("Content-Type") != "application/json" {
-		t.Errorf("Expected response header to be set")
-	}
+	assert.Equal(t, responseReader.Code, http.StatusCreated)
+	assert.Equal(t, responseReader.Body.String(), cannedResponse)
+	assert.Equal(t, responseReader.Header().Get("Content-Type"), "application/json")
 
 	responseReader = httptest.NewRecorder()
 	requestTwo, _ := http.NewRequest("GET", testURL2, nil)
 
 	server.ServeHTTP(responseReader, requestTwo)
 
-	if responseReader.Body.String() != cannedResponse2 {
-		t.Errorf("Expected second endpoint's canned response, got %s", responseReader.Body.String())
-	}
+	assert.Equal(t, responseReader.Body.String(), cannedResponse2)
 }
 
-func TestItCanCreateEndpoints(t *testing.T) {
+func TestItCanCreateNewEndpointsOverHTTP(t *testing.T) {
 	server := NewServer([]FakeEndpoint{})
 
 	newEndpoint := FakeEndpoint{
@@ -101,24 +92,14 @@ func TestItCanCreateEndpoints(t *testing.T) {
 	}
 
 	newEndpointJSON, _ := json.Marshal(newEndpoint)
-
 	req, _ := http.NewRequest("POST", newEndpointURL, bytes.NewReader(newEndpointJSON))
-
 	responseReader := httptest.NewRecorder()
 
 	server.ServeHTTP(responseReader, req)
 
-	if responseReader.Code != http.StatusCreated {
-		t.Fatal("Didnt create new endpoint", responseReader.Code, responseReader.Body.String())
-	}
-
-	if len(server.Endpoints) != 1 {
-		t.Fatal("The number of endpoints didnt increate after creating")
-	}
-
-	if !reflect.DeepEqual(server.Endpoints[0], newEndpoint) {
-		t.Errorf("New endpoint was not correctly added to the server %v", server.Endpoints[0])
-	}
+	assert.Equal(t, responseReader.Code, http.StatusCreated)
+	assert.Len(t, server.Endpoints, 1)
+	assert.Equal(t, server.Endpoints[0], newEndpoint)
 }
 
 func TestItReturnsBadRequestWhenMakingABadNewEndpoint(t *testing.T) {
@@ -130,9 +111,7 @@ func TestItReturnsBadRequestWhenMakingABadNewEndpoint(t *testing.T) {
 
 	server.ServeHTTP(responseReader, req)
 
-	if responseReader.Code != http.StatusBadRequest {
-		t.Error("Expected to get a bad request but got", responseReader.Code)
-	}
+	assert.Equal(t, responseReader.Code, http.StatusBadRequest)
 }
 
 func TestItReturns404WhenUriIsWrong(t *testing.T) {
@@ -148,13 +127,8 @@ func TestItReturns404WhenUriIsWrong(t *testing.T) {
 
 	server.ServeHTTP(responseReader, request)
 
-	if responseReader.Code != http.StatusNotFound {
-		t.Error("Expected to get a 404")
-	}
-
-	if !strings.Contains(responseReader.Body.String(), requestBody) {
-		t.Errorf("Expected request body to be returned %v", responseReader.Body.String())
-	}
+	assert.Equal(t, responseReader.Code, http.StatusNotFound)
+	assert.Contains(t, responseReader.Body.String(), requestBody)
 }
 
 func TestItReturns404WhenMethodIsWrong(t *testing.T) {
@@ -169,14 +143,8 @@ func TestItReturns404WhenMethodIsWrong(t *testing.T) {
 
 	server.ServeHTTP(responseReader, request)
 
-	if responseReader.Code != http.StatusNotFound {
-		t.Error("Expected to get a 404")
-	}
-
-	if !strings.Contains(responseReader.Body.String(), "application/bob") {
-		t.Log(responseReader.Body.String())
-		t.Error("Request headers were not added to the response info")
-	}
+	assert.Equal(t, responseReader.Code, http.StatusNotFound)
+	assert.Contains(t, responseReader.Body.String(), "application/bob")
 }
 
 func TestItDoesContentNegotiation(t *testing.T) {
@@ -193,18 +161,14 @@ func TestItDoesContentNegotiation(t *testing.T) {
 
 	server.ServeHTTP(responseReader, requestWithIncorrectHeaderValue)
 
-	if responseReader.Code != http.StatusNotFound {
-		t.Error("Expected to get a 404 because we didnt set a content type header when it was expected")
-	}
+	assert.Equal(t, responseReader.Code, http.StatusNotFound)
 
 	requestWithNoHeaderAtAll, _ := http.NewRequest("GET", testURL, nil)
 	responseReader = httptest.NewRecorder()
 
 	server.ServeHTTP(responseReader, requestWithNoHeaderAtAll)
 
-	if responseReader.Code != http.StatusNotFound {
-		t.Error("Expected to get a 404 because we didnt set a content type header when it was expected")
-	}
+	assert.Equal(t, responseReader.Code, http.StatusNotFound)
 
 	requestWithDifferentCasedHeader, _ := http.NewRequest("GET", testURL, nil)
 	requestWithDifferentCasedHeader.Header.Add("Content-TYPE", "application/json")
@@ -212,9 +176,7 @@ func TestItDoesContentNegotiation(t *testing.T) {
 
 	server.ServeHTTP(responseReader, requestWithDifferentCasedHeader)
 
-	if responseReader.Code != http.StatusCreated {
-		t.Errorf("Expected request to match even though the header name was differently cased : \n%d", responseReader.Code)
-	}
+	assert.Equal(t, responseReader.Code, http.StatusCreated, "Expected request to match even though the header name was differently cased")
 }
 
 func TestItSendsRequestBodies(t *testing.T) {
@@ -230,18 +192,14 @@ func TestItSendsRequestBodies(t *testing.T) {
 
 	server.ServeHTTP(responseReader, requestWithoutBody)
 
-	if responseReader.Code != http.StatusNotFound {
-		t.Error("Expected to get a 404 because we didnt set a request body when it was expected")
-	}
+	assert.Equal(t, responseReader.Code, http.StatusNotFound)
 
 	requestWithBody, _ := http.NewRequest("POST", testURL, strings.NewReader(body))
 	responseReader = httptest.NewRecorder()
 
 	server.ServeHTTP(responseReader, requestWithBody)
 
-	if responseReader.Code != expectedStatus {
-		t.Error("Expected request to succeed but it didnt")
-	}
+	assert.Equal(t, responseReader.Code, expectedStatus)
 }
 
 func TestItRecordsIncomingRequests(t *testing.T) {
@@ -257,13 +215,8 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 
 	server.ServeHTTP(responseReader, requestWithDifferentBody)
 
-	if len(server.requests) != 1 {
-		t.Fatalf("Expected one request to be recorded but got %d", len(server.requests))
-	}
-
-	if server.requests[0].Method != "POST" {
-		t.Error("It doesnt look like it recorded the request properly")
-	}
+	assert.Len(t, server.requests, 1)
+	assert.Equal(t, server.requests[0].Method, "POST")
 }
 
 func TestItRespectsURLencoding(t *testing.T) {
@@ -280,9 +233,7 @@ func TestItRespectsURLencoding(t *testing.T) {
 
 	server.ServeHTTP(responseReader, request)
 
-	if responseReader.Code != expectedStatus {
-		t.Errorf("It looks like it didnt respect the escaped url, got a %d", responseReader.Code)
-	}
+	assert.Equal(t, responseReader.Code, expectedStatus)
 }
 
 func TestItReturnsListOfEndpoints(t *testing.T) {
@@ -295,22 +246,12 @@ func TestItReturnsListOfEndpoints(t *testing.T) {
 
 	server.ServeHTTP(responseReader, request)
 
-	if responseReader.Code != http.StatusOK {
-		t.Error("Didnt get a 200 from the endpoints url, got", responseReader.Code)
-	}
-
-	if responseReader.HeaderMap["Content-Type"][0] != "application/json" {
-		t.Error("Expected content type header to be set to json")
-	}
+	assert.Equal(t, responseReader.Code, http.StatusOK)
+	assert.Equal(t, responseReader.HeaderMap["Content-Type"][0], "application/json")
 
 	var endpointResponse []FakeEndpoint
 	err := json.Unmarshal(responseReader.Body.Bytes(), &endpointResponse)
 
-	if err != nil {
-		t.Fatal("Unable to parse JSON from endpoints URL", err)
-	}
-
-	if !reflect.DeepEqual(endpointResponse[0], endpoint) {
-		t.Error("The endpoint returned doesnt match what the server was set up with, got", endpointResponse, "expected", endpoint)
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, endpointResponse[0], endpoint, "The endpoint returned doesnt match what the server was set up with")
 }

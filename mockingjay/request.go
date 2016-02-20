@@ -26,7 +26,7 @@ var (
 	errEmptyMethod = errors.New("Cannot have an empty HTTP method")
 )
 
-func (r Request) isValid() error {
+func (r Request) errors() error {
 	regexPassed := r.RegexURI == nil || r.RegexURI.MatchString(r.URI)
 	if !regexPassed {
 		return errBadRegex

@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/quii/mockingjay-server/mockingjay"
+	"github.com/stretchr/testify/assert"
 )
 
 const yaml = `
@@ -32,7 +33,7 @@ func init() {
 	endpoints, err := mockingjay.NewFakeEndpoints([]byte(yaml))
 
 	if err != nil {
-		log.Fatal("Couldn't make endpoints for test", endpoints)
+		log.Fatal("Couldnt set up mockingjay from config", err)
 	}
 
 	server := mockingjay.NewServer(endpoints)
@@ -41,13 +42,8 @@ func init() {
 }
 
 func TestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {
-
 	checker := NewCompatabilityChecker(log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime))
-
-	if !checker.CheckCompatability(endpoints, "http://localhost:9094") {
-		t.Log("Endpoints were not seen as compatible and they should've been.")
-		t.Fail()
-	}
+	assert.True(t, checker.CheckCompatability(endpoints, "http://localhost:9094"))
 }
 
 func TestItListsRequestsItHasReceived(t *testing.T) {
@@ -55,13 +51,8 @@ func TestItListsRequestsItHasReceived(t *testing.T) {
 
 	res, err := http.Get("http://localhost:9094/requests")
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if res.StatusCode != http.StatusOK {
-		t.Error("Expected a 200 but got", res.StatusCode)
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, res.StatusCode, http.StatusOK)
 }
 
 func TestANewEndpointCanBeAdded(t *testing.T) {
@@ -87,27 +78,15 @@ func TestANewEndpointCanBeAdded(t *testing.T) {
 	newEndpointURL := "http://localhost:9094/mj-new-endpoint"
 	res, err := http.Post(newEndpointURL, "application/json", strings.NewReader(newEndpointJSON))
 
-	if err != nil {
-		t.Fatal("Problem calling new endpoint URL", newEndpointURL, err)
-	}
-
-	if res.StatusCode != http.StatusCreated {
-		t.Error("Create endpoint didnt return created - got", res.Status)
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, res.StatusCode, http.StatusCreated)
 
 	newEndPointResponse, err := http.Get("http://localhost:9094/hello")
 
-	if err != nil {
-		t.Fatal("Problem requesting newly created endpoint", err)
-	}
-
-	if newEndPointResponse.StatusCode != http.StatusOK {
-		t.Error("Didnt get a 200 from newly created endpoint, got", newEndPointResponse.StatusCode)
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, newEndPointResponse.StatusCode, http.StatusOK)
 
 	newEndpointBody, _ := ioutil.ReadAll(newEndPointResponse.Body)
 
-	if string(newEndpointBody) != `{"message": "hello, world"}` {
-		t.Error("New endpoint didnt return the correct body, got", newEndpointBody)
-	}
+	assert.Equal(t, string(newEndpointBody), `{"message": "hello, world"}`)
 }

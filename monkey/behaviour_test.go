@@ -2,46 +2,35 @@ package monkey
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestItGetsRandomBehaviours(t *testing.T) {
-	behaviour1 := new(behaviour)
-	behaviour1.Frequency = 0.15
-	behaviour1.Status = 123
+func TestItGetsRandomBehavioursAccordingToFrequency(t *testing.T) {
+	behaviour1 := behaviour{
+		Frequency: 0.15,
+		Status:    123,
+	}
 
-	behaviour2 := new(behaviour)
-	behaviour2.Frequency = 0.2
-	behaviour2.Status = 456
+	behaviour2 := behaviour{
+		Frequency: 0.2,
+		Status:    456,
+	}
 
-	allBehaviours := []behaviour{*behaviour1, *behaviour2}
+	allBehaviours := []behaviour{behaviour1, behaviour2}
 
 	result := getBehaviour(allBehaviours, fakeRandomiser{0.9})
 
-	if result != nil {
-		t.Error("There shouldnt have been a behaviour returned, but there was", result)
-	}
+	assert.Nil(t, result)
 
-	result = getBehaviour(allBehaviours, fakeRandomiser{0.13})
+	assert.Equal(t, getBehaviour(allBehaviours, fakeRandomiser{0.13}).Status, behaviour1.Status)
 
-	if result.Status != behaviour1.Status {
-		t.Error("It shouldve found behaviour 1", result, behaviour1)
-	}
-
-	result = getBehaviour(allBehaviours, fakeRandomiser{0.19})
-
-	if result.Status != behaviour2.Status {
-		t.Error("It should've found behaviour 2", result)
-	}
+	assert.Equal(t, getBehaviour(allBehaviours, fakeRandomiser{0.19}).Status, behaviour2.Status)
 }
 
 func TestItReturnsAnErrorForBadYAML(t *testing.T) {
-	yaml := "lol not yaml"
-
-	_, err := monkeyConfigFromYAML([]byte(yaml))
-
-	if err == nil {
-		t.Error("Error was not returned for bad YAML")
-	}
+	_, err := monkeyConfigFromYAML([]byte("lol not YAML"))
+	assert.NotNil(t, err, "Should get an error for bad YAML")
 }
 
 func TestItParsesYAMLIntoBehaviour(t *testing.T) {
@@ -64,10 +53,7 @@ func TestItParsesYAMLIntoBehaviour(t *testing.T) {
   frequency: 0.09
   `
 	behaviours, _ := monkeyConfigFromYAML([]byte(yaml))
-
-	if len(behaviours) != 4 {
-		t.Error("It didnt load all the behaviours from YAML")
-	}
+	assert.Len(t, behaviours, 4)
 }
 
 type fakeRandomiser struct {

@@ -1,8 +1,9 @@
 package mockingjay
 
 import (
-	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const testYAML = `
@@ -43,85 +44,31 @@ const testYAML = `
 func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 	endpoints, err := NewFakeEndpoints([]byte(testYAML))
 
-	if err != nil {
-		t.Fatalf("Shouldn't have got an error for valid YAML [%v]", err)
-	}
+	assert.Nil(t, err, "Shouldn't have got an error for valid YAML")
+	assert.Len(t, endpoints, 3, "There should be 3 endpoints found in YAML")
+
 	firstEndpoint := endpoints[0]
 
-	if len(endpoints) != 3 {
-		t.Fatalf("There should be 3 endpoints found in YAML")
-	}
-
-	if firstEndpoint.Name != "Test endpoint" {
-		t.Error("There should be a name set for the endpoint")
-	}
-
-	if firstEndpoint.Request.URI != "/hello/chris" {
-		t.Error("Request URI was not properly set")
-	}
-
-	if firstEndpoint.Request.Headers["content-type"] != "application/json" {
-		t.Error("Request headers were not parsed")
-	}
-
-	if firstEndpoint.Response.Headers["content-type"] != "text/json" {
-		t.Errorf("Response headers were not parsed, got %s", firstEndpoint.Response.Headers)
-	}
-
-	if firstEndpoint.Request.Method != "GET" {
-		t.Error("Request method was not properly set")
-	}
-
-	if firstEndpoint.Response.Code != 200 {
-		t.Error("Response code was not properly set")
-	}
-
-	if firstEndpoint.Response.Body != `{"message": "hello, world"}` {
-		t.Errorf("Response body was not properly set got [%s]", firstEndpoint.Response.Body)
-	}
-
-	if firstEndpoint.CDCDisabled {
-		t.Error("First endpoint doesnt define cdc preference so it should be enabled by default")
-	}
-
-	if firstEndpoint.Request.RegexURI == nil {
-		t.Error("First endpoint should have a regex defined")
-	}
+	assert.Equal(t, firstEndpoint.Name, "Test endpoint")
+	assert.Equal(t, firstEndpoint.Request.URI, "/hello/chris")
+	assert.Equal(t, firstEndpoint.Request.Headers["content-type"], "application/json")
+	assert.Equal(t, firstEndpoint.Request.Method, "GET")
+	assert.Equal(t, firstEndpoint.Request.Body, "foobar")
+	assert.Equal(t, firstEndpoint.Response.Headers["content-type"], "text/json")
+	assert.Equal(t, firstEndpoint.Response.Code, 200)
+	assert.Equal(t, firstEndpoint.Response.Body, `{"message": "hello, world"}`)
+	assert.False(t, firstEndpoint.CDCDisabled)
+	assert.NotNil(t, firstEndpoint.Request.RegexURI)
 
 	endpoint2 := endpoints[1]
 
-	if endpoint2.Request.Method != "DELETE" {
-		t.Error("Request method for second fake was not properly set")
-	}
-
-	if endpoint2.Response.Body != "" {
-		t.Error("Response body for second fake was not properly set")
-	}
-
-	if endpoint2.String() != "Test endpoint 2 (DELETE /world)" {
-		t.Errorf("Fake didnt have correct Stringer, got %s", endpoints[1].String())
-	}
-
-	if endpoints[2].Request.Body != "Greetings" {
-		t.Errorf("Request body for third fake was not properly set, got [%s]", endpoints[2].Request.Body)
-	}
-
-	if !endpoint2.CDCDisabled {
-		t.Error("Second endpoint should have CDC disabled")
-	}
+	assert.True(t, endpoint2.CDCDisabled)
 }
 
 func TestItReturnsAnErrorWhenNotValidYAML(t *testing.T) {
 	_, err := NewFakeEndpoints([]byte("not real YAML"))
-
-	if err == nil {
-		t.Error("Expected an error to be returned because the YAML is bad")
-	}
-
-	if !strings.Contains(err.Error(), "The structure of the supplied YAML is wrong") {
-		t.Errorf("Expected unmarshal error actual: %v", err.Error())
-	}
-
+	assert.NotNil(t, err, "Expected an error to be returned because the YAML is bad")
+	assert.Contains(t, err.Error(), "The structure of the supplied YAML is wrong")
 }
 
 const badYAML = `
@@ -144,13 +91,8 @@ const badYAML = `
 
 func TestItReturnsAnErrorWhenStructureOfYAMLIsWrong(t *testing.T) {
 	_, err := NewFakeEndpoints([]byte(badYAML))
-	if err == nil {
-		t.Error("Expected an error to be returned because the YAML is bad")
-	}
-
-	if err != errEmptyURI {
-		t.Errorf("Expected YAML was invalid error actual: %v", err.Error())
-	}
+	assert.NotNil(t, err, "Expected an error to be returned because the YAML is bad")
+	assert.Equal(t, err, errEmptyURI)
 }
 
 const incompleteYAML = `
@@ -165,14 +107,8 @@ const incompleteYAML = `
 
 func TestItReturnsAnErrorWhenYAMLIsIncomplete(t *testing.T) {
 	_, err := NewFakeEndpoints([]byte(incompleteYAML))
-	if err == nil {
-		t.Error("Expected an error to be returned because the YAML has missing fields")
-	}
-
-	if err != errResponseInvalid {
-		t.Errorf("Expected YAML was incomplete error actual: %v", err.Error())
-	}
-
+	assert.NotNil(t, err, "Expected an error to be returned because the YAML has missing fields")
+	assert.Equal(t, err, errResponseInvalid)
 }
 
 const duplicatedRequest = `
@@ -195,14 +131,8 @@ const duplicatedRequest = `
 
 func TestItReturnsErrorWhenRequestsAreDuplicated(t *testing.T) {
 	_, err := NewFakeEndpoints([]byte(duplicatedRequest))
-
-	if err == nil {
-		t.Fatal("Expected an error to be returned for duplicated requests")
-	}
-
-	if !strings.Contains(err.Error(), "duplicated") {
-		t.Error("Unexpeted error message", err)
-	}
+	assert.NotNil(t, err)
+	assert.Contains(t, err.Error(), "duplicated")
 }
 
 const badRegex = `
@@ -220,12 +150,6 @@ const badRegex = `
 
 func TestItReturnsErrorWhenRegexDoesntMatchURI(t *testing.T) {
 	_, err := NewFakeEndpoints([]byte(badRegex))
-
-	if err == nil {
-		t.Fatal("Expected an error to be returned")
-	}
-
-	if err != errBadRegex {
-		t.Error("Didnt get the correct type of error returned, expected", errBadRegex, "but got", err)
-	}
+	assert.NotNil(t, err)
+	assert.Equal(t, err, errBadRegex)
 }

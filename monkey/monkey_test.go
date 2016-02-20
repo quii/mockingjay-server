@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const alwaysMonkeyingAround = 1.0
@@ -36,13 +38,8 @@ func TestItLoadsFromYAML(t *testing.T) {
 
 	monkeyServer, err := NewServerFromYAML(delegate.Config.Handler, []byte(yaml))
 
-	if err != nil {
-		t.Fatalf("It didnt return a server from the YAML: %v", err)
-	}
-
-	if len(monkeyServer.(*server).behaviours) != 4 {
-		t.Error("It didnt load all the behaviours from YAML")
-	}
+	assert.Nil(t, err, "It didnt return a server from the YAML")
+	assert.Len(t, monkeyServer.(*server).behaviours, 4)
 }
 
 func TestItMonkeysWithStatusCodesAndBodies(t *testing.T) {
@@ -59,13 +56,8 @@ func TestItMonkeysWithStatusCodesAndBodies(t *testing.T) {
 
 	monkeyServer.ServeHTTP(w, request)
 
-	if w.Code != monkeyBehaviour.Status {
-		t.Error("Server shouldve returned a 404 because of monkey override")
-	}
-
-	if w.Body.String() != monkeyBehaviour.Body {
-		t.Error("Server should've returned a different body because of monkey override")
-	}
+	assert.Equal(t, w.Code, monkeyBehaviour.Status, "Server shouldve returned a 404 because of monkey")
+	assert.Equal(t, w.Body.String(), monkeyBehaviour.Body, "Server should've returned a different body because of monkey override")
 }
 
 func TestItReturnsGarbage(t *testing.T) {
@@ -81,9 +73,7 @@ func TestItReturnsGarbage(t *testing.T) {
 
 	monkeyServer.ServeHTTP(w, request)
 
-	if len(w.Body.Bytes()) != monkeyBehaviour.Garbage {
-		t.Error("Server shouldve returned garbage")
-	}
+	assert.Len(t, w.Body.Bytes(), monkeyBehaviour.Garbage, "Server shouldve returned garbage")
 }
 
 func TestItDoesntMonkeyAroundWhenFrequencyIsNothing(t *testing.T) {
@@ -99,9 +89,7 @@ func TestItDoesntMonkeyAroundWhenFrequencyIsNothing(t *testing.T) {
 
 	monkeyServer.ServeHTTP(w, request)
 
-	if w.Body.String() != cannedResponse {
-		t.Error("Server shouldn't have been monkeyed with ")
-	}
+	assert.Equal(t, w.Body.String(), cannedResponse, "Response body shouldve been tampered")
 }
 
 func makeTestServerAndRequest() (*httptest.Server, *http.Request) {

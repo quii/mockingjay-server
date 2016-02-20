@@ -5,7 +5,7 @@
      method: GET
    response:
      code: 200
-     body: '{"message": "hello, world"}'
+     body: '{"message": "hello, worldddfrf"}'
      headers:
        content-type: text/json
 

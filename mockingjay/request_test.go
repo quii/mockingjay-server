@@ -3,6 +3,8 @@ package mockingjay
 import (
 	"io/ioutil"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestItCreatesHTTPRequests(t *testing.T) {
@@ -21,23 +23,13 @@ func TestItCreatesHTTPRequests(t *testing.T) {
 
 	httpRequest, _ := mockingJayRequest.AsHTTPRequest(baseURL)
 
-	if httpRequest.URL.String() != baseURL+uri {
-		t.Errorf("Request URL is wrong, got %s", httpRequest.URL)
-	}
-
-	if httpRequest.Method != method {
-		t.Errorf("Request method is wrong, got %s", httpRequest.Method)
-	}
-
-	if httpRequest.Header.Get("foo") != "bar" {
-		t.Error("Request didnt have a header set")
-	}
+	assert.Equal(t, httpRequest.URL.String(), httpRequest.URL.String())
+	assert.Equal(t, httpRequest.Method, method)
+	assert.Equal(t, httpRequest.Header.Get("foo"), "bar")
 
 	requestBody, _ := ioutil.ReadAll(httpRequest.Body)
 
-	if string(requestBody) != body {
-		t.Errorf("Request body was not set properly, got %s", requestBody)
-	}
+	assert.Equal(t, string(requestBody), body)
 }
 
 func TestItValidatesRequests(t *testing.T) {
@@ -45,24 +37,19 @@ func TestItValidatesRequests(t *testing.T) {
 		URI:    "",
 		Method: "POST"}
 
-	if noURIRequest.isValid() != errEmptyURI {
-		t.Error("A request without a URI is seen as valid")
-	}
+	assert.Equal(t, noURIRequest.errors(), errEmptyURI)
 
 	noMethodRequest := Request{
 		URI:    "/",
 		Method: ""}
 
-	if noMethodRequest.isValid() != errEmptyMethod {
-		t.Error("A request without a method is seen as valid")
-	}
+	assert.Equal(t, noMethodRequest.errors(), errEmptyMethod)
 
 	validRequest := Request{
 		URI:    "/",
 		Method: "POST",
 	}
 
-	if validRequest.isValid() != nil {
-		t.Error("A valid request is seen as not valid")
-	}
+	assert.Nil(t, validRequest.errors())
+
 }

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/quii/mockingjay-server/mockingjay"
+	"github.com/stretchr/testify/assert"
 )
 
 const someMonkeyConfigString = "Hello, world"
@@ -17,9 +18,7 @@ func TestItFailsWhenTheConfigFileCantBeLoaded(t *testing.T) {
 
 	err := app.Run("mockingjay config path", 1234, "", "")
 
-	if err == nil {
-		t.Error("Didnt get an error when the config file failed to load")
-	}
+	assert.NotNil(t, err)
 }
 
 func TestItFailsWhenTheConfigIsInvalid(t *testing.T) {
@@ -28,9 +27,7 @@ func TestItFailsWhenTheConfigIsInvalid(t *testing.T) {
 
 	err := app.Run("mockingjay config path", 1234, "", "")
 
-	if err == nil {
-		t.Error("Didnt get an error when the mockingjay config failed to load")
-	}
+	assert.NotNil(t, err, "Didnt get an error when the mockingjay config failed to load")
 }
 
 func TestItFailsWhenTheMonkeyConfigIsInvalid(t *testing.T) {
@@ -38,9 +35,7 @@ func TestItFailsWhenTheMonkeyConfigIsInvalid(t *testing.T) {
 
 	err := app.Run("mockingjay config path", 1234, "", "monkey config path")
 
-	if err == nil {
-		t.Error("Didnt get an error when the monkey config failed to load")
-	}
+	assert.NotNil(t, err, "Didnt get an error when the monkey config failed to load")
 }
 
 func testApplication() *application {

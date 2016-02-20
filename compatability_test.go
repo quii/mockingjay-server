@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/quii/mockingjay-server/mockingjay"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -34,9 +35,8 @@ func TestItIgnoresEndpointsNotSetToCDC(t *testing.T) {
 		fmt.Fprint(w, ":(")
 	}))
 
-	if !checker.CheckCompatability(endpoints, realServerThatsNotCompatible.URL) {
-		t.Error(`Checker shouldve found downstream server to be "compatible" as the endpoint is ignored`)
-	}
+	compatible := checker.CheckCompatability(endpoints, realServerThatsNotCompatible.URL)
+	assert.True(t, compatible, `Checker shouldve found downstream server to be "compatible" as the endpoint is ignored`)
 }
 
 func TestItMatchesHeaders(t *testing.T) {
@@ -54,9 +54,7 @@ func TestItMatchesHeaders(t *testing.T) {
 `
 	endpoints, err := mockingjay.NewFakeEndpoints([]byte(yaml))
 
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
 	realServerWithoutHeaders := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "ok")
@@ -67,13 +65,11 @@ func TestItMatchesHeaders(t *testing.T) {
 		fmt.Fprint(w, "ok")
 	}))
 
-	if checker.CheckCompatability(endpoints, realServerWithoutHeaders.URL) {
-		t.Error("Checker should've found downstream server to be incompatible as it did not include the response headers we expected")
-	}
+	assert.False(t,
+		checker.CheckCompatability(endpoints, realServerWithoutHeaders.URL),
+		"Checker should've found downstream server to be incompatible as it did not include the response headers we expected")
 
-	if !checker.CheckCompatability(endpoints, realServerWithHeaders.URL) {
-		t.Error("Checker shouldve found downstream server to be compatible")
-	}
+	assert.True(t, checker.CheckCompatability(endpoints, realServerWithHeaders.URL))
 }
 
 func TestItMatchesBodiesAsStrings(t *testing.T) {
@@ -82,9 +78,7 @@ func TestItMatchesBodiesAsStrings(t *testing.T) {
 	realServer := makeFakeDownstreamServer(downstreamBody, noSleep)
 	endpoints := makeEndpoints(body)
 
-	if !checker.CheckCompatability(endpoints, realServer.URL) {
-		t.Error("Checker should've found this endpoint to be correct")
-	}
+	assert.True(t, checker.CheckCompatability(endpoints, realServer.URL))
 }
 
 func TestItFailsWhenStringsDontMatch(t *testing.T) {
@@ -93,9 +87,7 @@ func TestItFailsWhenStringsDontMatch(t *testing.T) {
 	realServer := makeFakeDownstreamServer(downstreamBody, noSleep)
 	endpoints := makeEndpoints(body)
 
-	if checker.CheckCompatability(endpoints, realServer.URL) {
-		t.Error("Checker should've found this endpoint to be incompatible")
-	}
+	assert.False(t, checker.CheckCompatability(endpoints, realServer.URL))
 }
 
 func TestItChecksAValidEndpointsJSON(t *testing.T) {
@@ -103,9 +95,7 @@ func TestItChecksAValidEndpointsJSON(t *testing.T) {
 	realServer := makeFakeDownstreamServer(body, noSleep)
 	endpoints := makeEndpoints(body)
 
-	if !checker.CheckCompatability(endpoints, realServer.URL) {
-		t.Error("Checker should've found this endpoint to be correct")
-	}
+	assert.True(t, checker.CheckCompatability(endpoints, realServer.URL))
 }
 
 func TestItChecksAValidEndpointsXML(t *testing.T) {
@@ -114,9 +104,7 @@ func TestItChecksAValidEndpointsXML(t *testing.T) {
 	realServer := makeFakeDownstreamServer(realServerBody, noSleep)
 	endpoints := makeEndpoints(body)
 
-	if !checker.CheckCompatability(endpoints, realServer.URL) {
-		t.Error("Checker should've found this endpoint to be correct")
-	}
+	assert.True(t, checker.CheckCompatability(endpoints, realServer.URL))
 }
 
 func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
@@ -126,9 +114,7 @@ func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
 	realServer := makeFakeDownstreamServer(serverResponseBody, noSleep)
 	endpoints := makeEndpoints(fakeResponseBody)
 
-	if checker.CheckCompatability(endpoints, realServer.URL) {
-		t.Error("Checker should've found this endpoint to be incorrect")
-	}
+	assert.False(t, checker.CheckCompatability(endpoints, realServer.URL))
 }
 
 func TestItChecksStatusCodes(t *testing.T) {
@@ -141,9 +127,7 @@ func TestItChecksStatusCodes(t *testing.T) {
 
 	endpoints := makeEndpoints(body)
 
-	if checker.CheckCompatability(endpoints, realServer.URL) {
-		t.Error("Checker should've found this endpoint to be incorrect")
-	}
+	assert.False(t, checker.CheckCompatability(endpoints, realServer.URL))
 }
 
 func TestIfItsNotJSONItDoesAStringMatch(t *testing.T) {
@@ -153,48 +137,30 @@ func TestIfItsNotJSONItDoesAStringMatch(t *testing.T) {
 	realServer := makeFakeDownstreamServer(serverResponseBody, noSleep)
 	endpoints := makeEndpoints(fakeResponseBody)
 
-	if checker.CheckCompatability(endpoints, realServer.URL) {
-		t.Error("Checker should've found this endpoint to be incorrect")
-	}
+	assert.False(t, checker.CheckCompatability(endpoints, realServer.URL))
 }
 
-func TestIfItsNotJSONItKnowsItsCompatable(t *testing.T) {
-	body := "hello world"
-
-	realServer := makeFakeDownstreamServer(body, noSleep)
-	endpoints := makeEndpoints(body)
-
-	if !checker.CheckCompatability(endpoints, realServer.URL) {
-		t.Error("Checker should've found this endpoint to be correct")
-	}
-}
-
-func TestIfItsNotJSONItAllowsAnyBody(t *testing.T) {
+func TestItAllowsAnyBodyOnWildcard(t *testing.T) {
 	body := "hello world"
 
 	realServer := makeFakeDownstreamServer(body, noSleep)
 	endpoints := makeEndpoints("*")
 
-	if !checker.CheckCompatability(endpoints, realServer.URL) {
-		t.Error("Checker should've found this endpoint to be correct")
-	}
+	assert.True(t, checker.CheckCompatability(endpoints, realServer.URL))
 }
 
 func TestItIsIncompatibleWhenRealServerIsntReachable(t *testing.T) {
 	body := "doesnt matter"
 	endpoints := makeEndpoints(body)
-	if checker.CheckCompatability(endpoints, "http://localhost:12344") {
-		t.Error("Checker shouldve found this to be an error as the real server isnt reachable")
-	}
+
+	assert.False(t, checker.CheckCompatability(endpoints, "http://localhost:12344"))
 }
 
 func TestItHandlesBadURLsInConfig(t *testing.T) {
 	yaml := fmt.Sprintf(yamlFormat, "not a real url", "foobar")
 	fakeEndPoints, _ := mockingjay.NewFakeEndpoints([]byte(yaml))
 
-	if checker.CheckCompatability(fakeEndPoints, "also not a real url") {
-		t.Error("Checker should've found that the URL in the YAML cannot be made into a request")
-	}
+	assert.False(t, checker.CheckCompatability(fakeEndPoints, "also not a real url"))
 }
 
 // https://github.com/quii/mockingjay-server/issues/3
@@ -213,36 +179,7 @@ func TestWhitespaceSensitivity(t *testing.T) {
 	fakeEndPoints, _ := mockingjay.NewFakeEndpoints([]byte(y))
 	realServer := makeFakeDownstreamServer(`{"token":    "1234abc"}`, noSleep)
 
-	if !checker.CheckCompatability(fakeEndPoints, realServer.URL) {
-		t.Error("Checker should've found that the two JSONs are compatible despite having different whitespace")
-	}
-}
-
-// this is panicing in goconvey?
-func TestErrorReportingOfEmptyJSONArrays(t *testing.T) {
-	y := `
----
-- name: Testing whitespace sensitivity
-  request:
-    uri: /hello
-    method: POST
-    body: '{"email":"foo@bar.com","password":"xxx"}'
-  response:
-    code: 200
-    body: '{"stuff": [{"foo":"bar"}]}'
-`
-
-	fakeEndPoints, err := mockingjay.NewFakeEndpoints([]byte(y))
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	realServer := makeFakeDownstreamServer(`{"stuff":[]}`, noSleep)
-
-	if checker.CheckCompatability(fakeEndPoints, realServer.URL) {
-		t.Error("Checker shouldn't have found it compatible because its got an empty array downstream")
-	}
+	assert.True(t, checker.CheckCompatability(fakeEndPoints, realServer.URL))
 }
 
 const noSleep = 1

@@ -22,7 +22,7 @@ func (f *FakeEndpoint) String() string {
 }
 
 func (f FakeEndpoint) isValid() error {
-	if reqError := f.Request.isValid(); reqError != nil {
+	if reqError := f.Request.errors(); reqError != nil {
 		return reqError
 	}
 	if !f.Response.isValid() {

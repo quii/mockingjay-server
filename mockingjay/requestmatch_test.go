@@ -3,6 +3,8 @@ package mockingjay
 import (
 	"regexp"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -17,9 +19,7 @@ func TestMatchingWithRegex(t *testing.T) {
 	uriPathRegex, err := regexp.Compile(`\/hello\/[a-z]+`)
 	regexURI := &RegexYAML{Regexp: *uriPathRegex}
 
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 
 	serverConfig := Request{
 		URI:      "/hello/world",
@@ -27,20 +27,16 @@ func TestMatchingWithRegex(t *testing.T) {
 		Method:   "GET",
 	}
 
-	if !requestMatches(serverConfig, incomingRequest) {
-		t.Error("Requests didnt match when we expected them to", incomingRequest, serverConfig)
-	}
+	assert.True(t, requestMatches(serverConfig, incomingRequest))
 }
 
 func TestItMatchesOnURL(t *testing.T) {
-	serverConfig := Request{
+	notMatchingURL := Request{
 		URI:    "/hello/bob",
 		Method: "GET",
 	}
 
-	if requestMatches(serverConfig, incomingRequest) {
-		t.Error("Should not match", serverConfig, incomingRequest)
-	}
+	assert.False(t, requestMatches(notMatchingURL, incomingRequest))
 }
 
 func TestItMatchesWildcardBodies(t *testing.T) {
@@ -56,7 +52,5 @@ func TestItMatchesWildcardBodies(t *testing.T) {
 		Body:   "*",
 	}
 
-	if !requestMatches(serverConfig, incomingRequest) {
-		t.Error("Expected wildcards to match", incomingRequest, serverConfig)
-	}
+	assert.True(t, requestMatches(serverConfig, incomingRequest))
 }

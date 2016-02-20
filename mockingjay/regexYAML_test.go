@@ -3,6 +3,8 @@ package mockingjay
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"gopkg.in/yaml.v2"
 )
 
@@ -16,11 +18,6 @@ func TestItCanUnmarshalRegex(t *testing.T) {
 	var d testRegexDataType
 	err := yaml.Unmarshal([]byte(rawYAML), &d)
 
-	if err != nil {
-		t.Error("Couldnt unmarshal regex from YAML", err)
-	}
-
-	if d.Regex == nil {
-		t.Error("Regex was not extracted from YAML")
-	}
+	assert.Nil(t, err)
+	assert.NotNil(t, d.Regex)
 }
