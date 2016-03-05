@@ -10,6 +10,7 @@ import (
 
 	"github.com/quii/mockingjay-server/mockingjay"
 	"github.com/stretchr/testify/assert"
+	"net/http/httptest"
 )
 
 const yaml = `
@@ -27,6 +28,7 @@ const yaml = `
 
 var (
 	endpoints []mockingjay.FakeEndpoint
+	server *mockingjay.Server
 )
 
 func init() {
@@ -36,26 +38,33 @@ func init() {
 		log.Fatal("Couldnt set up mockingjay from config", err)
 	}
 
-	server := mockingjay.NewServer(endpoints)
-	http.Handle("/", server)
-	go http.ListenAndServe(":9094", nil)
+	server = mockingjay.NewServer(endpoints)
 }
 
 func TestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {
+	svr := httptest.NewServer(server)
+	defer svr.Close()
+
 	checker := NewCompatabilityChecker(log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime))
-	assert.True(t, checker.CheckCompatability(endpoints, "http://localhost:9094"))
+	assert.True(t, checker.CheckCompatability(endpoints, svr.URL))
 }
 
 func TestItListsRequestsItHasReceived(t *testing.T) {
-	http.Get("http://localhost:9094/hello")
+	svr := httptest.NewServer(server)
+	defer svr.Close()
 
-	res, err := http.Get("http://localhost:9094/requests")
+	http.Get(svr.URL + "/hello")
+
+	res, err := http.Get(svr.URL + "/requests")
 
 	assert.Nil(t, err)
 	assert.Equal(t, res.StatusCode, http.StatusOK)
 }
 
 func TestANewEndpointCanBeAdded(t *testing.T) {
+	svr := httptest.NewServer(server)
+	defer svr.Close()
+
 	newEndpointJSON := `
 	{
 	  "Name": "Test endpoint",
@@ -75,13 +84,13 @@ func TestANewEndpointCanBeAdded(t *testing.T) {
 	  }
 	}
 	`
-	newEndpointURL := "http://localhost:9094/mj-new-endpoint"
+	newEndpointURL := svr.URL + "/mj-new-endpoint"
 	res, err := http.Post(newEndpointURL, "application/json", strings.NewReader(newEndpointJSON))
 
 	assert.Nil(t, err)
 	assert.Equal(t, res.StatusCode, http.StatusCreated)
 
-	newEndPointResponse, err := http.Get("http://localhost:9094/hello")
+	newEndPointResponse, err := http.Get(svr.URL + `/hello`)
 
 	assert.Nil(t, err)
 	assert.Equal(t, newEndPointResponse.StatusCode, http.StatusOK)
