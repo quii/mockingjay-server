@@ -16,7 +16,7 @@ func TestItFailsWhenTheConfigFileCantBeLoaded(t *testing.T) {
 	app := testApplication()
 	app.configLoader = failingIOUtil
 
-	_, err := app.Run("mockingjay config path", "", "")
+	_, err := app.CreateServer("mockingjay config path", "")
 
 	assert.NotNil(t, err)
 }
@@ -25,7 +25,7 @@ func TestItFailsWhenTheConfigIsInvalid(t *testing.T) {
 	app := testApplication()
 	app.mockingjayLoader = failingMockingjayLoader
 
-	_, err := app.Run("mockingjay config path", "", "")
+	_, err := app.CreateServer("mockingjay config path", "")
 
 	assert.NotNil(t, err, "Didnt get an error when the mockingjay config failed to load")
 }
@@ -33,7 +33,7 @@ func TestItFailsWhenTheConfigIsInvalid(t *testing.T) {
 func TestItFailsWhenTheMonkeyConfigIsInvalid(t *testing.T) {
 	app := testApplication()
 
-	_, err := app.Run("mockingjay config path", "", "monkey config path")
+	_, err := app.CreateServer("mockingjay config path", "monkey config path")
 
 	assert.NotNil(t, err, "Didnt get an error when the monkey config failed to load")
 }

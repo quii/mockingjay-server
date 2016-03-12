@@ -30,15 +30,20 @@ func main() {
 	}
 
 	app := defaultApplication(logger)
-	svr, err := app.Run(*configPath, *realURL, *monkeyConfigPath)
 
-	if err != nil {
-		log.Fatal(err)
-	} else if svr != nil {
-		log.Printf("Listening on port %d", *port)
-		err = http.ListenAndServe(fmt.Sprintf(":%d", *port), svr)
+	if realURL!= nil{
+		app.CheckCompatability(*configPath, *realURL)
+	}else {
+		svr, err := app.CreateServer(*configPath, *monkeyConfigPath)
+
 		if err != nil {
-			log.Fatal("There was a problem starting the mockingjay server on port %d: %v", *port, err.Error())
+			log.Fatal(err)
+		} else {
+			log.Printf("Listening on port %d", *port)
+			err = http.ListenAndServe(fmt.Sprintf(":%d", *port), svr)
+			if err != nil {
+				log.Fatal("There was a problem starting the mockingjay server on port %d: %v", *port, err.Error())
+			}
 		}
 	}
 }

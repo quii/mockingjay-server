@@ -4,59 +4,38 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 	"testing"
-
-	"github.com/quii/mockingjay-server/mockingjay"
 	"github.com/stretchr/testify/assert"
 	"net/http/httptest"
 )
 
-/*
-TODO: Now that application returns a HTTP server it is more testable so these "acceptance"
-tests should now actually run the application rather than the library. This will give
-super confidence MJ is working well.
- */
-
-const yaml = `
-- name: Valid login details
-  request:
-    uri: /token
-    method: POST
-    body: '{"email":"foo@domain.com","password":"secret"}'
-    headers:
-     X-Api-Key: supersecret
-  response:
-    code: 200
-    body: '{"token": "1234abc"}'
-`
-
 var (
-	endpoints []mockingjay.FakeEndpoint
-	server    *mockingjay.Server
+	app *application
+	mjServer http.Handler
 )
 
-func init() {
-	endpoints, err := mockingjay.NewFakeEndpoints([]byte(yaml))
+const testYAMLPath = "examples/example.yaml"
 
-	if err != nil {
-		log.Fatal("Couldnt set up mockingjay from config", err)
+func init() {
+	app = defaultApplication(log.New(ioutil.Discard, "", 0))
+	svr, err := app.CreateServer(testYAMLPath, "")
+
+	if err != nil{
+		log.Fatal("Couldn't load MJ config from", testYAMLPath)
 	}
 
-	server = mockingjay.NewServer(endpoints)
+	mjServer = svr
 }
 
 func TestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {
-	svr := httptest.NewServer(server)
+	svr := httptest.NewServer(mjServer)
 	defer svr.Close()
-
-	checker := NewCompatabilityChecker(log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime))
-	assert.True(t, checker.CheckCompatability(endpoints, svr.URL))
+	assert.NoError(t, app.CheckCompatability(testYAMLPath, svr.URL))
 }
 
 func TestItListsRequestsItHasReceived(t *testing.T) {
-	svr := httptest.NewServer(server)
+	svr := httptest.NewServer(mjServer)
 	defer svr.Close()
 
 	http.Get(svr.URL + "/hello")
@@ -68,7 +47,7 @@ func TestItListsRequestsItHasReceived(t *testing.T) {
 }
 
 func TestANewEndpointCanBeAdded(t *testing.T) {
-	svr := httptest.NewServer(server)
+	svr := httptest.NewServer(mjServer)
 	defer svr.Close()
 
 	newEndpointJSON := `
@@ -76,7 +55,7 @@ func TestANewEndpointCanBeAdded(t *testing.T) {
 	  "Name": "Test endpoint",
 	  "CDCDisabled": false,
 	  "Request": {
-	    "URI": "/hello",
+	    "URI": "/new-endpoint",
 	    "Method": "GET",
 	    "Headers": null,
 	    "Body": ""
@@ -96,7 +75,7 @@ func TestANewEndpointCanBeAdded(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, res.StatusCode, http.StatusCreated)
 
-	newEndPointResponse, err := http.Get(svr.URL + `/hello`)
+	newEndPointResponse, err := http.Get(svr.URL + `/new-endpoint`)
 
 	assert.Nil(t, err)
 	assert.Equal(t, newEndPointResponse.StatusCode, http.StatusOK)

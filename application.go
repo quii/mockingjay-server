@@ -67,8 +67,8 @@ func (a *application) PollConfig() {
 	}
 }
 
-// Run will create a fake server from the configuration found in configPath with optional performance constraints from configutation found in monkeyConfigPath. If the realURL is supplied then it will not launch as a server and instead will check the config against the URL to see if it is structurally compatible (CDC mode)
-func (a *application) Run(configPath string, realURL string, monkeyConfigPath string) (server http.Handler, err error) {
+// CreateServer will create a fake server from the configuration found in configPath with optional performance constraints from configutation found in monkeyConfigPath
+func (a *application) CreateServer(configPath string, monkeyConfigPath string) (server http.Handler, err error) {
 	a.configPath = configPath
 	a.monkeyConfigPath = monkeyConfigPath
 	endpoints, err := a.loadConfig()
@@ -77,17 +77,18 @@ func (a *application) Run(configPath string, realURL string, monkeyConfigPath st
 		return
 	}
 
-	inCheckCompatabilityMode := realURL != ""
-
-	if inCheckCompatabilityMode {
-		err = a.checkCompatability(endpoints, realURL)
-		return nil, err
-	}
-
 	return a.createFakeServer(endpoints)
 }
 
-func (a *application) checkCompatability(endpoints []mockingjay.FakeEndpoint, realURL string) error {
+// CheckCompatability will run a MJ config against a realURL to see if it's compatible
+func (a *application) CheckCompatability(configPath string, realURL string) error {
+	a.configPath = configPath
+	endpoints, err := a.loadConfig()
+
+	if err != nil{
+		return err
+	}
+
 	if a.compatabilityChecker.CheckCompatability(endpoints, realURL) {
 		a.logger.Println("All endpoints are compatible")
 		return nil
@@ -100,7 +101,7 @@ func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err err
 	configData, err := a.configLoader(a.configPath)
 
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	if newMD5 := md5.Sum(configData); newMD5 != a.yamlMD5 {
