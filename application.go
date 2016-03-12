@@ -85,7 +85,7 @@ func (a *application) CheckCompatability(configPath string, realURL string) erro
 	a.configPath = configPath
 	endpoints, err := a.loadConfig()
 
-	if err != nil{
+	if err != nil {
 		return err
 	}
 

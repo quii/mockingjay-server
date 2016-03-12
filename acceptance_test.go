@@ -1,17 +1,17 @@
 package main
 
 import (
+	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
-	"github.com/stretchr/testify/assert"
-	"net/http/httptest"
 )
 
 var (
-	app *application
+	app      *application
 	mjServer http.Handler
 )
 
@@ -21,7 +21,7 @@ func init() {
 	app = defaultApplication(log.New(ioutil.Discard, "", 0))
 	svr, err := app.CreateServer(testYAMLPath, "")
 
-	if err != nil{
+	if err != nil {
 		log.Fatal("Couldn't load MJ config from", testYAMLPath)
 	}
 

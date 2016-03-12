@@ -31,9 +31,9 @@ func main() {
 
 	app := defaultApplication(logger)
 
-	if realURL!= nil{
+	if realURL != nil {
 		app.CheckCompatability(*configPath, *realURL)
-	}else {
+	} else {
 		svr, err := app.CreateServer(*configPath, *monkeyConfigPath)
 
 		if err != nil {

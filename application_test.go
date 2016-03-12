@@ -66,11 +66,13 @@ func passingIOUtil(path string) ([]byte, error) {
 }
 
 var errIOError = errors.New("Couldn't load err from FS")
+
 func failingIOUtil(path string) ([]byte, error) {
 	return nil, errIOError
 }
 
 var errMJLoaderError = errors.New("Couldnt load mj file")
+
 func failingMockingjayLoader([]byte) ([]mockingjay.FakeEndpoint, error) {
 	return nil, errMJLoaderError
 }
@@ -80,6 +82,7 @@ func passingMockingjayLoader([]byte) ([]mockingjay.FakeEndpoint, error) {
 }
 
 var errMonkeyLoadError = errors.New("Couldn't load monkey file")
+
 func failingMonkeyServerMaker(http.Handler, string) (http.Handler, error) {
 	return nil, errMonkeyLoadError
 }
