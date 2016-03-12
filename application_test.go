@@ -19,6 +19,7 @@ func TestItFailsWhenTheConfigFileCantBeLoaded(t *testing.T) {
 	_, err := app.CreateServer("mockingjay config path", "")
 
 	assert.NotNil(t, err)
+	assert.Equal(t, err, errIOError)
 }
 
 func TestItFailsWhenTheConfigIsInvalid(t *testing.T) {
@@ -28,6 +29,7 @@ func TestItFailsWhenTheConfigIsInvalid(t *testing.T) {
 	_, err := app.CreateServer("mockingjay config path", "")
 
 	assert.NotNil(t, err, "Didnt get an error when the mockingjay config failed to load")
+	assert.Equal(t, err, errMJLoaderError)
 }
 
 func TestItFailsWhenTheMonkeyConfigIsInvalid(t *testing.T) {
@@ -36,6 +38,7 @@ func TestItFailsWhenTheMonkeyConfigIsInvalid(t *testing.T) {
 	_, err := app.CreateServer("mockingjay config path", "monkey config path")
 
 	assert.NotNil(t, err, "Didnt get an error when the monkey config failed to load")
+	assert.Equal(t, err, errMonkeyLoadError)
 }
 
 func testApplication() *application {
@@ -62,18 +65,21 @@ func passingIOUtil(path string) ([]byte, error) {
 	return []byte(someMonkeyConfigString), nil
 }
 
+var errIOError = errors.New("Couldn't load err from FS")
 func failingIOUtil(path string) ([]byte, error) {
-	return nil, errors.New("Couldnt load file")
+	return nil, errIOError
 }
 
+var errMJLoaderError = errors.New("Couldnt load mj file")
 func failingMockingjayLoader([]byte) ([]mockingjay.FakeEndpoint, error) {
-	return nil, errors.New("Couldn't load file")
+	return nil, errMJLoaderError
 }
 
 func passingMockingjayLoader([]byte) ([]mockingjay.FakeEndpoint, error) {
 	return testMockingJayConfig(), nil
 }
 
+var errMonkeyLoadError = errors.New("Couldn't load monkey file")
 func failingMonkeyServerMaker(http.Handler, string) (http.Handler, error) {
-	return nil, errors.New("Couldn't load monkey config")
+	return nil, errMonkeyLoadError
 }
