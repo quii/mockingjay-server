@@ -13,6 +13,11 @@ import (
 	"github.com/quii/mockingjay-server/monkey"
 )
 
+var (
+	// ErrCDCFail describes when a fake server is not compatible with a given URL
+	ErrCDCFail = fmt.Errorf("At least one endpoint was incompatible with the real URL supplied")
+)
+
 type configLoader func(string) ([]byte, error)
 type mockingjayLoader func([]byte) ([]mockingjay.FakeEndpoint, error)
 
@@ -52,84 +57,70 @@ func (a *application) PollConfig() {
 	ticker := time.NewTicker(time.Millisecond * 500)
 
 	for range ticker.C {
-		a.updateServer()
-	}
-}
-
-// Run will create a fake server from the configuration found in configPath with optional performance constraints from configutation found in monkeyConfigPath. If the realURL is supplied then it will not launch as a server and instead will check the config against the URL to see if it is structurally compatible (CDC mode)
-func (a *application) Run(configPath string, port int, realURL string, monkeyConfigPath string) error {
-	a.configPath = configPath
-	a.monkeyConfigPath = monkeyConfigPath
-
-	configData, err := a.configLoader(configPath)
-
-	if err != nil {
-		return err
-	}
-
-	a.yamlMD5 = md5.Sum(configData)
-
-	endpoints, err := a.mockingjayLoader(configData)
-
-	if err != nil {
-		return err
-	}
-
-	inCheckCompatabilityMode := realURL != ""
-
-	if inCheckCompatabilityMode {
-		a.checkCompatability(endpoints, realURL)
-		return nil
-	}
-
-	return a.runFakeServer(endpoints, port)
-}
-
-func (a *application) checkCompatability(endpoints []mockingjay.FakeEndpoint, realURL string) {
-	if a.compatabilityChecker.CheckCompatability(endpoints, realURL) {
-		a.logger.Println("All endpoints are compatible")
-	} else {
-		a.logger.Fatal("At least one endpoint was incompatible with the real URL supplied")
-	}
-}
-
-//TODO: refactor the duplication in here and in Run
-func (a *application) updateServer() {
-	configData, err := a.configLoader(a.configPath)
-
-	if err != nil {
-		log.Println("New config couldnt be loaded", err)
-		return
-	}
-
-	if newMD5 := md5.Sum(configData); newMD5 != a.yamlMD5 {
-		a.yamlMD5 = newMD5
-
-		endpoints, err := a.mockingjayLoader(configData)
-
+		endpoints, err := a.loadConfig()
 		if err != nil {
-			log.Println("New config is wrong!", err)
-		} else {
-			log.Println("Loaded new config")
+			log.Println(err)
+		} else if len(endpoints) > 0 {
+			a.logger.Println("Reloaded config")
 			a.mjServer.Endpoints = endpoints
 		}
 	}
 }
 
-func (a *application) runFakeServer(endpoints []mockingjay.FakeEndpoint, port int) error {
+// Run will create a fake server from the configuration found in configPath with optional performance constraints from configutation found in monkeyConfigPath. If the realURL is supplied then it will not launch as a server and instead will check the config against the URL to see if it is structurally compatible (CDC mode)
+func (a *application) Run(configPath string, realURL string, monkeyConfigPath string) (server http.Handler, err error) {
+	a.configPath = configPath
+	a.monkeyConfigPath = monkeyConfigPath
+	endpoints, err := a.loadConfig()
+
+	if err != nil || len(endpoints) == 0 {
+		return
+	}
+
+	inCheckCompatabilityMode := realURL != ""
+
+	if inCheckCompatabilityMode {
+		err = a.checkCompatability(endpoints, realURL)
+		return nil, err
+	}
+
+	return a.createFakeServer(endpoints)
+}
+
+func (a *application) checkCompatability(endpoints []mockingjay.FakeEndpoint, realURL string) error {
+	if a.compatabilityChecker.CheckCompatability(endpoints, realURL) {
+		a.logger.Println("All endpoints are compatible")
+		return nil
+	}
+	return ErrCDCFail
+}
+
+func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err error) {
+
+	configData, err := a.configLoader(a.configPath)
+
+	if err != nil {
+		return
+	}
+
+	if newMD5 := md5.Sum(configData); newMD5 != a.yamlMD5 {
+		a.yamlMD5 = newMD5
+		endpoints, err = a.mockingjayLoader(configData)
+	}
+	return
+}
+
+func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint) (server http.Handler, err error) {
 	go a.PollConfig()
 	a.mjServer = a.mockingjayServerMaker(endpoints)
 	monkeyServer, err := a.monkeyServerMaker(a.mjServer, a.monkeyConfigPath)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	http.Handle("/", monkeyServer)
-	a.logger.Printf("Serving %d endpoints defined from %s on port %d", len(endpoints), a.configPath, port)
-	err = http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
-	if err != nil {
-		return fmt.Errorf("There was a problem starting the mockingjay server on port %d: %v", port, err)
-	}
-	return nil
+	router := http.NewServeMux()
+	router.Handle("/", monkeyServer)
+
+	return router, nil
 }

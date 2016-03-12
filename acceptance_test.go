@@ -13,6 +13,12 @@ import (
 	"net/http/httptest"
 )
 
+/*
+TODO: Now that application returns a HTTP server it is more testable so these "acceptance"
+tests should now actually run the application rather than the library. This will give
+super confidence MJ is working well.
+ */
+
 const yaml = `
 - name: Valid login details
   request:
@@ -28,7 +34,7 @@ const yaml = `
 
 var (
 	endpoints []mockingjay.FakeEndpoint
-	server *mockingjay.Server
+	server    *mockingjay.Server
 )
 
 func init() {

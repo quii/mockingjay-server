@@ -2,30 +2,27 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
 )
 
-var (
-	logger           *log.Logger
-	envPort          = 9090
-	port             = flag.Int("port", envPort, "Port to listen on")
-	configPath       = flag.String("config", "", "Path to config YAML")
-	realURL          = flag.String("realURL", "", "Optional: Set this to a URL to check your config against a real server for compatibility")
-	monkeyConfigPath = flag.String("monkeyConfig", "", "Optional: Set this to add some monkey business")
-)
+func main() {
 
-func init() {
-	logger = log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime)
+	logger := log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime)
+	envPort := 9090
+	port := flag.Int("port", envPort, "Port to listen on")
+	configPath := flag.String("config", "", "Path to config YAML")
+	realURL := flag.String("realURL", "", "Optional: Set this to a URL to check your config against a real server for compatibility")
+	monkeyConfigPath := flag.String("monkeyConfig", "", "Optional: Set this to add some monkey business")
+
+	flag.Parse()
+
 	if i, err := strconv.Atoi(os.Getenv("PORT")); err == nil {
 		envPort = i
 	}
-}
-
-func main() {
-
-	flag.Parse()
 
 	if *configPath == "" {
 		flag.Usage()
@@ -33,8 +30,15 @@ func main() {
 	}
 
 	app := defaultApplication(logger)
+	svr, err := app.Run(*configPath, *realURL, *monkeyConfigPath)
 
-	if err := app.Run(*configPath, *port, *realURL, *monkeyConfigPath); err != nil {
+	if err != nil {
 		log.Fatal(err)
+	} else if svr != nil {
+		log.Printf("Listening on port %d", *port)
+		err = http.ListenAndServe(fmt.Sprintf(":%d", *port), svr)
+		if err != nil {
+			log.Fatal("There was a problem starting the mockingjay server on port %d: %v", *port, err.Error())
+		}
 	}
 }
