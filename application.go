@@ -54,9 +54,7 @@ func defaultApplication(logger *log.Logger) (app *application) {
 }
 
 func (a *application) PollConfig() {
-	ticker := time.NewTicker(time.Millisecond * 500)
-
-	for range ticker.C {
+	for range time.Tick(time.Millisecond * 500) {
 		endpoints, err := a.loadConfig()
 		if err != nil {
 			log.Println(err)
