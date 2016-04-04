@@ -31,7 +31,7 @@ func init() {
 func TestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {
 	svr := httptest.NewServer(mjServer)
 	defer svr.Close()
-	assert.NoError(t, app.CheckCompatability(testYAMLPath, svr.URL))
+	assert.NoError(t, app.CheckCompatibility(testYAMLPath, svr.URL))
 }
 
 func TestItListsRequestsItHasReceived(t *testing.T) {

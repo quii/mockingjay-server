@@ -78,8 +78,8 @@ func (a *application) CreateServer(configPath string, monkeyConfigPath string) (
 	return a.createFakeServer(endpoints)
 }
 
-// CheckCompatability will run a MJ config against a realURL to see if it's compatible
-func (a *application) CheckCompatability(configPath string, realURL string) error {
+// CheckCompatibility will run a MJ config against a realURL to see if it's compatible
+func (a *application) CheckCompatibility(configPath string, realURL string) error {
 	a.configPath = configPath
 	endpoints, err := a.loadConfig()
 
