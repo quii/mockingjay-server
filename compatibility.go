@@ -15,23 +15,23 @@ import (
 	"github.com/quii/mockingjay-server/mockingjay"
 )
 
-// CompatabilityChecker is responsible for checking endpoints are compatible
-type CompatabilityChecker struct {
+// CompatibilityChecker is responsible for checking endpoints are compatible
+type CompatibilityChecker struct {
 	client *http.Client
 	logger *log.Logger
 }
 
 // NewCompatabilityChecker creates a new CompatabilityChecker
-func NewCompatabilityChecker(logger *log.Logger) *CompatabilityChecker {
-	c := new(CompatabilityChecker)
+func NewCompatabilityChecker(logger *log.Logger) *CompatibilityChecker {
+	c := new(CompatibilityChecker)
 	c.client = &http.Client{}
 	c.logger = logger
 	c.client.Timeout = 5 * time.Second
 	return c
 }
 
-// CheckCompatability checks the endpoints against a "real" URL
-func (c *CompatabilityChecker) CheckCompatability(endpoints []mockingjay.FakeEndpoint, realURL string) bool {
+// CheckCompatibility checks the endpoints against a "real" URL
+func (c *CompatibilityChecker) CheckCompatibility(endpoints []mockingjay.FakeEndpoint, realURL string) bool {
 
 	numberOfEndpoints := len(endpoints)
 
@@ -58,7 +58,7 @@ func (c *CompatabilityChecker) CheckCompatability(endpoints []mockingjay.FakeEnd
 	return allCompatible
 }
 
-func (c *CompatabilityChecker) compatabilityWorker(endpoint mockingjay.FakeEndpoint, realURL string, results chan<- bool) {
+func (c *CompatibilityChecker) compatabilityWorker(endpoint mockingjay.FakeEndpoint, realURL string, results chan<- bool) {
 	errorMessages := c.check(&endpoint, realURL)
 
 	if len(errorMessages) > 0 {
@@ -73,7 +73,7 @@ func (c *CompatabilityChecker) compatabilityWorker(endpoint mockingjay.FakeEndpo
 	}
 }
 
-func (c *CompatabilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL string) (errors []string) {
+func (c *CompatibilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL string) (errors []string) {
 
 	request, err := endpoint.Request.AsHTTPRequest(realURL)
 

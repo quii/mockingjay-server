@@ -26,7 +26,7 @@ func BenchmarkCompatabilityChecking(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		checker.CheckCompatability(endpoints, realServer.URL)
+		checker.CheckCompatibility(endpoints, realServer.URL)
 	}
 }
 

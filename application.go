@@ -22,7 +22,7 @@ type configLoader func(string) ([]byte, error)
 type mockingjayLoader func([]byte) ([]mockingjay.FakeEndpoint, error)
 
 type compatabilityChecker interface {
-	CheckCompatability(endpoints []mockingjay.FakeEndpoint, realURL string) bool
+	CheckCompatibility(endpoints []mockingjay.FakeEndpoint, realURL string) bool
 }
 
 type serverMaker func([]mockingjay.FakeEndpoint) *mockingjay.Server
@@ -87,7 +87,7 @@ func (a *application) CheckCompatability(configPath string, realURL string) erro
 		return err
 	}
 
-	if a.compatabilityChecker.CheckCompatability(endpoints, realURL) {
+	if a.compatabilityChecker.CheckCompatibility(endpoints, realURL) {
 		a.logger.Println("All endpoints are compatible")
 		return nil
 	}
