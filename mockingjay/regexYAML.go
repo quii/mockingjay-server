@@ -7,7 +7,7 @@ import (
 
 // RegexYAML allows you to work with regex fields in YAML
 type RegexYAML struct {
-	regexp.Regexp
+	*regexp.Regexp
 }
 
 // UnmarshalYAML will unhmarshal a YAML field into regexp
@@ -21,7 +21,7 @@ func (r *RegexYAML) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if err != nil {
 		return err
 	}
-	r.Regexp = *reg
+	r.Regexp = reg
 	return nil
 }
 

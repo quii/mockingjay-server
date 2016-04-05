@@ -17,7 +17,7 @@ var (
 func TestMatchingWithRegex(t *testing.T) {
 
 	uriPathRegex, err := regexp.Compile(`\/hello\/[a-z]+`)
-	regexURI := &RegexYAML{Regexp: *uriPathRegex}
+	regexURI := &RegexYAML{Regexp: uriPathRegex}
 
 	assert.Nil(t, err)
 
