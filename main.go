@@ -22,7 +22,8 @@ func main() {
 			config.logger.Printf("Listening on port %d", config.port)
 			err = http.ListenAndServe(fmt.Sprintf(":%d", config.port), svr)
 			if err != nil {
-				config.logger.Fatal("There was a problem starting the mockingjay server on port %d: %s", config.port, err.Error())
+				msg := fmt.Sprintf("There was a problem starting the mockingjay server on port %d: %s", config.port, err.Error())
+				config.logger.Fatal(msg)
 			}
 		}
 	}
