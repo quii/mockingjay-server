@@ -85,7 +85,8 @@ func (c *CompatibilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 	response, err := c.client.Do(request)
 
 	if err != nil {
-		errors = append(errors, "Couldn't reach real server")
+		errMsg := fmt.Sprintf("Couldn't reach real server: %v", err)
+		errors = append(errors, errMsg)
 		return
 	}
 
