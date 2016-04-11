@@ -107,6 +107,15 @@ func TestItChecksAValidEndpointsXML(t *testing.T) {
 	assert.True(t, checker.CheckCompatibility(endpoints, realServer.URL))
 }
 
+func TestItChecksInvaidXML(t *testing.T) {
+	body := `<foo><bar>x</bar></foo>`
+	realServerBody := `not xml`
+	realServer := makeFakeDownstreamServer(realServerBody, noSleep)
+	endpoints := makeEndpoints(body)
+
+	assert.False(t, checker.CheckCompatibility(endpoints, realServer.URL))
+}
+
 func TestItFlagsDifferentJSONToBeIncompatible(t *testing.T) {
 	serverResponseBody := `{"foo": "bar"}`
 	fakeResponseBody := `{"baz": "boo"}`
@@ -161,6 +170,16 @@ func TestItHandlesBadURLsInConfig(t *testing.T) {
 	fakeEndPoints, _ := mockingjay.NewFakeEndpoints([]byte(yaml))
 
 	assert.False(t, checker.CheckCompatibility(fakeEndPoints, "also not a real url"))
+}
+
+func TestItFailsWhenExpectedJSONButGotSomethingElse(t *testing.T) {
+	serverResponseBody := `not json`
+	fakeResponseBody := `{"isJSON": true}`
+
+	realServer := makeFakeDownstreamServer(serverResponseBody, noSleep)
+	endpoints := makeEndpoints(fakeResponseBody)
+
+	assert.False(t, checker.CheckCompatibility(endpoints, realServer.URL))
 }
 
 // https://github.com/quii/mockingjay-server/issues/3
