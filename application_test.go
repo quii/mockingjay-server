@@ -41,6 +41,19 @@ func TestItFailsWhenTheMonkeyConfigIsInvalid(t *testing.T) {
 	assert.Equal(t, err, errMonkeyLoadError)
 }
 
+func TestItReturnsCDCErrIfCompatabilityFails(t *testing.T) {
+	app := new(application)
+	app.configLoader = passingIOUtil
+	app.mockingjayLoader = passingMockingjayLoader
+
+	app.compatabilityChecker = fakeCompatabilityChecker{passes: false}
+
+	err := app.CheckCompatibility("mj config path", "http://someurl")
+
+	assert.NotNil(t, err, "Didn't get an error when compatability fails")
+	assert.Equal(t, err, ErrCDCFail)
+}
+
 func testApplication() *application {
 	app := new(application)
 	app.configLoader = passingIOUtil
@@ -85,4 +98,12 @@ var errMonkeyLoadError = errors.New("Couldn't load monkey file")
 
 func failingMonkeyServerMaker(http.Handler, string) (http.Handler, error) {
 	return nil, errMonkeyLoadError
+}
+
+type fakeCompatabilityChecker struct {
+	passes bool
+}
+
+func (f fakeCompatabilityChecker) CheckCompatibility(endpoints []mockingjay.FakeEndpoint, realURL string) bool {
+	return f.passes
 }
