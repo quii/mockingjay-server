@@ -95,7 +95,6 @@ func (a *application) CheckCompatibility(configPath string, realURL string) erro
 }
 
 func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err error) {
-
 	configData, err := a.configLoader(a.configPath)
 
 	if err != nil {
@@ -105,6 +104,9 @@ func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err err
 	if newMD5 := md5.Sum(configData); newMD5 != a.yamlMD5 {
 		a.yamlMD5 = newMD5
 		endpoints, err = a.mockingjayLoader(configData)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return
 }

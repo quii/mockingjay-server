@@ -12,7 +12,10 @@ func main() {
 	app := defaultApplication(config.logger)
 
 	if config.realURL != "" {
-		app.CheckCompatibility(config.configPath, config.realURL)
+		err := app.CheckCompatibility(config.configPath, config.realURL)
+		if err != nil {
+			log.Fatal(err)
+		}
 	} else {
 		svr, err := app.CreateServer(config.configPath, config.monkeyConfigPath)
 
