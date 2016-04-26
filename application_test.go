@@ -16,9 +16,14 @@ func TestItFailsWhenTheConfigFileCantBeLoaded(t *testing.T) {
 	app := testApplication()
 	app.configLoader = failingIOUtil
 
-	_, err := app.CreateServer("mockingjay config path", "")
+	configPath := "mockingjay config path"
+	_, err := app.CreateServer(configPath, "")
 
 	assert.NotNil(t, err)
+	assert.Equal(t, err, errIOError)
+
+	compatErr := app.CheckCompatibility(configPath, "some url")
+	assert.NotNil(t, compatErr)
 	assert.Equal(t, err, errIOError)
 }
 
@@ -27,6 +32,16 @@ func TestItFailsWhenTheConfigIsInvalid(t *testing.T) {
 	app.mockingjayLoader = failingMockingjayLoader
 
 	_, err := app.CreateServer("mockingjay config path", "")
+
+	assert.NotNil(t, err, "Didnt get an error when the mockingjay config failed to load")
+	assert.Equal(t, err, errMJLoaderError)
+}
+
+func TestCompatFailsWhenConfigIsInvalid(t *testing.T){
+	app := testApplication()
+	app.mockingjayLoader = failingMockingjayLoader
+
+	err := app.CheckCompatibility("mockingjay config path", "some url")
 
 	assert.NotNil(t, err, "Didnt get an error when the mockingjay config failed to load")
 	assert.Equal(t, err, errMJLoaderError)
