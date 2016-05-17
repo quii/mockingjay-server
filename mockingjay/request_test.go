@@ -72,3 +72,22 @@ func TestItIgnoresExtraHeadersInEqualityCheck(t *testing.T){
 	
 	assert.True(t, requestMatches(config, incomingRequest))
 }
+
+func TestItIgnoresHeadersKeyCasing(t *testing.T){
+	requiredHeaders := make(map[string]string)
+	requiredHeaders["content-type"] = "application/json"
+	
+	expectedRequest := Request{
+		URI: "",
+		Method: "POST",
+		Headers: requiredHeaders,
+	}
+	
+	differentlyCasingHeaders := make(map[string]string)
+	differentlyCasingHeaders["Content-Type"] = "application/json"
+	
+	incomingRequest := expectedRequest
+	incomingRequest.Headers = differentlyCasingHeaders
+	
+	assert.True(t, requestMatches(expectedRequest, incomingRequest))
+}

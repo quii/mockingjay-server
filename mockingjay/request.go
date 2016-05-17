@@ -100,8 +100,11 @@ func requestMatches(expected, incoming Request) bool {
 }
 
 func matchHeaders(expected, incoming map[string]string) bool {
-	for key, expectedValue := range expected {
-		if value, exists := incoming[key]; exists {
+	incominglowercased := lowercaseMapKeys(incoming)
+	expectedLowercased := lowercaseMapKeys(expected)
+	
+	for key, expectedValue := range expectedLowercased {
+		if value, exists := incominglowercased[key]; exists {
 			if value != expectedValue {
 				return false
 			}
@@ -119,4 +122,15 @@ func matchURI(serverURI string, serverRegex *RegexYAML, incomingURI string) bool
 		return serverRegex.MatchString(incomingURI)
 	}
 	return false
+}
+
+func lowercaseMapKeys(upperCasedMap map[string]string) map[string]string {
+	lowerCasedMap := make(map[string]string)
+	
+	for key, value := range upperCasedMap {
+		lowerCasedMap[strings.ToLower(key)] = value
+	}
+	
+	return lowerCasedMap;
+	
 }
