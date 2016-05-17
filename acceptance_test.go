@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"bytes"
 )
 
 var (
@@ -26,6 +27,29 @@ func init() {
 	}
 
 	mjServer = svr
+}
+
+func TestIssue42(t *testing.T){
+	failApp := defaultApplication(log.New(ioutil.Discard, "", 0))
+	failSvr, _ := failApp.CreateServer("examples/issue42.yaml", "")
+	svr := httptest.NewServer(failSvr)
+	defer svr.Close()
+
+	reqBody := []byte(`{"query":{"match_all":{}}}`)
+	req, _ := http.NewRequest("POST", svr.URL + "/profile/validate-query", bytes.NewBuffer(reqBody))
+	req.Header["Content-Type"] = []string{"application/json"}
+	req.Header["Content-Butt"] = []string{"application/json"}
+
+	client := http.Client{}
+	res, _ := client.Do(req)
+
+	defer res.Body.Close()
+
+	body, _ := ioutil.ReadAll(res.Body)
+
+	if res.StatusCode!=http.StatusOK{
+		t.Error("WTF", res, string(body))
+	}
 }
 
 func TestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {

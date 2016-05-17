@@ -1,0 +1,10 @@
+---
+ - name: validate query (success)
+   request:
+     uri: /profile/validate-query
+     method: POST
+     body: '{"query":{"match_all":{}}}'
+     headers:
+      content-type: application/json
+   response:
+     code: 200
