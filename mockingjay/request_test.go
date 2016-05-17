@@ -53,3 +53,22 @@ func TestItValidatesRequests(t *testing.T) {
 	assert.Nil(t, validRequest.errors())
 
 }
+
+func TestItIgnoresExtraHeadersInEqualityCheck(t *testing.T){
+	requiredHeaders := make(map[string]string)
+	requiredHeaders["Content-Type"] = "application/json"
+	
+	config := Request{
+		URI: "",
+		Method: "POST",
+		Headers: requiredHeaders,
+	}
+	
+	extraHeaders := make(map[string]string)
+	extraHeaders["Content-Type"] = "application/json"
+	extraHeaders["Content-Size"] = "ten"
+	incomingRequest := config
+	incomingRequest.Headers = extraHeaders
+	
+	assert.True(t, requestMatches(config, incomingRequest))
+}
