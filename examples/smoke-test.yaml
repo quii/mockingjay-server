@@ -5,7 +5,7 @@
      method: GET
    response:
      code: 200
-     body: '<h1 id="title" itemprop="headline">Optimizing the performance of vehicle-to-grid (V2G) enabled battery electric vehicles through a smart charge scheduling model'
+     body: '<title>Optimizing the performance of vehicle-to-grid (V2G) enabled battery electric vehicles through a smart charge scheduling model'
 
  # - name: Some article on content api should have a download pdf link
  #   request:
