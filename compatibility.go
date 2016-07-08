@@ -122,7 +122,7 @@ func findMissingHeaders(expectedHeaders map[string]string, response *http.Respon
 var (
 	msgNotJSON          = "Expected JSON to be returned"
 	msgXMLNotCompatible = "XML is not compatible"
-	msgExactMatchFailed = "Exact body match did not pass"
+	msgExactMatchFailed = "Exact body match did not pass (i did this because the body doesn't look like JSON or XML to me)"
 )
 
 func checkBody(downstreamBody string, expectedBody string) (errors []string) {
