@@ -179,29 +179,6 @@ func TestItDoesContentNegotiation(t *testing.T) {
 	assert.Equal(t, responseReader.Code, http.StatusCreated, "Expected request to match even though the header name was differently cased")
 }
 
-func TestItSendsRequestBodies(t *testing.T) {
-	body := "some body"
-	expectedStatus := http.StatusInternalServerError
-
-	mjReq := Request{URI: testURL, Method: "POST", Body: body}
-	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{expectedStatus, "", nil}}
-	server := NewServer([]FakeEndpoint{endpoint})
-
-	requestWithoutBody, _ := http.NewRequest("POST", testURL, nil)
-	responseReader := httptest.NewRecorder()
-
-	server.ServeHTTP(responseReader, requestWithoutBody)
-
-	assert.Equal(t, responseReader.Code, http.StatusNotFound)
-
-	requestWithBody, _ := http.NewRequest("POST", testURL, strings.NewReader(body))
-	responseReader = httptest.NewRecorder()
-
-	server.ServeHTTP(responseReader, requestWithBody)
-
-	assert.Equal(t, responseReader.Code, expectedStatus)
-}
-
 func TestItRecordsIncomingRequests(t *testing.T) {
 	wildcardBody := "*"
 	expectedStatus := http.StatusOK

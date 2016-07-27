@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"encoding/json"
+	"reflect"
 )
 
 // Request is a simplified version of a http.Request
@@ -92,11 +94,26 @@ func (r Request) hash() string {
 func requestMatches(expected, incoming Request) bool {
 
 	headersOk := matchHeaders(expected.Headers, incoming.Headers)
-	bodyOk := expected.Body == "*" || expected.Body == incoming.Body
+	bodyOk := expected.Body == "*" || expected.Body == incoming.Body || matchJSON(expected.Body, incoming.Body)
 	urlOk := matchURI(expected.URI, expected.RegexURI, incoming.URI)
 	methodOk := expected.Method == incoming.Method
 
 	return bodyOk && urlOk && methodOk && headersOk
+}
+
+func matchJSON(a string, b string) bool {
+
+	var aJSON map[string]interface{}
+	var bJSON map[string]interface{}
+
+	err := json.Unmarshal([]byte(a), &aJSON)
+	err = json.Unmarshal([]byte(b), &bJSON)
+
+	if err != nil{
+		return false
+	}
+
+	return reflect.DeepEqual(aJSON, bJSON)
 }
 
 func matchHeaders(expected, incoming map[string]string) bool {

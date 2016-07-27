@@ -14,6 +14,70 @@ var (
 	}
 )
 
+func TestItMatchesJSONWithSpaces(t *testing.T){
+	serverConfig := Request{
+		URI:      "/hello/world",
+		Method:   "POST",
+		Body : `{"foo": 2}`,
+	}
+
+	incoming := Request{
+		URI:      "/hello/world",
+		Method:   "POST",
+		Body : `{"foo": 2    }`,
+	}
+
+	assert.True(t, requestMatches(serverConfig, incoming))
+}
+
+func TestItDoesntMatchWhenJSONValuesAreDifferent(t *testing.T){
+	serverConfig := Request{
+		URI:      "/hello/world",
+		Method:   "POST",
+		Body : `{"foo": 2}`,
+	}
+
+	incoming := Request{
+		URI:      "/hello/world",
+		Method:   "POST",
+		Body : `{"foo": 3    }`,
+	}
+
+	assert.False(t, requestMatches(serverConfig, incoming))
+}
+
+func TestItDoesntCrashOnNonJSONAndAssumesNotMatch(t *testing.T){
+	serverConfig := Request{
+		URI:      "/hello/world",
+		Method:   "POST",
+		Body : `{"foo": 2}`,
+	}
+
+	incoming := Request{
+		URI:      "/hello/world",
+		Method:   "POST",
+		Body : `not json`,
+	}
+
+	assert.False(t, requestMatches(serverConfig, incoming))
+}
+
+func TestItDoesntMatchUnequalBodies(t *testing.T){
+	serverConfig := Request{
+		URI:      "/hello/world",
+		Method:   "POST",
+		Body : `123`,
+	}
+
+	incoming := Request{
+		URI:      "/hello/world",
+		Method:   "POST",
+		Body : `456`,
+	}
+
+	assert.False(t, requestMatches(serverConfig, incoming))
+}
+
 func TestMatchingWithRegex(t *testing.T) {
 
 	uriPathRegex, err := regexp.Compile(`\/hello\/[a-z]+`)
