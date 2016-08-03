@@ -94,7 +94,6 @@ $ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-
 ### Requirements
 
 - Go 1.3+ installed ($GOPATH set, et al)
-- godep https://github.com/tools/godep
 - golint https://github.com/golang/lint
 
 ````bash
