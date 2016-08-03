@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	checker = NewCompatabilityChecker(log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime))
+	checker = NewCompatabilityChecker(log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime), defaultHTTPTimeoutSeconds)
 )
 
 func TestItIgnoresEndpointsNotSetToCDC(t *testing.T) {

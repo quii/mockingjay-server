@@ -17,7 +17,7 @@ const numberOfEndpoints = 3
 func BenchmarkCompatabilityChecking(b *testing.B) {
 	body := "hello, world"
 	realServer := makeFakeDownstreamServer(body, sleepyTime)
-	checker := NewCompatabilityChecker(log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime))
+	checker := NewCompatabilityChecker(log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime), defaultHTTPTimeoutSeconds)
 	endpoints, err := mockingjay.NewFakeEndpoints([]byte(multipleEndpointYAML(numberOfEndpoints)))
 
 	if err != nil {

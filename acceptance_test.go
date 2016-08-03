@@ -19,7 +19,7 @@ var (
 const testYAMLPath = "examples/example.yaml"
 
 func init() {
-	app = defaultApplication(log.New(ioutil.Discard, "", 0))
+	app = defaultApplication(log.New(ioutil.Discard, "", 0), defaultHTTPTimeoutSeconds)
 	svr, err := app.CreateServer(testYAMLPath, "")
 
 	if err != nil {
@@ -30,7 +30,7 @@ func init() {
 }
 
 func TestIssue42(t *testing.T) {
-	failApp := defaultApplication(log.New(ioutil.Discard, "", 0))
+	failApp := defaultApplication(log.New(ioutil.Discard, "", 0), defaultHTTPTimeoutSeconds)
 	failSvr, _ := failApp.CreateServer("examples/issue42.yaml", "")
 	svr := httptest.NewServer(failSvr)
 	defer svr.Close()

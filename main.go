@@ -9,7 +9,7 @@ import (
 func main() {
 
 	config := loadConfig()
-	app := defaultApplication(config.logger)
+	app := defaultApplication(config.logger, config.httpTimeout)
 
 	if config.realURL != "" {
 		err := app.CheckCompatibility(config.configPath, config.realURL)

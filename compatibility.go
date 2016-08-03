@@ -21,12 +21,14 @@ type CompatibilityChecker struct {
 	logger *log.Logger
 }
 
-// NewCompatabilityChecker creates a new CompatabilityChecker
-func NewCompatabilityChecker(logger *log.Logger) *CompatibilityChecker {
+const defaultHTTPTimeoutSeconds = 5
+
+// NewCompatabilityChecker creates a new CompatabilityChecker. The httpTimeout refers to the http timeout when making requests to the real server
+func NewCompatabilityChecker(logger *log.Logger, httpTimeout time.Duration) *CompatibilityChecker {
 	c := new(CompatibilityChecker)
 	c.client = &http.Client{}
 	c.logger = logger
-	c.client.Timeout = 5 * time.Second
+	c.client.Timeout = httpTimeout * time.Second
 	return c
 }
 

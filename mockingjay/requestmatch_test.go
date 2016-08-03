@@ -25,7 +25,7 @@ func TestItMatchesRequests(t *testing.T) {
 		URI:     "/cats",
 		Method:  "POST",
 		Headers: requiredHeaders,
-		Body: `123`,
+		Body:    `123`,
 	}
 
 	failingCases := []struct {
@@ -38,7 +38,7 @@ func TestItMatchesRequests(t *testing.T) {
 				URI:     "/wrong-uri",
 				Method:  "POST",
 				Headers: requiredHeaders,
-				Body: `123`,
+				Body:    `123`,
 			},
 		},
 		{
@@ -47,7 +47,7 @@ func TestItMatchesRequests(t *testing.T) {
 				URI:     "/cats",
 				Method:  "GET",
 				Headers: requiredHeaders,
-				Body: `123`,
+				Body:    `123`,
 			},
 		},
 		{
@@ -56,7 +56,7 @@ func TestItMatchesRequests(t *testing.T) {
 				URI:     "/cats",
 				Method:  "POST",
 				Headers: wrongHeaders,
-				Body: `123`,
+				Body:    `123`,
 			},
 		},
 		{
@@ -65,7 +65,7 @@ func TestItMatchesRequests(t *testing.T) {
 				URI:     "/cats",
 				Method:  "POST",
 				Headers: wrongHeaders,
-				Body: `456`,
+				Body:    `456`,
 			},
 		},
 	}

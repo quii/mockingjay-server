@@ -41,11 +41,11 @@ type application struct {
 	yamlMD5               [md5.Size]byte
 }
 
-func defaultApplication(logger *log.Logger) (app *application) {
+func defaultApplication(logger *log.Logger, httpTimeout time.Duration) (app *application) {
 	app = new(application)
 	app.configLoader = ioutil.ReadFile
 	app.mockingjayLoader = mockingjay.NewFakeEndpoints
-	app.compatabilityChecker = NewCompatabilityChecker(logger)
+	app.compatabilityChecker = NewCompatabilityChecker(logger, httpTimeout)
 	app.mockingjayServerMaker = mockingjay.NewServer
 	app.monkeyServerMaker = monkey.NewServer
 	app.logger = logger
