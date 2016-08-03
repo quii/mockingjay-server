@@ -15,7 +15,7 @@ before_install:
 script:
   - golint .
   - go test -coverprofile=coverage.out
-  # - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
+  - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
 before_deploy:
   - gox -output "dist/{{.OS}}_{{.Arch}}_{{.Dir}}" -ldflags="-w"
 

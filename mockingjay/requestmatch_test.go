@@ -64,7 +64,7 @@ func TestItMatchesRequests(t *testing.T) {
 			Request{
 				URI:     "/cats",
 				Method:  "POST",
-				Headers: wrongHeaders,
+				Headers: requiredHeaders,
 				Body:    `456`,
 			},
 		},
