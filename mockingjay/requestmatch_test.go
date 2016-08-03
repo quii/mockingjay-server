@@ -14,65 +14,111 @@ var (
 	}
 )
 
-func TestItMatchesJSONWithSpaces(t *testing.T){
+func TestItMatchesRequests(t *testing.T) {
+	requiredHeaders := make(map[string]string)
+	requiredHeaders["Content-Type"] = "application/json"
+
+	wrongHeaders := make(map[string]string)
+	wrongHeaders["Content-Type"] = "text/html"
+
+	config := Request{
+		URI:     "/cats",
+		Method:  "POST",
+		Headers: requiredHeaders,
+		Body: `123`,
+	}
+
+	failingCases := []struct {
+		name            string
+		incomingRequest Request
+	}{
+		{
+			"Incorrect URI",
+			Request{
+				URI:     "/wrong-uri",
+				Method:  "POST",
+				Headers: requiredHeaders,
+				Body: `123`,
+			},
+		},
+		{
+			"Incorrect Method",
+			Request{
+				URI:     "/cats",
+				Method:  "GET",
+				Headers: requiredHeaders,
+				Body: `123`,
+			},
+		},
+		{
+			"Incorrect headers",
+			Request{
+				URI:     "/cats",
+				Method:  "POST",
+				Headers: wrongHeaders,
+				Body: `123`,
+			},
+		},
+		{
+			"Incorrect body",
+			Request{
+				URI:     "/cats",
+				Method:  "POST",
+				Headers: wrongHeaders,
+				Body: `456`,
+			},
+		},
+	}
+	for _, c := range failingCases {
+		assert.False(t, requestMatches(config, c.incomingRequest), c.name)
+	}
+
+	assert.True(t, requestMatches(config, config), "The exact same request should match")
+}
+
+func TestItMatchesJSONWithSpaces(t *testing.T) {
 	serverConfig := Request{
-		URI:      "/hello/world",
-		Method:   "POST",
-		Body : `{"foo": 2}`,
+		URI:    "/hello/world",
+		Method: "POST",
+		Body:   `{"foo": 2}`,
 	}
 
 	incoming := Request{
-		URI:      "/hello/world",
-		Method:   "POST",
-		Body : `{"foo": 2    }`,
+		URI:    "/hello/world",
+		Method: "POST",
+		Body:   `{"foo": 2    }`,
 	}
 
 	assert.True(t, requestMatches(serverConfig, incoming))
 }
 
-func TestItDoesntMatchWhenJSONValuesAreDifferent(t *testing.T){
+func TestItDoesntMatchWhenJSONValuesAreDifferent(t *testing.T) {
 	serverConfig := Request{
-		URI:      "/hello/world",
-		Method:   "POST",
-		Body : `{"foo": 2}`,
+		URI:    "/hello/world",
+		Method: "POST",
+		Body:   `{"foo": 2}`,
 	}
 
 	incoming := Request{
-		URI:      "/hello/world",
-		Method:   "POST",
-		Body : `{"foo": 3    }`,
+		URI:    "/hello/world",
+		Method: "POST",
+		Body:   `{"foo": 3    }`,
 	}
 
 	assert.False(t, requestMatches(serverConfig, incoming))
 }
 
-func TestItDoesntCrashOnNonJSONAndAssumesNotMatch(t *testing.T){
+func TestItDoesntCrashOnNonJSONAndAssumesNotMatch(t *testing.T) {
 	serverConfig := Request{
-		URI:      "/hello/world",
-		Method:   "POST",
-		Body : `{"foo": 2}`,
+		URI:    "/hello/world",
+		Method: "POST",
+		Body:   `{"foo": 2}`,
 	}
 
 	incoming := Request{
-		URI:      "/hello/world",
-		Method:   "POST",
-		Body : `not json`,
-	}
-
-	assert.False(t, requestMatches(serverConfig, incoming))
-}
-
-func TestItDoesntMatchUnequalBodies(t *testing.T){
-	serverConfig := Request{
-		URI:      "/hello/world",
-		Method:   "POST",
-		Body : `123`,
-	}
-
-	incoming := Request{
-		URI:      "/hello/world",
-		Method:   "POST",
-		Body : `456`,
+		URI:    "/hello/world",
+		Method: "POST",
+		Body:   `not json`,
 	}
 
 	assert.False(t, requestMatches(serverConfig, incoming))
@@ -92,15 +138,6 @@ func TestMatchingWithRegex(t *testing.T) {
 	}
 
 	assert.True(t, requestMatches(serverConfig, incomingRequest))
-}
-
-func TestItMatchesOnURL(t *testing.T) {
-	notMatchingURL := Request{
-		URI:    "/hello/bob",
-		Method: "GET",
-	}
-
-	assert.False(t, requestMatches(notMatchingURL, incomingRequest))
 }
 
 func TestItMatchesWildcardBodies(t *testing.T) {

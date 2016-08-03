@@ -2,14 +2,14 @@ package mockingjay
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
-	"encoding/json"
 	"reflect"
+	"strings"
 )
 
 // Request is a simplified version of a http.Request
@@ -109,7 +109,7 @@ func matchJSON(a string, b string) bool {
 	err := json.Unmarshal([]byte(a), &aJSON)
 	err = json.Unmarshal([]byte(b), &bJSON)
 
-	if err != nil{
+	if err != nil {
 		return false
 	}
 
@@ -119,7 +119,7 @@ func matchJSON(a string, b string) bool {
 func matchHeaders(expected, incoming map[string]string) bool {
 	incominglowercased := lowercaseMapKeys(incoming)
 	expectedLowercased := lowercaseMapKeys(expected)
-	
+
 	for key, expectedValue := range expectedLowercased {
 		if value, exists := incominglowercased[key]; exists {
 			if value != expectedValue {
@@ -143,11 +143,11 @@ func matchURI(serverURI string, serverRegex *RegexYAML, incomingURI string) bool
 
 func lowercaseMapKeys(upperCasedMap map[string]string) map[string]string {
 	lowerCasedMap := make(map[string]string)
-	
+
 	for key, value := range upperCasedMap {
 		lowerCasedMap[strings.ToLower(key)] = value
 	}
-	
-	return lowerCasedMap;
-	
+
+	return lowerCasedMap
+
 }

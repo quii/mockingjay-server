@@ -9,8 +9,9 @@ import (
 
 // Server allows you to configure a HTTP server for a slice of fake endpoints
 type Server struct {
-	Endpoints []FakeEndpoint
-	requests  []Request
+	Endpoints      []FakeEndpoint
+	requests       []Request
+	requestMatcher func(a, b Request) bool
 }
 
 // NewServer creates a new Server instance
@@ -18,6 +19,7 @@ func NewServer(endpoints []FakeEndpoint) *Server {
 	s := new(Server)
 	s.Endpoints = endpoints
 	s.requests = make([]Request, 0)
+	s.requestMatcher = requestMatches
 	return s
 }
 
@@ -63,7 +65,7 @@ func (s *Server) listAvailableRequests(w http.ResponseWriter) {
 func (s *Server) getResponse(r Request) *response {
 
 	for _, endpoint := range s.Endpoints {
-		if requestMatches(endpoint.Request, r) {
+		if s.requestMatcher(endpoint.Request, r) {
 			return &endpoint.Response
 		}
 	}

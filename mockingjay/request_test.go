@@ -54,40 +54,40 @@ func TestItValidatesRequests(t *testing.T) {
 
 }
 
-func TestItIgnoresExtraHeadersInEqualityCheck(t *testing.T){
+func TestItIgnoresExtraHeadersInEqualityCheck(t *testing.T) {
 	requiredHeaders := make(map[string]string)
 	requiredHeaders["Content-Type"] = "application/json"
-	
+
 	config := Request{
-		URI: "",
-		Method: "POST",
+		URI:     "",
+		Method:  "POST",
 		Headers: requiredHeaders,
 	}
-	
+
 	extraHeaders := make(map[string]string)
 	extraHeaders["Content-Type"] = "application/json"
 	extraHeaders["Content-Size"] = "ten"
 	incomingRequest := config
 	incomingRequest.Headers = extraHeaders
-	
+
 	assert.True(t, requestMatches(config, incomingRequest))
 }
 
-func TestItIgnoresHeadersKeyCasing(t *testing.T){
+func TestItIgnoresHeadersKeyCasing(t *testing.T) {
 	requiredHeaders := make(map[string]string)
 	requiredHeaders["content-type"] = "application/json"
-	
+
 	expectedRequest := Request{
-		URI: "",
-		Method: "POST",
+		URI:     "",
+		Method:  "POST",
 		Headers: requiredHeaders,
 	}
-	
+
 	differentlyCasingHeaders := make(map[string]string)
 	differentlyCasingHeaders["Content-Type"] = "application/json"
-	
+
 	incomingRequest := expectedRequest
 	incomingRequest.Headers = differentlyCasingHeaders
-	
+
 	assert.True(t, requestMatches(expectedRequest, incomingRequest))
 }

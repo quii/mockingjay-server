@@ -37,7 +37,7 @@ func TestItFailsWhenTheConfigIsInvalid(t *testing.T) {
 	assert.Equal(t, err, errMJLoaderError)
 }
 
-func TestCompatFailsWhenConfigIsInvalid(t *testing.T){
+func TestCompatFailsWhenConfigIsInvalid(t *testing.T) {
 	app := testApplication()
 	app.mockingjayLoader = failingMockingjayLoader
 
