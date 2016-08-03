@@ -1,0 +1,57 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "nW4GA7dJwKo7v/XYcVrGTMkq/fc=",
+			"path": "github.com/clbanning/mxj",
+			"revision": "e4cb9d324e36a3fec6f879ad4657d88130736bb3",
+			"revisionTime": "2015-05-12T14:17:32Z"
+		},
+		{
+			"checksumSHA1": "jqSVRDK7dGg6E/NikVq1Kw6gdbA=",
+			"origin": "github.com/stretchr/testify/vendor/github.com/davecgh/go-spew/spew",
+			"path": "github.com/davecgh/go-spew/spew",
+			"revision": "9f9027faeb0dad515336ed2f28317f9f8f527ab4",
+			"revisionTime": "2016-01-29T19:31:06Z"
+		},
+		{
+			"checksumSHA1": "sfjIP/dDU7t4DhhrWLZYkSiXFdQ=",
+			"path": "github.com/fatih/structs",
+			"revision": "b4641b79cf37cd07961c25c5460be637ab27da76",
+			"revisionTime": "2015-05-06T15:01:09Z"
+		},
+		{
+			"checksumSHA1": "Y0+4Svy4QwDMck8biT/r+i/sTLQ=",
+			"path": "github.com/johnmuth/xmlcompare",
+			"revision": "1142c04325f04ebfcb479007b9e16522487155c5",
+			"revisionTime": "2015-05-18T09:49:49Z"
+		},
+		{
+			"checksumSHA1": "zKKp5SZ3d3ycKe4EKMNT0BqAWBw=",
+			"origin": "github.com/stretchr/testify/vendor/github.com/pmezard/go-difflib/difflib",
+			"path": "github.com/pmezard/go-difflib/difflib",
+			"revision": "9f9027faeb0dad515336ed2f28317f9f8f527ab4",
+			"revisionTime": "2016-01-29T19:31:06Z"
+		},
+		{
+			"checksumSHA1": "E8S9T4RwTVB7/5Bv5i7IYrmtSaI=",
+			"path": "github.com/quii/jsonequaliser",
+			"revision": "4c6bbfba9eff4df40e99f9c8e77f02de3df9038a",
+			"revisionTime": "2016-01-31T08:47:41Z"
+		},
+		{
+			"checksumSHA1": "Bn333k9lTndxU3D6n/G5c+GMcYY=",
+			"path": "github.com/stretchr/testify/assert",
+			"revision": "9f9027faeb0dad515336ed2f28317f9f8f527ab4",
+			"revisionTime": "2016-01-29T19:31:06Z"
+		},
+		{
+			"checksumSHA1": "TXfll3dCoaPKSntwHO0yR8eZ4JY=",
+			"path": "gopkg.in/yaml.v2",
+			"revision": "49c95bdc21843256fb6c4e0d370a05f24a0bf213",
+			"revisionTime": "2015-02-24T22:57:58Z"
+		}
+	],
+	"rootPath": "github.com/quii/mockingjay-server"
+}
