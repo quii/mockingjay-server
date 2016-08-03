@@ -7,7 +7,6 @@ env:
   - "PATH=/home/travis/gopath/bin:$PATH"
 before_install:
   - go get github.com/mitchellh/gox
-  - go get github.com/tools/godep
   - go get github.com/tcnksm/ghr
   - go get -u github.com/golang/lint/golint
   - go get github.com/axw/gocov/gocov
@@ -15,7 +14,7 @@ before_install:
   - go get golang.org/x/tools/cmd/cover
 script:
   - golint .
-  - godep go test -coverprofile=coverage.out
+  - go test -coverprofile=coverage.out
   # - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
 before_deploy:
   - gox -output "dist/{{.OS}}_{{.Arch}}_{{.Dir}}" -ldflags="-w"
