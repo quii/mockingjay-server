@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"reflect"
 	"strings"
 )
@@ -19,6 +20,7 @@ type Request struct {
 	Method   string
 	Headers  map[string]string
 	Body     string
+	Form     map[string]string
 }
 
 var (
@@ -46,7 +48,18 @@ func (r Request) errors() error {
 // AsHTTPRequest tries to create a http.Request from a given baseURL
 func (r Request) AsHTTPRequest(baseURL string) (req *http.Request, err error) {
 
-	req, err = http.NewRequest(r.Method, baseURL+r.URI, ioutil.NopCloser(bytes.NewBufferString(r.Body)))
+	//todo: Test me with the form stuff
+
+	body := r.Body
+	if r.Form != nil {
+		form := url.Values{}
+		for formKey, formValue := range r.Form {
+			form.Add(formKey, formValue)
+		}
+		body = form.Encode()
+	}
+
+	req, err = http.NewRequest(r.Method, baseURL+r.URI, ioutil.NopCloser(bytes.NewBufferString(body)))
 
 	if err != nil {
 		return
@@ -56,11 +69,18 @@ func (r Request) AsHTTPRequest(baseURL string) (req *http.Request, err error) {
 		req.Header.Add(headerName, headerValue)
 	}
 
+	if r.Form != nil {
+		req.Header.Add("content-type", "application/x-www-form-urlencoded")
+	}
+
 	return
 }
 
 // NewRequest creates a mockingjay request from a http request
 func NewRequest(httpRequest *http.Request) (req Request) {
+
+	//todo: Test me with the form stuff
+
 	req.URI = httpRequest.URL.String()
 	req.Method = httpRequest.Method
 
@@ -69,6 +89,8 @@ func NewRequest(httpRequest *http.Request) (req Request) {
 		req.Headers[header] = strings.Join(values, ",")
 	}
 
+	err := httpRequest.ParseForm()
+
 	if httpRequest.Body != nil {
 		reqBody, err := ioutil.ReadAll(httpRequest.Body)
 		if err != nil {
@@ -76,6 +98,16 @@ func NewRequest(httpRequest *http.Request) (req Request) {
 		} else {
 			req.Body = string(reqBody)
 		}
+	}
+
+	if err == nil {
+		req.Form = make(map[string]string)
+		for key, val := range httpRequest.PostForm {
+			log.Println(val)
+			req.Form[key] = val[0] // bit naughty
+		}
+	} else {
+		log.Println("Problem parsing http form", err)
 	}
 
 	return
@@ -97,8 +129,23 @@ func requestMatches(expected, incoming Request) bool {
 	bodyOk := expected.Body == "*" || expected.Body == incoming.Body || matchJSON(expected.Body, incoming.Body)
 	urlOk := matchURI(expected.URI, expected.RegexURI, incoming.URI)
 	methodOk := expected.Method == incoming.Method
+	formOK := matchForm(expected.Form, incoming.Form)
 
-	return bodyOk && urlOk && methodOk && headersOk
+	return bodyOk && urlOk && methodOk && headersOk && formOK
+}
+
+func matchForm(expected map[string]string, incoming map[string]string) bool {
+	if expected == nil {
+		return true
+	}
+
+	for expectedKey, expectedValue := range expected {
+		if incoming[expectedKey] != expectedValue {
+			return false
+		}
+	}
+
+	return true
 }
 
 func matchJSON(a string, b string) bool {

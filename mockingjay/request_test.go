@@ -1,10 +1,10 @@
 package mockingjay
 
 import (
-	"io/ioutil"
-	"testing"
-
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"net/http"
+	"testing"
 )
 
 func TestItCreatesHTTPRequests(t *testing.T) {
@@ -30,6 +30,12 @@ func TestItCreatesHTTPRequests(t *testing.T) {
 	requestBody, _ := ioutil.ReadAll(httpRequest.Body)
 
 	assert.Equal(t, string(requestBody), body)
+}
+
+func TestItMapsHTTPRequestsToMJRequests(t *testing.T) {
+	req, _ := http.NewRequest(http.MethodPost, "/foo", nil)
+	mjRequest := NewRequest(req)
+	assert.Equal(t, mjRequest.Method, http.MethodPost)
 }
 
 func TestItValidatesRequests(t *testing.T) {

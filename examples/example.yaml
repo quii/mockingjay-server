@@ -35,3 +35,15 @@
    response:
      code: 500
      body: Oh no
+
+ - name: Posting forms
+   cdcdisabled: false
+   request:
+     uri: /cats
+     method: POST
+     form:
+      age: 10
+      name: Hudson
+   response:
+     code: 201
+     body: Created

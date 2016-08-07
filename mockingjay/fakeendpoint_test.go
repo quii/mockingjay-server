@@ -35,6 +35,9 @@ const testYAML = `
    request:
      uri: /card
      method: POST
+     form:
+       age: 10
+       name: Hudson
      body: Greetings
    response:
      code: 500
@@ -63,6 +66,11 @@ func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 	endpoint2 := endpoints[1]
 
 	assert.True(t, endpoint2.CDCDisabled)
+
+	failingEndpoint := endpoints[2]
+
+	assert.Equal(t, failingEndpoint.Request.Form["age"], "10")
+	assert.Equal(t, failingEndpoint.Request.Form["name"], "Hudson")
 }
 
 func TestItReturnsAnErrorWhenNotValidYAML(t *testing.T) {

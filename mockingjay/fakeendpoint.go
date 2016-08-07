@@ -12,7 +12,6 @@ type FakeEndpoint struct {
 	CDCDisabled bool   // When set to true it will not be included in the consumer driven contract tests against real server
 	Request     Request
 	Response    response
-	Form        map[string]string
 }
 
 const fakeEndpointStringerFormat = "%s (%s)"

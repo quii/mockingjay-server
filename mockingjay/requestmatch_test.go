@@ -21,11 +21,15 @@ func TestItMatchesRequests(t *testing.T) {
 	wrongHeaders := make(map[string]string)
 	wrongHeaders["Content-Type"] = "text/html"
 
+	form := make(map[string]string)
+	form["name"] = "Hudson"
+
 	config := Request{
 		URI:     "/cats",
 		Method:  "POST",
 		Headers: requiredHeaders,
 		Body:    `123`,
+		Form:    form,
 	}
 
 	failingCases := []struct {
@@ -39,6 +43,7 @@ func TestItMatchesRequests(t *testing.T) {
 				Method:  "POST",
 				Headers: requiredHeaders,
 				Body:    `123`,
+				Form:    form,
 			},
 		},
 		{
@@ -48,6 +53,7 @@ func TestItMatchesRequests(t *testing.T) {
 				Method:  "GET",
 				Headers: requiredHeaders,
 				Body:    `123`,
+				Form:    form,
 			},
 		},
 		{
@@ -57,6 +63,7 @@ func TestItMatchesRequests(t *testing.T) {
 				Method:  "POST",
 				Headers: wrongHeaders,
 				Body:    `123`,
+				Form:    form,
 			},
 		},
 		{
@@ -66,6 +73,17 @@ func TestItMatchesRequests(t *testing.T) {
 				Method:  "POST",
 				Headers: requiredHeaders,
 				Body:    `456`,
+				Form:    form,
+			},
+		},
+		{
+			"No form",
+			Request{
+				URI:     "/cats",
+				Method:  "POST",
+				Headers: requiredHeaders,
+				Body:    `123`,
+				Form:    nil,
 			},
 		},
 	}

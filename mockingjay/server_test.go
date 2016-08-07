@@ -135,7 +135,7 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 	wildcardBody := "*"
 	expectedStatus := http.StatusOK
 
-	mjReq := Request{URI: testURL, Method: "POST", Body: wildcardBody, nil}
+	mjReq := Request{URI: testURL, Method: "POST", Body: wildcardBody, Form: nil}
 	config := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{expectedStatus, "", nil}}
 	server := NewServer([]FakeEndpoint{config})
 
@@ -149,7 +149,7 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 }
 
 func TestItReturnsListOfEndpoints(t *testing.T) {
-	mjReq := Request{URI: testURL, Method: "GET", nil}
+	mjReq := Request{URI: testURL, Method: "GET", Form: nil}
 	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
 	server := NewServer([]FakeEndpoint{endpoint})
 
