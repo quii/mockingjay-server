@@ -37,6 +37,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		s.listAvailableRequests(w)
 	default:
 		mjRequest := NewRequest(r)
+		log.Println("Got request", mjRequest)
 		s.requests = append(s.requests, mjRequest)
 
 		cannedResponse := s.getResponse(mjRequest)
@@ -70,7 +71,7 @@ func (s *Server) getResponse(r Request) *response {
 		}
 	}
 
-	return newNotFound(r.Method, r.URI, r.Body, r.Headers, s.Endpoints)
+	return newNotFound(r, s.Endpoints)
 }
 
 func (s *Server) serveEndpoints(w http.ResponseWriter) {

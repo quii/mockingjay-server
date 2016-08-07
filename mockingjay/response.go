@@ -21,14 +21,10 @@ type notFoundResponse struct {
 	EndpointsAvailable []FakeEndpoint `json:"EndpointsAvailable"`
 }
 
-func newNotFound(method string, url string, body string, headers map[string]string, endpoints []FakeEndpoint) *response {
+func newNotFound(req Request, endpoints []FakeEndpoint) *response {
 	notFound := notFoundResponse{
 		"Endpoint not found",
-		Request{
-			URI:     url,
-			Method:  method,
-			Headers: headers,
-			Body:    body},
+		req,
 		endpoints}
 	j, err := json.Marshal(notFound)
 	if err != nil {

@@ -89,9 +89,17 @@ func NewRequest(httpRequest *http.Request) (req Request) {
 		req.Headers[header] = strings.Join(values, ",")
 	}
 
-	err := httpRequest.ParseForm()
-
-	if httpRequest.Body != nil {
+	if httpRequest.Header.Get("content-type") == "application/x-www-form-urlencoded" {
+		err := httpRequest.ParseForm()
+		if err == nil {
+			req.Form = make(map[string]string)
+			for key, val := range httpRequest.PostForm {
+				req.Form[key] = val[0] // bit naughty
+			}
+		} else {
+			log.Println("Problem parsing http form", err)
+		}
+	} else if httpRequest.Body != nil {
 		reqBody, err := ioutil.ReadAll(httpRequest.Body)
 		if err != nil {
 			log.Println(err)
@@ -100,23 +108,13 @@ func NewRequest(httpRequest *http.Request) (req Request) {
 		}
 	}
 
-	if err == nil {
-		req.Form = make(map[string]string)
-		for key, val := range httpRequest.PostForm {
-			log.Println(val)
-			req.Form[key] = val[0] // bit naughty
-		}
-	} else {
-		log.Println("Problem parsing http form", err)
-	}
-
 	return
 }
 
-const stringerFormat = "%s %s"
+const stringerFormat = "%s %s Form: %s Headers: %s"
 
 func (r Request) String() string {
-	return fmt.Sprintf(stringerFormat, r.Method, r.URI)
+	return fmt.Sprintf(stringerFormat, r.Method, r.URI, r.Form, r.Headers)
 }
 
 func (r Request) hash() string {
@@ -130,6 +128,10 @@ func requestMatches(expected, incoming Request) bool {
 	urlOk := matchURI(expected.URI, expected.RegexURI, incoming.URI)
 	methodOk := expected.Method == incoming.Method
 	formOK := matchForm(expected.Form, incoming.Form)
+
+	log.Println("Got", incoming.Form)
+	log.Println("Exp", expected.Form)
+	log.Println(headersOk, bodyOk, urlOk, methodOk, formOK)
 
 	return bodyOk && urlOk && methodOk && headersOk && formOK
 }
