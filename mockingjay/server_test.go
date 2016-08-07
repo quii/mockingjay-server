@@ -56,7 +56,7 @@ func TestItReturnsCannedResponses(t *testing.T) {
 		},
 	}
 
-	server := NewServer([]FakeEndpoint{endpoint, secondEndpoint})
+	server := NewServer([]FakeEndpoint{endpoint, secondEndpoint}, debugModeOff)
 
 	request, _ := http.NewRequest("GET", testURL, nil)
 	responseReader := httptest.NewRecorder()
@@ -76,7 +76,7 @@ func TestItReturnsCannedResponses(t *testing.T) {
 }
 
 func TestItCanCreateNewEndpointsOverHTTP(t *testing.T) {
-	server := NewServer([]FakeEndpoint{})
+	server := NewServer([]FakeEndpoint{}, debugModeOff)
 
 	newEndpoint := FakeEndpoint{
 		Name: "New endpoint",
@@ -103,7 +103,7 @@ func TestItCanCreateNewEndpointsOverHTTP(t *testing.T) {
 }
 
 func TestItReturnsBadRequestWhenMakingABadNewEndpoint(t *testing.T) {
-	server := NewServer([]FakeEndpoint{})
+	server := NewServer([]FakeEndpoint{}, debugModeOff)
 
 	badBody := []byte("blah")
 	req, _ := http.NewRequest("POST", newEndpointURL, bytes.NewReader(badBody))
@@ -115,11 +115,11 @@ func TestItReturnsBadRequestWhenMakingABadNewEndpoint(t *testing.T) {
 }
 
 func TestItReturns404WhenRequestCannotBeMatched(t *testing.T) {
-	alwaysNotMatching := func(a, b Request) bool {
+	alwaysNotMatching := func(a, b Request, endpointName string) bool {
 		return false
 	}
 
-	server := NewServer([]FakeEndpoint{})
+	server := NewServer([]FakeEndpoint{}, debugModeOff)
 	server.requestMatcher = alwaysNotMatching
 
 	req, _ := http.NewRequest("POST", "doesnt-matter", nil)
@@ -137,7 +137,7 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 
 	mjReq := Request{URI: testURL, Method: "POST", Body: wildcardBody, Form: nil}
 	config := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{expectedStatus, "", nil}}
-	server := NewServer([]FakeEndpoint{config})
+	server := NewServer([]FakeEndpoint{config}, debugModeOff)
 
 	requestWithDifferentBody, _ := http.NewRequest("POST", testURL, strings.NewReader("This body isnt what we said but it should match"))
 	responseReader := httptest.NewRecorder()
@@ -151,7 +151,7 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 func TestItReturnsListOfEndpoints(t *testing.T) {
 	mjReq := Request{URI: testURL, Method: "GET", Form: nil}
 	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
-	server := NewServer([]FakeEndpoint{endpoint})
+	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff)
 
 	request, _ := http.NewRequest("GET", endpointsURL, nil)
 	responseReader := httptest.NewRecorder()

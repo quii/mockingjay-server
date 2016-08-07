@@ -17,7 +17,7 @@ func main() {
 			log.Fatal(err)
 		}
 	} else {
-		svr, err := app.CreateServer(config.configPath, config.monkeyConfigPath)
+		svr, err := app.CreateServer(config.configPath, config.monkeyConfigPath, config.debugMode)
 
 		if err != nil {
 			log.Fatal(err)

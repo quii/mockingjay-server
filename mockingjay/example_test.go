@@ -52,7 +52,7 @@ func ExampleNewServer() {
  `
 
 	endpoints, _ := NewFakeEndpoints([]byte(testYAML))
-	server := NewServer(endpoints)
+	server := NewServer(endpoints, false)
 
 	// Mount it just like any other server
 	http.Handle("/", server)

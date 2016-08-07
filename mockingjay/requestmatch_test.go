@@ -7,11 +7,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type noOpLogger struct{}
+
+func (noOpLogger) Println(...interface{}) {}
+
 var (
 	incomingRequest = Request{
 		URI:    "/hello/chris",
 		Method: "GET",
 	}
+	testLogger   = noOpLogger{}
+	endpointName = "test endpoint"
 )
 
 func TestItMatchesRequests(t *testing.T) {
@@ -88,10 +94,10 @@ func TestItMatchesRequests(t *testing.T) {
 		},
 	}
 	for _, c := range failingCases {
-		assert.False(t, requestMatches(config, c.incomingRequest), c.name)
+		assert.False(t, requestMatches(config, c.incomingRequest, endpointName, testLogger), c.name)
 	}
 
-	assert.True(t, requestMatches(config, config), "The exact same request should match")
+	assert.True(t, requestMatches(config, config, endpointName, testLogger), "The exact same request should match")
 }
 
 func TestItMatchesJSONWithSpaces(t *testing.T) {
@@ -107,7 +113,7 @@ func TestItMatchesJSONWithSpaces(t *testing.T) {
 		Body:   `{"foo": 2    }`,
 	}
 
-	assert.True(t, requestMatches(serverConfig, incoming))
+	assert.True(t, requestMatches(serverConfig, incoming, endpointName, testLogger))
 }
 
 func TestItDoesntMatchWhenJSONValuesAreDifferent(t *testing.T) {
@@ -123,7 +129,7 @@ func TestItDoesntMatchWhenJSONValuesAreDifferent(t *testing.T) {
 		Body:   `{"foo": 3    }`,
 	}
 
-	assert.False(t, requestMatches(serverConfig, incoming))
+	assert.False(t, requestMatches(serverConfig, incoming, endpointName, testLogger))
 }
 
 func TestItDoesntCrashOnNonJSONAndAssumesNotMatch(t *testing.T) {
@@ -139,7 +145,7 @@ func TestItDoesntCrashOnNonJSONAndAssumesNotMatch(t *testing.T) {
 		Body:   `not json`,
 	}
 
-	assert.False(t, requestMatches(serverConfig, incoming))
+	assert.False(t, requestMatches(serverConfig, incoming, endpointName, testLogger))
 }
 
 func TestMatchingWithRegex(t *testing.T) {
@@ -155,7 +161,7 @@ func TestMatchingWithRegex(t *testing.T) {
 		Method:   "GET",
 	}
 
-	assert.True(t, requestMatches(serverConfig, incomingRequest))
+	assert.True(t, requestMatches(serverConfig, incomingRequest, endpointName, testLogger))
 }
 
 func TestItMatchesWildcardBodies(t *testing.T) {
@@ -171,7 +177,7 @@ func TestItMatchesWildcardBodies(t *testing.T) {
 		Body:   "*",
 	}
 
-	assert.True(t, requestMatches(serverConfig, incomingRequest))
+	assert.True(t, requestMatches(serverConfig, incomingRequest, endpointName, testLogger))
 }
 
 func TestItIgnoresExtraHeadersInEqualityCheck(t *testing.T) {
@@ -190,7 +196,7 @@ func TestItIgnoresExtraHeadersInEqualityCheck(t *testing.T) {
 	incomingRequest := config
 	incomingRequest.Headers = extraHeaders
 
-	assert.True(t, requestMatches(config, incomingRequest))
+	assert.True(t, requestMatches(config, incomingRequest, endpointName, testLogger))
 }
 
 func TestItIgnoresHeadersKeyCasing(t *testing.T) {
@@ -209,5 +215,5 @@ func TestItIgnoresHeadersKeyCasing(t *testing.T) {
 	incomingRequest := expectedRequest
 	incomingRequest.Headers = differentlyCasingHeaders
 
-	assert.True(t, requestMatches(expectedRequest, incomingRequest))
+	assert.True(t, requestMatches(expectedRequest, incomingRequest, endpointName, testLogger))
 }

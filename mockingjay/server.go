@@ -5,21 +5,39 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 )
+
+const debugModeOff = false
+
+type mjLogger interface {
+	Println(...interface{})
+}
 
 // Server allows you to configure a HTTP server for a slice of fake endpoints
 type Server struct {
 	Endpoints      []FakeEndpoint
 	requests       []Request
-	requestMatcher func(a, b Request) bool
+	requestMatcher func(a, b Request, endpointName string) bool
+	logger         mjLogger
 }
 
 // NewServer creates a new Server instance
-func NewServer(endpoints []FakeEndpoint) *Server {
+func NewServer(endpoints []FakeEndpoint, debugMode bool) *Server {
 	s := new(Server)
 	s.Endpoints = endpoints
 	s.requests = make([]Request, 0)
-	s.requestMatcher = requestMatches
+
+	if debugMode {
+		s.logger = log.New(os.Stdout, "mocking-jay", log.Ldate|log.Ltime)
+	} else {
+		s.logger = log.New(ioutil.Discard, "mocking-jay", log.Ldate|log.Ltime)
+	}
+
+	s.requestMatcher = func(a, b Request, endpointName string) bool {
+		return requestMatches(a, b, endpointName, s.logger)
+	}
+
 	return s
 }
 
@@ -37,7 +55,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		s.listAvailableRequests(w)
 	default:
 		mjRequest := NewRequest(r)
-		log.Println("Got request", mjRequest)
+
+		s.logger.Println("Trying to match a request")
+		s.logger.Println(mjRequest.String())
+
 		s.requests = append(s.requests, mjRequest)
 
 		cannedResponse := s.getResponse(mjRequest)
@@ -66,7 +87,7 @@ func (s *Server) listAvailableRequests(w http.ResponseWriter) {
 func (s *Server) getResponse(r Request) *response {
 
 	for _, endpoint := range s.Endpoints {
-		if s.requestMatcher(endpoint.Request, r) {
+		if s.requestMatcher(endpoint.Request, r, endpoint.Name) {
 			return &endpoint.Response
 		}
 	}

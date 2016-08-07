@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -121,19 +122,32 @@ func (r Request) hash() string {
 	return fmt.Sprintf("URI: %v | METHOD: %v | HEADERS: %v | BODY: %v", r.URI, r.Method, r.Headers, r.Body)
 }
 
-func requestMatches(expected, incoming Request) bool {
+func requestMatches(expected, incoming Request, endpointName string, logger mjLogger) bool {
 
 	headersOk := matchHeaders(expected.Headers, incoming.Headers)
 	bodyOk := expected.Body == "*" || expected.Body == incoming.Body || matchJSON(expected.Body, incoming.Body)
 	urlOk := matchURI(expected.URI, expected.RegexURI, incoming.URI)
 	methodOk := expected.Method == incoming.Method
 	formOK := matchForm(expected.Form, incoming.Form)
+	matches := bodyOk && urlOk && methodOk && headersOk && formOK
 
-	log.Println("Got", incoming.Form)
-	log.Println("Exp", expected.Form)
-	log.Println(headersOk, bodyOk, urlOk, methodOk, formOK)
+	if matches {
+		logger.Println("Matched on", endpointName)
+	} else {
+		debugMsg := fmt.Sprintf(
+			"%s | URL OK? %s | Body OK? %s | Method OK? %s | Form OK? %s | Headers OK? %s",
+			fixedLengthString(20, endpointName),
+			fixedLengthString(5, strconv.FormatBool(urlOk)),
+			fixedLengthString(5, strconv.FormatBool(bodyOk)),
+			fixedLengthString(5, strconv.FormatBool(methodOk)),
+			fixedLengthString(5, strconv.FormatBool(formOK)),
+			fixedLengthString(5, strconv.FormatBool(headersOk)),
+		)
 
-	return bodyOk && urlOk && methodOk && headersOk && formOK
+		logger.Println(debugMsg)
+	}
+
+	return matches
 }
 
 func matchForm(expected map[string]string, incoming map[string]string) bool {
@@ -198,5 +212,9 @@ func lowercaseMapKeys(upperCasedMap map[string]string) map[string]string {
 	}
 
 	return lowerCasedMap
+}
 
+func fixedLengthString(length int, str string) string {
+	verb := fmt.Sprintf("%%%d.%ds", length, length)
+	return fmt.Sprintf(verb, str)
 }

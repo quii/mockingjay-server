@@ -25,7 +25,7 @@ type compatabilityChecker interface {
 	CheckCompatibility(endpoints []mockingjay.FakeEndpoint, realURL string) bool
 }
 
-type serverMaker func([]mockingjay.FakeEndpoint) *mockingjay.Server
+type serverMaker func([]mockingjay.FakeEndpoint, bool) *mockingjay.Server
 type monkeyServerMaker func(http.Handler, string) (http.Handler, error)
 
 type application struct {
@@ -66,7 +66,7 @@ func (a *application) PollConfig() {
 }
 
 // CreateServer will create a fake server from the configuration found in configPath with optional performance constraints from configutation found in monkeyConfigPath
-func (a *application) CreateServer(configPath string, monkeyConfigPath string) (server http.Handler, err error) {
+func (a *application) CreateServer(configPath string, monkeyConfigPath string, debugMode bool) (server http.Handler, err error) {
 	a.configPath = configPath
 	a.monkeyConfigPath = monkeyConfigPath
 	endpoints, err := a.loadConfig()
@@ -75,7 +75,7 @@ func (a *application) CreateServer(configPath string, monkeyConfigPath string) (
 		return
 	}
 
-	return a.createFakeServer(endpoints)
+	return a.createFakeServer(endpoints, debugMode)
 }
 
 // CheckCompatibility will run a MJ config against a realURL to see if it's compatible
@@ -108,9 +108,9 @@ func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err err
 	return
 }
 
-func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint) (server http.Handler, err error) {
+func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debugMode bool) (server http.Handler, err error) {
 	go a.PollConfig()
-	a.mjServer = a.mockingjayServerMaker(endpoints)
+	a.mjServer = a.mockingjayServerMaker(endpoints, debugMode)
 	monkeyServer, err := a.monkeyServerMaker(a.mjServer, a.monkeyConfigPath)
 
 	if err != nil {
