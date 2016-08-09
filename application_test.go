@@ -17,19 +17,26 @@ const someMonkeyConfigString = "Hello, world"
 
 func TestCompatabilityWithWildcards(t *testing.T) {
 
-	notWildcardPath := "examples/issue40/1.yaml"
-
 	app := defaultApplication(log.New(ioutil.Discard, "", log.Ldate|log.Ltime), 1)
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		t.Log("Got request", r.URL)
 		if r.URL.String() == "/hello" {
 			fmt.Fprint(w, "world")
+		} else {
+			http.Error(w, "Nope", http.StatusNotFound)
 		}
 	}))
 
 	defer svr.Close()
+
+	notWildcardPath := "examples/issue40/1.yaml"
 	err := app.CheckCompatibility(notWildcardPath, svr.URL)
 	assert.NoError(t, err)
+
+	wildCardPath := "examples/issue40/*.yaml"
+	err = app.CheckCompatibility(wildCardPath, svr.URL)
+	assert.Equal(t, ErrCDCFail, err)
+
 }
 
 func TestItFailsWhenTheConfigFileCantBeLoaded(t *testing.T) {
@@ -80,6 +87,7 @@ func TestItReturnsCDCErrorIfCompatabilityFails(t *testing.T) {
 	app := new(application)
 	app.configLoader = passingIOUtil
 	app.mockingjayLoader = passingMockingjayLoader
+	app.logger = log.New(ioutil.Discard, "", 0)
 
 	app.compatabilityChecker = fakeCompatabilityChecker{passes: false}
 
@@ -95,6 +103,7 @@ func testApplication() *application {
 	app.mockingjayLoader = passingMockingjayLoader
 	app.mockingjayServerMaker = mockingjay.NewServer
 	app.monkeyServerMaker = failingMonkeyServerMaker
+	app.logger = log.New(ioutil.Discard, "mocking-jay: ", log.Ldate|log.Ltime)
 	return app
 }
 
@@ -109,14 +118,15 @@ func testMockingJayConfig() []mockingjay.FakeEndpoint {
 	return m
 }
 
-func passingIOUtil(path string) ([]byte, error) {
-	return []byte(someMonkeyConfigString), nil
+func passingIOUtil(path string) ([][]byte, []string, error) {
+	monkeyConfigBytes := []byte(someMonkeyConfigString)
+	return [][]byte{monkeyConfigBytes}, []string{"lol.yaml"}, nil
 }
 
 var errIOError = errors.New("Couldn't load err from FS")
 
-func failingIOUtil(path string) ([]byte, error) {
-	return nil, errIOError
+func failingIOUtil(path string) ([][]byte, []string, error) {
+	return nil, nil, errIOError
 }
 
 var errMJLoaderError = errors.New("Couldnt load mj file")

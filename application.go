@@ -1,16 +1,18 @@
 package main
 
 import (
+	"bytes"
 	"crypto/md5"
 	_ "expvar"
 	"fmt"
+	"github.com/quii/mockingjay-server/mockingjay"
+	"github.com/quii/mockingjay-server/monkey"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"path/filepath"
+	"strings"
 	"time"
-
-	"github.com/quii/mockingjay-server/mockingjay"
-	"github.com/quii/mockingjay-server/monkey"
 )
 
 var (
@@ -18,7 +20,7 @@ var (
 	ErrCDCFail = fmt.Errorf("At least one endpoint was incompatible with the real URL supplied")
 )
 
-type configLoader func(string) ([]byte, error)
+type configLoader func(string) ([][]byte, []string, error)
 type mockingjayLoader func([]byte) ([]mockingjay.FakeEndpoint, error)
 
 type compatabilityChecker interface {
@@ -43,7 +45,7 @@ type application struct {
 
 func defaultApplication(logger *log.Logger, httpTimeout time.Duration) (app *application) {
 	app = new(application)
-	app.configLoader = ioutil.ReadFile
+	app.configLoader = globFileLoader
 	app.mockingjayLoader = mockingjay.NewFakeEndpoints
 	app.compatabilityChecker = NewCompatabilityChecker(logger, httpTimeout)
 	app.mockingjayServerMaker = mockingjay.NewServer
@@ -96,16 +98,29 @@ func (a *application) CheckCompatibility(configPath string, realURL string) erro
 }
 
 func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err error) {
-	configData, err := a.configLoader(a.configPath)
+
+	configs, paths, err := a.configLoader(a.configPath)
 
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	if newMD5 := md5.Sum(configData); newMD5 != a.yamlMD5 {
+	a.logger.Println("Loaded and merged into one config:", strings.Join(paths, ", "))
+
+	if newMD5 := md5.Sum(bytes.Join(configs, []byte{})); newMD5 != a.yamlMD5 {
 		a.yamlMD5 = newMD5
-		endpoints, err = a.mockingjayLoader(configData)
+
+		for _, configData := range configs {
+			mjEndpoint, err := a.mockingjayLoader(configData)
+
+			if err != nil {
+				return nil, err
+			}
+
+			endpoints = append(endpoints, mjEndpoint...)
+		}
 	}
+
 	return
 }
 
@@ -122,4 +137,30 @@ func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debu
 	router.Handle("/", monkeyServer)
 
 	return router, nil
+}
+
+func globFileLoader(path string) (data [][]byte, paths []string, err error) {
+	files, err := filepath.Glob(path)
+
+	if err != nil {
+		return nil, nil, fmt.Errorf("Failed to get files from file path (glob) %s, %v", path, err)
+	}
+
+	if len(files) == 0 {
+		return nil, nil, fmt.Errorf("No files found in path %s", path)
+	}
+
+	var configs [][]byte
+	for _, file := range files {
+
+		configData, err := ioutil.ReadFile(file)
+
+		if err != nil {
+			return nil, nil, err
+		}
+
+		configs = append(configs, configData)
+	}
+
+	return configs, files, nil
 }
