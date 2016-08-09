@@ -11,7 +11,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"strings"
 	"time"
 )
 
@@ -99,7 +98,7 @@ func (a *application) CheckCompatibility(configPath string, realURL string) erro
 
 func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err error) {
 
-	configs, paths, err := a.configLoader(a.configPath)
+	configs, _, err := a.configLoader(a.configPath)
 
 	if err != nil {
 		return
