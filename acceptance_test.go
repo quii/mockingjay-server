@@ -55,7 +55,7 @@ func TestIssue42(t *testing.T) {
 func TestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {
 	svr := httptest.NewServer(mjServer)
 	defer svr.Close()
-	cdcErrors, _ := app.CheckCompatibility(testYAMLPath, svr.URL)
+	cdcErrors := app.CheckCompatibility(testYAMLPath, svr.URL)
 	assert.Empty(t, cdcErrors, "There should be no CDC errors with itself")
 }
 

@@ -17,7 +17,7 @@ const someMonkeyConfigString = "Hello, world"
 
 func TestCompatabilityWithWildcards(t *testing.T) {
 
-	wildcardPath := "examples/issue40/1.yaml"
+	notWildcardPath := "examples/issue40/1.yaml"
 
 	app := defaultApplication(log.New(ioutil.Discard, "", log.Ldate|log.Ltime), 1)
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -28,9 +28,8 @@ func TestCompatabilityWithWildcards(t *testing.T) {
 	}))
 
 	defer svr.Close()
-	cdcErrors, err := app.CheckCompatibility(wildcardPath, svr.URL)
+	err := app.CheckCompatibility(notWildcardPath, svr.URL)
 	assert.NoError(t, err)
-	assert.Empty(t, cdcErrors)
 }
 
 func TestItFailsWhenTheConfigFileCantBeLoaded(t *testing.T) {
@@ -43,7 +42,7 @@ func TestItFailsWhenTheConfigFileCantBeLoaded(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errIOError)
 
-	_, err = app.CheckCompatibility(configPath, "some url")
+	err = app.CheckCompatibility(configPath, "some url")
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errIOError)
 }
@@ -62,7 +61,7 @@ func TestCompatFailsWhenConfigIsInvalid(t *testing.T) {
 	app := testApplication()
 	app.mockingjayLoader = failingMockingjayLoader
 
-	_, err := app.CheckCompatibility("mockingjay config path", "some url")
+	err := app.CheckCompatibility("mockingjay config path", "some url")
 
 	assert.NotNil(t, err, "Didnt get an error when the mockingjay config failed to load")
 	assert.Equal(t, err, errMJLoaderError)
@@ -84,10 +83,10 @@ func TestItReturnsCDCErrorIfCompatabilityFails(t *testing.T) {
 
 	app.compatabilityChecker = fakeCompatabilityChecker{passes: false}
 
-	cdcError, _ := app.CheckCompatibility("mj config path", "http://someurl")
+	cdcError := app.CheckCompatibility("mj config path", "http://someurl")
 
 	assert.NotNil(t, cdcError, "Didn't get an error when compatability fails")
-	assert.IsType(t, []CDCFailError{}, cdcError)
+	assert.Equal(t, ErrCDCFail, cdcError)
 }
 
 func testApplication() *application {
