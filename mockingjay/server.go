@@ -61,14 +61,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		s.requests = append(s.requests, mjRequest)
 
-		cannedResponse := s.getResponse(mjRequest)
-
-		for name, value := range cannedResponse.Headers {
-			w.Header().Set(name, value)
-		}
-
-		w.WriteHeader(cannedResponse.Code)
-		w.Write([]byte(cannedResponse.Body))
+		writeToHTTP(s.getResponse(mjRequest), w)
 	}
 }
 

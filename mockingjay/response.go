@@ -3,6 +3,7 @@ package mockingjay
 import (
 	"encoding/json"
 	"log"
+	"net/http"
 )
 
 type response struct {
@@ -30,5 +31,14 @@ func newNotFound(req Request, endpoints []FakeEndpoint) *response {
 	if err != nil {
 		log.Println(err)
 	}
-	return &response{404, string(j), nil}
+	return &response{http.StatusNotFound, string(j), nil}
+}
+
+func writeToHTTP(res *response, w http.ResponseWriter) {
+	for name, value := range res.Headers {
+		w.Header().Set(name, value)
+	}
+
+	w.WriteHeader(res.Code)
+	w.Write([]byte(res.Body))
 }

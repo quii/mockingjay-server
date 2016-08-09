@@ -12,9 +12,14 @@ func main() {
 	app := defaultApplication(config.logger, config.httpTimeout)
 
 	if config.realURL != "" {
-		err := app.CheckCompatibility(config.configPath, config.realURL)
+		cdcFails, err := app.CheckCompatibility(config.configPath, config.realURL)
+
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("Problem doing CDC test", err)
+		}
+
+		if len(cdcFails) > 0 {
+			log.Fatal(cdcFails)
 		}
 	} else {
 		svr, err := app.CreateServer(config.configPath, config.monkeyConfigPath, config.debugMode)

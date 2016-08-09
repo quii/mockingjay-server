@@ -49,8 +49,6 @@ func (r Request) errors() error {
 // AsHTTPRequest tries to create a http.Request from a given baseURL
 func (r Request) AsHTTPRequest(baseURL string) (req *http.Request, err error) {
 
-	//todo: Test me with the form stuff
-
 	body := r.Body
 	if r.Form != nil {
 		form := url.Values{}

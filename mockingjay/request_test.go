@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -36,6 +37,33 @@ func TestItMapsHTTPRequestsToMJRequests(t *testing.T) {
 	req, _ := http.NewRequest(http.MethodPost, "/foo", nil)
 	mjRequest := NewRequest(req)
 	assert.Equal(t, mjRequest.Method, http.MethodPost)
+}
+
+func TestItSendsForms(t *testing.T) {
+	mjReq := Request{
+		URI:    "/cat",
+		Form:   make(map[string]string),
+		Method: http.MethodPost,
+	}
+
+	mjReq.Form["name"] = "Hudson"
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		if r.PostForm.Get("name") != "Hudson" {
+			t.Error("Did not get expected form value from request", r.PostForm)
+		}
+	})
+
+	req, err := mjReq.AsHTTPRequest("/")
+
+	if err != nil {
+		t.Fatal("Couldnt create http request from mj request", err)
+	}
+
+	rec := httptest.NewRecorder()
+
+	handler.ServeHTTP(rec, req)
 }
 
 func TestItValidatesRequests(t *testing.T) {

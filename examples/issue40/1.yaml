@@ -1,0 +1,8 @@
+---
+ - name: Hello, world
+   request:
+     uri: /hello
+     method: GET
+   response:
+     code: 200
+     body: 'world'

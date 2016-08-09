@@ -13,10 +13,15 @@ import (
 	"github.com/quii/mockingjay-server/monkey"
 )
 
-var (
-	// ErrCDCFail describes when a fake server is not compatible with a given URL
-	ErrCDCFail = fmt.Errorf("At least one endpoint was incompatible with the real URL supplied")
-)
+// CDCFailError provides a summary of errors
+type CDCFailError struct {
+	ConfigPath string
+	URL        string
+}
+
+func (c CDCFailError) Error() string {
+	return fmt.Sprintf("Config defined at %s has at least one endpoint that was incompatible with %s", c.ConfigPath, c.URL)
+}
 
 type configLoader func(string) ([]byte, error)
 type mockingjayLoader func([]byte) ([]mockingjay.FakeEndpoint, error)
@@ -79,19 +84,24 @@ func (a *application) CreateServer(configPath string, monkeyConfigPath string, d
 }
 
 // CheckCompatibility will run a MJ config against a realURL to see if it's compatible
-func (a *application) CheckCompatibility(configPath string, realURL string) error {
+func (a *application) CheckCompatibility(configPath string, realURL string) ([]CDCFailError, error) {
 	a.configPath = configPath
 	endpoints, err := a.loadConfig()
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if a.compatabilityChecker.CheckCompatibility(endpoints, realURL) {
 		a.logger.Println("All endpoints are compatible")
-		return nil
+		return nil, nil
 	}
-	return ErrCDCFail
+
+	error := CDCFailError{
+		ConfigPath: configPath,
+		URL:        realURL,
+	}
+	return []CDCFailError{error}, nil
 }
 
 func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err error) {

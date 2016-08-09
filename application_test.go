@@ -6,11 +6,32 @@ import (
 	"net/http"
 	"testing"
 
+	"fmt"
 	"github.com/quii/mockingjay-server/mockingjay"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"net/http/httptest"
 )
 
 const someMonkeyConfigString = "Hello, world"
+
+func TestCompatabilityWithWildcards(t *testing.T) {
+
+	wildcardPath := "examples/issue40/1.yaml"
+
+	app := defaultApplication(log.New(ioutil.Discard, "", log.Ldate|log.Ltime), 1)
+	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t.Log("Got request", r.URL)
+		if r.URL.String() == "/hello" {
+			fmt.Fprint(w, "world")
+		}
+	}))
+
+	defer svr.Close()
+	cdcErrors, err := app.CheckCompatibility(wildcardPath, svr.URL)
+	assert.NoError(t, err)
+	assert.Empty(t, cdcErrors)
+}
 
 func TestItFailsWhenTheConfigFileCantBeLoaded(t *testing.T) {
 	app := testApplication()
@@ -22,8 +43,8 @@ func TestItFailsWhenTheConfigFileCantBeLoaded(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errIOError)
 
-	compatErr := app.CheckCompatibility(configPath, "some url")
-	assert.NotNil(t, compatErr)
+	_, err = app.CheckCompatibility(configPath, "some url")
+	assert.NotNil(t, err)
 	assert.Equal(t, err, errIOError)
 }
 
@@ -41,7 +62,7 @@ func TestCompatFailsWhenConfigIsInvalid(t *testing.T) {
 	app := testApplication()
 	app.mockingjayLoader = failingMockingjayLoader
 
-	err := app.CheckCompatibility("mockingjay config path", "some url")
+	_, err := app.CheckCompatibility("mockingjay config path", "some url")
 
 	assert.NotNil(t, err, "Didnt get an error when the mockingjay config failed to load")
 	assert.Equal(t, err, errMJLoaderError)
@@ -56,17 +77,17 @@ func TestItFailsWhenTheMonkeyConfigIsInvalid(t *testing.T) {
 	assert.Equal(t, err, errMonkeyLoadError)
 }
 
-func TestItReturnsCDCErrIfCompatabilityFails(t *testing.T) {
+func TestItReturnsCDCErrorIfCompatabilityFails(t *testing.T) {
 	app := new(application)
 	app.configLoader = passingIOUtil
 	app.mockingjayLoader = passingMockingjayLoader
 
 	app.compatabilityChecker = fakeCompatabilityChecker{passes: false}
 
-	err := app.CheckCompatibility("mj config path", "http://someurl")
+	cdcError, _ := app.CheckCompatibility("mj config path", "http://someurl")
 
-	assert.NotNil(t, err, "Didn't get an error when compatability fails")
-	assert.Equal(t, err, ErrCDCFail)
+	assert.NotNil(t, cdcError, "Didn't get an error when compatability fails")
+	assert.IsType(t, []CDCFailError{}, cdcError)
 }
 
 func testApplication() *application {

@@ -1,0 +1,7 @@
+---
+ - name: Delete, world
+   request:
+     uri: /world
+     method: DELETE
+   response:
+     code: 200
