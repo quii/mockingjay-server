@@ -105,8 +105,6 @@ func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err err
 		return
 	}
 
-	a.logger.Println("Loaded and merged into one config:", strings.Join(paths, ", "))
-
 	if newMD5 := md5.Sum(bytes.Join(configs, []byte{})); newMD5 != a.yamlMD5 {
 		a.yamlMD5 = newMD5
 
