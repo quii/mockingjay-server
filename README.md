@@ -8,7 +8,7 @@ Mockingjay lets you define the contract between a consumer and producer and with
  - Configurable to simulate the eratic nature of calling other services
 - [Consumer driven contracts (CDCs)](http://martinfowler.com/articles/consumerDrivenContracts.html) to run against your real downstream services.
 
-**Mockingjay makes it really easy to check your integration points**. It's fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent
+**Mockingjay makes it really easy to check your HTTP integration points**. It's fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent so that you never have a green build but failing software.
 
 - [Installation](https://github.com/quii/mockingjay-server/wiki/Installing) - [Download a binary](https://github.com/quii/mockingjay-server/releases/latest), [use a Docker image](https://hub.docker.com/r/quii/mockingjay-server/) or `go get`)
 - [Rationale](https://github.com/quii/mockingjay-server/wiki/Rationale)
@@ -49,6 +49,7 @@ $ mockingjay-server -config=example.yaml -realURL=http://some-real-api.com
 2015/04/13 21:06:06 Failing endpoint (POST /card) is incompatible with http://some-real-api - Couldn't reach real server
 2015/04/13 21:06:06 At least one endpoint was incompatible with the real URL supplied
 ````
+This ensures your integration test is working against a *reliable* fake.
 
 ### Inspect what requests mockingjay has received
 
