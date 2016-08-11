@@ -1,10 +1,39 @@
 import React from 'react';
-import {render} from 'react-dom';
+import ReactDOM from 'react-dom';
 
-class App extends React.Component {
-    render () {
-        return <p> Hello world!</p>;
+var Endpoint = React.createClass({
+    render: function() {
+        return (
+            <div className="endpoint">
+                I am an endpoint
+            </div>
+        );
     }
-}
+});
 
-render(<App/>, document.getElementById('app'));
+var EndpointForm = React.createClass({
+    render: function () {
+        return (
+            <div className="endpointForm">
+                <label htmlFor="name">Name</label><input type="text" name="name"/>
+                <input type="submit" value="Save"/>
+            </div>
+        );
+    }
+});
+
+var UI = React.createClass({
+    render: function () {
+        return (
+            <div className="ui">
+                <Endpoint/>
+                <EndpointForm/>
+            </div>
+        )
+    }
+})
+
+ReactDOM.render(
+    <UI/>,
+    document.getElementById('app')
+);
