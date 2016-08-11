@@ -6,18 +6,60 @@ var Endpoint = React.createClass({
         return (
             <div className="endpoint">
                 <h1>{this.props.name}</h1>
-                <span className="method">{this.props.method}</span>
-                <span className="uri">{this.props.uri}</span>
+                <div className="request">
+                    <span className="method">{this.props.method}</span>
+                    <span className="uri">{this.props.uri}</span>
+                    <code className="regex">{this.props.regex}</code>
+                    <HttpDataList name="Form data" items={this.props.form} />
+                    <HttpDataList name="Request headers" items={this.props.reqHeaders} />
+                </div>
+                <div className="response">
+                    <span className="code">{this.props.status}</span>
+                    <code className="code">{this.props.body}</code>
+                    <HttpDataList name="Response headers" items={this.props.resHeaders} />
+                </div>
             </div>
         );
     }
 });
 
+var HttpDataList = React.createClass({
+    render: function(){
+        if(this.props.items) {
+            self = this;
+            var items = Object.keys(this.props.items).map(function (key) {
+                let value = self.props.items[key];
+                return (
+                    <li>{key} -> {value}</li>
+                )
+            });
+            return (
+                <div className={this.props.name}>
+                    <h3>{this.props.name}</h3>
+                    <ul>{items}</ul>
+                </div>
+            )
+        }else{
+            return null;
+        }
+    }
+})
+
 var EndpointList = React.createClass({
     render: function () {
         var endpoints = this.props.data.map(function(endpoint) {
             return (
-                <Endpoint name={endpoint.Name} method={endpoint.Request.Method} uri={endpoint.Request.URI}/>
+                <Endpoint
+                    name={endpoint.Name}
+                    method={endpoint.Request.Method}
+                    uri={endpoint.Request.URI}
+                    regex={endpoint.Request.RegexURI}
+                    reqHeaders={endpoint.Request.Headers}
+                    form={endpoint.Request.Form}
+                    code={endpoint.Response.Code}
+                    body={endpoint.Response.Body}
+                    resHeaders={endpoint.Response.Headers}
+                />
             );
         });
         return (
@@ -31,113 +73,42 @@ var EndpointList = React.createClass({
 var EndpointForm = React.createClass({
     render: function () {
         return (
-            <div className="endpointForm">
+            <form className="endpointForm">
                 <label htmlFor="name">Name</label><input type="text" name="name"/>
                 <input type="submit" value="Save"/>
-            </div>
+            </form>
         );
     }
 });
 
 var UI = React.createClass({
+    getInitialState: function() {
+        return {data: []};
+    },
+    componentDidMount: function() {
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({data: data});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
     render: function () {
         return (
             <div className="ui">
-                <EndpointList data={this.props.data}/>
+                <EndpointList data={this.state.data}/>
                 <EndpointForm/>
             </div>
         )
     }
 });
 
-var data = [{
-    "Name": "Test endpoint",
-    "CDCDisabled": false,
-    "Request": {
-        "URI": "/hello",
-        "RegexURI": null,
-        "Method": "GET",
-        "Headers": null,
-        "Body": "",
-        "Form": null
-    },
-    "Response": {
-        "Code": 200,
-        "Body": "{\"message\": \"hello, world\"}",
-        "Headers": {
-            "content-type": "text/json"
-        }
-    }
-}, {
-    "Name": "Test endpoint 2",
-    "CDCDisabled": false,
-    "Request": {
-        "URI": "/world",
-        "RegexURI": null,
-        "Method": "DELETE",
-        "Headers": null,
-        "Body": "",
-        "Form": null
-    },
-    "Response": {
-        "Code": 200,
-        "Body": "hello, world",
-        "Headers": null
-    }
-}, {
-    "Name": "Failing endpoint",
-    "CDCDisabled": false,
-    "Request": {
-        "URI": "/card",
-        "RegexURI": null,
-        "Method": "POST",
-        "Headers": null,
-        "Body": "Greetings",
-        "Form": null
-    },
-    "Response": {
-        "Code": 500,
-        "Body": "Oh bugger",
-        "Headers": null
-    }
-}, {
-    "Name": "Endpoint not used for CDC",
-    "CDCDisabled": true,
-    "Request": {
-        "URI": "/burp",
-        "RegexURI": null,
-        "Method": "POST",
-        "Headers": null,
-        "Body": "Belch",
-        "Form": null
-    },
-    "Response": {
-        "Code": 500,
-        "Body": "Oh no",
-        "Headers": null
-    }
-}, {
-    "Name": "Posting forms",
-    "CDCDisabled": false,
-    "Request": {
-        "URI": "/cats",
-        "RegexURI": null,
-        "Method": "POST",
-        "Headers": null,
-        "Body": "",
-        "Form": {
-            "age": "10",
-            "name": "Hudson"
-        }
-    },
-    "Response": {
-        "Code": 201,
-        "Body": "Created",
-        "Headers": null
-    }
-}]
-
 ReactDOM.render(
-    <UI data={data}/>,
+    <UI url="/mj-endpoints"/>,
     document.getElementById('app')
 );

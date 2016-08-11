@@ -20,7 +20,7 @@ const testYAMLPath = "examples/example.yaml"
 
 func init() {
 	app = defaultApplication(log.New(ioutil.Discard, "", 0), defaultHTTPTimeoutSeconds)
-	svr, err := app.CreateServer(testYAMLPath, "", false)
+	svr, err := app.CreateServer(testYAMLPath, "", false, nil)
 
 	if err != nil {
 		log.Fatal("Couldn't load MJ config from", testYAMLPath)
@@ -31,7 +31,7 @@ func init() {
 
 func TestIssue42(t *testing.T) {
 	failApp := defaultApplication(log.New(ioutil.Discard, "", 0), defaultHTTPTimeoutSeconds)
-	failSvr, _ := failApp.CreateServer("examples/issue42.yaml", "", false)
+	failSvr, _ := failApp.CreateServer("examples/issue42.yaml", "", false, nil)
 	svr := httptest.NewServer(failSvr)
 	defer svr.Close()
 

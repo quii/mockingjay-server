@@ -11,7 +11,6 @@ import (
 type appConfig struct {
 	logger           *log.Logger
 	port             int
-	uiPort           int
 	configPath       string
 	monkeyConfigPath string
 	realURL          string
@@ -21,7 +20,6 @@ type appConfig struct {
 
 func loadConfig() *appConfig {
 	port := flag.Int("port", 9090, "Port to listen on")
-	uiPort := flag.Int("ui-port", 9091, "UI port to listen on")
 	debug := flag.Bool("debug", false, "Print debug statements")
 	configPath := flag.String("config", "", "Path to config YAML")
 	httpTimeout := flag.Int("timeout", 5, "Optional: HTTP timeout when performing CDC")
@@ -33,7 +31,6 @@ func loadConfig() *appConfig {
 	config := &appConfig{
 		logger:           log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime),
 		port:             *port,
-		uiPort:           *uiPort,
 		configPath:       *configPath,
 		monkeyConfigPath: *monkeyConfigPath,
 		realURL:          *realURL,
@@ -48,10 +45,6 @@ func loadConfig() *appConfig {
 	if config.configPath == "" {
 		flag.Usage()
 		os.Exit(1)
-	}
-
-	if config.port == config.uiPort {
-		log.Fatal("UI port cant be the same as the server port, silly")
 	}
 
 	return config

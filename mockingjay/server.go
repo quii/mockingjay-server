@@ -46,7 +46,7 @@ const endpointsURL = "/mj-endpoints"
 const newEndpointURL = "/mj-new-endpoint"
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.URL.String() {
+	switch r.URL.Path {
 	case endpointsURL:
 		s.serveEndpoints(w)
 	case newEndpointURL:
@@ -97,6 +97,8 @@ func (s *Server) serveEndpoints(w http.ResponseWriter) {
 
 	w.Write(endpointsBody)
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 }
 
 func (s *Server) createEndpoint(w http.ResponseWriter, r *http.Request) {

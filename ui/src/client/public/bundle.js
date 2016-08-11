@@ -72,16 +72,78 @@
 	                this.props.name
 	            ),
 	            _react2.default.createElement(
-	                'span',
-	                { className: 'method' },
-	                this.props.method
+	                'div',
+	                { className: 'request' },
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'method' },
+	                    this.props.method
+	                ),
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'uri' },
+	                    this.props.uri
+	                ),
+	                _react2.default.createElement(
+	                    'code',
+	                    { className: 'regex' },
+	                    this.props.regex
+	                ),
+	                _react2.default.createElement(HttpDataList, { name: 'Form data', items: this.props.form }),
+	                _react2.default.createElement(HttpDataList, { name: 'Request headers', items: this.props.reqHeaders })
 	            ),
 	            _react2.default.createElement(
-	                'span',
-	                { className: 'uri' },
-	                this.props.uri
+	                'div',
+	                { className: 'response' },
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'code' },
+	                    this.props.status
+	                ),
+	                _react2.default.createElement(
+	                    'code',
+	                    { className: 'code' },
+	                    this.props.body
+	                ),
+	                _react2.default.createElement(HttpDataList, { name: 'Response headers', items: this.props.resHeaders })
 	            )
 	        );
+	    }
+	});
+	
+	var HttpDataList = _react2.default.createClass({
+	    displayName: 'HttpDataList',
+	
+	    render: function render() {
+	        if (this.props.items) {
+	            self = this;
+	            var items = Object.keys(this.props.items).map(function (key) {
+	                var value = self.props.items[key];
+	                return _react2.default.createElement(
+	                    'li',
+	                    null,
+	                    key,
+	                    ' -> ',
+	                    value
+	                );
+	            });
+	            return _react2.default.createElement(
+	                'div',
+	                { className: this.props.name },
+	                _react2.default.createElement(
+	                    'h3',
+	                    null,
+	                    this.props.name
+	                ),
+	                _react2.default.createElement(
+	                    'ul',
+	                    null,
+	                    items
+	                )
+	            );
+	        } else {
+	            return null;
+	        }
 	    }
 	});
 	
@@ -90,7 +152,17 @@
 	
 	    render: function render() {
 	        var endpoints = this.props.data.map(function (endpoint) {
-	            return _react2.default.createElement(Endpoint, { name: endpoint.Name, method: endpoint.Request.Method, uri: endpoint.Request.URI });
+	            return _react2.default.createElement(Endpoint, {
+	                name: endpoint.Name,
+	                method: endpoint.Request.Method,
+	                uri: endpoint.Request.URI,
+	                regex: endpoint.Request.RegexURI,
+	                reqHeaders: endpoint.Request.Headers,
+	                form: endpoint.Request.Form,
+	                code: endpoint.Response.Code,
+	                body: endpoint.Response.Body,
+	                resHeaders: endpoint.Response.Headers
+	            });
 	        });
 	        return _react2.default.createElement(
 	            'div',
@@ -105,7 +177,7 @@
 	
 	    render: function render() {
 	        return _react2.default.createElement(
-	            'div',
+	            'form',
 	            { className: 'endpointForm' },
 	            _react2.default.createElement(
 	                'label',
@@ -121,104 +193,33 @@
 	var UI = _react2.default.createClass({
 	    displayName: 'UI',
 	
+	    getInitialState: function getInitialState() {
+	        return { data: [] };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        $.ajax({
+	            url: this.props.url,
+	            dataType: 'json',
+	            cache: false,
+	            success: function (data) {
+	                this.setState({ data: data });
+	            }.bind(this),
+	            error: function (xhr, status, err) {
+	                console.error(this.props.url, status, err.toString());
+	            }.bind(this)
+	        });
+	    },
 	    render: function render() {
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'ui' },
-	            _react2.default.createElement(EndpointList, { data: this.props.data }),
+	            _react2.default.createElement(EndpointList, { data: this.state.data }),
 	            _react2.default.createElement(EndpointForm, null)
 	        );
 	    }
 	});
 	
-	var data = [{
-	    "Name": "Test endpoint",
-	    "CDCDisabled": false,
-	    "Request": {
-	        "URI": "/hello",
-	        "RegexURI": null,
-	        "Method": "GET",
-	        "Headers": null,
-	        "Body": "",
-	        "Form": null
-	    },
-	    "Response": {
-	        "Code": 200,
-	        "Body": "{\"message\": \"hello, world\"}",
-	        "Headers": {
-	            "content-type": "text/json"
-	        }
-	    }
-	}, {
-	    "Name": "Test endpoint 2",
-	    "CDCDisabled": false,
-	    "Request": {
-	        "URI": "/world",
-	        "RegexURI": null,
-	        "Method": "DELETE",
-	        "Headers": null,
-	        "Body": "",
-	        "Form": null
-	    },
-	    "Response": {
-	        "Code": 200,
-	        "Body": "hello, world",
-	        "Headers": null
-	    }
-	}, {
-	    "Name": "Failing endpoint",
-	    "CDCDisabled": false,
-	    "Request": {
-	        "URI": "/card",
-	        "RegexURI": null,
-	        "Method": "POST",
-	        "Headers": null,
-	        "Body": "Greetings",
-	        "Form": null
-	    },
-	    "Response": {
-	        "Code": 500,
-	        "Body": "Oh bugger",
-	        "Headers": null
-	    }
-	}, {
-	    "Name": "Endpoint not used for CDC",
-	    "CDCDisabled": true,
-	    "Request": {
-	        "URI": "/burp",
-	        "RegexURI": null,
-	        "Method": "POST",
-	        "Headers": null,
-	        "Body": "Belch",
-	        "Form": null
-	    },
-	    "Response": {
-	        "Code": 500,
-	        "Body": "Oh no",
-	        "Headers": null
-	    }
-	}, {
-	    "Name": "Posting forms",
-	    "CDCDisabled": false,
-	    "Request": {
-	        "URI": "/cats",
-	        "RegexURI": null,
-	        "Method": "POST",
-	        "Headers": null,
-	        "Body": "",
-	        "Form": {
-	            "age": "10",
-	            "name": "Hudson"
-	        }
-	    },
-	    "Response": {
-	        "Code": 201,
-	        "Body": "Created",
-	        "Headers": null
-	    }
-	}];
-	
-	_reactDom2.default.render(_react2.default.createElement(UI, { data: data }), document.getElementById('app'));
+	_reactDom2.default.render(_react2.default.createElement(UI, { url: '/mj-endpoints' }), document.getElementById('app'));
 
 /***/ },
 /* 1 */

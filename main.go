@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -19,13 +20,11 @@ func main() {
 			log.Fatal(err)
 		}
 	} else {
-		svr, err := app.CreateServer(config.configPath, config.monkeyConfigPath, config.debugMode)
+		svr, err := app.CreateServer(config.configPath, config.monkeyConfigPath, config.debugMode, getUIServer())
 
 		if err != nil {
 			log.Fatal(err)
 		} else {
-			go ui(config)
-
 			config.logger.Printf("Listening on port %d", config.port)
 			err = http.ListenAndServe(fmt.Sprintf(":%d", config.port), svr)
 			if err != nil {
@@ -36,13 +35,10 @@ func main() {
 	}
 }
 
-func ui(config *appConfig) {
-	config.logger.Printf("UI served on port %d", config.uiPort)
-	svr := http.NewServeMux()
-	svr.Handle("/", http.FileServer(assetFS()))
-	err := http.ListenAndServe(fmt.Sprintf(":%d", config.uiPort), svr)
-
-	if err != nil {
-		log.Fatal(err)
+func getUIServer() http.Handler {
+	if os.Getenv("ENV") == "LOCAL" {
+		return http.FileServer(http.Dir("./ui"))
+	} else {
+		return http.FileServer(assetFS())
 	}
 }

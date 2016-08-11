@@ -67,7 +67,7 @@ func (a *application) PollConfig() {
 }
 
 // CreateServer will create a fake server from the configuration found in configPath with optional performance constraints from configutation found in monkeyConfigPath
-func (a *application) CreateServer(configPath string, monkeyConfigPath string, debugMode bool) (server http.Handler, err error) {
+func (a *application) CreateServer(configPath string, monkeyConfigPath string, debugMode bool, ui http.Handler) (server http.Handler, err error) {
 	a.configPath = configPath
 	a.monkeyConfigPath = monkeyConfigPath
 	endpoints, err := a.loadConfig()
@@ -76,7 +76,7 @@ func (a *application) CreateServer(configPath string, monkeyConfigPath string, d
 		return
 	}
 
-	return a.createFakeServer(endpoints, debugMode)
+	return a.createFakeServer(endpoints, debugMode, ui)
 }
 
 // CheckCompatibility will run a MJ config against a realURL to see if it's compatible
@@ -121,7 +121,7 @@ func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err err
 	return
 }
 
-func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debugMode bool) (server http.Handler, err error) {
+func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debugMode bool, ui http.Handler) (server http.Handler, err error) {
 	go a.PollConfig()
 	a.mjServer = a.mockingjayServerMaker(endpoints, debugMode)
 	monkeyServer, err := a.monkeyServerMaker(a.mjServer, a.monkeyConfigPath)
@@ -131,6 +131,11 @@ func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debu
 	}
 
 	router := http.NewServeMux()
+
+	if ui != nil {
+		router.Handle("/mj-admin/", http.StripPrefix("/mj-admin", ui))
+	}
+
 	router.Handle("/", monkeyServer)
 
 	return router, nil
