@@ -1,3 +1,4 @@
+//go:generate go-bindata-assetfs -ignore=node_modules -pkg $GOPACKAGE ui/...
 package main
 
 import (
@@ -23,6 +24,8 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		} else {
+			go ui(config)
+
 			config.logger.Printf("Listening on port %d", config.port)
 			err = http.ListenAndServe(fmt.Sprintf(":%d", config.port), svr)
 			if err != nil {
@@ -30,5 +33,16 @@ func main() {
 				config.logger.Fatal(msg)
 			}
 		}
+	}
+}
+
+func ui(config *appConfig) {
+	config.logger.Printf("UI served on port %d", config.uiPort)
+	svr := http.NewServeMux()
+	svr.Handle("/", http.FileServer(assetFS()))
+	err := http.ListenAndServe(fmt.Sprintf(":%d", config.uiPort), svr)
+
+	if err != nil {
+		log.Fatal(err)
 	}
 }
