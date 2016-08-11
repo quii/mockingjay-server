@@ -1,22 +1,20 @@
 {
-  "name": "mj-ui",
+  "name": "mockingjay-ui",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "webpack.config.js",
   "dependencies": {
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.13.2",
     "babel-preset-react": "^6.11.1",
-    "babelify": "^7.3.0",
-    "browserify": "^13.1.0",
     "react": "^15.3.0",
-    "react-dom": "^15.3.0"
+    "react-dom": "^15.3.0",
+    "webpack": "^1.13.1"
   },
-  "devDependencies": {
-    "nodemon": "^1.10.0"
-  },
+  "devDependencies": {},
   "scripts": {
-    "build": "browserify -t [ babelify ] main.js -o bundle.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "nodemon -x 'npm run build'"
+    "dev": "webpack -d --watch",
+    "build" : "webpack -p"
   },
   "author": "",
   "license": "ISC"

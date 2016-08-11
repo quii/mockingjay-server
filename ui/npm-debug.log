@@ -1,0 +1,23 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'run', 'watch' ]
+2 info using npm@3.5.2
+3 info using node@v4.2.6
+4 verbose stack Error: missing script: watch
+4 verbose stack     at run (/usr/share/npm/lib/run-script.js:147:19)
+4 verbose stack     at /usr/share/npm/lib/run-script.js:57:5
+4 verbose stack     at /usr/share/npm/node_modules/read-package-json/read-json.js:345:5
+4 verbose stack     at checkBinReferences_ (/usr/share/npm/node_modules/read-package-json/read-json.js:309:45)
+4 verbose stack     at final (/usr/share/npm/node_modules/read-package-json/read-json.js:343:3)
+4 verbose stack     at then (/usr/share/npm/node_modules/read-package-json/read-json.js:113:5)
+4 verbose stack     at ReadFileContext.<anonymous> (/usr/share/npm/node_modules/read-package-json/read-json.js:284:20)
+4 verbose stack     at ReadFileContext.callback (/usr/share/npm/node_modules/graceful-fs/graceful-fs.js:76:16)
+4 verbose stack     at FSReqWrap.readFileAfterOpen [as oncomplete] (fs.js:303:13)
+5 verbose cwd /home/qui/go/src/github.com/quii/mockingjay-server/ui
+6 error Linux 4.4.0-31-generic
+7 error argv "/usr/bin/nodejs" "/usr/bin/npm" "run" "watch"
+8 error node v4.2.6
+9 error npm  v3.5.2
+10 error missing script: watch
+11 error If you need help, you may report this error at:
+11 error     <https://github.com/npm/npm/issues>
+12 verbose exit [ 1, true ]
