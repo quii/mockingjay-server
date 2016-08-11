@@ -66,7 +66,36 @@
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'endpoint' },
-	            'I am an endpoint'
+	            _react2.default.createElement(
+	                'h1',
+	                null,
+	                this.props.name
+	            ),
+	            _react2.default.createElement(
+	                'span',
+	                { className: 'method' },
+	                this.props.method
+	            ),
+	            _react2.default.createElement(
+	                'span',
+	                { className: 'uri' },
+	                this.props.uri
+	            )
+	        );
+	    }
+	});
+	
+	var EndpointList = _react2.default.createClass({
+	    displayName: 'EndpointList',
+	
+	    render: function render() {
+	        var endpoints = this.props.data.map(function (endpoint) {
+	            return _react2.default.createElement(Endpoint, { name: endpoint.Name, method: endpoint.Request.Method, uri: endpoint.Request.URI });
+	        });
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'endpointList' },
+	            endpoints
 	        );
 	    }
 	});
@@ -96,13 +125,100 @@
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'ui' },
-	            _react2.default.createElement(Endpoint, null),
+	            _react2.default.createElement(EndpointList, { data: this.props.data }),
 	            _react2.default.createElement(EndpointForm, null)
 	        );
 	    }
 	});
 	
-	_reactDom2.default.render(_react2.default.createElement(UI, null), document.getElementById('app'));
+	var data = [{
+	    "Name": "Test endpoint",
+	    "CDCDisabled": false,
+	    "Request": {
+	        "URI": "/hello",
+	        "RegexURI": null,
+	        "Method": "GET",
+	        "Headers": null,
+	        "Body": "",
+	        "Form": null
+	    },
+	    "Response": {
+	        "Code": 200,
+	        "Body": "{\"message\": \"hello, world\"}",
+	        "Headers": {
+	            "content-type": "text/json"
+	        }
+	    }
+	}, {
+	    "Name": "Test endpoint 2",
+	    "CDCDisabled": false,
+	    "Request": {
+	        "URI": "/world",
+	        "RegexURI": null,
+	        "Method": "DELETE",
+	        "Headers": null,
+	        "Body": "",
+	        "Form": null
+	    },
+	    "Response": {
+	        "Code": 200,
+	        "Body": "hello, world",
+	        "Headers": null
+	    }
+	}, {
+	    "Name": "Failing endpoint",
+	    "CDCDisabled": false,
+	    "Request": {
+	        "URI": "/card",
+	        "RegexURI": null,
+	        "Method": "POST",
+	        "Headers": null,
+	        "Body": "Greetings",
+	        "Form": null
+	    },
+	    "Response": {
+	        "Code": 500,
+	        "Body": "Oh bugger",
+	        "Headers": null
+	    }
+	}, {
+	    "Name": "Endpoint not used for CDC",
+	    "CDCDisabled": true,
+	    "Request": {
+	        "URI": "/burp",
+	        "RegexURI": null,
+	        "Method": "POST",
+	        "Headers": null,
+	        "Body": "Belch",
+	        "Form": null
+	    },
+	    "Response": {
+	        "Code": 500,
+	        "Body": "Oh no",
+	        "Headers": null
+	    }
+	}, {
+	    "Name": "Posting forms",
+	    "CDCDisabled": false,
+	    "Request": {
+	        "URI": "/cats",
+	        "RegexURI": null,
+	        "Method": "POST",
+	        "Headers": null,
+	        "Body": "",
+	        "Form": {
+	            "age": "10",
+	            "name": "Hudson"
+	        }
+	    },
+	    "Response": {
+	        "Code": 201,
+	        "Body": "Created",
+	        "Headers": null
+	    }
+	}];
+	
+	_reactDom2.default.render(_react2.default.createElement(UI, { data: data }), document.getElementById('app'));
 
 /***/ },
 /* 1 */
