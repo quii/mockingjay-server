@@ -22156,14 +22156,14 @@
 	            'div',
 	            { className: 'endpoint' },
 	            _react2.default.createElement(
-	                'h1',
-	                null,
-	                this.state.name
-	            ),
-	            _react2.default.createElement(
 	                'button',
 	                { onClick: this.startEditing },
 	                'Edit'
+	            ),
+	            _react2.default.createElement(
+	                'h1',
+	                null,
+	                this.state.name
 	            ),
 	            _react2.default.createElement(
 	                'div',
@@ -22174,27 +22174,57 @@
 	                    'Request'
 	                ),
 	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'method', onClick: this.startEditing },
-	                    this.state.method
+	                    'p',
+	                    null,
+	                    'Method ',
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'method', onClick: this.startEditing },
+	                        this.state.method
+	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'uri' },
-	                    this.state.uri
+	                    'p',
+	                    null,
+	                    'URI ',
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'uri' },
+	                        this.state.uri
+	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'code',
-	                    { className: 'regex' },
-	                    this.state.regex
+	                    'p',
+	                    null,
+	                    'Regex URI',
+	                    _react2.default.createElement(
+	                        'code',
+	                        { className: 'regex' },
+	                        this.state.regex
+	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'reqBody' },
-	                    this.state.reqBody
+	                    'p',
+	                    null,
+	                    'Body ',
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'reqBody' },
+	                        this.state.reqBody
+	                    )
 	                ),
-	                _react2.default.createElement(_httpDataList2.default, { name: 'Form data', items: this.state.form }),
-	                _react2.default.createElement(_httpDataList2.default, { name: 'Request headers', items: this.state.reqHeaders })
+	                _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'Form data ',
+	                    _react2.default.createElement(_httpDataList2.default, { name: 'Form data', items: this.state.form })
+	                ),
+	                _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'Headers ',
+	                    _react2.default.createElement(_httpDataList2.default, { name: 'Request headers', items: this.state.reqHeaders })
+	                )
 	            ),
 	            _react2.default.createElement(
 	                'div',
@@ -22205,16 +22235,31 @@
 	                    'Response'
 	                ),
 	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'code' },
-	                    this.state.code
+	                    'p',
+	                    null,
+	                    'Status code ',
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'code' },
+	                        this.state.code
+	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'code',
-	                    { className: 'body' },
-	                    this.state.body
+	                    'p',
+	                    null,
+	                    'Body ',
+	                    _react2.default.createElement(
+	                        'code',
+	                        { className: 'body' },
+	                        this.state.body
+	                    )
 	                ),
-	                _react2.default.createElement(_httpDataList2.default, { name: 'Response headers', items: this.state.resHeaders })
+	                _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'Headers ',
+	                    _react2.default.createElement(_httpDataList2.default, { name: 'Response headers', items: this.state.resHeaders })
+	                )
 	            )
 	        );
 	
@@ -22249,7 +22294,40 @@
 	                null,
 	                'Method'
 	            ),
-	            _react2.default.createElement('input', { type: 'text', name: 'method', value: this.props.originalValues.method, onChange: this.props.onChange }),
+	            _react2.default.createElement(
+	                'select',
+	                { name: 'method', value: this.props.originalValues.method, onChange: this.props.onChange },
+	                _react2.default.createElement(
+	                    'option',
+	                    { value: 'GET' },
+	                    'GET'
+	                ),
+	                _react2.default.createElement(
+	                    'option',
+	                    { value: 'POST' },
+	                    'POST'
+	                ),
+	                _react2.default.createElement(
+	                    'option',
+	                    { value: 'DELETE' },
+	                    'DELETE'
+	                ),
+	                _react2.default.createElement(
+	                    'option',
+	                    { value: 'PUT' },
+	                    'PUT'
+	                ),
+	                _react2.default.createElement(
+	                    'option',
+	                    { value: 'PATCH' },
+	                    'PATCH'
+	                ),
+	                _react2.default.createElement(
+	                    'option',
+	                    { value: 'OPTIONS' },
+	                    'OPTIONS'
+	                )
+	            ),
 	            _react2.default.createElement('br', null),
 	            _react2.default.createElement(
 	                'label',

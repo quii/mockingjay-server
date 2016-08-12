@@ -36,22 +36,22 @@ const Endpoint = React.createClass({
     },
     render: function() {
         var view = (<div className="endpoint">
-            <h1>{this.state.name}</h1>
             <button onClick={this.startEditing}>Edit</button>
+            <h1>{this.state.name}</h1>
             <div className="request">
                 <h4>Request</h4>
-                <span className="method" onClick={this.startEditing}>{this.state.method}</span>
-                <span className="uri">{this.state.uri}</span>
-                <code className="regex">{this.state.regex}</code>
-                <span className="reqBody">{this.state.reqBody}</span>
-                <HttpDataList name="Form data" items={this.state.form} />
-                <HttpDataList name="Request headers" items={this.state.reqHeaders} />
+                <p>Method <span className="method" onClick={this.startEditing}>{this.state.method}</span></p>
+                <p>URI <span className="uri">{this.state.uri}</span></p>
+                <p>Regex URI<code className="regex">{this.state.regex}</code></p>
+                <p>Body <span className="reqBody">{this.state.reqBody}</span></p>
+                <p>Form data <HttpDataList name="Form data" items={this.state.form} /></p>
+                <p>Headers <HttpDataList name="Request headers" items={this.state.reqHeaders} /></p>
             </div>
             <div className="response">
                 <h4>Response</h4>
-                <span className="code">{this.state.code}</span>
-                <code className="body">{this.state.body}</code>
-                <HttpDataList name="Response headers" items={this.state.resHeaders} />
+                <p>Status code <span className="code">{this.state.code}</span></p>
+                <p>Body <code className="body">{this.state.body}</code></p>
+                <p>Headers <HttpDataList name="Response headers" items={this.state.resHeaders} /></p>
             </div>
         </div>);
 
@@ -70,7 +70,17 @@ const EndpointForm = React.createClass({
         return (
             <div class="editor">
                 <h4>Request</h4>
-                <label>Method</label><input type="text" name="method" value={this.props.originalValues.method} onChange={this.props.onChange} /><br />
+                <label>Method</label>
+
+                <select name="method" value={this.props.originalValues.method} onChange={this.props.onChange}>
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="DELETE">DELETE</option>
+                    <option value="PUT">PUT</option>
+                    <option value="PATCH">PATCH</option>
+                    <option value="OPTIONS">OPTIONS</option>
+                </select>
+                <br />
                 <label>URI</label><input type="text" name="uri" value={this.props.originalValues.uri} onChange={this.props.onChange} /><br />
                 <label>Regex URI</label><input type="text" name="regex" value={this.props.originalValues.regex} onChange={this.props.onChange} /><br />
                 <label>Body</label><input type="text" name="reqBody" value={this.props.originalValues.reqBody} onChange={this.props.onChange} /><br />
