@@ -1,5 +1,5 @@
 import React from 'react';
-import HttpDataList from './httpDataList.jsx';
+import {HttpDataList, HttpDataEditor} from './httpDataList.jsx';
 
 const Endpoint = React.createClass({
     getInitialState: function() {
@@ -15,7 +15,7 @@ const Endpoint = React.createClass({
             reqHeaders: this.props.reqHeaders,
             code: this.props.code,
             body: this.props.body,
-            form: this.props.resHeaders,
+            resHeaders: this.props.resHeaders,
         };
     },
     startEditing: function(){
@@ -55,6 +55,7 @@ const Endpoint = React.createClass({
         </div>);
 
         var form = <EndpointForm
+            name={this.state.name}
             finishEditing={this.finishEditing}
             originalValues={this.state}
             onChange={this.updateValue}                                                             ss
@@ -68,6 +69,7 @@ const EndpointForm = React.createClass({
     render: function () {
         return (
             <div class="editor">
+                <h1>Editing {this.props.name}</h1>
                 <h4>Request</h4>
                 <label>Method</label>
                 <select name="method" value={this.props.originalValues.method} onChange={this.props.onChange}>
@@ -82,6 +84,7 @@ const EndpointForm = React.createClass({
                 <label>URI</label><input type="text" name="uri" value={this.props.originalValues.uri} onChange={this.props.onChange} /><br />
                 <label>Regex URI</label><input type="text" name="regex" value={this.props.originalValues.regex} onChange={this.props.onChange} /><br />
                 <label>Body</label><input type="text" name="reqBody" value={this.props.originalValues.reqBody} onChange={this.props.onChange} /><br />
+                <label>Form</label><HttpDataEditor name="form" items={this.props.originalValues.form} />
 
                 <h4>Response</h4>
                 <label>Status code</label><input type="text" name="code" value={this.props.originalValues.code} onChange={this.props.onChange} /><br />

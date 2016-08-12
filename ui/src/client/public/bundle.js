@@ -22049,6 +22049,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.HttpDataEditor = exports.HttpDataList = undefined;
 	
 	var _react = __webpack_require__(/*! react */ 1);
 	
@@ -22056,10 +22057,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var httpDataList = _react2.default.createClass({
-	    displayName: 'httpDataList',
+	var HttpDataList = exports.HttpDataList = _react2.default.createClass({
+	    displayName: 'HttpDataList',
 	
 	    render: function render() {
+	        console.log('rendering', this.props.items);
 	        if (this.props.items) {
 	            self = this;
 	            var items = Object.keys(this.props.items).map(function (key) {
@@ -22092,7 +22094,41 @@
 	    }
 	});
 	
-	exports.default = httpDataList;
+	var HttpDataEditor = exports.HttpDataEditor = _react2.default.createClass({
+	    displayName: 'HttpDataEditor',
+	
+	    render: function render() {
+	        if (this.props.items) {
+	            self = this;
+	            var items = Object.keys(this.props.items).map(function (key) {
+	                var value = self.props.items[key];
+	                return _react2.default.createElement(
+	                    'li',
+	                    null,
+	                    _react2.default.createElement('input', { type: 'text', value: key }),
+	                    ' -> ',
+	                    _react2.default.createElement('input', { type: 'text', value: value })
+	                );
+	            });
+	            return _react2.default.createElement(
+	                'div',
+	                { className: this.props.name },
+	                _react2.default.createElement(
+	                    'h3',
+	                    null,
+	                    this.props.name
+	                ),
+	                _react2.default.createElement(
+	                    'ul',
+	                    null,
+	                    items
+	                )
+	            );
+	        } else {
+	            return null;
+	        }
+	    }
+	});
 
 /***/ },
 /* 176 */
@@ -22113,8 +22149,6 @@
 	
 	var _httpDataList = __webpack_require__(/*! ./httpDataList.jsx */ 175);
 	
-	var _httpDataList2 = _interopRequireDefault(_httpDataList);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -22123,7 +22157,7 @@
 	    displayName: 'Endpoint',
 	
 	    getInitialState: function getInitialState() {
-	        return _defineProperty({
+	        return {
 	            cdcDisabled: this.props.cdcDisabled,
 	            isEditing: false,
 	            name: this.props.name,
@@ -22134,8 +22168,9 @@
 	            form: this.props.form,
 	            reqHeaders: this.props.reqHeaders,
 	            code: this.props.code,
-	            body: this.props.body
-	        }, 'form', this.props.resHeaders);
+	            body: this.props.body,
+	            resHeaders: this.props.resHeaders
+	        };
 	    },
 	    startEditing: function startEditing() {
 	        this.setState({
@@ -22218,13 +22253,13 @@
 	                    'p',
 	                    null,
 	                    'Form data ',
-	                    _react2.default.createElement(_httpDataList2.default, { name: 'Form data', items: this.state.form })
+	                    _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: this.state.form })
 	                ),
 	                _react2.default.createElement(
 	                    'p',
 	                    null,
 	                    'Headers ',
-	                    _react2.default.createElement(_httpDataList2.default, { name: 'Request headers', items: this.state.reqHeaders })
+	                    _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Request headers', items: this.state.reqHeaders })
 	                )
 	            ),
 	            _react2.default.createElement(
@@ -22259,12 +22294,13 @@
 	                    'p',
 	                    null,
 	                    'Headers ',
-	                    _react2.default.createElement(_httpDataList2.default, { name: 'Response headers', items: this.state.resHeaders })
+	                    _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Response headers', items: this.state.resHeaders })
 	                )
 	            )
 	        );
 	
 	        var form = _react2.default.createElement(EndpointForm, {
+	            name: this.state.name,
 	            finishEditing: this.finishEditing,
 	            originalValues: this.state,
 	            onChange: this.updateValue, ss: true
@@ -22285,6 +22321,12 @@
 	        return _react2.default.createElement(
 	            'div',
 	            { 'class': 'editor' },
+	            _react2.default.createElement(
+	                'h1',
+	                null,
+	                'Editing ',
+	                this.props.name
+	            ),
 	            _react2.default.createElement(
 	                'h4',
 	                null,
@@ -22351,6 +22393,12 @@
 	            ),
 	            _react2.default.createElement('input', { type: 'text', name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
 	            _react2.default.createElement('br', null),
+	            _react2.default.createElement(
+	                'label',
+	                null,
+	                'Form'
+	            ),
+	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'form', items: this.props.originalValues.form }),
 	            _react2.default.createElement(
 	                'h4',
 	                null,
