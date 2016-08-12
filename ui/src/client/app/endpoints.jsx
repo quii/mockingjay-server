@@ -115,7 +115,7 @@ const EndpointList = React.createClass({
                     Body: state.reqBody
                 },
                 Response: {
-                    Code: state.code,
+                    Code: parseInt(state.code),
                     Body: state.body
                 }
             };
