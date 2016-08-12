@@ -84,6 +84,19 @@
 	    },
 	    putUpdate: function putUpdate(update) {
 	        console.log('I will PUT', update);
+	        $.ajax({
+	            url: this.props.url,
+	            dataType: 'json',
+	            type: 'PUT',
+	            cache: false,
+	            data: update,
+	            success: function (data) {
+	                this.setState({ data: data });
+	            }.bind(this),
+	            error: function (xhr, status, err) {
+	                console.error(this.props.url, status, err.toString());
+	            }.bind(this)
+	        });
 	    },
 	    render: function render() {
 	        return _react2.default.createElement(
@@ -22308,7 +22321,7 @@
 	                Request: {
 	                    URI: state.uri,
 	                    RegexURI: state.regex,
-	                    Method: state.reqHeaders,
+	                    Method: state.method,
 	                    Body: state.reqBody
 	                },
 	                Response: {

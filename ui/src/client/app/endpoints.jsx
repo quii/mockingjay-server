@@ -102,7 +102,7 @@ const EndpointList = React.createClass({
                 Request: {
                     URI: state.uri,
                     RegexURI: state.regex,
-                    Method: state.reqHeaders,
+                    Method: state.method,
                     Body: state.reqBody
                 },
                 Response: {

@@ -21,6 +21,19 @@ const UI = React.createClass({
     },
     putUpdate: function(update) {
         console.log('I will PUT', update);
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            type: 'PUT',
+            cache: false,
+            data: update,
+            success: function(data) {
+                this.setState({data: data});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
     },
     render: function () {
         return (
