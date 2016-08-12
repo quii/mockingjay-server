@@ -36,8 +36,7 @@ const Endpoint = React.createClass({
     },
     render: function() {
         var view = (<div className="endpoint">
-            <button onClick={this.startEditing}>Edit</button>
-            <h1>{this.state.name}</h1>
+            <h1>{this.state.name} <button onClick={this.startEditing}>Edit</button></h1>
             <div className="request">
                 <h4>Request</h4>
                 <p>Method <span className="method" onClick={this.startEditing}>{this.state.method}</span></p>
@@ -71,7 +70,6 @@ const EndpointForm = React.createClass({
             <div class="editor">
                 <h4>Request</h4>
                 <label>Method</label>
-
                 <select name="method" value={this.props.originalValues.method} onChange={this.props.onChange}>
                     <option value="GET">GET</option>
                     <option value="POST">POST</option>
@@ -84,9 +82,10 @@ const EndpointForm = React.createClass({
                 <label>URI</label><input type="text" name="uri" value={this.props.originalValues.uri} onChange={this.props.onChange} /><br />
                 <label>Regex URI</label><input type="text" name="regex" value={this.props.originalValues.regex} onChange={this.props.onChange} /><br />
                 <label>Body</label><input type="text" name="reqBody" value={this.props.originalValues.reqBody} onChange={this.props.onChange} /><br />
+
                 <h4>Response</h4>
-                <label>Status code</label><input type="text" name="regex" value={this.props.originalValues.code} onChange={this.props.onChange} /><br />
-                <label>Body</label><input type="text" name="regex" value={this.props.originalValues.body} onChange={this.props.onChange} /><br />
+                <label>Status code</label><input type="text" name="code" value={this.props.originalValues.code} onChange={this.props.onChange} /><br />
+                <label>Body</label><input type="text" name="body" value={this.props.originalValues.body} onChange={this.props.onChange} /><br />
                 <button onClick={this.props.finishEditing}>Save</button>
             </div>
         )

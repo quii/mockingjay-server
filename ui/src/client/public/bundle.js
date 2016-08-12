@@ -22156,14 +22156,15 @@
 	            'div',
 	            { className: 'endpoint' },
 	            _react2.default.createElement(
-	                'button',
-	                { onClick: this.startEditing },
-	                'Edit'
-	            ),
-	            _react2.default.createElement(
 	                'h1',
 	                null,
-	                this.state.name
+	                this.state.name,
+	                ' ',
+	                _react2.default.createElement(
+	                    'button',
+	                    { onClick: this.startEditing },
+	                    'Edit'
+	                )
 	            ),
 	            _react2.default.createElement(
 	                'div',
@@ -22360,14 +22361,14 @@
 	                null,
 	                'Status code'
 	            ),
-	            _react2.default.createElement('input', { type: 'text', name: 'regex', value: this.props.originalValues.code, onChange: this.props.onChange }),
+	            _react2.default.createElement('input', { type: 'text', name: 'code', value: this.props.originalValues.code, onChange: this.props.onChange }),
 	            _react2.default.createElement('br', null),
 	            _react2.default.createElement(
 	                'label',
 	                null,
 	                'Body'
 	            ),
-	            _react2.default.createElement('input', { type: 'text', name: 'regex', value: this.props.originalValues.body, onChange: this.props.onChange }),
+	            _react2.default.createElement('input', { type: 'text', name: 'body', value: this.props.originalValues.body, onChange: this.props.onChange }),
 	            _react2.default.createElement('br', null),
 	            _react2.default.createElement(
 	                'button',
