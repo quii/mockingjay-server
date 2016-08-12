@@ -22111,14 +22111,16 @@
 	
 	    getInitialState: function getInitialState() {
 	        return _defineProperty({
+	            cdcDisabled: this.props.cdcDisabled,
 	            isEditing: false,
 	            name: this.props.name,
 	            method: this.props.method,
 	            uri: this.props.uri,
 	            regex: this.props.regex,
+	            reqBody: this.props.reqBody,
 	            form: this.props.form,
 	            reqHeaders: this.props.reqHeaders,
-	            status: this.props.status,
+	            code: this.props.code,
 	            body: this.props.body
 	        }, 'form', this.props.resHeaders);
 	    },
@@ -22173,6 +22175,11 @@
 	                    { className: 'regex' },
 	                    this.state.regex
 	                ),
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'reqBody' },
+	                    this.state.reqBody
+	                ),
 	                _react2.default.createElement(_httpDataList2.default, { name: 'Form data', items: this.state.form }),
 	                _react2.default.createElement(_httpDataList2.default, { name: 'Request headers', items: this.state.reqHeaders })
 	            ),
@@ -22187,11 +22194,11 @@
 	                _react2.default.createElement(
 	                    'span',
 	                    { className: 'code' },
-	                    this.state.status
+	                    this.state.code
 	                ),
 	                _react2.default.createElement(
 	                    'code',
-	                    { className: 'code' },
+	                    { className: 'body' },
 	                    this.state.body
 	                ),
 	                _react2.default.createElement(_httpDataList2.default, { name: 'Response headers', items: this.state.resHeaders })
@@ -22246,6 +22253,13 @@
 	            _react2.default.createElement('input', { type: 'text', name: 'regex', value: this.props.originalValues.regex, onChange: this.props.onChange }),
 	            _react2.default.createElement('br', null),
 	            _react2.default.createElement(
+	                'label',
+	                null,
+	                'Body'
+	            ),
+	            _react2.default.createElement('input', { type: 'text', name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
+	            _react2.default.createElement('br', null),
+	            _react2.default.createElement(
 	                'h4',
 	                null,
 	                'Response'
@@ -22253,9 +22267,9 @@
 	            _react2.default.createElement(
 	                'label',
 	                null,
-	                'Status'
+	                'Status code'
 	            ),
-	            _react2.default.createElement('input', { type: 'text', name: 'regex', value: this.props.originalValues.status, onChange: this.props.onChange }),
+	            _react2.default.createElement('input', { type: 'text', name: 'regex', value: this.props.originalValues.code, onChange: this.props.onChange }),
 	            _react2.default.createElement('br', null),
 	            _react2.default.createElement(
 	                'label',
@@ -22287,7 +22301,21 @@
 	    updateServer: function updateServer() {
 	        self = this;
 	        var updatedEndpoints = this.state.endpointIds.map(function (ref) {
-	            return self.refs[ref].state;
+	            var state = self.refs[ref].state;
+	            return {
+	                Name: state.name,
+	                CDCDisabled: state.cdcDisabled,
+	                Request: {
+	                    URI: state.uri,
+	                    RegexURI: state.regex,
+	                    Method: state.reqHeaders,
+	                    Body: state.reqBody
+	                },
+	                Response: {
+	                    Code: state.code,
+	                    Body: state.body
+	                }
+	            };
 	        });
 	        this.props.putUpdate(JSON.stringify(updatedEndpoints));
 	    },
@@ -22300,9 +22328,11 @@
 	            i++;
 	            return _react2.default.createElement(Endpoint, {
 	                ref: endpointName,
+	                cdcDisabled: endpoint.CDCDisabled,
 	                updateServer: self.updateServer,
 	                name: endpoint.Name,
 	                method: endpoint.Request.Method,
+	                reqBody: endpoint.Request.Body,
 	                uri: endpoint.Request.URI,
 	                regex: endpoint.Request.RegexURI,
 	                reqHeaders: endpoint.Request.Headers,

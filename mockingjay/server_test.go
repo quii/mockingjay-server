@@ -148,7 +148,7 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 	assert.Equal(t, server.requests[0].Method, "POST")
 }
 
-func TestItReturnsListOfEndpoints(t *testing.T) {
+func TestItReturnsListOfEndpointsAndUpdates(t *testing.T) {
 	mjReq := Request{URI: testURL, Method: "GET", Form: nil}
 	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
 	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff)
@@ -166,4 +166,42 @@ func TestItReturnsListOfEndpoints(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, endpointResponse[0], endpoint, "The endpoint returned doesnt match what the server was set up with")
+
+	updateBody := `[{
+	"Name": "Test endpoint updated",
+	"CDCDisabled": false,
+	"Request": {
+		"URI": "/hello",
+		"RegexURI": null,
+		"Method": null,
+		"Body": ""
+	},
+	"Response": {
+		"Code": 200,
+		"Body": "{\"message\": \"hello, world\"}"
+	}
+}, {
+	"Name": "New endpoint",
+	"CDCDisabled": false,
+	"Request": {
+		"URI": "/world",
+		"RegexURI": null,
+		"Method": null,
+		"Body": ""
+	},
+	"Response": {
+		"Code": 200,
+		"Body": "hello, world"
+	}
+
+}]`
+	updateRequest, _ := http.NewRequest(http.MethodPut, endpointsURL, strings.NewReader(updateBody))
+	updateResponseReader := httptest.NewRecorder()
+
+	server.ServeHTTP(updateResponseReader, updateRequest)
+
+	assert.Equal(t, updateResponseReader.Code, http.StatusOK)
+	assert.Equal(t, updateResponseReader.HeaderMap["Content-Type"][0], "application/json")
+
+	assert.Len(t, server.Endpoints, 2)
 }

@@ -48,7 +48,7 @@ const newEndpointURL = "/mj-new-endpoint"
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case endpointsURL:
-		s.serveEndpoints(w)
+		s.handleEndpoints(w, r)
 	case newEndpointURL:
 		s.createEndpoint(w, r)
 	case requestsURL:
@@ -88,7 +88,28 @@ func (s *Server) getResponse(r Request) *response {
 	return newNotFound(r, s.Endpoints)
 }
 
-func (s *Server) serveEndpoints(w http.ResponseWriter) {
+func (s *Server) handleEndpoints(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == http.MethodPut {
+		var updatedEndpoints []FakeEndpoint
+
+		defer r.Body.Close()
+
+		endpointBody, err := ioutil.ReadAll(r.Body)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+
+		err = json.Unmarshal(endpointBody, &updatedEndpoints)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+
+		s.Endpoints = updatedEndpoints
+	}
+
 	endpointsBody, err := json.Marshal(s.Endpoints)
 
 	if err != nil {
@@ -96,6 +117,7 @@ func (s *Server) serveEndpoints(w http.ResponseWriter) {
 	}
 
 	w.Write(endpointsBody)
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
