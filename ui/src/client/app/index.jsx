@@ -19,10 +19,13 @@ const UI = React.createClass({
             }.bind(this)
         });
     },
+    putUpdate: function(update) {
+        console.log('I will PUT', update);
+    },
     render: function () {
         return (
             <div className="ui">
-                <EndpointList data={this.state.data}/>
+                <EndpointList putUpdate={this.putUpdate} data={this.state.data}/>
             </div>
         )
     }

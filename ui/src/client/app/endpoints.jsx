@@ -24,7 +24,8 @@ const Endpoint = React.createClass({
     finishEditing: function(){
         this.setState({
             isEditing: false
-        })
+        });
+        this.props.updateServer();
     },
     updateValue: function (e) {
         this.setState({
@@ -79,10 +80,32 @@ const EndpointForm = React.createClass({
 })
 
 const EndpointList = React.createClass({
+    getInitialState: function() {
+        return {
+            endpointIds: []
+        };
+    },
+    addEndpoint: function (id) {
+        this.state.endpointIds.push(id)
+    },
+    updateServer: function(){
+        self = this;
+        const updatedEndpoints = this.state.endpointIds.map(function (ref) {
+            return self.refs[ref].state;
+        })
+        this.props.putUpdate(JSON.stringify(updatedEndpoints));
+    },
     render: function () {
-        var endpoints = this.props.data.map(function(endpoint) {
+        self = this;
+        var i = 0;
+        var endpointElements = this.props.data.map(function(endpoint) {
+            const endpointName = 'endpoint'+i;
+            self.addEndpoint(endpointName);
+            i++;
             return (
                 <Endpoint
+                    ref={endpointName}
+                    updateServer={self.updateServer}
                     name={endpoint.Name}
                     method={endpoint.Request.Method}
                     uri={endpoint.Request.URI}
@@ -97,7 +120,7 @@ const EndpointList = React.createClass({
         });
         return (
             <div className="endpointList">
-                {endpoints}
+                {endpointElements}
             </div>
         );
     }

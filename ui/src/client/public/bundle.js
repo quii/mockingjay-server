@@ -82,11 +82,14 @@
 	            }.bind(this)
 	        });
 	    },
+	    putUpdate: function putUpdate(update) {
+	        console.log('I will PUT', update);
+	    },
 	    render: function render() {
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'ui' },
-	            _react2.default.createElement(_endpoints2.default, { data: this.state.data })
+	            _react2.default.createElement(_endpoints2.default, { putUpdate: this.putUpdate, data: this.state.data })
 	        );
 	    }
 	});
@@ -22128,6 +22131,7 @@
 	        this.setState({
 	            isEditing: false
 	        });
+	        this.props.updateServer();
 	    },
 	    updateValue: function updateValue(e) {
 	        this.setState(_defineProperty({}, e.target.name, e.target.value));
@@ -22272,9 +22276,31 @@
 	var EndpointList = _react2.default.createClass({
 	    displayName: 'EndpointList',
 	
+	    getInitialState: function getInitialState() {
+	        return {
+	            endpointIds: []
+	        };
+	    },
+	    addEndpoint: function addEndpoint(id) {
+	        this.state.endpointIds.push(id);
+	    },
+	    updateServer: function updateServer() {
+	        self = this;
+	        var updatedEndpoints = this.state.endpointIds.map(function (ref) {
+	            return self.refs[ref].state;
+	        });
+	        this.props.putUpdate(JSON.stringify(updatedEndpoints));
+	    },
 	    render: function render() {
-	        var endpoints = this.props.data.map(function (endpoint) {
+	        self = this;
+	        var i = 0;
+	        var endpointElements = this.props.data.map(function (endpoint) {
+	            var endpointName = 'endpoint' + i;
+	            self.addEndpoint(endpointName);
+	            i++;
 	            return _react2.default.createElement(Endpoint, {
+	                ref: endpointName,
+	                updateServer: self.updateServer,
 	                name: endpoint.Name,
 	                method: endpoint.Request.Method,
 	                uri: endpoint.Request.URI,
@@ -22289,7 +22315,7 @@
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'endpointList' },
-	            endpoints
+	            endpointElements
 	        );
 	    }
 	});
