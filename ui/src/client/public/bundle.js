@@ -22101,53 +22101,169 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
 	var Endpoint = _react2.default.createClass({
 	    displayName: 'Endpoint',
 	
+	    getInitialState: function getInitialState() {
+	        return _defineProperty({
+	            isEditing: false,
+	            name: this.props.name,
+	            method: this.props.method,
+	            uri: this.props.uri,
+	            regex: this.props.regex,
+	            form: this.props.form,
+	            reqHeaders: this.props.reqHeaders,
+	            status: this.props.status,
+	            body: this.props.body
+	        }, 'form', this.props.resHeaders);
+	    },
+	    startEditing: function startEditing() {
+	        this.setState({
+	            isEditing: true
+	        });
+	    },
+	    finishEditing: function finishEditing() {
+	        this.setState({
+	            isEditing: false
+	        });
+	    },
+	    updateValue: function updateValue(e) {
+	        this.setState(_defineProperty({}, e.target.name, e.target.value));
+	    },
 	    render: function render() {
-	        return _react2.default.createElement(
+	        var view = _react2.default.createElement(
 	            'div',
 	            { className: 'endpoint' },
 	            _react2.default.createElement(
 	                'h1',
 	                null,
-	                this.props.name
+	                this.state.name
+	            ),
+	            _react2.default.createElement(
+	                'button',
+	                { onClick: this.startEditing },
+	                'Edit'
 	            ),
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'request' },
 	                _react2.default.createElement(
+	                    'h4',
+	                    null,
+	                    'Request'
+	                ),
+	                _react2.default.createElement(
 	                    'span',
-	                    { className: 'method' },
-	                    this.props.method
+	                    { className: 'method', onClick: this.startEditing },
+	                    this.state.method
 	                ),
 	                _react2.default.createElement(
 	                    'span',
 	                    { className: 'uri' },
-	                    this.props.uri
+	                    this.state.uri
 	                ),
 	                _react2.default.createElement(
 	                    'code',
 	                    { className: 'regex' },
-	                    this.props.regex
+	                    this.state.regex
 	                ),
-	                _react2.default.createElement(_httpDataList2.default, { name: 'Form data', items: this.props.form }),
-	                _react2.default.createElement(_httpDataList2.default, { name: 'Request headers', items: this.props.reqHeaders })
+	                _react2.default.createElement(_httpDataList2.default, { name: 'Form data', items: this.state.form }),
+	                _react2.default.createElement(_httpDataList2.default, { name: 'Request headers', items: this.state.reqHeaders })
 	            ),
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'response' },
 	                _react2.default.createElement(
+	                    'h4',
+	                    null,
+	                    'Response'
+	                ),
+	                _react2.default.createElement(
 	                    'span',
 	                    { className: 'code' },
-	                    this.props.status
+	                    this.state.status
 	                ),
 	                _react2.default.createElement(
 	                    'code',
 	                    { className: 'code' },
-	                    this.props.body
+	                    this.state.body
 	                ),
-	                _react2.default.createElement(_httpDataList2.default, { name: 'Response headers', items: this.props.resHeaders })
+	                _react2.default.createElement(_httpDataList2.default, { name: 'Response headers', items: this.state.resHeaders })
+	            )
+	        );
+	
+	        var form = _react2.default.createElement(EndpointForm, {
+	            finishEditing: this.finishEditing,
+	            originalValues: this.state,
+	            onChange: this.updateValue, ss: true
+	        });
+	
+	        return _react2.default.createElement(
+	            'div',
+	            null,
+	            this.state.isEditing ? form : view
+	        );
+	    }
+	});
+	
+	var EndpointForm = _react2.default.createClass({
+	    displayName: 'EndpointForm',
+	
+	    render: function render() {
+	        return _react2.default.createElement(
+	            'div',
+	            { 'class': 'editor' },
+	            _react2.default.createElement(
+	                'h4',
+	                null,
+	                'Request'
+	            ),
+	            _react2.default.createElement(
+	                'label',
+	                null,
+	                'Method'
+	            ),
+	            _react2.default.createElement('input', { type: 'text', name: 'method', value: this.props.originalValues.method, onChange: this.props.onChange }),
+	            _react2.default.createElement('br', null),
+	            _react2.default.createElement(
+	                'label',
+	                null,
+	                'URI'
+	            ),
+	            _react2.default.createElement('input', { type: 'text', name: 'uri', value: this.props.originalValues.uri, onChange: this.props.onChange }),
+	            _react2.default.createElement('br', null),
+	            _react2.default.createElement(
+	                'label',
+	                null,
+	                'Regex URI'
+	            ),
+	            _react2.default.createElement('input', { type: 'text', name: 'regex', value: this.props.originalValues.regex, onChange: this.props.onChange }),
+	            _react2.default.createElement('br', null),
+	            _react2.default.createElement(
+	                'h4',
+	                null,
+	                'Response'
+	            ),
+	            _react2.default.createElement(
+	                'label',
+	                null,
+	                'Status'
+	            ),
+	            _react2.default.createElement('input', { type: 'text', name: 'regex', value: this.props.originalValues.status, onChange: this.props.onChange }),
+	            _react2.default.createElement('br', null),
+	            _react2.default.createElement(
+	                'label',
+	                null,
+	                'Body'
+	            ),
+	            _react2.default.createElement('input', { type: 'text', name: 'regex', value: this.props.originalValues.body, onChange: this.props.onChange }),
+	            _react2.default.createElement('br', null),
+	            _react2.default.createElement(
+	                'button',
+	                { onClick: this.props.finishEditing },
+	                'Save'
 	            )
 	        );
 	    }
