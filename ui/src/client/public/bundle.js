@@ -57,138 +57,11 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
+	var _endpoints = __webpack_require__(/*! ./endpoints.jsx */ 176);
+	
+	var _endpoints2 = _interopRequireDefault(_endpoints);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var Endpoint = _react2.default.createClass({
-	    displayName: 'Endpoint',
-	
-	    render: function render() {
-	        return _react2.default.createElement(
-	            'div',
-	            { className: 'endpoint' },
-	            _react2.default.createElement(
-	                'h1',
-	                null,
-	                this.props.name
-	            ),
-	            _react2.default.createElement(
-	                'div',
-	                { className: 'request' },
-	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'method' },
-	                    this.props.method
-	                ),
-	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'uri' },
-	                    this.props.uri
-	                ),
-	                _react2.default.createElement(
-	                    'code',
-	                    { className: 'regex' },
-	                    this.props.regex
-	                ),
-	                _react2.default.createElement(HttpDataList, { name: 'Form data', items: this.props.form }),
-	                _react2.default.createElement(HttpDataList, { name: 'Request headers', items: this.props.reqHeaders })
-	            ),
-	            _react2.default.createElement(
-	                'div',
-	                { className: 'response' },
-	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'code' },
-	                    this.props.status
-	                ),
-	                _react2.default.createElement(
-	                    'code',
-	                    { className: 'code' },
-	                    this.props.body
-	                ),
-	                _react2.default.createElement(HttpDataList, { name: 'Response headers', items: this.props.resHeaders })
-	            )
-	        );
-	    }
-	});
-	
-	var HttpDataList = _react2.default.createClass({
-	    displayName: 'HttpDataList',
-	
-	    render: function render() {
-	        if (this.props.items) {
-	            self = this;
-	            var items = Object.keys(this.props.items).map(function (key) {
-	                var value = self.props.items[key];
-	                return _react2.default.createElement(
-	                    'li',
-	                    null,
-	                    key,
-	                    ' -> ',
-	                    value
-	                );
-	            });
-	            return _react2.default.createElement(
-	                'div',
-	                { className: this.props.name },
-	                _react2.default.createElement(
-	                    'h3',
-	                    null,
-	                    this.props.name
-	                ),
-	                _react2.default.createElement(
-	                    'ul',
-	                    null,
-	                    items
-	                )
-	            );
-	        } else {
-	            return null;
-	        }
-	    }
-	});
-	
-	var EndpointList = _react2.default.createClass({
-	    displayName: 'EndpointList',
-	
-	    render: function render() {
-	        var endpoints = this.props.data.map(function (endpoint) {
-	            return _react2.default.createElement(Endpoint, {
-	                name: endpoint.Name,
-	                method: endpoint.Request.Method,
-	                uri: endpoint.Request.URI,
-	                regex: endpoint.Request.RegexURI,
-	                reqHeaders: endpoint.Request.Headers,
-	                form: endpoint.Request.Form,
-	                code: endpoint.Response.Code,
-	                body: endpoint.Response.Body,
-	                resHeaders: endpoint.Response.Headers
-	            });
-	        });
-	        return _react2.default.createElement(
-	            'div',
-	            { className: 'endpointList' },
-	            endpoints
-	        );
-	    }
-	});
-	
-	var EndpointForm = _react2.default.createClass({
-	    displayName: 'EndpointForm',
-	
-	    render: function render() {
-	        return _react2.default.createElement(
-	            'form',
-	            { className: 'endpointForm' },
-	            _react2.default.createElement(
-	                'label',
-	                { htmlFor: 'name' },
-	                'Name'
-	            ),
-	            _react2.default.createElement('input', { type: 'text', name: 'name' }),
-	            _react2.default.createElement('input', { type: 'submit', value: 'Save' })
-	        );
-	    }
-	});
 	
 	var UI = _react2.default.createClass({
 	    displayName: 'UI',
@@ -213,8 +86,7 @@
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'ui' },
-	            _react2.default.createElement(EndpointList, { data: this.state.data }),
-	            _react2.default.createElement(EndpointForm, null)
+	            _react2.default.createElement(_endpoints2.default, { data: this.state.data })
 	        );
 	    }
 	});
@@ -22148,6 +22020,165 @@
 	var ReactMount = __webpack_require__(/*! ./ReactMount */ 167);
 	
 	module.exports = ReactMount.renderSubtreeIntoContainer;
+
+/***/ },
+/* 175 */
+/*!*****************************************!*\
+  !*** ./src/client/app/httpDataList.jsx ***!
+  \*****************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var httpDataList = _react2.default.createClass({
+	    displayName: 'httpDataList',
+	
+	    render: function render() {
+	        if (this.props.items) {
+	            self = this;
+	            var items = Object.keys(this.props.items).map(function (key) {
+	                var value = self.props.items[key];
+	                return _react2.default.createElement(
+	                    'li',
+	                    null,
+	                    key,
+	                    ' -> ',
+	                    value
+	                );
+	            });
+	            return _react2.default.createElement(
+	                'div',
+	                { className: this.props.name },
+	                _react2.default.createElement(
+	                    'h3',
+	                    null,
+	                    this.props.name
+	                ),
+	                _react2.default.createElement(
+	                    'ul',
+	                    null,
+	                    items
+	                )
+	            );
+	        } else {
+	            return null;
+	        }
+	    }
+	});
+	
+	exports.default = httpDataList;
+
+/***/ },
+/* 176 */
+/*!**************************************!*\
+  !*** ./src/client/app/endpoints.jsx ***!
+  \**************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _httpDataList = __webpack_require__(/*! ./httpDataList.jsx */ 175);
+	
+	var _httpDataList2 = _interopRequireDefault(_httpDataList);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Endpoint = _react2.default.createClass({
+	    displayName: 'Endpoint',
+	
+	    render: function render() {
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'endpoint' },
+	            _react2.default.createElement(
+	                'h1',
+	                null,
+	                this.props.name
+	            ),
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'request' },
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'method' },
+	                    this.props.method
+	                ),
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'uri' },
+	                    this.props.uri
+	                ),
+	                _react2.default.createElement(
+	                    'code',
+	                    { className: 'regex' },
+	                    this.props.regex
+	                ),
+	                _react2.default.createElement(_httpDataList2.default, { name: 'Form data', items: this.props.form }),
+	                _react2.default.createElement(_httpDataList2.default, { name: 'Request headers', items: this.props.reqHeaders })
+	            ),
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'response' },
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'code' },
+	                    this.props.status
+	                ),
+	                _react2.default.createElement(
+	                    'code',
+	                    { className: 'code' },
+	                    this.props.body
+	                ),
+	                _react2.default.createElement(_httpDataList2.default, { name: 'Response headers', items: this.props.resHeaders })
+	            )
+	        );
+	    }
+	});
+	
+	var EndpointList = _react2.default.createClass({
+	    displayName: 'EndpointList',
+	
+	    render: function render() {
+	        var endpoints = this.props.data.map(function (endpoint) {
+	            return _react2.default.createElement(Endpoint, {
+	                name: endpoint.Name,
+	                method: endpoint.Request.Method,
+	                uri: endpoint.Request.URI,
+	                regex: endpoint.Request.RegexURI,
+	                reqHeaders: endpoint.Request.Headers,
+	                form: endpoint.Request.Form,
+	                code: endpoint.Response.Code,
+	                body: endpoint.Response.Body,
+	                resHeaders: endpoint.Response.Headers
+	            });
+	        });
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'endpointList' },
+	            endpoints
+	        );
+	    }
+	});
+	
+	exports.default = EndpointList;
 
 /***/ }
 /******/ ]);
