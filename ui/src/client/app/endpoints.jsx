@@ -83,12 +83,14 @@ const EndpointForm = React.createClass({
                 <br />
                 <label>URI</label><input type="text" name="uri" value={this.props.originalValues.uri} onChange={this.props.onChange} /><br />
                 <label>Regex URI</label><input type="text" name="regex" value={this.props.originalValues.regex} onChange={this.props.onChange} /><br />
-                <label>Body</label><input type="text" name="reqBody" value={this.props.originalValues.reqBody} onChange={this.props.onChange} /><br />
+                <label>Body</label><textarea name="reqBody" onChange={this.props.onChange}>{this.props.originalValues.reqBody}</textarea><br />
                 <label>Form</label><HttpDataEditor name="form" items={this.props.originalValues.form} onChange={this.props.onChange} />
+                <label>Headers</label><HttpDataEditor name="reqHeaders" items={this.props.originalValues.reqHeaders} onChange={this.props.onChange} />
 
                 <h4>Response</h4>
                 <label>Status code</label><input type="text" name="code" value={this.props.originalValues.code} onChange={this.props.onChange} /><br />
-                <label>Body</label><input type="text" name="body" value={this.props.originalValues.body} onChange={this.props.onChange} /><br />
+                <label>Body</label><textarea name="body" onChange={this.props.onChange}>{this.props.originalValues.body}</textarea><br />
+                <label>Headers</label><HttpDataEditor name="resHeaders" items={this.props.originalValues.resHeaders} onChange={this.props.onChange} />
                 <button onClick={this.props.finishEditing}>Finish editing</button>
             </div>
         )
@@ -116,11 +118,13 @@ const EndpointList = React.createClass({
                     RegexURI: state.regex,
                     Method: state.method,
                     Body: state.reqBody,
-                    Form: state.form
+                    Form: state.form,
+                    Headers: state.reqHeaders
                 },
                 Response: {
                     Code: parseInt(state.code),
-                    Body: state.body
+                    Body: state.body,
+                    Headers: state.resHeaders
                 }
             };
         });

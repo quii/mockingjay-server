@@ -51,6 +51,7 @@ export const HttpDataEditor = React.createClass({
             items.push(<li>
                 <input onChange={this.updateMap} ref={i+items.length+"key"} type="text"/> ->
                 <input onChange={this.updateMap} ref={i+items.length+"value"} type="text"/>
+
             </li>)
         }
 

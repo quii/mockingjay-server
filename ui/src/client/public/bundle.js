@@ -22298,7 +22298,11 @@
 	                null,
 	                'Body'
 	            ),
-	            _react2.default.createElement('input', { type: 'text', name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
+	            _react2.default.createElement(
+	                'textarea',
+	                { name: 'reqBody', onChange: this.props.onChange },
+	                this.props.originalValues.reqBody
+	            ),
 	            _react2.default.createElement('br', null),
 	            _react2.default.createElement(
 	                'label',
@@ -22306,6 +22310,12 @@
 	                'Form'
 	            ),
 	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'form', items: this.props.originalValues.form, onChange: this.props.onChange }),
+	            _react2.default.createElement(
+	                'label',
+	                null,
+	                'Headers'
+	            ),
+	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'reqHeaders', items: this.props.originalValues.reqHeaders, onChange: this.props.onChange }),
 	            _react2.default.createElement(
 	                'h4',
 	                null,
@@ -22323,8 +22333,18 @@
 	                null,
 	                'Body'
 	            ),
-	            _react2.default.createElement('input', { type: 'text', name: 'body', value: this.props.originalValues.body, onChange: this.props.onChange }),
+	            _react2.default.createElement(
+	                'textarea',
+	                { name: 'body', onChange: this.props.onChange },
+	                this.props.originalValues.body
+	            ),
 	            _react2.default.createElement('br', null),
+	            _react2.default.createElement(
+	                'label',
+	                null,
+	                'Headers'
+	            ),
+	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'resHeaders', items: this.props.originalValues.resHeaders, onChange: this.props.onChange }),
 	            _react2.default.createElement(
 	                'button',
 	                { onClick: this.props.finishEditing },
@@ -22357,11 +22377,13 @@
 	                    RegexURI: state.regex,
 	                    Method: state.method,
 	                    Body: state.reqBody,
-	                    Form: state.form
+	                    Form: state.form,
+	                    Headers: state.reqHeaders
 	                },
 	                Response: {
 	                    Code: parseInt(state.code),
-	                    Body: state.body
+	                    Body: state.body,
+	                    Headers: state.resHeaders
 	                }
 	            };
 	        });
