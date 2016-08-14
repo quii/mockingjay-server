@@ -20,7 +20,6 @@ const UI = React.createClass({
         });
     },
     putUpdate: function(update) {
-        console.log('I will PUT', update);
         $.ajax({
             url: this.props.url,
             dataType: 'json',
