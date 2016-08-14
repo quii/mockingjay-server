@@ -22460,7 +22460,10 @@
 	
 	            var k = this.refs[keyName].value;
 	            var v = this.refs[valueName].value;
-	            newState[k] = v;
+	
+	            if (k !== "" && v !== "") {
+	                newState[k] = v;
+	            }
 	        }
 	        this.props.onChange({
 	            target: {

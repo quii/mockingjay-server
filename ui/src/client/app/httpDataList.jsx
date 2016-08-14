@@ -26,7 +26,10 @@ export const HttpDataEditor = React.createClass({
 
             const k = this.refs[keyName].value;
             const v = this.refs[valueName].value;
-            newState[k] = v;
+
+            if(k!=="" && v!=="") {
+                newState[k] = v;
+            }
         }
         this.props.onChange({
             target: {
