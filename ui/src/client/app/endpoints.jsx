@@ -34,23 +34,28 @@ const Endpoint = React.createClass({
             [e.target.name]: e.target.value
         })
     },
+    updateCheckbox: function (e) {
+        this.setState({
+            [e.target.name]: e.target.value==='on'
+        })
+    },
     render: function() {
         var view = (<div className="endpoint">
             <h1>{this.state.name} <button onClick={this.startEditing}>Edit</button></h1>
             <div className="request">
                 <h4>Request</h4>
-                <p>Method <span className="method" onClick={this.startEditing}>{this.state.method}</span></p>
-                <p>URI <span className="uri">{this.state.uri}</span></p>
-                <p>Regex URI<code className="regex">{this.state.regex}</code></p>
-                <p>Body <span className="reqBody">{this.state.reqBody}</span></p>
-                <p>Form data <HttpDataList name="Form data" items={this.state.form} /></p>
-                <p>Headers <HttpDataList name="Request headers" items={this.state.reqHeaders} /></p>
+                <div>Method <span className="method" onClick={this.startEditing}>{this.state.method}</span></div>
+                <div>URI <span className="uri">{this.state.uri}</span></div>
+                <div>Regex URI<code className="regex">{this.state.regex}</code></div>
+                <div>Body <span className="reqBody">{this.state.reqBody}</span></div>
+                <div>Form data <HttpDataList name="Form data" items={this.state.form} /></div>
+                <div>Headers <HttpDataList name="Request headers" items={this.state.reqHeaders} /></div>
             </div>
             <div className="response">
                 <h4>Response</h4>
-                <p>Status code <span className="code">{this.state.code}</span></p>
-                <p>Body <code className="body">{this.state.body}</code></p>
-                <p>Headers <HttpDataList name="Response headers" items={this.state.resHeaders} /></p>
+                <div>Status code <span className="code">{this.state.code}</span></div>
+                <div>Body <code className="body">{this.state.body}</code></div>
+                <div>Headers <HttpDataList name="Response headers" items={this.state.resHeaders} /></div>
             </div>
         </div>);
 
@@ -58,7 +63,8 @@ const Endpoint = React.createClass({
             name={this.state.name}
             finishEditing={this.finishEditing}
             originalValues={this.state}
-            onChange={this.updateValue}                                                             ss
+            onChange={this.updateValue}
+            onCheckboxChange={this.updateCheckbox}
         />;
 
         return <div>{this.state.isEditing ? form : view}</div>;
@@ -68,8 +74,9 @@ const Endpoint = React.createClass({
 const EndpointForm = React.createClass({
     render: function () {
         return (
-            <div class="editor">
+            <div className="editor">
                 <h1>Editing {this.props.name}</h1>
+                <label>CDC Disabled?</label><input type="checkbox" defaultChecked={this.props.originalValues.cdcDisabled} name="cdcDisabled" onClick={this.props.onCheckboxChange} /><br />
                 <h4>Request</h4>
                 <label>Method</label>
                 <select name="method" value={this.props.originalValues.method} onChange={this.props.onChange}>
@@ -139,6 +146,7 @@ const EndpointList = React.createClass({
             i++;
             return (
                 <Endpoint
+                    key={endpointName}
                     ref={endpointName}
                     cdcDisabled={endpoint.CDCDisabled}
                     updateServer={self.updateServer}

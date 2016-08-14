@@ -22093,6 +22093,9 @@
 	    updateValue: function updateValue(e) {
 	        this.setState(_defineProperty({}, e.target.name, e.target.value));
 	    },
+	    updateCheckbox: function updateCheckbox(e) {
+	        this.setState(_defineProperty({}, e.target.name, e.target.value === 'on'));
+	    },
 	    render: function render() {
 	        var view = _react2.default.createElement(
 	            'div',
@@ -22117,7 +22120,7 @@
 	                    'Request'
 	                ),
 	                _react2.default.createElement(
-	                    'p',
+	                    'div',
 	                    null,
 	                    'Method ',
 	                    _react2.default.createElement(
@@ -22127,7 +22130,7 @@
 	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'p',
+	                    'div',
 	                    null,
 	                    'URI ',
 	                    _react2.default.createElement(
@@ -22137,7 +22140,7 @@
 	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'p',
+	                    'div',
 	                    null,
 	                    'Regex URI',
 	                    _react2.default.createElement(
@@ -22147,7 +22150,7 @@
 	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'p',
+	                    'div',
 	                    null,
 	                    'Body ',
 	                    _react2.default.createElement(
@@ -22157,13 +22160,13 @@
 	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'p',
+	                    'div',
 	                    null,
 	                    'Form data ',
 	                    _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: this.state.form })
 	                ),
 	                _react2.default.createElement(
-	                    'p',
+	                    'div',
 	                    null,
 	                    'Headers ',
 	                    _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Request headers', items: this.state.reqHeaders })
@@ -22178,7 +22181,7 @@
 	                    'Response'
 	                ),
 	                _react2.default.createElement(
-	                    'p',
+	                    'div',
 	                    null,
 	                    'Status code ',
 	                    _react2.default.createElement(
@@ -22188,7 +22191,7 @@
 	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'p',
+	                    'div',
 	                    null,
 	                    'Body ',
 	                    _react2.default.createElement(
@@ -22198,7 +22201,7 @@
 	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'p',
+	                    'div',
 	                    null,
 	                    'Headers ',
 	                    _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Response headers', items: this.state.resHeaders })
@@ -22210,7 +22213,8 @@
 	            name: this.state.name,
 	            finishEditing: this.finishEditing,
 	            originalValues: this.state,
-	            onChange: this.updateValue, ss: true
+	            onChange: this.updateValue,
+	            onCheckboxChange: this.updateCheckbox
 	        });
 	
 	        return _react2.default.createElement(
@@ -22227,13 +22231,20 @@
 	    render: function render() {
 	        return _react2.default.createElement(
 	            'div',
-	            { 'class': 'editor' },
+	            { className: 'editor' },
 	            _react2.default.createElement(
 	                'h1',
 	                null,
 	                'Editing ',
 	                this.props.name
 	            ),
+	            _react2.default.createElement(
+	                'label',
+	                null,
+	                'CDC Disabled?'
+	            ),
+	            _react2.default.createElement('input', { type: 'checkbox', defaultChecked: this.props.originalValues.cdcDisabled, name: 'cdcDisabled', onClick: this.props.onCheckboxChange }),
+	            _react2.default.createElement('br', null),
 	            _react2.default.createElement(
 	                'h4',
 	                null,
@@ -22397,6 +22408,7 @@
 	            self.addEndpoint(endpointName);
 	            i++;
 	            return _react2.default.createElement(Endpoint, {
+	                key: endpointName,
 	                ref: endpointName,
 	                cdcDisabled: endpoint.CDCDisabled,
 	                updateServer: self.updateServer,
