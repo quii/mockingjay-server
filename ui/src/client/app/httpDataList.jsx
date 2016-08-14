@@ -8,6 +8,16 @@ export const HttpDataList = React.createClass({
 });
 
 export const HttpDataEditor = React.createClass({
+    getInitialState: function(){
+        return {
+            numberOfItems: Object.keys(this.props.items).length
+        }
+    },
+    addItem:function () {
+        this.setState({
+            numberOfItems: this.state.numberOfItems+1
+        });
+    },
     updateMap: function(ref){
         const newState = {};
         for(let i=0; i < Object.keys(this.refs).length; i+=2){
@@ -32,6 +42,16 @@ export const HttpDataEditor = React.createClass({
                 <input onChange={this.updateMap} ref={i+"value"} type="text" value={val}/>
             </li>);
         });
+        const remainingItems = this.state.numberOfItems - items.length;
+
+        for(let i=0; i < remainingItems; i++){
+            items.push(<li>
+                <input onChange={this.updateMap} ref={i+items.length+"key"} type="text"/> ->
+                <input onChange={this.updateMap} ref={i+items.length+"value"} type="text"/>
+            </li>)
+        }
+
+        items.push(<li><button onClick={this.addItem}>+</button></li>);
         return <HttpDataView name={this.props.name} items={items}/>
     }
 });

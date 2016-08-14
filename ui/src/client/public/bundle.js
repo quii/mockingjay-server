@@ -22442,6 +22442,16 @@
 	var HttpDataEditor = exports.HttpDataEditor = _react2.default.createClass({
 	    displayName: "HttpDataEditor",
 	
+	    getInitialState: function getInitialState() {
+	        return {
+	            numberOfItems: Object.keys(this.props.items).length
+	        };
+	    },
+	    addItem: function addItem() {
+	        this.setState({
+	            numberOfItems: this.state.numberOfItems + 1
+	        });
+	    },
 	    updateMap: function updateMap(ref) {
 	        var newState = {};
 	        for (var i = 0; i < Object.keys(this.refs).length; i += 2) {
@@ -22471,6 +22481,27 @@
 	                _react2.default.createElement("input", { onChange: _this.updateMap, ref: i + "value", type: "text", value: val })
 	            );
 	        });
+	        var remainingItems = this.state.numberOfItems - items.length;
+	
+	        for (var i = 0; i < remainingItems; i++) {
+	            items.push(_react2.default.createElement(
+	                "li",
+	                null,
+	                _react2.default.createElement("input", { onChange: this.updateMap, ref: i + items.length + "key", type: "text" }),
+	                " ->",
+	                _react2.default.createElement("input", { onChange: this.updateMap, ref: i + items.length + "value", type: "text" })
+	            ));
+	        }
+	
+	        items.push(_react2.default.createElement(
+	            "li",
+	            null,
+	            _react2.default.createElement(
+	                "button",
+	                { onClick: this.addItem },
+	                "+"
+	            )
+	        ));
 	        return _react2.default.createElement(HttpDataView, { name: this.props.name, items: items });
 	    }
 	});
