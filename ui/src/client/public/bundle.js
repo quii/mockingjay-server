@@ -22423,20 +22423,16 @@
 	    displayName: "HttpDataList",
 	
 	    render: function render() {
-	        if (this.props.items) {
-	            var items = mapKeyVals(this.props.items, function (key, val) {
-	                return _react2.default.createElement(
-	                    "li",
-	                    null,
-	                    key,
-	                    " -> ",
-	                    val
-	                );
-	            });
-	            return _react2.default.createElement(HttpDataView, { name: this.props.name, items: items });
-	        } else {
-	            return null;
-	        }
+	        var items = mapKeyVals(this.props.items, function (key, val) {
+	            return _react2.default.createElement(
+	                "li",
+	                null,
+	                key,
+	                " -> ",
+	                val
+	            );
+	        });
+	        return _react2.default.createElement(HttpDataView, { name: this.props.name, items: items });
 	    }
 	});
 	
@@ -22444,20 +22440,17 @@
 	    displayName: "HttpDataEditor",
 	
 	    render: function render() {
-	        if (this.props.items) {
-	            var items = mapKeyVals(this.props.items, function (key, val) {
-	                return _react2.default.createElement(
-	                    "li",
-	                    null,
-	                    _react2.default.createElement("input", { type: "text", value: key }),
-	                    " -> ",
-	                    _react2.default.createElement("input", { type: "text", value: val })
-	                );
-	            });
-	            return _react2.default.createElement(HttpDataView, { name: this.props.name, items: items });
-	        } else {
-	            return null;
-	        }
+	        var items = mapKeyVals(this.props.items, function (key, val) {
+	            return _react2.default.createElement(
+	                "li",
+	                null,
+	                _react2.default.createElement("input", { type: "text", value: key }),
+	                " -> ",
+	                _react2.default.createElement("input", {
+	                    type: "text", value: val })
+	            );
+	        });
+	        return _react2.default.createElement(HttpDataView, { name: this.props.name, items: items });
 	    }
 	});
 	
@@ -22465,28 +22458,35 @@
 	    displayName: "HttpDataView",
 	
 	    render: function render() {
-	        return _react2.default.createElement(
-	            "div",
-	            { className: this.props.name },
-	            _react2.default.createElement(
-	                "h3",
-	                null,
-	                this.props.name
-	            ),
-	            _react2.default.createElement(
-	                "ul",
-	                null,
-	                this.props.items
-	            )
-	        );
+	        if (this.props.items && this.props.items.length > 0) {
+	            return _react2.default.createElement(
+	                "div",
+	                { className: this.props.name },
+	                _react2.default.createElement(
+	                    "h3",
+	                    null,
+	                    this.props.name
+	                ),
+	                _react2.default.createElement(
+	                    "ul",
+	                    null,
+	                    this.props.items
+	                )
+	            );
+	        } else {
+	            return null;
+	        }
 	    }
 	});
 	
 	function mapKeyVals(items, f) {
-	    return Object.keys(items).map(function (key) {
-	        var value = items[key];
-	        return f(key, value);
-	    });
+	    if (items && items.length > 0) {
+	        return Object.keys(items).map(function (key) {
+	            var value = items[key];
+	            return f(key, value);
+	        });
+	    }
+	    return [];
 	}
 
 /***/ }

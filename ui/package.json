@@ -1,7 +1,7 @@
 {
   "name": "mockingjay-ui",
   "version": "1.0.0",
-  "description": "",
+  "description": "A UI for rendering and editing the configuration of a mockingjay server",
   "main": "webpack.config.js",
   "dependencies": {
     "babel-loader": "^6.2.4",
@@ -17,6 +17,6 @@
     "dev": "webpack -d --watch",
     "build": "webpack -p"
   },
-  "author": "",
+  "author": "Chris James",
   "license": "ISC"
 }
