@@ -10,7 +10,7 @@ export const HttpDataList = React.createClass({
 export const HttpDataEditor = React.createClass({
     getInitialState: function(){
         return {
-            numberOfItems: Object.keys(this.props.items).length
+            numberOfItems: this.props.items ? Object.keys(this.props.items).length : 0
         }
     },
     addItem:function () {

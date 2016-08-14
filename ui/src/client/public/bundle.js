@@ -22444,7 +22444,7 @@
 	
 	    getInitialState: function getInitialState() {
 	        return {
-	            numberOfItems: Object.keys(this.props.items).length
+	            numberOfItems: this.props.items ? Object.keys(this.props.items).length : 0
 	        };
 	    },
 	    addItem: function addItem() {
