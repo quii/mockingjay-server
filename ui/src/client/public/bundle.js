@@ -22305,7 +22305,7 @@
 	                null,
 	                'Form'
 	            ),
-	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'form', items: this.props.originalValues.form }),
+	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'form', items: this.props.originalValues.form, onChange: this.props.onChange }),
 	            _react2.default.createElement(
 	                'h4',
 	                null,
@@ -22356,7 +22356,8 @@
 	                    URI: state.uri,
 	                    RegexURI: state.regex,
 	                    Method: state.method,
-	                    Body: state.reqBody
+	                    Body: state.reqBody,
+	                    Form: state.form
 	                },
 	                Response: {
 	                    Code: parseInt(state.code),
@@ -22413,6 +22414,8 @@
 	});
 	exports.HttpDataEditor = exports.HttpDataList = undefined;
 	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
 	var _react = __webpack_require__(/*! react */ 1);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -22439,15 +22442,33 @@
 	var HttpDataEditor = exports.HttpDataEditor = _react2.default.createClass({
 	    displayName: "HttpDataEditor",
 	
+	    updateMap: function updateMap(ref) {
+	        var newState = {};
+	        for (var i = 0; i < Object.keys(this.refs).length; i += 2) {
+	            var keyName = Object.keys(this.refs)[i];
+	            var valueName = Object.keys(this.refs)[i + 1];
+	
+	            var k = this.refs[keyName].value;
+	            var v = this.refs[valueName].value;
+	            newState[k] = v;
+	        }
+	        this.props.onChange({
+	            target: {
+	                name: this.props.name,
+	                value: newState
+	            }
+	        });
+	    },
 	    render: function render() {
-	        var items = mapKeyVals(this.props.items, function (key, val) {
+	        var _this = this;
+	
+	        var items = mapKeyVals(this.props.items, function (key, val, i) {
 	            return _react2.default.createElement(
 	                "li",
 	                null,
-	                _react2.default.createElement("input", { type: "text", value: key }),
-	                " -> ",
-	                _react2.default.createElement("input", {
-	                    type: "text", value: val })
+	                _react2.default.createElement("input", { onChange: _this.updateMap, ref: i + "key", type: "text", value: key }),
+	                " ->",
+	                _react2.default.createElement("input", { onChange: _this.updateMap, ref: i + "value", type: "text", value: val })
 	            );
 	        });
 	        return _react2.default.createElement(HttpDataView, { name: this.props.name, items: items });
@@ -22480,11 +22501,19 @@
 	});
 	
 	function mapKeyVals(items, f) {
-	    if (items && items.length > 0) {
-	        return Object.keys(items).map(function (key) {
-	            var value = items[key];
-	            return f(key, value);
-	        });
+	    if (items) {
+	        var _ret = function () {
+	            var i = -1;
+	            return {
+	                v: Object.keys(items).map(function (key) {
+	                    i++;
+	                    var value = items[key];
+	                    return f(key, value, i);
+	                })
+	            };
+	        }();
+	
+	        if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
 	    }
 	    return [];
 	}

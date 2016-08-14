@@ -2,15 +2,36 @@ import React from 'react';
 
 export const HttpDataList = React.createClass({
     render: function () {
-        const items = mapKeyVals(this.props.items, (key, val) => <li>{key} -> {val}</li>)
+        const items = mapKeyVals(this.props.items, (key, val) => <li>{key} -> {val}</li>);
         return <HttpDataView name={this.props.name} items={items}/>
     }
 });
 
 export const HttpDataEditor = React.createClass({
+    updateMap: function(ref){
+        const newState = {};
+        for(let i=0; i < Object.keys(this.refs).length; i+=2){
+            var keyName = Object.keys(this.refs)[i];
+            var valueName = Object.keys(this.refs)[i+1];
+
+            const k = this.refs[keyName].value;
+            const v = this.refs[valueName].value;
+            newState[k] = v;
+        }
+        this.props.onChange({
+            target: {
+                name: this.props.name,
+                value: newState
+            }
+        })
+    },
     render: function () {
-        const items = mapKeyVals(this.props.items, (key, val) => <li><input type="text" value={key}/> -> <input
-            type="text" value={val}/></li>)
+        const items = mapKeyVals(this.props.items, (key, val, i) => {
+            return (<li>
+                <input onChange={this.updateMap} ref={i+"key"} type="text" value={key}/> ->
+                <input onChange={this.updateMap} ref={i+"value"} type="text" value={val}/>
+            </li>);
+        });
         return <HttpDataView name={this.props.name} items={items}/>
     }
 });
@@ -31,11 +52,13 @@ const HttpDataView = React.createClass({
 })
 
 function mapKeyVals(items, f) {
-    if (items && items.length > 0) {
+    if (items) {
+        let i = -1;
         return Object.keys(items).map(function (key) {
+            i++;
             let value = items[key];
             return (
-                f(key, value)
+                f(key, value, i)
             )
         });
     }

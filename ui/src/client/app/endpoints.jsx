@@ -84,7 +84,7 @@ const EndpointForm = React.createClass({
                 <label>URI</label><input type="text" name="uri" value={this.props.originalValues.uri} onChange={this.props.onChange} /><br />
                 <label>Regex URI</label><input type="text" name="regex" value={this.props.originalValues.regex} onChange={this.props.onChange} /><br />
                 <label>Body</label><input type="text" name="reqBody" value={this.props.originalValues.reqBody} onChange={this.props.onChange} /><br />
-                <label>Form</label><HttpDataEditor name="form" items={this.props.originalValues.form} />
+                <label>Form</label><HttpDataEditor name="form" items={this.props.originalValues.form} onChange={this.props.onChange} />
 
                 <h4>Response</h4>
                 <label>Status code</label><input type="text" name="code" value={this.props.originalValues.code} onChange={this.props.onChange} /><br />
@@ -115,7 +115,8 @@ const EndpointList = React.createClass({
                     URI: state.uri,
                     RegexURI: state.regex,
                     Method: state.method,
-                    Body: state.reqBody
+                    Body: state.reqBody,
+                    Form: state.form
                 },
                 Response: {
                     Code: parseInt(state.code),
