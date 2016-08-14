@@ -57,7 +57,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _endpoints = __webpack_require__(/*! ./endpoints.jsx */ 176);
+	var _endpoints = __webpack_require__(/*! ./endpoints.jsx */ 175);
 	
 	var _endpoints2 = _interopRequireDefault(_endpoints);
 	
@@ -22039,99 +22039,6 @@
 
 /***/ },
 /* 175 */
-/*!*****************************************!*\
-  !*** ./src/client/app/httpDataList.jsx ***!
-  \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.HttpDataEditor = exports.HttpDataList = undefined;
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var HttpDataList = exports.HttpDataList = _react2.default.createClass({
-	    displayName: 'HttpDataList',
-	
-	    render: function render() {
-	        console.log('rendering', this.props.items);
-	        if (this.props.items) {
-	            self = this;
-	            var items = Object.keys(this.props.items).map(function (key) {
-	                var value = self.props.items[key];
-	                return _react2.default.createElement(
-	                    'li',
-	                    null,
-	                    key,
-	                    ' -> ',
-	                    value
-	                );
-	            });
-	            return _react2.default.createElement(
-	                'div',
-	                { className: this.props.name },
-	                _react2.default.createElement(
-	                    'h3',
-	                    null,
-	                    this.props.name
-	                ),
-	                _react2.default.createElement(
-	                    'ul',
-	                    null,
-	                    items
-	                )
-	            );
-	        } else {
-	            return null;
-	        }
-	    }
-	});
-	
-	var HttpDataEditor = exports.HttpDataEditor = _react2.default.createClass({
-	    displayName: 'HttpDataEditor',
-	
-	    render: function render() {
-	        if (this.props.items) {
-	            self = this;
-	            var items = Object.keys(this.props.items).map(function (key) {
-	                var value = self.props.items[key];
-	                return _react2.default.createElement(
-	                    'li',
-	                    null,
-	                    _react2.default.createElement('input', { type: 'text', value: key }),
-	                    ' -> ',
-	                    _react2.default.createElement('input', { type: 'text', value: value })
-	                );
-	            });
-	            return _react2.default.createElement(
-	                'div',
-	                { className: this.props.name },
-	                _react2.default.createElement(
-	                    'h3',
-	                    null,
-	                    this.props.name
-	                ),
-	                _react2.default.createElement(
-	                    'ul',
-	                    null,
-	                    items
-	                )
-	            );
-	        } else {
-	            return null;
-	        }
-	    }
-	});
-
-/***/ },
-/* 176 */
 /*!**************************************!*\
   !*** ./src/client/app/endpoints.jsx ***!
   \**************************************/
@@ -22147,7 +22054,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _httpDataList = __webpack_require__(/*! ./httpDataList.jsx */ 175);
+	var _httpDataList = __webpack_require__(/*! ./httpDataList.jsx */ 176);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22421,7 +22328,7 @@
 	            _react2.default.createElement(
 	                'button',
 	                { onClick: this.props.finishEditing },
-	                'Save'
+	                'Finish editing'
 	            )
 	        );
 	    }
@@ -22491,6 +22398,96 @@
 	});
 	
 	exports.default = EndpointList;
+
+/***/ },
+/* 176 */
+/*!*****************************************!*\
+  !*** ./src/client/app/httpDataList.jsx ***!
+  \*****************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.HttpDataEditor = exports.HttpDataList = undefined;
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var HttpDataList = exports.HttpDataList = _react2.default.createClass({
+	    displayName: "HttpDataList",
+	
+	    render: function render() {
+	        if (this.props.items) {
+	            var items = mapKeyVals(this.props.items, function (key, val) {
+	                return _react2.default.createElement(
+	                    "li",
+	                    null,
+	                    key,
+	                    " -> ",
+	                    val
+	                );
+	            });
+	            return _react2.default.createElement(HttpDataView, { name: this.props.name, items: items });
+	        } else {
+	            return null;
+	        }
+	    }
+	});
+	
+	var HttpDataEditor = exports.HttpDataEditor = _react2.default.createClass({
+	    displayName: "HttpDataEditor",
+	
+	    render: function render() {
+	        if (this.props.items) {
+	            var items = mapKeyVals(this.props.items, function (key, val) {
+	                return _react2.default.createElement(
+	                    "li",
+	                    null,
+	                    _react2.default.createElement("input", { type: "text", value: key }),
+	                    " -> ",
+	                    _react2.default.createElement("input", { type: "text", value: val })
+	                );
+	            });
+	            return _react2.default.createElement(HttpDataView, { name: this.props.name, items: items });
+	        } else {
+	            return null;
+	        }
+	    }
+	});
+	
+	var HttpDataView = _react2.default.createClass({
+	    displayName: "HttpDataView",
+	
+	    render: function render() {
+	        return _react2.default.createElement(
+	            "div",
+	            { className: this.props.name },
+	            _react2.default.createElement(
+	                "h3",
+	                null,
+	                this.props.name
+	            ),
+	            _react2.default.createElement(
+	                "ul",
+	                null,
+	                this.props.items
+	            )
+	        );
+	    }
+	});
+	
+	function mapKeyVals(items, f) {
+	    return Object.keys(items).map(function (key) {
+	        var value = items[key];
+	        return f(key, value);
+	    });
+	}
 
 /***/ }
 /******/ ]);

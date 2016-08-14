@@ -89,7 +89,7 @@ const EndpointForm = React.createClass({
                 <h4>Response</h4>
                 <label>Status code</label><input type="text" name="code" value={this.props.originalValues.code} onChange={this.props.onChange} /><br />
                 <label>Body</label><input type="text" name="body" value={this.props.originalValues.body} onChange={this.props.onChange} /><br />
-                <button onClick={this.props.finishEditing}>Save</button>
+                <button onClick={this.props.finishEditing}>Finish editing</button>
             </div>
         )
     }
