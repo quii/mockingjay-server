@@ -22126,55 +22126,27 @@
 	                    this.state.name
 	                )
 	            ),
+	            _react2.default.createElement(Chip, { icon: 'cloud', value: this.state.method + " " + this.state.uri }),
+	            _react2.default.createElement(Chip, { icon: 'face', value: this.state.regex }),
+	            _react2.default.createElement(Chip, { icon: 'face', value: this.state.code }),
+	            _react2.default.createElement(Body, { value: this.state.reqBody }),
+	            _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: this.state.form }),
+	            _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Request headers', items: this.state.reqHeaders }),
+	            _react2.default.createElement('br', null),
+	            _react2.default.createElement(Body, { value: this.state.body }),
+	            _react2.default.createElement('br', null),
+	            _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Response headers', items: this.state.resHeaders }),
 	            _react2.default.createElement(
 	                'div',
-	                { 'class': 'mdl-card__actions' },
+	                { className: 'mdl-card__menu' },
 	                _react2.default.createElement(
-	                    'a',
-	                    { onClick: this.startEditing },
-	                    'Edit'
-	                )
-	            ),
-	            _react2.default.createElement(
-	                'div',
-	                { className: 'mdl-grid' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'mdl-cell--6-col' },
-	                    _react2.default.createElement(Chip, { icon: 'cloud', value: this.state.method + " " + this.state.uri }),
-	                    _react2.default.createElement(Chip, { icon: 'face', value: this.state.regex }),
+	                    'button',
+	                    { onClick: this.startEditing,
+	                        className: 'mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect' },
 	                    _react2.default.createElement(
-	                        'div',
-	                        null,
-	                        'Body ',
-	                        _react2.default.createElement(
-	                            'span',
-	                            { className: 'reqBody' },
-	                            this.state.reqBody
-	                        )
-	                    ),
-	                    _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: this.state.form }),
-	                    _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Request headers', items: this.state.reqHeaders })
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'mdl-cell--6-col' },
-	                    _react2.default.createElement(Chip, { icon: 'face', value: this.state.code }),
-	                    _react2.default.createElement(
-	                        'div',
-	                        null,
-	                        'Body ',
-	                        _react2.default.createElement(
-	                            'code',
-	                            { className: 'body' },
-	                            this.state.body
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        null,
-	                        'Headers ',
-	                        _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Response headers', items: this.state.resHeaders })
+	                        'i',
+	                        { className: 'material-icons' },
+	                        'edit'
 	                    )
 	                )
 	            )
@@ -22190,7 +22162,7 @@
 	
 	        return _react2.default.createElement(
 	            'div',
-	            { className: 'mdl-cell mdl-cell--6-col' },
+	            { className: 'mdl-cell mdl-cell--4-col' },
 	            this.state.isEditing ? form : view
 	        );
 	    }
@@ -22218,7 +22190,9 @@
 	                null,
 	                'CDC Disabled?'
 	            ),
-	            _react2.default.createElement('input', { type: 'checkbox', defaultChecked: this.props.originalValues.cdcDisabled, name: 'cdcDisabled', onClick: this.props.onCheckboxChange }),
+	            _react2.default.createElement('input', { type: 'checkbox',
+	                defaultChecked: this.props.originalValues.cdcDisabled,
+	                name: 'cdcDisabled', onClick: this.props.onCheckboxChange }),
 	            _react2.default.createElement('br', null),
 	            _react2.default.createElement(
 	                'h4',
@@ -22270,14 +22244,16 @@
 	                null,
 	                'URI'
 	            ),
-	            _react2.default.createElement('input', { type: 'text', name: 'uri', value: this.props.originalValues.uri, onChange: this.props.onChange }),
+	            _react2.default.createElement('input', { type: 'text', name: 'uri', value: this.props.originalValues.uri,
+	                onChange: this.props.onChange }),
 	            _react2.default.createElement('br', null),
 	            _react2.default.createElement(
 	                'label',
 	                null,
 	                'Regex URI'
 	            ),
-	            _react2.default.createElement('input', { type: 'text', name: 'regex', value: this.props.originalValues.regex, onChange: this.props.onChange }),
+	            _react2.default.createElement('input', { type: 'text', name: 'regex', value: this.props.originalValues.regex,
+	                onChange: this.props.onChange }),
 	            _react2.default.createElement('br', null),
 	            _react2.default.createElement(
 	                'label',
@@ -22286,7 +22262,8 @@
 	            ),
 	            _react2.default.createElement(
 	                'textarea',
-	                { name: 'reqBody', onChange: this.props.onChange },
+	                { name: 'reqBody',
+	                    onChange: this.props.onChange },
 	                this.props.originalValues.reqBody
 	            ),
 	            _react2.default.createElement('br', null),
@@ -22295,13 +22272,15 @@
 	                null,
 	                'Form'
 	            ),
-	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'form', items: this.props.originalValues.form, onChange: this.props.onChange }),
+	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'form', items: this.props.originalValues.form,
+	                onChange: this.props.onChange }),
 	            _react2.default.createElement(
 	                'label',
 	                null,
 	                'Headers'
 	            ),
-	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'reqHeaders', items: this.props.originalValues.reqHeaders, onChange: this.props.onChange }),
+	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'reqHeaders', items: this.props.originalValues.reqHeaders,
+	                onChange: this.props.onChange }),
 	            _react2.default.createElement(
 	                'h4',
 	                null,
@@ -22312,7 +22291,8 @@
 	                null,
 	                'Status code'
 	            ),
-	            _react2.default.createElement('input', { type: 'text', name: 'code', value: this.props.originalValues.code, onChange: this.props.onChange }),
+	            _react2.default.createElement('input', { type: 'text', name: 'code', value: this.props.originalValues.code,
+	                onChange: this.props.onChange }),
 	            _react2.default.createElement('br', null),
 	            _react2.default.createElement(
 	                'label',
@@ -22321,7 +22301,8 @@
 	            ),
 	            _react2.default.createElement(
 	                'textarea',
-	                { name: 'body', onChange: this.props.onChange },
+	                { name: 'body',
+	                    onChange: this.props.onChange },
 	                this.props.originalValues.body
 	            ),
 	            _react2.default.createElement('br', null),
@@ -22330,7 +22311,8 @@
 	                null,
 	                'Headers'
 	            ),
-	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'resHeaders', items: this.props.originalValues.resHeaders, onChange: this.props.onChange }),
+	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'resHeaders', items: this.props.originalValues.resHeaders,
+	                onChange: this.props.onChange }),
 	            _react2.default.createElement(
 	                'button',
 	                { onClick: this.props.finishEditing },
@@ -22420,7 +22402,8 @@
 	                    { className: 'mdl-chip__contact mdl-color--teal mdl-color-text--white' },
 	                    _react2.default.createElement(
 	                        'i',
-	                        { className: 'material-icons' },
+	                        {
+	                            className: 'material-icons' },
 	                        this.props.icon
 	                    )
 	                ),
@@ -22428,6 +22411,41 @@
 	                    'span',
 	                    { className: 'mdl-chip__text' },
 	                    this.props.value
+	                )
+	            );
+	        } else {
+	            return null;
+	        }
+	    }
+	});
+	
+	var Body = _react2.default.createClass({
+	    displayName: 'Body',
+	
+	    isJSON: function isJSON() {
+	        try {
+	            var json = JSON.parse(this.props.value);
+	            return true;
+	        } catch (e) {
+	            return false;
+	        }
+	    },
+	    renderText: function renderText() {
+	        if (this.isJSON()) {
+	            return JSON.stringify(JSON.parse(this.props.value), null, 2);
+	        } else {
+	            return this.props.value;
+	        }
+	    },
+	    render: function render() {
+	        if (this.props.value) {
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'pre',
+	                    null,
+	                    this.renderText()
 	                )
 	            );
 	        } else {
@@ -22466,14 +22484,64 @@
 	    render: function render() {
 	        var items = mapKeyVals(this.props.items, function (key, val) {
 	            return _react2.default.createElement(
-	                "li",
+	                "tr",
 	                null,
-	                key,
-	                " -> ",
-	                val
+	                _react2.default.createElement(
+	                    "td",
+	                    { className: "mdl-data-table__cell--non-numeric" },
+	                    key
+	                ),
+	                _react2.default.createElement(
+	                    "td",
+	                    { className: "mdl-data-table__cell--non-numeric" },
+	                    val
+	                )
 	            );
 	        });
-	        return _react2.default.createElement(HttpDataView, { name: this.props.name, items: items });
+	        if (items.length > 0) {
+	            return _react2.default.createElement(
+	                "div",
+	                null,
+	                _react2.default.createElement(
+	                    "div",
+	                    { "class": "mdl-card__title mdl-card--expand" },
+	                    _react2.default.createElement(
+	                        "h6",
+	                        { "class": "mdl-card__title-text" },
+	                        this.props.name
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    "table",
+	                    { className: "mdl-data-table mdl-js-data-table mdl-data-table mdl-shadow--2dp" },
+	                    _react2.default.createElement(
+	                        "thead",
+	                        null,
+	                        _react2.default.createElement(
+	                            "tr",
+	                            null,
+	                            _react2.default.createElement(
+	                                "th",
+	                                { className: "mdl-data-table__cell--non-numeric" },
+	                                "Name"
+	                            ),
+	                            _react2.default.createElement(
+	                                "th",
+	                                { className: "mdl-data-table__cell--non-numeric" },
+	                                "Value"
+	                            )
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        "tbody",
+	                        null,
+	                        items
+	                    )
+	                )
+	            );
+	        } else {
+	            return null;
+	        }
 	    }
 	});
 	

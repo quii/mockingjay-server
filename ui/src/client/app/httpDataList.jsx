@@ -2,8 +2,27 @@ import React from 'react';
 
 export const HttpDataList = React.createClass({
     render: function () {
-        const items = mapKeyVals(this.props.items, (key, val) => <li>{key} -> {val}</li>);
-        return <HttpDataView name={this.props.name} items={items}/>
+        const items = mapKeyVals(this.props.items, (key, val) => <tr><td className="mdl-data-table__cell--non-numeric">{key}</td><td className="mdl-data-table__cell--non-numeric">{val}</td></tr>);
+        if(items.length>0) {
+            return <div>
+                <div class="mdl-card__title mdl-card--expand">
+                    <h6 class="mdl-card__title-text">{this.props.name}</h6>
+                </div>
+                <table className="mdl-data-table mdl-js-data-table mdl-data-table mdl-shadow--2dp">
+                <thead>
+                <tr>
+                    <th className="mdl-data-table__cell--non-numeric">Name</th>
+                    <th className="mdl-data-table__cell--non-numeric">Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                {items}
+                </tbody>
+            </table>
+                </div>
+        }else{
+            return null;
+        }
     }
 });
 
