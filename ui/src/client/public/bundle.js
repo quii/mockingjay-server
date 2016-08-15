@@ -111,7 +111,7 @@
 	        return this.state.data.map(function (endpoint) {
 	            var cssClass = "mdl-navigation__link";
 	            if (endpoint.Name === _this.state.activeEndpoint) {
-	                cssClass += " --accent";
+	                cssClass += " mdl-color--accent-contrast mdl-color-text--primary";
 	            }
 	
 	            return _react2.default.createElement(
@@ -22216,15 +22216,6 @@
 	            null,
 	            _react2.default.createElement(
 	                'div',
-	                { className: 'mdl-card__title', style: { width: "90%" } },
-	                _react2.default.createElement(
-	                    'h3',
-	                    { className: 'mdl-card__title-text' },
-	                    this.state.name
-	                )
-	            ),
-	            _react2.default.createElement(
-	                'div',
 	                { className: 'mdl-card mdl-shadow--2dp' },
 	                _react2.default.createElement(
 	                    'div',
@@ -22259,16 +22250,11 @@
 	            ),
 	            _react2.default.createElement(
 	                'div',
-	                { className: 'mdl-card__menu' },
+	                { className: 'mdl-card mdl-shadow--2dp' },
 	                _react2.default.createElement(
 	                    'button',
-	                    { onClick: this.startEditing,
-	                        className: 'mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect' },
-	                    _react2.default.createElement(
-	                        'i',
-	                        { className: 'material-icons' },
-	                        'edit'
-	                    )
+	                    { onClick: this.startEditing, className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent' },
+	                    'Edit'
 	                )
 	            )
 	        );
@@ -22292,16 +22278,6 @@
 	        return _react2.default.createElement(
 	            'div',
 	            { className: '' },
-	            _react2.default.createElement(
-	                'div',
-	                { className: 'mdl-card__title' },
-	                _react2.default.createElement(
-	                    'h3',
-	                    { className: 'mdl-card__title-text' },
-	                    'Editing ',
-	                    this.props.name
-	                )
-	            ),
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'mdl-card mdl-shadow--2dp' },
@@ -22461,21 +22437,11 @@
 	    render: function render() {
 	        if (this.props.value) {
 	            return _react2.default.createElement(
-	                'span',
-	                { className: 'mdl-chip mdl-chip--contact' },
+	                'div',
+	                { className: 'mdl-card__supporting-text' },
 	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'mdl-chip__contact mdl-color--teal mdl-color-text--white' },
-	                    _react2.default.createElement(
-	                        'i',
-	                        {
-	                            className: 'material-icons' },
-	                        this.props.icon
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'mdl-chip__text' },
+	                    'code',
+	                    { className: 'mdl-color-text--accent' },
 	                    this.props.value
 	                )
 	            );
@@ -22518,9 +22484,13 @@
 	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'pre',
-	                    null,
-	                    this.renderText()
+	                    'div',
+	                    { className: 'mdl-card__supporting-text' },
+	                    _react2.default.createElement(
+	                        'pre',
+	                        { className: 'mdl-color-text--primary' },
+	                        this.renderText()
+	                    )
 	                )
 	            );
 	        } else {

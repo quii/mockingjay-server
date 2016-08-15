@@ -45,10 +45,6 @@ const Endpoint = React.createClass({
         const view = (
             <div>
 
-                <div className="mdl-card__title" style={{width: "90%"}}>
-                    <h3 className="mdl-card__title-text">{this.state.name}</h3>
-                </div>
-
                 <div className="mdl-card mdl-shadow--2dp">
                     <div className="mdl-card__title" style={{width: "90%"}}>
                         <h3 className="mdl-card__title-text">Request</h3>
@@ -69,10 +65,9 @@ const Endpoint = React.createClass({
                     <HttpDataList name="Headers" items={this.state.resHeaders}/>
                 </div>
 
-                <div className="mdl-card__menu">
-                    <button onClick={this.startEditing}
-                            className="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                        <i className="material-icons">edit</i>
+                <div className="mdl-card mdl-shadow--2dp">
+                    <button onClick={this.startEditing} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
+                        Edit
                     </button>
                 </div>
             </div>);
@@ -93,10 +88,6 @@ const EndpointForm = React.createClass({
     render: function () {
         return (
             <div className="">
-
-                <div className="mdl-card__title">
-                    <h3 className="mdl-card__title-text">Editing {this.props.name}</h3>
-                </div>
 
                 <div className="mdl-card mdl-shadow--2dp">
                     <div className="mdl-card__title" style={{width: "90%"}}>
@@ -152,13 +143,7 @@ const EndpointForm = React.createClass({
 const Chip = React.createClass({
     render: function () {
         if (this.props.value) {
-            return (
-                <span className="mdl-chip mdl-chip--contact">
-                        <span className="mdl-chip__contact mdl-color--teal mdl-color-text--white"><i
-                            className="material-icons">{this.props.icon}</i></span>
-                        <span className="mdl-chip__text">{this.props.value}</span>
-                    </span>
-            );
+            return <div className="mdl-card__supporting-text"><code className="mdl-color-text--accent">{this.props.value}</code></div>
         } else {
             return null;
         }
@@ -189,7 +174,9 @@ const Body = React.createClass({
                     <div className="mdl-card__title mdl-card--expand">
                         <h6 className="mdl-card__title-text">{this.props.label}</h6>
                     </div>
-                    <pre>{this.renderText()}</pre>
+                    <div className="mdl-card__supporting-text">
+                        <pre className="mdl-color-text--primary">{this.renderText()}</pre>
+                    </div>
                 </div>
             )
         } else {
