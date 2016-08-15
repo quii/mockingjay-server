@@ -22358,6 +22358,18 @@
 	                'div',
 	                { className: 'mdl-card mdl-shadow--2dp' },
 	                _react2.default.createElement(
+	                    'label',
+	                    null,
+	                    'Name'
+	                ),
+	                _react2.default.createElement('input', { type: 'text', name: 'name', value: this.props.originalValues.name,
+	                    onChange: this.props.onChange }),
+	                _react2.default.createElement('br', null)
+	            ),
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'mdl-card mdl-shadow--2dp' },
+	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'mdl-card__title', style: { width: "90%" } },
 	                    _react2.default.createElement(

@@ -96,6 +96,11 @@ const EndpointForm = React.createClass({
             <div className="">
 
                 <div className="mdl-card mdl-shadow--2dp">
+                    <label>Name</label><input type="text" name="name" value={this.props.originalValues.name}
+                                             onChange={this.props.onChange}/><br />
+                </div>
+
+                <div className="mdl-card mdl-shadow--2dp">
                     <div className="mdl-card__title" style={{width: "90%"}}>
                         <h3 className="mdl-card__title-text">Request</h3>
                     </div>
