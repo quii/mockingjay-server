@@ -125,8 +125,6 @@
 	
 	        data.unshift(newEndpoint);
 	
-	        console.log('now the data looks like', data);
-	
 	        this.setState({
 	            data: data,
 	            activeEndpoint: newEndpointName,
@@ -170,6 +168,16 @@
 	            activeEndpoint: endpointName
 	        });
 	    },
+	    deleteEndpoint: function deleteEndpoint() {
+	        var indexToDelete = this.refs[this.state.activeEndpoint].state.index;
+	
+	        var data = _lodash2.default.cloneDeep(this.state.data);
+	        console.log('deleting index', indexToDelete);
+	        data.splice(indexToDelete, 1);
+	        var json = JSON.stringify(data);
+	
+	        this.putUpdate(json);
+	    },
 	    updateServer: function updateServer() {
 	        var newEndpointState = this.refs[this.state.activeEndpoint].state;
 	
@@ -207,26 +215,28 @@
 	            var endpoint = this.state.data.find(function (ep) {
 	                return ep.Name === _this2.state.activeEndpoint;
 	            });
-	            return _react2.default.createElement(_endpoints2.default, {
-	                index: index,
-	                key: endpoint.Name,
-	                ref: endpoint.Name,
-	                cdcDisabled: endpoint.CDCDisabled,
-	                updateServer: this.updateServer,
-	                name: endpoint.Name,
-	                method: endpoint.Request.Method,
-	                reqBody: endpoint.Request.Body,
-	                uri: endpoint.Request.URI,
-	                regex: endpoint.Request.RegexURI,
-	                reqHeaders: endpoint.Request.Headers,
-	                form: endpoint.Request.Form,
-	                code: endpoint.Response.Code,
-	                body: endpoint.Response.Body,
-	                resHeaders: endpoint.Response.Headers
-	            });
-	        } else {
-	            return null;
+	            if (endpoint) {
+	                return _react2.default.createElement(_endpoints2.default, {
+	                    index: index,
+	                    'delete': this.deleteEndpoint,
+	                    key: endpoint.Name,
+	                    ref: endpoint.Name,
+	                    cdcDisabled: endpoint.CDCDisabled,
+	                    updateServer: this.updateServer,
+	                    name: endpoint.Name,
+	                    method: endpoint.Request.Method,
+	                    reqBody: endpoint.Request.Body,
+	                    uri: endpoint.Request.URI,
+	                    regex: endpoint.Request.RegexURI,
+	                    reqHeaders: endpoint.Request.Headers,
+	                    form: endpoint.Request.Form,
+	                    code: endpoint.Response.Code,
+	                    body: endpoint.Response.Body,
+	                    resHeaders: endpoint.Response.Headers
+	                });
+	            }
 	        }
+	        return null;
 	    },
 	    render: function render() {
 	        return _react2.default.createElement(
@@ -22236,6 +22246,9 @@
 	            isEditing: true
 	        });
 	    },
+	    delete: function _delete() {
+	        this.props.delete();
+	    },
 	    finishEditing: function finishEditing() {
 	        this.setState({
 	            isEditing: false
@@ -22294,6 +22307,11 @@
 	                    'button',
 	                    { style: { margin: "0% 1% 0% 0%" }, onClick: this.startEditing, className: 'mdl-button mdl-button--raised mdl-button--accent' },
 	                    'Edit'
+	                ),
+	                _react2.default.createElement(
+	                    'button',
+	                    { onClick: this.delete, className: 'mdl-button mdl-button--raised mdl-button--primary' },
+	                    'Delete'
 	                )
 	            )
 	        );

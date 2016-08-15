@@ -59,8 +59,6 @@ const UI = React.createClass({
 
         data.unshift(newEndpoint);
 
-        console.log('now the data looks like', data);
-
         this.setState({
             data,
             activeEndpoint: newEndpointName,
@@ -100,6 +98,17 @@ const UI = React.createClass({
             activeEndpoint: endpointName
         })
     },
+    deleteEndpoint: function(){
+        const indexToDelete = this.refs[this.state.activeEndpoint].state.index;
+
+        let data = _.cloneDeep( this.state.data);
+        console.log('deleting index', indexToDelete)
+        data.splice(indexToDelete, 1);
+        const json = JSON.stringify(data);
+
+        this.putUpdate(json);
+
+    },
     updateServer: function () {
         const newEndpointState = this.refs[this.state.activeEndpoint].state;
 
@@ -131,28 +140,29 @@ const UI = React.createClass({
         if(this.state.activeEndpoint) {
             const index = _.findIndex(this.state.data, ep => ep.Name==this.state.activeEndpoint)
             const endpoint = this.state.data.find(ep => ep.Name===this.state.activeEndpoint);
-            return (
-                <Endpoint
-                    index={index}
-                    key={endpoint.Name}
-                    ref={endpoint.Name}
-                    cdcDisabled={endpoint.CDCDisabled}
-                    updateServer={this.updateServer}
-                    name={endpoint.Name}
-                    method={endpoint.Request.Method}
-                    reqBody={endpoint.Request.Body}
-                    uri={endpoint.Request.URI}
-                    regex={endpoint.Request.RegexURI}
-                    reqHeaders={endpoint.Request.Headers}
-                    form={endpoint.Request.Form}
-                    code={endpoint.Response.Code}
-                    body={endpoint.Response.Body}
-                    resHeaders={endpoint.Response.Headers}
-                />);
-
-        }else {
-            return null;
+            if(endpoint) {
+                return (
+                    <Endpoint
+                        index={index}
+                        delete={this.deleteEndpoint}
+                        key={endpoint.Name}
+                        ref={endpoint.Name}
+                        cdcDisabled={endpoint.CDCDisabled}
+                        updateServer={this.updateServer}
+                        name={endpoint.Name}
+                        method={endpoint.Request.Method}
+                        reqBody={endpoint.Request.Body}
+                        uri={endpoint.Request.URI}
+                        regex={endpoint.Request.RegexURI}
+                        reqHeaders={endpoint.Request.Headers}
+                        form={endpoint.Request.Form}
+                        code={endpoint.Response.Code}
+                        body={endpoint.Response.Body}
+                        resHeaders={endpoint.Response.Headers}
+                    />);
+            }
         }
+        return null;
     },
     render: function () {
         return (
