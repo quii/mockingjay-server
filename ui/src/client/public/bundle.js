@@ -105,6 +105,9 @@
 	            }.bind(this)
 	        });
 	    },
+	    add: function add() {
+	        console.log('Add new endpoint!');
+	    },
 	    getMenuLinks: function getMenuLinks() {
 	        var _this = this;
 	
@@ -169,6 +172,7 @@
 	                return ep.Name === _this2.state.activeEndpoint;
 	            });
 	            return _react2.default.createElement(_endpoints2.default, {
+	                add: this.add,
 	                index: index,
 	                key: endpoint.Name,
 	                ref: endpoint.Name,
@@ -22197,6 +22201,9 @@
 	            isEditing: true
 	        });
 	    },
+	    add: function add() {
+	        this.props.add();
+	    },
 	    finishEditing: function finishEditing() {
 	        this.setState({
 	            isEditing: false
@@ -22250,11 +22257,16 @@
 	            ),
 	            _react2.default.createElement(
 	                'div',
-	                { className: 'mdl-card mdl-shadow--2dp' },
+	                { style: { margin: "2%" } },
 	                _react2.default.createElement(
 	                    'button',
-	                    { onClick: this.startEditing, className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent' },
+	                    { style: { margin: "0% 1% 0% 0%" }, onClick: this.startEditing, className: 'mdl-button mdl-button--raised mdl-button--accent' },
 	                    'Edit'
+	                ),
+	                _react2.default.createElement(
+	                    'button',
+	                    { onClick: this.add, className: 'mdl-button mdl-button--raised mdl-button--primary' },
+	                    'Add new endpoint'
 	                )
 	            )
 	        );

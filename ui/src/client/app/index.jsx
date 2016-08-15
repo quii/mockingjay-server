@@ -39,6 +39,9 @@ const UI = React.createClass({
             }.bind(this)
         });
     },
+    add: function () {
+        console.log('Add new endpoint!');
+    },
     getMenuLinks: function () {
         return this.state.data.map(endpoint => {
             let cssClass = "mdl-navigation__link";
@@ -94,6 +97,7 @@ const UI = React.createClass({
             const endpoint = this.state.data.find(ep => ep.Name===this.state.activeEndpoint);
             return (
                 <Endpoint
+                    add={this.add}
                     index={index}
                     key={endpoint.Name}
                     ref={endpoint.Name}
