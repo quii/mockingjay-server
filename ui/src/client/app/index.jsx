@@ -36,9 +36,16 @@ const UI = React.createClass({
     },
     render: function () {
         return (
+            <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+                <header className="mdl-layout__header">
+                    <div className="mdl-layout__header-row">
+                        <span className="mdl-layout-title">mockingjay</span>
+                        </div>
+                    </header>
             <div className="ui">
                 <EndpointList putUpdate={this.putUpdate} data={this.state.data}/>
             </div>
+                </div>
         )
     }
 });

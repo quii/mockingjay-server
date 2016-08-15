@@ -40,22 +40,30 @@ const Endpoint = React.createClass({
         })
     },
     render: function() {
-        var view = (<div className="endpoint">
-            <h1>{this.state.name} <button onClick={this.startEditing}>Edit</button></h1>
-            <div className="request">
-                <h4>Request</h4>
-                <div>Method <span className="method" onClick={this.startEditing}>{this.state.method}</span></div>
-                <div>URI <span className="uri">{this.state.uri}</span></div>
-                <div>Regex URI<code className="regex">{this.state.regex}</code></div>
-                <div>Body <span className="reqBody">{this.state.reqBody}</span></div>
-                <div>Form data <HttpDataList name="Form data" items={this.state.form} /></div>
-                <div>Headers <HttpDataList name="Request headers" items={this.state.reqHeaders} /></div>
+
+        const view = (<div className="mdl-card mdl-shadow--2dp">
+            <div class="mdl-card__title">
+                <h4 class="mdl-card__title-text">{this.state.name}</h4>
             </div>
-            <div className="response">
-                <h4>Response</h4>
-                <div>Status code <span className="code">{this.state.code}</span></div>
-                <div>Body <code className="body">{this.state.body}</code></div>
-                <div>Headers <HttpDataList name="Response headers" items={this.state.resHeaders} /></div>
+            <div class="mdl-card__actions">
+                <a onClick={this.startEditing}>Edit</a>
+            </div>
+
+            <div className="mdl-grid">
+
+                <div className="mdl-cell--6-col">
+                    <Chip icon="cloud" value={this.state.method + " " + this.state.uri} />
+                    <Chip icon="face" value={this.state.regex} />
+
+                    <div>Body <span className="reqBody">{this.state.reqBody}</span></div>
+                    <HttpDataList name="Form data" items={this.state.form} />
+                    <HttpDataList name="Request headers" items={this.state.reqHeaders} />
+                </div>
+                <div className="mdl-cell--6-col">
+                    <Chip icon="face" value={this.state.code} />
+                    <div>Body <code className="body">{this.state.body}</code></div>
+                    <div>Headers <HttpDataList name="Response headers" items={this.state.resHeaders} /></div>
+                </div>
             </div>
         </div>);
 
@@ -74,8 +82,12 @@ const Endpoint = React.createClass({
 const EndpointForm = React.createClass({
     render: function () {
         return (
-            <div className="editor">
-                <h1>Editing {this.props.name}</h1>
+            <div className="mdl-card mdl-shadow--2dp">
+
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">Editing {this.props.name}</h2>
+                </div>
+
                 <label>CDC Disabled?</label><input type="checkbox" defaultChecked={this.props.originalValues.cdcDisabled} name="cdcDisabled" onClick={this.props.onCheckboxChange} /><br />
                 <h4>Request</h4>
                 <label>Method</label>
@@ -168,6 +180,21 @@ const EndpointList = React.createClass({
                 {endpointElements}
             </div>
         );
+    }
+});
+
+const Chip = React.createClass({
+    render: function () {
+        if(this.props.value){
+            return (
+            <span className="mdl-chip mdl-chip--contact">
+                        <span className="mdl-chip__contact mdl-color--teal mdl-color-text--white"><i className="material-icons">{this.props.icon}</i></span>
+                        <span className="mdl-chip__text">{this.props.value}</span>
+                    </span>
+            );
+        }else{
+            return null;
+        }
     }
 });
 

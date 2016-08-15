@@ -65,7 +65,7 @@ const HttpDataView = React.createClass({
         if (this.props.items && this.props.items.length > 0) {
             return (
                 <div className={this.props.name}>
-                    <h3>{this.props.name}</h3>
+                    <h5>{this.props.name}</h5>
                     <ul>{this.props.items}</ul>
                 </div>
             )

@@ -100,8 +100,25 @@
 	    render: function render() {
 	        return _react2.default.createElement(
 	            'div',
-	            { className: 'ui' },
-	            _react2.default.createElement(_endpoints2.default, { putUpdate: this.putUpdate, data: this.state.data })
+	            { className: 'mdl-layout mdl-js-layout mdl-layout--fixed-header' },
+	            _react2.default.createElement(
+	                'header',
+	                { className: 'mdl-layout__header' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-layout__header-row' },
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'mdl-layout-title' },
+	                        'mockingjay'
+	                    )
+	                )
+	            ),
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'ui' },
+	                _react2.default.createElement(_endpoints2.default, { putUpdate: this.putUpdate, data: this.state.data })
+	            )
 	        );
 	    }
 	});
@@ -22096,114 +22113,69 @@
 	        this.setState(_defineProperty({}, e.target.name, e.target.value === 'on'));
 	    },
 	    render: function render() {
+	
 	        var view = _react2.default.createElement(
 	            'div',
-	            { className: 'endpoint' },
+	            { className: 'mdl-card mdl-shadow--2dp' },
 	            _react2.default.createElement(
-	                'h1',
-	                null,
-	                this.state.name,
-	                ' ',
+	                'div',
+	                { 'class': 'mdl-card__title' },
 	                _react2.default.createElement(
-	                    'button',
+	                    'h4',
+	                    { 'class': 'mdl-card__title-text' },
+	                    this.state.name
+	                )
+	            ),
+	            _react2.default.createElement(
+	                'div',
+	                { 'class': 'mdl-card__actions' },
+	                _react2.default.createElement(
+	                    'a',
 	                    { onClick: this.startEditing },
 	                    'Edit'
 	                )
 	            ),
 	            _react2.default.createElement(
 	                'div',
-	                { className: 'request' },
-	                _react2.default.createElement(
-	                    'h4',
-	                    null,
-	                    'Request'
-	                ),
+	                { className: 'mdl-grid' },
 	                _react2.default.createElement(
 	                    'div',
-	                    null,
-	                    'Method ',
+	                    { className: 'mdl-cell--6-col' },
+	                    _react2.default.createElement(Chip, { icon: 'cloud', value: this.state.method + " " + this.state.uri }),
+	                    _react2.default.createElement(Chip, { icon: 'face', value: this.state.regex }),
 	                    _react2.default.createElement(
-	                        'span',
-	                        { className: 'method', onClick: this.startEditing },
-	                        this.state.method
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    'URI ',
-	                    _react2.default.createElement(
-	                        'span',
-	                        { className: 'uri' },
-	                        this.state.uri
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    'Regex URI',
-	                    _react2.default.createElement(
-	                        'code',
-	                        { className: 'regex' },
-	                        this.state.regex
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    'Body ',
-	                    _react2.default.createElement(
-	                        'span',
-	                        { className: 'reqBody' },
-	                        this.state.reqBody
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    'Form data ',
-	                    _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: this.state.form })
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    'Headers ',
+	                        'div',
+	                        null,
+	                        'Body ',
+	                        _react2.default.createElement(
+	                            'span',
+	                            { className: 'reqBody' },
+	                            this.state.reqBody
+	                        )
+	                    ),
+	                    _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: this.state.form }),
 	                    _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Request headers', items: this.state.reqHeaders })
-	                )
-	            ),
-	            _react2.default.createElement(
-	                'div',
-	                { className: 'response' },
-	                _react2.default.createElement(
-	                    'h4',
-	                    null,
-	                    'Response'
 	                ),
 	                _react2.default.createElement(
 	                    'div',
-	                    null,
-	                    'Status code ',
+	                    { className: 'mdl-cell--6-col' },
+	                    _react2.default.createElement(Chip, { icon: 'face', value: this.state.code }),
 	                    _react2.default.createElement(
-	                        'span',
-	                        { className: 'code' },
-	                        this.state.code
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    'Body ',
+	                        'div',
+	                        null,
+	                        'Body ',
+	                        _react2.default.createElement(
+	                            'code',
+	                            { className: 'body' },
+	                            this.state.body
+	                        )
+	                    ),
 	                    _react2.default.createElement(
-	                        'code',
-	                        { className: 'body' },
-	                        this.state.body
+	                        'div',
+	                        null,
+	                        'Headers ',
+	                        _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Response headers', items: this.state.resHeaders })
 	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    'Headers ',
-	                    _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Response headers', items: this.state.resHeaders })
 	                )
 	            )
 	        );
@@ -22230,12 +22202,16 @@
 	    render: function render() {
 	        return _react2.default.createElement(
 	            'div',
-	            { className: 'editor' },
+	            { className: 'mdl-card mdl-shadow--2dp' },
 	            _react2.default.createElement(
-	                'h1',
-	                null,
-	                'Editing ',
-	                this.props.name
+	                'div',
+	                { 'class': 'mdl-card__title' },
+	                _react2.default.createElement(
+	                    'h2',
+	                    { 'class': 'mdl-card__title-text' },
+	                    'Editing ',
+	                    this.props.name
+	                )
 	            ),
 	            _react2.default.createElement(
 	                'label',
@@ -22431,6 +22407,35 @@
 	    }
 	});
 	
+	var Chip = _react2.default.createClass({
+	    displayName: 'Chip',
+	
+	    render: function render() {
+	        if (this.props.value) {
+	            return _react2.default.createElement(
+	                'span',
+	                { className: 'mdl-chip mdl-chip--contact' },
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'mdl-chip__contact mdl-color--teal mdl-color-text--white' },
+	                    _react2.default.createElement(
+	                        'i',
+	                        { className: 'material-icons' },
+	                        this.props.icon
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'mdl-chip__text' },
+	                    this.props.value
+	                )
+	            );
+	        } else {
+	            return null;
+	        }
+	    }
+	});
+	
 	exports.default = EndpointList;
 
 /***/ },
@@ -22551,7 +22556,7 @@
 	                "div",
 	                { className: this.props.name },
 	                _react2.default.createElement(
-	                    "h3",
+	                    "h5",
 	                    null,
 	                    this.props.name
 	                ),

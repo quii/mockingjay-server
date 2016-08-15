@@ -37,6 +37,7 @@ func main() {
 
 func getUIServer() http.Handler {
 	if os.Getenv("ENV") == "LOCAL" {
+		log.Println("Detected local dev mode, serving files from /ui")
 		return http.FileServer(http.Dir("./ui"))
 	} else {
 		return http.FileServer(assetFS())
