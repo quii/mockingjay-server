@@ -22321,7 +22321,7 @@
 	            ),
 	            _react2.default.createElement(
 	                'div',
-	                { style: { margin: "2%" } },
+	                { style: { margin: "2% 2% 2% 3%" } },
 	                _react2.default.createElement(
 	                    'button',
 	                    { style: { margin: "0% 1% 0% 0%" }, onClick: this.startEditing, className: 'mdl-button mdl-button--raised mdl-button--accent' },

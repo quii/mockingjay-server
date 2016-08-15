@@ -68,7 +68,7 @@ const Endpoint = React.createClass({
                     <HttpDataList name="Headers" items={this.state.resHeaders}/>
                 </div>
 
-                <div style={{margin:"2%"}}>
+                <div style={{margin:"2% 2% 2% 3%"}}>
                     <button style={{margin:"0% 1% 0% 0%"}} onClick={this.startEditing} className="mdl-button mdl-button--raised mdl-button--accent">
                         Edit
                     </button>
