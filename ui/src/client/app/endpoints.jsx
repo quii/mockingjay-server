@@ -4,6 +4,7 @@ import {HttpDataList, HttpDataEditor} from './httpDataList.jsx';
 const Endpoint = React.createClass({
     getInitialState: function () {
         return {
+            index: this.props.index,
             cdcDisabled: this.props.cdcDisabled,
             isEditing: false,
             name: this.props.name,
@@ -42,7 +43,7 @@ const Endpoint = React.createClass({
     render: function () {
 
         const view = (
-            <div className="mdl-card mdl-shadow--2dp">
+            <div>
                 <div className="mdl-card__title" style={{width: "90%"}}>
                     <h3 className="mdl-card__title-text">{this.state.name}</h3>
                 </div>
@@ -66,7 +67,7 @@ const Endpoint = React.createClass({
                 </div>
             </div>);
 
-        var form = <EndpointForm
+        const form = <EndpointForm
             name={this.state.name}
             finishEditing={this.finishEditing}
             originalValues={this.state}
@@ -74,14 +75,14 @@ const Endpoint = React.createClass({
             onCheckboxChange={this.updateCheckbox}
         />;
 
-        return <div className="mdl-cell mdl-cell--4-col">{this.state.isEditing ? form : view}</div>;
+        return this.state.isEditing ? form : view;
     }
 });
 
 const EndpointForm = React.createClass({
     render: function () {
         return (
-            <div className="mdl-card mdl-shadow--2dp">
+            <div className="">
 
                 <div className="mdl-card__title">
                     <h3 className="mdl-card__title-text">Editing {this.props.name}</h3>
@@ -125,72 +126,6 @@ const EndpointForm = React.createClass({
     }
 })
 
-const EndpointList = React.createClass({
-    getInitialState: function () {
-        return {
-            endpointIds: []
-        };
-    },
-    addEndpoint: function (id) {
-        this.state.endpointIds.push(id)
-    },
-    updateServer: function () {
-        self = this;
-        const updatedEndpoints = this.state.endpointIds.map(function (ref) {
-            const state = self.refs[ref].state;
-            return {
-                Name: state.name,
-                CDCDisabled: state.cdcDisabled,
-                Request: {
-                    URI: state.uri,
-                    RegexURI: state.regex,
-                    Method: state.method,
-                    Body: state.reqBody,
-                    Form: state.form,
-                    Headers: state.reqHeaders
-                },
-                Response: {
-                    Code: parseInt(state.code),
-                    Body: state.body,
-                    Headers: state.resHeaders
-                }
-            };
-        });
-        this.props.putUpdate(JSON.stringify(updatedEndpoints));
-    },
-    render: function () {
-        self = this;
-        var i = 0;
-        var endpointElements = this.props.data.map(function (endpoint) {
-            const endpointName = 'endpoint' + i;
-            self.addEndpoint(endpointName);
-            i++;
-            return (
-                <Endpoint
-                    key={endpointName}
-                    ref={endpointName}
-                    cdcDisabled={endpoint.CDCDisabled}
-                    updateServer={self.updateServer}
-                    name={endpoint.Name}
-                    method={endpoint.Request.Method}
-                    reqBody={endpoint.Request.Body}
-                    uri={endpoint.Request.URI}
-                    regex={endpoint.Request.RegexURI}
-                    reqHeaders={endpoint.Request.Headers}
-                    form={endpoint.Request.Form}
-                    code={endpoint.Response.Code}
-                    body={endpoint.Response.Body}
-                    resHeaders={endpoint.Response.Headers}
-                />
-            );
-        });
-        return (
-            <div className="mdl-grid">
-                {endpointElements}
-            </div>
-        );
-    }
-});
 
 const Chip = React.createClass({
     render: function () {
@@ -241,4 +176,4 @@ const Body = React.createClass({
     }
 })
 
-export default EndpointList
+export default Endpoint

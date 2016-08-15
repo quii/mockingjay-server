@@ -1,10 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import EndpointList from './endpoints.jsx';
+import Endpoint from './endpoints.jsx';
+import _ from 'lodash';
 
 const UI = React.createClass({
     getInitialState: function() {
-        return {data: []};
+        return {
+            data: [],
+            activeEndpoint: null,
+            endpointIds: []
+        };
     },
     componentDidMount: function() {
         $.ajax({
@@ -34,22 +39,86 @@ const UI = React.createClass({
             }.bind(this)
         });
     },
+    getMenuLinks: function () {
+        const links = this.state.data.map(endpoint => <a ref={'menu-'+endpoint.Name} className="mdl-navigation__link" onClick={(event)=>this.openEditor(endpoint.Name, event)}>{endpoint.Name}</a> )
+        return links
+    },
+    openEditor: function (endpointName) {
+        this.setState({
+            activeEndpoint: endpointName
+        })
+    },
+    updateServer: function () {
+        const newEndpointState = this.refs[this.state.activeEndpoint].state;
+
+        let data = _.cloneDeep( this.state.data);
+
+        data[newEndpointState.index] = {
+            Name: newEndpointState.name,
+            CDCDisabled: newEndpointState.cdcDisabled,
+            Request: {
+                URI: newEndpointState.uri,
+                RegexURI: newEndpointState.regex,
+                Method: newEndpointState.method,
+                Body: newEndpointState.reqBody,
+                Form: newEndpointState.form,
+                Headers: newEndpointState.reqHeaders
+            },
+            Response: {
+                Code: parseInt(newEndpointState.code),
+                Body: newEndpointState.body,
+                Headers: newEndpointState.resHeaders
+            }
+        };
+
+        const json = JSON.stringify(data);
+
+        this.putUpdate(json);
+    },
+    renderCurrentEndpoint: function(){
+        if(this.state.activeEndpoint) {
+            const index = _.findIndex(this.state.data, ep => ep.Name==this.state.activeEndpoint)
+            const endpoint = this.state.data.find(ep => ep.Name===this.state.activeEndpoint);
+            return (
+                <Endpoint
+                    index={index}
+                    key={endpoint.Name}
+                    ref={endpoint.Name}
+                    cdcDisabled={endpoint.CDCDisabled}
+                    updateServer={this.updateServer}
+                    name={endpoint.Name}
+                    method={endpoint.Request.Method}
+                    reqBody={endpoint.Request.Body}
+                    uri={endpoint.Request.URI}
+                    regex={endpoint.Request.RegexURI}
+                    reqHeaders={endpoint.Request.Headers}
+                    form={endpoint.Request.Form}
+                    code={endpoint.Response.Code}
+                    body={endpoint.Response.Body}
+                    resHeaders={endpoint.Response.Headers}
+                />);
+
+        }else {
+            return null;
+        }
+    },
     render: function () {
         return (
-            <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-                <header className="mdl-layout__header">
-                    <div className="mdl-layout__header-row">
-                        <span className="mdl-layout-title">mockingjay</span>
-                        </div>
-                    </header>
-            <div className="ui">
-                <EndpointList putUpdate={this.putUpdate} data={this.state.data}/>
+        <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
+            <div className="mdl-layout__drawer">
+                <span className="mdl-layout-title">mockingjay server</span>
+                <nav className="mdl-navigation">
+                    {this.getMenuLinks()}
+                </nav>
             </div>
-                </div>
+            <main className="mdl-layout__content">
+                <div className="page-content">{this.renderCurrentEndpoint()}</div>
+            </main>
+        </div>
+
         )
     }
 });
-
 ReactDOM.render(
     <UI url="/mj-endpoints"/>,
     document.getElementById('app')
