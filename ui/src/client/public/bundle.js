@@ -108,16 +108,23 @@
 	    getMenuLinks: function getMenuLinks() {
 	        var _this = this;
 	
-	        var links = this.state.data.map(function (endpoint) {
+	        return this.state.data.map(function (endpoint) {
+	            var cssClass = "mdl-navigation__link";
+	            if (endpoint.Name === _this.state.activeEndpoint) {
+	                cssClass += " --accent";
+	            }
+	
 	            return _react2.default.createElement(
 	                'a',
-	                { ref: 'menu-' + endpoint.Name, className: 'mdl-navigation__link', onClick: function onClick(event) {
+	                {
+	                    ref: 'menu-' + endpoint.Name,
+	                    className: cssClass,
+	                    onClick: function onClick(event) {
 	                        return _this.openEditor(endpoint.Name, event);
 	                    } },
 	                endpoint.Name
 	            );
 	        });
-	        return links;
 	    },
 	    openEditor: function openEditor(endpointName) {
 	        this.setState({
@@ -22216,14 +22223,40 @@
 	                    this.state.name
 	                )
 	            ),
-	            _react2.default.createElement(Chip, { icon: 'cloud', value: this.state.method + " " + this.state.uri }),
-	            _react2.default.createElement(Chip, { icon: 'face', value: this.state.regex }),
-	            _react2.default.createElement(Body, { label: 'Request body', value: this.state.reqBody }),
-	            _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: this.state.form }),
-	            _react2.default.createElement(Chip, { icon: 'face', value: this.state.code }),
-	            _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Request headers', items: this.state.reqHeaders }),
-	            _react2.default.createElement(Body, { label: 'Response body', value: this.state.body }),
-	            _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Response headers', items: this.state.resHeaders }),
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'mdl-card mdl-shadow--2dp' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-card__title', style: { width: "90%" } },
+	                    _react2.default.createElement(
+	                        'h3',
+	                        { className: 'mdl-card__title-text' },
+	                        'Request'
+	                    )
+	                ),
+	                _react2.default.createElement(Chip, { icon: 'cloud', value: this.state.method + " " + this.state.uri }),
+	                _react2.default.createElement(Chip, { icon: 'face', value: this.state.regex }),
+	                _react2.default.createElement(Body, { label: 'Body', value: this.state.reqBody }),
+	                _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: this.state.reqHeaders }),
+	                _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: this.state.form })
+	            ),
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'mdl-card mdl-shadow--2dp' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-card__title', style: { width: "90%" } },
+	                    _react2.default.createElement(
+	                        'h3',
+	                        { className: 'mdl-card__title-text' },
+	                        'Response'
+	                    )
+	                ),
+	                _react2.default.createElement(Chip, { icon: 'face', value: this.state.code }),
+	                _react2.default.createElement(Body, { label: 'Body', value: this.state.body }),
+	                _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: this.state.resHeaders })
+	            ),
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'mdl-card__menu' },
@@ -22270,137 +22303,153 @@
 	                )
 	            ),
 	            _react2.default.createElement(
-	                'label',
-	                null,
-	                'CDC Disabled?'
-	            ),
-	            _react2.default.createElement('input', { type: 'checkbox',
-	                defaultChecked: this.props.originalValues.cdcDisabled,
-	                name: 'cdcDisabled', onClick: this.props.onCheckboxChange }),
-	            _react2.default.createElement('br', null),
-	            _react2.default.createElement(
-	                'h4',
-	                null,
-	                'Request'
-	            ),
-	            _react2.default.createElement(
-	                'label',
-	                null,
-	                'Method'
-	            ),
-	            _react2.default.createElement(
-	                'select',
-	                { name: 'method', value: this.props.originalValues.method, onChange: this.props.onChange },
+	                'div',
+	                { className: 'mdl-card mdl-shadow--2dp' },
 	                _react2.default.createElement(
-	                    'option',
-	                    { value: 'GET' },
-	                    'GET'
+	                    'div',
+	                    { className: 'mdl-card__title', style: { width: "90%" } },
+	                    _react2.default.createElement(
+	                        'h3',
+	                        { className: 'mdl-card__title-text' },
+	                        'Request'
+	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'option',
-	                    { value: 'POST' },
-	                    'POST'
+	                    'label',
+	                    null,
+	                    'CDC Disabled?'
+	                ),
+	                _react2.default.createElement('input', { type: 'checkbox',
+	                    defaultChecked: this.props.originalValues.cdcDisabled,
+	                    name: 'cdcDisabled', onClick: this.props.onCheckboxChange }),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                    'label',
+	                    null,
+	                    'Method'
 	                ),
 	                _react2.default.createElement(
-	                    'option',
-	                    { value: 'DELETE' },
-	                    'DELETE'
+	                    'select',
+	                    { name: 'method', value: this.props.originalValues.method, onChange: this.props.onChange },
+	                    _react2.default.createElement(
+	                        'option',
+	                        { value: 'GET' },
+	                        'GET'
+	                    ),
+	                    _react2.default.createElement(
+	                        'option',
+	                        { value: 'POST' },
+	                        'POST'
+	                    ),
+	                    _react2.default.createElement(
+	                        'option',
+	                        { value: 'DELETE' },
+	                        'DELETE'
+	                    ),
+	                    _react2.default.createElement(
+	                        'option',
+	                        { value: 'PUT' },
+	                        'PUT'
+	                    ),
+	                    _react2.default.createElement(
+	                        'option',
+	                        { value: 'PATCH' },
+	                        'PATCH'
+	                    ),
+	                    _react2.default.createElement(
+	                        'option',
+	                        { value: 'OPTIONS' },
+	                        'OPTIONS'
+	                    )
+	                ),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                    'label',
+	                    null,
+	                    'URI'
+	                ),
+	                _react2.default.createElement('input', { type: 'text', name: 'uri', value: this.props.originalValues.uri,
+	                    onChange: this.props.onChange }),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                    'label',
+	                    null,
+	                    'Regex URI'
+	                ),
+	                _react2.default.createElement('input', { type: 'text', name: 'regex', value: this.props.originalValues.regex,
+	                    onChange: this.props.onChange }),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                    'label',
+	                    null,
+	                    'Body'
 	                ),
 	                _react2.default.createElement(
-	                    'option',
-	                    { value: 'PUT' },
-	                    'PUT'
+	                    'textarea',
+	                    { name: 'reqBody',
+	                        onChange: this.props.onChange },
+	                    this.props.originalValues.reqBody
+	                ),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                    'label',
+	                    null,
+	                    'Form'
+	                ),
+	                _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'form', items: this.props.originalValues.form,
+	                    onChange: this.props.onChange }),
+	                _react2.default.createElement(
+	                    'label',
+	                    null,
+	                    'Headers'
+	                ),
+	                _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'reqHeaders', items: this.props.originalValues.reqHeaders,
+	                    onChange: this.props.onChange })
+	            ),
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'mdl-card mdl-shadow--2dp' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-card__title', style: { width: "90%" } },
+	                    _react2.default.createElement(
+	                        'h3',
+	                        { className: 'mdl-card__title-text' },
+	                        'Response'
+	                    )
 	                ),
 	                _react2.default.createElement(
-	                    'option',
-	                    { value: 'PATCH' },
-	                    'PATCH'
+	                    'label',
+	                    null,
+	                    'Status code'
+	                ),
+	                _react2.default.createElement('input', { type: 'text', name: 'code', value: this.props.originalValues.code,
+	                    onChange: this.props.onChange }),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                    'label',
+	                    null,
+	                    'Body'
 	                ),
 	                _react2.default.createElement(
-	                    'option',
-	                    { value: 'OPTIONS' },
-	                    'OPTIONS'
-	                )
+	                    'textarea',
+	                    { name: 'body',
+	                        onChange: this.props.onChange },
+	                    this.props.originalValues.body
+	                ),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
+	                    'label',
+	                    null,
+	                    'Headers'
+	                ),
+	                _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'resHeaders', items: this.props.originalValues.resHeaders,
+	                    onChange: this.props.onChange })
 	            ),
-	            _react2.default.createElement('br', null),
-	            _react2.default.createElement(
-	                'label',
-	                null,
-	                'URI'
-	            ),
-	            _react2.default.createElement('input', { type: 'text', name: 'uri', value: this.props.originalValues.uri,
-	                onChange: this.props.onChange }),
-	            _react2.default.createElement('br', null),
-	            _react2.default.createElement(
-	                'label',
-	                null,
-	                'Regex URI'
-	            ),
-	            _react2.default.createElement('input', { type: 'text', name: 'regex', value: this.props.originalValues.regex,
-	                onChange: this.props.onChange }),
-	            _react2.default.createElement('br', null),
-	            _react2.default.createElement(
-	                'label',
-	                null,
-	                'Body'
-	            ),
-	            _react2.default.createElement(
-	                'textarea',
-	                { name: 'reqBody',
-	                    onChange: this.props.onChange },
-	                this.props.originalValues.reqBody
-	            ),
-	            _react2.default.createElement('br', null),
-	            _react2.default.createElement(
-	                'label',
-	                null,
-	                'Form'
-	            ),
-	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'form', items: this.props.originalValues.form,
-	                onChange: this.props.onChange }),
-	            _react2.default.createElement(
-	                'label',
-	                null,
-	                'Headers'
-	            ),
-	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'reqHeaders', items: this.props.originalValues.reqHeaders,
-	                onChange: this.props.onChange }),
-	            _react2.default.createElement(
-	                'h4',
-	                null,
-	                'Response'
-	            ),
-	            _react2.default.createElement(
-	                'label',
-	                null,
-	                'Status code'
-	            ),
-	            _react2.default.createElement('input', { type: 'text', name: 'code', value: this.props.originalValues.code,
-	                onChange: this.props.onChange }),
-	            _react2.default.createElement('br', null),
-	            _react2.default.createElement(
-	                'label',
-	                null,
-	                'Body'
-	            ),
-	            _react2.default.createElement(
-	                'textarea',
-	                { name: 'body',
-	                    onChange: this.props.onChange },
-	                this.props.originalValues.body
-	            ),
-	            _react2.default.createElement('br', null),
-	            _react2.default.createElement(
-	                'label',
-	                null,
-	                'Headers'
-	            ),
-	            _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'resHeaders', items: this.props.originalValues.resHeaders,
-	                onChange: this.props.onChange }),
 	            _react2.default.createElement(
 	                'button',
-	                { onClick: this.props.finishEditing },
-	                'Finish editing'
+	                { onClick: this.props.finishEditing, className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent' },
+	                'Save'
 	            )
 	        );
 	    }

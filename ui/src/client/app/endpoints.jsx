@@ -44,20 +44,30 @@ const Endpoint = React.createClass({
 
         const view = (
             <div>
+
                 <div className="mdl-card__title" style={{width: "90%"}}>
                     <h3 className="mdl-card__title-text">{this.state.name}</h3>
                 </div>
 
-                <Chip icon="cloud" value={this.state.method + " " + this.state.uri}/>
-                <Chip icon="face" value={this.state.regex}/>
-                <Body label="Request body" value={this.state.reqBody}/>
+                <div className="mdl-card mdl-shadow--2dp">
+                    <div className="mdl-card__title" style={{width: "90%"}}>
+                        <h3 className="mdl-card__title-text">Request</h3>
+                    </div>
+                    <Chip icon="cloud" value={this.state.method + " " + this.state.uri}/>
+                    <Chip icon="face" value={this.state.regex}/>
+                    <Body label="Body" value={this.state.reqBody}/>
+                    <HttpDataList name="Headers" items={this.state.reqHeaders}/>
+                    <HttpDataList name="Form data" items={this.state.form}/>
+                </div>
 
-                <HttpDataList name="Form data" items={this.state.form}/>
-
-                <Chip icon="face" value={this.state.code}/>
-                <HttpDataList name="Request headers" items={this.state.reqHeaders}/>
-                <Body label="Response body" value={this.state.body}/>
-                <HttpDataList name="Response headers" items={this.state.resHeaders}/>
+                <div className="mdl-card mdl-shadow--2dp">
+                    <div className="mdl-card__title" style={{width: "90%"}}>
+                        <h3 className="mdl-card__title-text">Response</h3>
+                    </div>
+                    <Chip icon="face" value={this.state.code}/>
+                    <Body label="Body" value={this.state.body}/>
+                    <HttpDataList name="Headers" items={this.state.resHeaders}/>
+                </div>
 
                 <div className="mdl-card__menu">
                     <button onClick={this.startEditing}
@@ -88,39 +98,51 @@ const EndpointForm = React.createClass({
                     <h3 className="mdl-card__title-text">Editing {this.props.name}</h3>
                 </div>
 
-                <label>CDC Disabled?</label><input type="checkbox"
-                                                   defaultChecked={this.props.originalValues.cdcDisabled}
-                                                   name="cdcDisabled" onClick={this.props.onCheckboxChange}/><br />
-                <h4>Request</h4>
-                <label>Method</label>
-                <select name="method" value={this.props.originalValues.method} onChange={this.props.onChange}>
-                    <option value="GET">GET</option>
-                    <option value="POST">POST</option>
-                    <option value="DELETE">DELETE</option>
-                    <option value="PUT">PUT</option>
-                    <option value="PATCH">PATCH</option>
-                    <option value="OPTIONS">OPTIONS</option>
-                </select>
-                <br />
-                <label>URI</label><input type="text" name="uri" value={this.props.originalValues.uri}
-                                         onChange={this.props.onChange}/><br />
-                <label>Regex URI</label><input type="text" name="regex" value={this.props.originalValues.regex}
-                                               onChange={this.props.onChange}/><br />
-                <label>Body</label><textarea name="reqBody"
-                                             onChange={this.props.onChange}>{this.props.originalValues.reqBody}</textarea><br />
-                <label>Form</label><HttpDataEditor name="form" items={this.props.originalValues.form}
-                                                   onChange={this.props.onChange}/>
-                <label>Headers</label><HttpDataEditor name="reqHeaders" items={this.props.originalValues.reqHeaders}
-                                                      onChange={this.props.onChange}/>
+                <div className="mdl-card mdl-shadow--2dp">
+                    <div className="mdl-card__title" style={{width: "90%"}}>
+                        <h3 className="mdl-card__title-text">Request</h3>
+                    </div>
 
-                <h4>Response</h4>
-                <label>Status code</label><input type="text" name="code" value={this.props.originalValues.code}
-                                                 onChange={this.props.onChange}/><br />
-                <label>Body</label><textarea name="body"
-                                             onChange={this.props.onChange}>{this.props.originalValues.body}</textarea><br />
-                <label>Headers</label><HttpDataEditor name="resHeaders" items={this.props.originalValues.resHeaders}
-                                                      onChange={this.props.onChange}/>
-                <button onClick={this.props.finishEditing}>Finish editing</button>
+                    <label>CDC Disabled?</label><input type="checkbox"
+                                                       defaultChecked={this.props.originalValues.cdcDisabled}
+                                                       name="cdcDisabled" onClick={this.props.onCheckboxChange}/><br />
+                    <label>Method</label>
+                    <select name="method" value={this.props.originalValues.method} onChange={this.props.onChange}>
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="DELETE">DELETE</option>
+                        <option value="PUT">PUT</option>
+                        <option value="PATCH">PATCH</option>
+                        <option value="OPTIONS">OPTIONS</option>
+                    </select>
+                    <br />
+                    <label>URI</label><input type="text" name="uri" value={this.props.originalValues.uri}
+                                             onChange={this.props.onChange}/><br />
+                    <label>Regex URI</label><input type="text" name="regex" value={this.props.originalValues.regex}
+                                                   onChange={this.props.onChange}/><br />
+                    <label>Body</label><textarea name="reqBody"
+                                                 onChange={this.props.onChange}>{this.props.originalValues.reqBody}</textarea><br />
+                    <label>Form</label><HttpDataEditor name="form" items={this.props.originalValues.form}
+                                                       onChange={this.props.onChange}/>
+                    <label>Headers</label><HttpDataEditor name="reqHeaders" items={this.props.originalValues.reqHeaders}
+                                                          onChange={this.props.onChange}/>
+                </div>
+
+                <div className="mdl-card mdl-shadow--2dp">
+                    <div className="mdl-card__title" style={{width: "90%"}}>
+                        <h3 className="mdl-card__title-text">Response</h3>
+                    </div>
+                    <label>Status code</label><input type="text" name="code" value={this.props.originalValues.code}
+                                                     onChange={this.props.onChange}/><br />
+                    <label>Body</label><textarea name="body"
+                                                 onChange={this.props.onChange}>{this.props.originalValues.body}</textarea><br />
+                    <label>Headers</label><HttpDataEditor name="resHeaders" items={this.props.originalValues.resHeaders}
+                                                          onChange={this.props.onChange}/>
+                </div>
+
+                <button onClick={this.props.finishEditing} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
+                    Save
+                </button>
             </div>
         )
     }

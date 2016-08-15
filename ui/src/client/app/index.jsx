@@ -40,8 +40,21 @@ const UI = React.createClass({
         });
     },
     getMenuLinks: function () {
-        const links = this.state.data.map(endpoint => <a ref={'menu-'+endpoint.Name} className="mdl-navigation__link" onClick={(event)=>this.openEditor(endpoint.Name, event)}>{endpoint.Name}</a> )
-        return links
+        return this.state.data.map(endpoint => {
+            let cssClass = "mdl-navigation__link";
+            if(endpoint.Name===this.state.activeEndpoint){
+                cssClass += " --accent";
+            }
+
+            return (
+                <a
+                    ref={'menu-'+endpoint.Name}
+                    className={cssClass}
+                    onClick={(event)=>this.openEditor(endpoint.Name, event)}>
+                    {endpoint.Name}
+                </a>
+            )
+        });
     },
     openEditor: function (endpointName) {
         this.setState({
