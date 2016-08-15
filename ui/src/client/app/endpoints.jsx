@@ -24,9 +24,6 @@ const Endpoint = React.createClass({
             isEditing: true
         })
     },
-    add: function () {
-        this.props.add();
-    },
     finishEditing: function () {
         this.setState({
             isEditing: false
@@ -71,9 +68,6 @@ const Endpoint = React.createClass({
                 <div style={{margin:"2%"}}>
                     <button style={{margin:"0% 1% 0% 0%"}} onClick={this.startEditing} className="mdl-button mdl-button--raised mdl-button--accent">
                         Edit
-                    </button>
-                    <button onClick={this.add} className="mdl-button mdl-button--raised mdl-button--primary">
-                        Add new endpoint
                     </button>
                 </div>
             </div>);

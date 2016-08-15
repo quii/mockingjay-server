@@ -106,12 +106,45 @@
 	        });
 	    },
 	    add: function add() {
-	        console.log('Add new endpoint!');
+	        var data = _lodash2.default.cloneDeep(this.state.data);
+	
+	        var newEndpointName = "Hello, World!";
+	
+	        var newEndpoint = {
+	            Name: newEndpointName,
+	            CDCDisabled: false,
+	            Request: {
+	                URI: "/hello",
+	                Method: "GET"
+	            },
+	            Response: {
+	                Code: 200,
+	                Body: "World!"
+	            }
+	        };
+	
+	        data.unshift(newEndpoint);
+	
+	        console.log('now the data looks like', data);
+	
+	        this.setState({
+	            data: data,
+	            activeEndpoint: newEndpointName,
+	            endpointIds: []
+	        });
 	    },
 	    getMenuLinks: function getMenuLinks() {
 	        var _this = this;
 	
-	        return this.state.data.map(function (endpoint) {
+	        var items = [];
+	        items.push(_react2.default.createElement(
+	            'a',
+	            {
+	                onClick: this.add,
+	                className: 'mdl-navigation__link' },
+	            'Add new endoint'
+	        ));
+	        var endpointLinks = this.state.data.map(function (endpoint) {
 	            var cssClass = "mdl-navigation__link";
 	            if (endpoint.Name === _this.state.activeEndpoint) {
 	                cssClass += " mdl-color--accent-contrast mdl-color-text--primary";
@@ -128,6 +161,9 @@
 	                endpoint.Name
 	            );
 	        });
+	
+	        items.push(endpointLinks);
+	        return items;
 	    },
 	    openEditor: function openEditor(endpointName) {
 	        this.setState({
@@ -172,7 +208,6 @@
 	                return ep.Name === _this2.state.activeEndpoint;
 	            });
 	            return _react2.default.createElement(_endpoints2.default, {
-	                add: this.add,
 	                index: index,
 	                key: endpoint.Name,
 	                ref: endpoint.Name,
@@ -22201,9 +22236,6 @@
 	            isEditing: true
 	        });
 	    },
-	    add: function add() {
-	        this.props.add();
-	    },
 	    finishEditing: function finishEditing() {
 	        this.setState({
 	            isEditing: false
@@ -22262,11 +22294,6 @@
 	                    'button',
 	                    { style: { margin: "0% 1% 0% 0%" }, onClick: this.startEditing, className: 'mdl-button mdl-button--raised mdl-button--accent' },
 	                    'Edit'
-	                ),
-	                _react2.default.createElement(
-	                    'button',
-	                    { onClick: this.add, className: 'mdl-button mdl-button--raised mdl-button--primary' },
-	                    'Add new endpoint'
 	                )
 	            )
 	        );

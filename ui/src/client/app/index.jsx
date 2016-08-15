@@ -40,10 +40,43 @@ const UI = React.createClass({
         });
     },
     add: function () {
-        console.log('Add new endpoint!');
+        let data = _.cloneDeep(this.state.data);
+
+        const newEndpointName = "Hello, World!";
+
+        const newEndpoint = {
+            Name: newEndpointName,
+            CDCDisabled: false,
+            Request: {
+                URI: "/hello",
+                Method: "GET"
+            },
+            Response: {
+                Code: 200,
+                Body: "World!",
+            }
+        };
+
+        data.unshift(newEndpoint);
+
+        console.log('now the data looks like', data);
+
+        this.setState({
+            data,
+            activeEndpoint: newEndpointName,
+            endpointIds: []
+        });
+
     },
     getMenuLinks: function () {
-        return this.state.data.map(endpoint => {
+        const items = []
+        items.push((
+            <a
+                onClick={this.add}
+                className="mdl-navigation__link">
+                Add new endoint</a>
+        ))
+        const endpointLinks = this.state.data.map(endpoint => {
             let cssClass = "mdl-navigation__link";
             if(endpoint.Name===this.state.activeEndpoint){
                 cssClass += " mdl-color--accent-contrast mdl-color-text--primary";
@@ -58,6 +91,9 @@ const UI = React.createClass({
                 </a>
             )
         });
+
+        items.push(endpointLinks)
+        return items;
     },
     openEditor: function (endpointName) {
         this.setState({
@@ -97,7 +133,6 @@ const UI = React.createClass({
             const endpoint = this.state.data.find(ep => ep.Name===this.state.activeEndpoint);
             return (
                 <Endpoint
-                    add={this.add}
                     index={index}
                     key={endpoint.Name}
                     ref={endpoint.Name}
