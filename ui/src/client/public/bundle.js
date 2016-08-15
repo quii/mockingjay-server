@@ -125,10 +125,18 @@
 	
 	        data.unshift(newEndpoint);
 	
+	        this.toasty("Endpoint added!");
+	
 	        this.setState({
 	            data: data,
 	            activeEndpoint: newEndpointName,
 	            endpointIds: []
+	        });
+	    },
+	    toasty: function toasty(msg) {
+	        var notification = document.querySelector('.mdl-js-snackbar');
+	        notification.MaterialSnackbar.showSnackbar({
+	            message: msg
 	        });
 	    },
 	    getMenuLinks: function getMenuLinks() {
@@ -175,6 +183,8 @@
 	        console.log('deleting index', indexToDelete);
 	        data.splice(indexToDelete, 1);
 	        var json = JSON.stringify(data);
+	
+	        this.toasty("Endpoint deleted");
 	
 	        this.putUpdate(json);
 	    },
@@ -264,6 +274,12 @@
 	                    { className: 'page-content' },
 	                    this.renderCurrentEndpoint()
 	                )
+	            ),
+	            _react2.default.createElement(
+	                'div',
+	                { 'aria-live': 'assertive', 'aria-atomic': 'true', 'aria-relevant': 'text', className: 'mdl-snackbar mdl-js-snackbar' },
+	                _react2.default.createElement('div', { className: 'mdl-snackbar__text' }),
+	                _react2.default.createElement('button', { type: 'button', className: 'mdl-snackbar__action' })
 	            )
 	        );
 	    }

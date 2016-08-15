@@ -59,12 +59,22 @@ const UI = React.createClass({
 
         data.unshift(newEndpoint);
 
+        this.toasty("Endpoint added!");
+
         this.setState({
             data,
             activeEndpoint: newEndpointName,
             endpointIds: []
         });
 
+    },
+    toasty: function (msg) {
+        const notification = document.querySelector('.mdl-js-snackbar');
+        notification.MaterialSnackbar.showSnackbar(
+            {
+                message: msg
+            }
+        );
     },
     getMenuLinks: function () {
         const items = []
@@ -105,6 +115,8 @@ const UI = React.createClass({
         console.log('deleting index', indexToDelete)
         data.splice(indexToDelete, 1);
         const json = JSON.stringify(data);
+
+        this.toasty("Endpoint deleted");
 
         this.putUpdate(json);
 
@@ -176,6 +188,10 @@ const UI = React.createClass({
             <main className="mdl-layout__content">
                 <div className="page-content">{this.renderCurrentEndpoint()}</div>
             </main>
+            <div aria-live="assertive" aria-atomic="true" aria-relevant="text" className="mdl-snackbar mdl-js-snackbar">
+                <div className="mdl-snackbar__text"></div>
+                <button type="button" className="mdl-snackbar__action"></button>
+            </div>
         </div>
 
         )
