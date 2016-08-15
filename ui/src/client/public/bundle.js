@@ -22218,7 +22218,7 @@
 	
 	        return _react2.default.createElement(
 	            'div',
-	            null,
+	            { className: 'mdl-cell mdl-cell--6-col' },
 	            this.state.isEditing ? form : view
 	        );
 	    }
@@ -22425,7 +22425,7 @@
 	        });
 	        return _react2.default.createElement(
 	            'div',
-	            { className: 'endpointList' },
+	            { className: 'mdl-grid' },
 	            endpointElements
 	        );
 	    }

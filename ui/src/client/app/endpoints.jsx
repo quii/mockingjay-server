@@ -67,7 +67,7 @@ const Endpoint = React.createClass({
             onCheckboxChange={this.updateCheckbox}
         />;
 
-        return <div>{this.state.isEditing ? form : view}</div>;
+        return <div className="mdl-cell mdl-cell--6-col">{this.state.isEditing ? form : view}</div>;
     }
 });
 
@@ -164,7 +164,7 @@ const EndpointList = React.createClass({
             );
         });
         return (
-            <div className="endpointList">
+            <div className="mdl-grid">
                 {endpointElements}
             </div>
         );
