@@ -41,29 +41,30 @@ const Endpoint = React.createClass({
     },
     render: function () {
 
-        const view = (<div className="mdl-card mdl-shadow--2dp">
-            <div class="mdl-card__title">
-                <h4 class="mdl-card__title-text">{this.state.name}</h4>
-            </div>
+        const view = (
+            <div className="mdl-card mdl-shadow--2dp">
+                <div className="mdl-card__title" style={{width: "90%"}}>
+                    <h3 className="mdl-card__title-text">{this.state.name}</h3>
+                </div>
 
-            <Chip icon="cloud" value={this.state.method + " " + this.state.uri}/>
-            <Chip icon="face" value={this.state.regex}/>
-            <Chip icon="face" value={this.state.code}/>
-            <Body value={this.state.reqBody}/>
+                <Chip icon="cloud" value={this.state.method + " " + this.state.uri}/>
+                <Chip icon="face" value={this.state.regex}/>
+                <Body label="Request body" value={this.state.reqBody}/>
 
-            <HttpDataList name="Form data" items={this.state.form}/>
-            <HttpDataList name="Request headers" items={this.state.reqHeaders}/>
-            <br />
-            <Body value={this.state.body}/><br />
-            <HttpDataList name="Response headers" items={this.state.resHeaders}/>
+                <HttpDataList name="Form data" items={this.state.form}/>
 
-            <div className="mdl-card__menu">
-                <button onClick={this.startEditing}
-                        className="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                    <i className="material-icons">edit</i>
-                </button>
-            </div>
-        </div>);
+                <Chip icon="face" value={this.state.code}/>
+                <HttpDataList name="Request headers" items={this.state.reqHeaders}/>
+                <Body label="Response body" value={this.state.body}/>
+                <HttpDataList name="Response headers" items={this.state.resHeaders}/>
+
+                <div className="mdl-card__menu">
+                    <button onClick={this.startEditing}
+                            className="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
+                        <i className="material-icons">edit</i>
+                    </button>
+                </div>
+            </div>);
 
         var form = <EndpointForm
             name={this.state.name}
@@ -82,8 +83,8 @@ const EndpointForm = React.createClass({
         return (
             <div className="mdl-card mdl-shadow--2dp">
 
-                <div class="mdl-card__title">
-                    <h2 class="mdl-card__title-text">Editing {this.props.name}</h2>
+                <div className="mdl-card__title">
+                    <h3 className="mdl-card__title-text">Editing {this.props.name}</h3>
                 </div>
 
                 <label>CDC Disabled?</label><input type="checkbox"
@@ -228,6 +229,9 @@ const Body = React.createClass({
         if (this.props.value) {
             return (
                 <div>
+                    <div className="mdl-card__title mdl-card--expand">
+                        <h6 className="mdl-card__title-text">{this.props.label}</h6>
+                    </div>
                     <pre>{this.renderText()}</pre>
                 </div>
             )

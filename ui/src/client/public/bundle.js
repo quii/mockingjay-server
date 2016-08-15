@@ -22119,22 +22119,20 @@
 	            { className: 'mdl-card mdl-shadow--2dp' },
 	            _react2.default.createElement(
 	                'div',
-	                { 'class': 'mdl-card__title' },
+	                { className: 'mdl-card__title', style: { width: "90%" } },
 	                _react2.default.createElement(
-	                    'h4',
-	                    { 'class': 'mdl-card__title-text' },
+	                    'h3',
+	                    { className: 'mdl-card__title-text' },
 	                    this.state.name
 	                )
 	            ),
 	            _react2.default.createElement(Chip, { icon: 'cloud', value: this.state.method + " " + this.state.uri }),
 	            _react2.default.createElement(Chip, { icon: 'face', value: this.state.regex }),
-	            _react2.default.createElement(Chip, { icon: 'face', value: this.state.code }),
-	            _react2.default.createElement(Body, { value: this.state.reqBody }),
+	            _react2.default.createElement(Body, { label: 'Request body', value: this.state.reqBody }),
 	            _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: this.state.form }),
+	            _react2.default.createElement(Chip, { icon: 'face', value: this.state.code }),
 	            _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Request headers', items: this.state.reqHeaders }),
-	            _react2.default.createElement('br', null),
-	            _react2.default.createElement(Body, { value: this.state.body }),
-	            _react2.default.createElement('br', null),
+	            _react2.default.createElement(Body, { label: 'Response body', value: this.state.body }),
 	            _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Response headers', items: this.state.resHeaders }),
 	            _react2.default.createElement(
 	                'div',
@@ -22177,10 +22175,10 @@
 	            { className: 'mdl-card mdl-shadow--2dp' },
 	            _react2.default.createElement(
 	                'div',
-	                { 'class': 'mdl-card__title' },
+	                { className: 'mdl-card__title' },
 	                _react2.default.createElement(
-	                    'h2',
-	                    { 'class': 'mdl-card__title-text' },
+	                    'h3',
+	                    { className: 'mdl-card__title-text' },
 	                    'Editing ',
 	                    this.props.name
 	                )
@@ -22443,6 +22441,15 @@
 	                'div',
 	                null,
 	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-card__title mdl-card--expand' },
+	                    _react2.default.createElement(
+	                        'h6',
+	                        { className: 'mdl-card__title-text' },
+	                        this.props.label
+	                    )
+	                ),
+	                _react2.default.createElement(
 	                    'pre',
 	                    null,
 	                    this.renderText()
@@ -22504,16 +22511,16 @@
 	                null,
 	                _react2.default.createElement(
 	                    "div",
-	                    { "class": "mdl-card__title mdl-card--expand" },
+	                    { className: "mdl-card__title mdl-card--expand" },
 	                    _react2.default.createElement(
 	                        "h6",
-	                        { "class": "mdl-card__title-text" },
+	                        { className: "mdl-card__title-text" },
 	                        this.props.name
 	                    )
 	                ),
 	                _react2.default.createElement(
 	                    "table",
-	                    { className: "mdl-data-table mdl-js-data-table mdl-data-table mdl-shadow--2dp" },
+	                    { className: "mdl-data-table mdl-js-data-table mdl-data-table" },
 	                    _react2.default.createElement(
 	                        "thead",
 	                        null,
