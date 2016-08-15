@@ -115,7 +115,6 @@ const UI = React.createClass({
         const indexToDelete = this.refs[this.state.activeEndpoint].state.index;
 
         let data = _.cloneDeep( this.state.data);
-        console.log('deleting index', indexToDelete)
         data.splice(indexToDelete, 1);
         const json = JSON.stringify(data);
 
