@@ -35,6 +35,7 @@ const UI = React.createClass({
                 this.setState({data: data});
             }.bind(this),
             error: function(xhr, status, err) {
+                this.toasty(`Problem with PUT to ${this.props.url} ${err.toString()}`);
                 console.error(this.props.url, status, err.toString());
             }.bind(this)
         });
@@ -59,13 +60,15 @@ const UI = React.createClass({
 
         data.unshift(newEndpoint);
 
-        this.toasty("Endpoint added!");
-
         this.setState({
             data,
             activeEndpoint: newEndpointName,
             endpointIds: []
         });
+
+        const json = JSON.stringify(data);
+
+        this.putUpdate(json);
 
     },
     toasty: function (msg) {
@@ -180,7 +183,7 @@ const UI = React.createClass({
         return (
         <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
             <div className="mdl-layout__drawer">
-                <span className="mdl-layout-title">mockingjay server</span>
+                <h1 className="mdl-layout-title mdl-color-text--primary">mockingjay server</h1>
                 <nav className="mdl-navigation">
                     {this.getMenuLinks()}
                 </nav>

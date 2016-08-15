@@ -101,6 +101,7 @@
 	                this.setState({ data: data });
 	            }.bind(this),
 	            error: function (xhr, status, err) {
+	                this.toasty('Problem with PUT to ' + this.props.url + ' ' + err.toString());
 	                console.error(this.props.url, status, err.toString());
 	            }.bind(this)
 	        });
@@ -125,13 +126,15 @@
 	
 	        data.unshift(newEndpoint);
 	
-	        this.toasty("Endpoint added!");
-	
 	        this.setState({
 	            data: data,
 	            activeEndpoint: newEndpointName,
 	            endpointIds: []
 	        });
+	
+	        var json = JSON.stringify(data);
+	
+	        this.putUpdate(json);
 	    },
 	    toasty: function toasty(msg) {
 	        var notification = document.querySelector('.mdl-js-snackbar');
@@ -256,8 +259,8 @@
 	                'div',
 	                { className: 'mdl-layout__drawer' },
 	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'mdl-layout-title' },
+	                    'h1',
+	                    { className: 'mdl-layout-title mdl-color-text--primary' },
 	                    'mockingjay server'
 	                ),
 	                _react2.default.createElement(
