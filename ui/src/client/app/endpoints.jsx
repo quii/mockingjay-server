@@ -164,7 +164,7 @@ const Chip = React.createClass({
 const Body = React.createClass({
     isJSON: function () {
         try {
-            const json = JSON.parse(this.props.value);
+            JSON.parse(this.props.value);
             return true;
         }
         catch (e) {
