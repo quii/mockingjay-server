@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -18,14 +19,17 @@ type mjLogger interface {
 
 // Server allows you to configure a HTTP server for a slice of fake endpoints
 type Server struct {
-	Endpoints      []FakeEndpoint
-	requests       []Request
-	requestMatcher func(a, b Request, endpointName string) bool
-	logger         mjLogger
+	Endpoints            []FakeEndpoint
+	requests             []Request
+	requestMatcher       func(a, b Request, endpointName string) bool
+	logger               mjLogger
+	newConfigStateWriter io.Writer
 }
 
-// NewServer creates a new Server instance
-func NewServer(endpoints []FakeEndpoint, debugMode bool) *Server {
+/* NewServer creates a new Server instance. debugMode will log additional info at runtime and newConfigStateWriter will
+write out the new state of the config if it gets changed at runtime
+*/
+func NewServer(endpoints []FakeEndpoint, debugMode bool, newConfigStateWriter io.Writer) *Server {
 	s := new(Server)
 	s.Endpoints = endpoints
 	s.requests = make([]Request, 0)

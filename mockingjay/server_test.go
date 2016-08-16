@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 )
 
 var (
@@ -56,7 +57,7 @@ func TestItReturnsCannedResponses(t *testing.T) {
 		},
 	}
 
-	server := NewServer([]FakeEndpoint{endpoint, secondEndpoint}, debugModeOff)
+	server := NewServer([]FakeEndpoint{endpoint, secondEndpoint}, debugModeOff, ioutil.Discard)
 
 	request, _ := http.NewRequest("GET", testURL, nil)
 	responseReader := httptest.NewRecorder()
@@ -76,7 +77,7 @@ func TestItReturnsCannedResponses(t *testing.T) {
 }
 
 func TestItCanCreateNewEndpointsOverHTTP(t *testing.T) {
-	server := NewServer([]FakeEndpoint{}, debugModeOff)
+	server := NewServer([]FakeEndpoint{}, debugModeOff, ioutil.Discard)
 
 	newEndpoint := FakeEndpoint{
 		Name: "New endpoint",
@@ -103,7 +104,7 @@ func TestItCanCreateNewEndpointsOverHTTP(t *testing.T) {
 }
 
 func TestItReturnsBadRequestWhenMakingABadNewEndpoint(t *testing.T) {
-	server := NewServer([]FakeEndpoint{}, debugModeOff)
+	server := NewServer([]FakeEndpoint{}, debugModeOff, ioutil.Discard)
 
 	badBody := []byte("blah")
 	req, _ := http.NewRequest("POST", newEndpointURL, bytes.NewReader(badBody))
@@ -119,7 +120,7 @@ func TestItReturns404WhenRequestCannotBeMatched(t *testing.T) {
 		return false
 	}
 
-	server := NewServer([]FakeEndpoint{}, debugModeOff)
+	server := NewServer([]FakeEndpoint{}, debugModeOff, ioutil.Discard)
 	server.requestMatcher = alwaysNotMatching
 
 	req, _ := http.NewRequest("POST", "doesnt-matter", nil)
@@ -137,7 +138,7 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 
 	mjReq := Request{URI: testURL, Method: "POST", Body: wildcardBody, Form: nil}
 	config := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{expectedStatus, "", nil}}
-	server := NewServer([]FakeEndpoint{config}, debugModeOff)
+	server := NewServer([]FakeEndpoint{config}, debugModeOff, ioutil.Discard)
 
 	requestWithDifferentBody, _ := http.NewRequest("POST", testURL, strings.NewReader("This body isnt what we said but it should match"))
 	responseReader := httptest.NewRecorder()
@@ -151,7 +152,7 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 func TestItReturnsListOfEndpointsAndUpdates(t *testing.T) {
 	mjReq := Request{URI: testURL, Method: "GET", Form: nil}
 	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
-	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff)
+	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff, ioutil.Discard)
 
 	request, _ := http.NewRequest("GET", endpointsURL, nil)
 	responseReader := httptest.NewRecorder()
@@ -211,7 +212,7 @@ func TestItCanCheckCompatability(t *testing.T) {
 
 	mjReq := Request{URI: testURL, Method: "GET", Form: nil}
 	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
-	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff)
+	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff, ioutil.Discard)
 
 	failingServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Not found", http.StatusNotFound)

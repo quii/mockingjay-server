@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/quii/mockingjay-server/mockingjay"
 	"github.com/quii/mockingjay-server/monkey"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -26,7 +27,7 @@ type compatabilityChecker interface {
 	CheckCompatibility(endpoints []mockingjay.FakeEndpoint, realURL string) bool
 }
 
-type serverMaker func([]mockingjay.FakeEndpoint, bool) *mockingjay.Server
+type serverMaker func([]mockingjay.FakeEndpoint, bool, io.Writer) *mockingjay.Server
 type monkeyServerMaker func(http.Handler, string) (http.Handler, error)
 
 type application struct {
@@ -123,7 +124,7 @@ func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err err
 
 func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debugMode bool, ui http.Handler) (server http.Handler, err error) {
 	go a.PollConfig()
-	a.mjServer = a.mockingjayServerMaker(endpoints, debugMode)
+	a.mjServer = a.mockingjayServerMaker(endpoints, debugMode, ioutil.Discard) //todo: pass file handle
 	monkeyServer, err := a.monkeyServerMaker(a.mjServer, a.monkeyConfigPath)
 
 	if err != nil {

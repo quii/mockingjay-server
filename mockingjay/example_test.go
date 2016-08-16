@@ -1,6 +1,7 @@
 package mockingjay
 
 import (
+	"io/ioutil"
 	"net/http"
 )
 
@@ -52,7 +53,7 @@ func ExampleNewServer() {
  `
 
 	endpoints, _ := NewFakeEndpoints([]byte(testYAML))
-	server := NewServer(endpoints, false)
+	server := NewServer(endpoints, false, ioutil.Discard)
 
 	// Mount it just like any other server
 	http.Handle("/", server)
