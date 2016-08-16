@@ -12,8 +12,11 @@ before_install:
   - go get github.com/axw/gocov/gocov
   - go get github.com/mattn/goveralls
   - go get golang.org/x/tools/cmd/cover
+  - go get github.com/jteeuwen/go-bindata/...
+  - go get github.com/elazarl/go-bindata-assetfs/...
 script:
   - golint .
+  - go generate
   - go test -coverprofile=coverage.out
   - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
 before_deploy:
