@@ -150,6 +150,11 @@ const UI = React.createClass({
 
         this.putUpdate(json);
     },
+    checkCompatability: function(e) {
+        if (!e.key || e.key === 'Enter') {
+            console.log('do it!', e.target.value);
+        }
+    },
     renderCurrentEndpoint: function(){
         if(this.state.activeEndpoint) {
             const index = _.findIndex(this.state.data, ep => ep.Name==this.state.activeEndpoint)
@@ -181,6 +186,23 @@ const UI = React.createClass({
     render: function () {
         return (
         <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
+
+            <header className="mdl-layout__header">
+                <div className="mdl-layout__header-row">
+                    <div className="mdl-layout-spacer"></div>
+                    <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+                  mdl-textfield--floating-label mdl-textfield--align-right">
+                        <label className=""
+                               htmlFor="fixed-header-drawer-exp">
+                            <i className="material-icons">playlist_add_check</i>Check endpoints against real URL
+                        </label>
+                        <div className="mdl-textfield__expandable-holder">
+                            <input className="mdl-textfield__input" type="text" name="sample"
+                                   id="fixed-header-drawer-exp" onBlur={this.checkCompatability} onKeyPress={this.checkCompatability} />
+                        </div>
+                    </div>
+                </div>
+            </header>
             <div className="mdl-layout__drawer">
                 <h1 className="mdl-layout-title mdl-color-text--primary">mockingjay server</h1>
                 <nav className="mdl-navigation">
@@ -188,7 +210,9 @@ const UI = React.createClass({
                 </nav>
             </div>
             <main className="mdl-layout__content">
-                <div className="page-content">{this.renderCurrentEndpoint()}</div>
+                <div className="page-content">
+                    {this.renderCurrentEndpoint()}
+                </div>
             </main>
             <div aria-live="assertive" aria-atomic="true" aria-relevant="text" className="mdl-snackbar mdl-js-snackbar">
                 <div className="mdl-snackbar__text"></div>
