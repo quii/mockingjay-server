@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"gopkg.in/yaml.v2"
 	"io"
 	"io/ioutil"
 	"log"
@@ -33,6 +35,7 @@ func NewServer(endpoints []FakeEndpoint, debugMode bool, newConfigStateWriter io
 	s := new(Server)
 	s.Endpoints = endpoints
 	s.requests = make([]Request, 0)
+	s.newConfigStateWriter = newConfigStateWriter
 
 	if debugMode {
 		s.logger = log.New(os.Stdout, "mocking-jay", log.Ldate|log.Ltime)
@@ -117,6 +120,12 @@ func (s *Server) handleEndpoints(w http.ResponseWriter, r *http.Request) {
 		}
 
 		s.Endpoints = updatedEndpoints
+
+		err = s.writeUpdatedConfig()
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
 
 	endpointsBody, err := json.Marshal(s.Endpoints)
@@ -130,6 +139,18 @@ func (s *Server) handleEndpoints(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+}
+
+func (s *Server) writeUpdatedConfig() error {
+	newYAML, err := yaml.Marshal(s.Endpoints)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprint(s.newConfigStateWriter, string(newYAML))
+
+	return nil
 }
 
 type compatCheckResult struct {

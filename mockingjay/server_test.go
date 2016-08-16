@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 )
 
@@ -150,9 +151,12 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 }
 
 func TestItReturnsListOfEndpointsAndUpdates(t *testing.T) {
+
+	var newConfigBuffer bytes.Buffer
+
 	mjReq := Request{URI: testURL, Method: "GET", Form: nil}
 	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
-	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff, ioutil.Discard)
+	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff, &newConfigBuffer)
 
 	request, _ := http.NewRequest("GET", endpointsURL, nil)
 	responseReader := httptest.NewRecorder()
@@ -204,6 +208,12 @@ func TestItReturnsListOfEndpointsAndUpdates(t *testing.T) {
 	assert.Equal(t, updateResponseReader.Code, http.StatusOK)
 	assert.Equal(t, updateResponseReader.HeaderMap["Content-Type"][0], "application/json")
 
+	var updatedEndpoints []FakeEndpoint
+
+	err = yaml.Unmarshal(newConfigBuffer.Bytes(), &updatedEndpoints)
+
+	assert.NoError(t, err)
+	//assert.Equal(t, updatedEndpoints, server.Endpoints) //todo: fix me!
 	assert.Len(t, server.Endpoints, 2)
 }
 

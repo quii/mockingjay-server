@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"time"
 )
@@ -122,9 +123,28 @@ func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err err
 	return
 }
 
+type fileUpdater struct {
+	path string
+}
+
+func (fu *fileUpdater) Write(p []byte) (n int, err error) {
+	f, err := os.Create(fu.path)
+
+	if err != nil {
+		return 0, err
+	}
+
+	n, err = f.Write(p)
+	f.Sync()
+	return
+}
+
 func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debugMode bool, ui http.Handler) (server http.Handler, err error) {
 	go a.PollConfig()
-	a.mjServer = a.mockingjayServerMaker(endpoints, debugMode, ioutil.Discard) //todo: pass file handle
+
+	configFile := fileUpdater{a.configPath}
+
+	a.mjServer = a.mockingjayServerMaker(endpoints, debugMode, &configFile)
 	monkeyServer, err := a.monkeyServerMaker(a.mjServer, a.monkeyConfigPath)
 
 	if err != nil {
