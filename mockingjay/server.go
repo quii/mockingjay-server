@@ -1,6 +1,8 @@
 package mockingjay
 
 import (
+	"bufio"
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -44,6 +46,7 @@ func NewServer(endpoints []FakeEndpoint, debugMode bool) *Server {
 const requestsURL = "/requests"
 const endpointsURL = "/mj-endpoints"
 const newEndpointURL = "/mj-new-endpoint"
+const checkcompatabilityURL = "/mj-check-compatability"
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
@@ -53,6 +56,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		s.createEndpoint(w, r)
 	case requestsURL:
 		s.listAvailableRequests(w)
+	case checkcompatabilityURL:
+		s.checkCompatability(r.URL.Query().Get("url"), w)
 	default:
 		mjRequest := NewRequest(r)
 
@@ -121,6 +126,37 @@ func (s *Server) handleEndpoints(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+}
+
+type compatCheckResult struct {
+	Passed   bool
+	Messages []string
+}
+
+func (s *Server) checkCompatability(url string, w http.ResponseWriter) {
+
+	msgBuffer := new(bytes.Buffer)
+
+	compatLogger := log.New(msgBuffer, "mockingjay-server", log.Ldate|log.Ltime)
+	compatChecker := NewCompatabilityChecker(compatLogger, DefaultHTTPTimeoutSeconds)
+
+	compatible := compatChecker.CheckCompatibility(s.Endpoints, url)
+
+	scanner := bufio.NewScanner(msgBuffer)
+	var messages []string
+	for scanner.Scan() {
+		messages = append(messages, scanner.Text())
+	}
+	if err := scanner.Err(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	result := compatCheckResult{compatible, messages}
+
+	resJSON, _ := json.Marshal(result)
+
+	w.Write(resJSON)
+	w.Header().Set("Content-Type", "application/json")
 }
 
 func (s *Server) createEndpoint(w http.ResponseWriter, r *http.Request) {

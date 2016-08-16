@@ -205,3 +205,55 @@ func TestItReturnsListOfEndpointsAndUpdates(t *testing.T) {
 
 	assert.Len(t, server.Endpoints, 2)
 }
+
+//todo: Refactor to use nice new nested test thing from 1.7?
+func TestItCanCheckCompatability(t *testing.T) {
+
+	mjReq := Request{URI: testURL, Method: "GET", Form: nil}
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
+	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff)
+
+	failingServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Not found", http.StatusNotFound)
+	}))
+	defer failingServer.Close()
+	request, _ := http.NewRequest("GET", checkcompatabilityURL+"?url="+failingServer.URL, nil)
+	failingResponseReader := httptest.NewRecorder()
+
+	server.ServeHTTP(failingResponseReader, request)
+
+	assert.Equal(t, failingResponseReader.Code, http.StatusOK)
+
+	var result compatCheckResult
+
+	err := json.Unmarshal(failingResponseReader.Body.Bytes(), &result)
+
+	assert.NoError(t, err, "Shouldn't get an error parsing compatability result")
+
+	assert.False(t, result.Passed, "Compatability check should be fail on failing server")
+	assert.NotEmpty(t, result.Messages, "Should be some messages about failure")
+
+	passingServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t.Log("Got request", r.URL.RequestURI())
+		if r.URL.Path == endpoint.Request.URI {
+			w.WriteHeader(endpoint.Response.Code)
+			w.Write([]byte(endpoint.Response.Body))
+		} else {
+			http.Error(w, "Not found", http.StatusNotFound)
+		}
+	}))
+	defer passingServer.Close()
+
+	passingRequest, _ := http.NewRequest("GET", checkcompatabilityURL+"?url="+passingServer.URL, nil)
+	passingResponseReader := httptest.NewRecorder()
+	server.ServeHTTP(passingResponseReader, passingRequest)
+
+	assert.Equal(t, passingResponseReader.Code, http.StatusOK)
+
+	err = json.Unmarshal(passingResponseReader.Body.Bytes(), &result)
+
+	assert.NoError(t, err, "Shouldn't get an error parsing compatability result")
+
+	assert.True(t, result.Passed, "Compatability check should be passing on compat server")
+
+}
