@@ -9,7 +9,7 @@ import (
 type response struct {
 	Code    int
 	Body    string
-	Headers map[string]string
+	Headers map[string]string `yaml:"headers,omitempty"`
 }
 
 func (r response) isValid() bool {

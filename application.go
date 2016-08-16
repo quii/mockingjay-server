@@ -123,6 +123,16 @@ func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err err
 	return
 }
 
+/*
+Giovanni Bajo [5:09 PM]
+it doesn't respect the semantics of io.Writer
+
+[5:09]
+like you wouldn’t be able to compose it with a gzip.Writer
+
+[5:10]
+so I’m not sure you’re doing yourself a favor in implementing the io.Writer interface, it’s prone to mistakes
+*/
 type fileUpdater struct {
 	path string
 }

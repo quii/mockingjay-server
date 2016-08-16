@@ -1,12 +1,8 @@
-- name: Test endpoint CHANGED
+- name: Test endpoint
   cdcdisabled: false
   request:
-    uri: /hello22
-    regexuri: null
+    uri: /helloooo
     method: GET
-    headers: {}
-    body: ""
-    form: {}
   response:
     code: 200
     body: '{"message": "hello, world"}'
@@ -16,11 +12,7 @@
   cdcdisabled: false
   request:
     uri: /world
-    regexuri: null
     method: DELETE
-    headers: {}
-    body: ""
-    form: {}
   response:
     code: 200
     body: hello, world
@@ -29,11 +21,8 @@
   cdcdisabled: false
   request:
     uri: /card
-    regexuri: null
     method: POST
-    headers: {}
     body: Greetings
-    form: {}
   response:
     code: 500
     body: Oh bugger
@@ -42,11 +31,8 @@
   cdcdisabled: true
   request:
     uri: /burp
-    regexuri: null
     method: POST
-    headers: {}
     body: Belch
-    form: {}
   response:
     code: 500
     body: Oh no
@@ -55,10 +41,7 @@
   cdcdisabled: false
   request:
     uri: /cats
-    regexuri: null
     method: POST
-    headers: {}
-    body: ""
     form:
       age: "10"
       name: Hudson

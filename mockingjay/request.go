@@ -16,12 +16,12 @@ import (
 
 // Request is a simplified version of a http.Request
 type Request struct {
-	URI      string
-	RegexURI *RegexYAML
-	Method   string
-	Headers  map[string]string
-	Body     string
-	Form     map[string]string
+	URI      string            `yaml:"uri"`
+	RegexURI *RegexYAML        `yaml:"regexuri,omitempty"`
+	Method   string            `yaml:"method"`
+	Headers  map[string]string `yaml:"headers,omitempty"`
+	Body     string            `yaml:"body,omitempty"`
+	Form     map[string]string `yaml:"form,omitempty"`
 }
 
 var (

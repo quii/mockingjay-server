@@ -213,7 +213,7 @@ func TestItReturnsListOfEndpointsAndUpdates(t *testing.T) {
 	err = yaml.Unmarshal(newConfigBuffer.Bytes(), &updatedEndpoints)
 
 	assert.NoError(t, err)
-	//assert.Equal(t, updatedEndpoints, server.Endpoints) //todo: fix me!
+	assert.Equal(t, updatedEndpoints, server.Endpoints) //todo: fix me!
 	assert.Len(t, server.Endpoints, 2)
 }
 
