@@ -22864,10 +22864,10 @@
 	        var checkDetails = void 0,
 	            messages = void 0;
 	        if (this.state && this.state.data) {
-	            checkDetails = this.state.data.Passed ? _react2.default.createElement(TestIndicator, { indicatorClick: this.indicatorClick, badge: '✓' }) : _react2.default.createElement(TestIndicator, { indicatorClick: this.indicatorClick, badge: '✘' });
+	            checkDetails = this.state.data.Passed ? _react2.default.createElement(TestIndicator, { indicatorClick: this.indicatorClick, badge: 'sentiment_satisfied' }) : _react2.default.createElement(TestIndicator, { indicatorClick: this.indicatorClick, badge: 'sentiment_very_dissatisfied' });
 	            messages = this.state.data.Messages;
 	        } else {
-	            checkDetails = _react2.default.createElement(TestIndicator, { indicatorClick: this.indicatorClick, badge: '?' });
+	            checkDetails = _react2.default.createElement(TestIndicator, { indicatorClick: this.indicatorClick, badge: 'sentiment_neutral' });
 	            messages = [];
 	        }
 	        return _react2.default.createElement(
@@ -22880,7 +22880,6 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right' },
-	                    checkDetails,
 	                    _react2.default.createElement(
 	                        'label',
 	                        { htmlFor: 'fixed-header-drawer-exp' },
@@ -22891,7 +22890,8 @@
 	                        { className: 'mdl-textfield__expandable-holder' },
 	                        _react2.default.createElement('input', { className: 'mdl-textfield__input', type: 'text', name: 'sample',
 	                            id: 'fixed-header-drawer-exp', onBlur: this.checkCompatability, onKeyPress: this.handleUrlChange })
-	                    )
+	                    ),
+	                    checkDetails
 	                )
 	            ),
 	            _react2.default.createElement(Dialog, { title: 'Messages from CDC check', messages: messages, ref: 'dialog' })
@@ -22904,9 +22904,9 @@
 	
 	    render: function render() {
 	        return _react2.default.createElement(
-	            'div',
-	            { onClick: this.props.indicatorClick, className: 'material-icons mdl-badge mdl-badge--overlap md-48', 'data-badge': this.props.badge },
-	            'compare_arrows'
+	            'i',
+	            { onClick: this.props.indicatorClick, style: { cursor: "hand" }, className: 'material-icons md-48' },
+	            this.props.badge
 	        );
 	    }
 	});

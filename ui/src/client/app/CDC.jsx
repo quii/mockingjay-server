@@ -43,10 +43,10 @@ const CDC = React.createClass({
     render: function () {
         let checkDetails, messages;
         if(this.state && this.state.data){
-            checkDetails = this.state.data.Passed ? <TestIndicator indicatorClick={this.indicatorClick} badge="✓"/> : <TestIndicator indicatorClick={this.indicatorClick} badge="✘" />;
+            checkDetails = this.state.data.Passed ? <TestIndicator indicatorClick={this.indicatorClick} badge="sentiment_satisfied"/> : <TestIndicator indicatorClick={this.indicatorClick} badge="sentiment_very_dissatisfied" />;
             messages = this.state.data.Messages;
         }else{
-            checkDetails = <TestIndicator indicatorClick={this.indicatorClick} badge="?" />;
+            checkDetails = <TestIndicator indicatorClick={this.indicatorClick} badge="sentiment_neutral" />;
             messages = [];
         }
         return (
@@ -55,12 +55,12 @@ const CDC = React.createClass({
                     <div className="mdl-layout-spacer"></div>
                     <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable
                   mdl-textfield--floating-label mdl-textfield--align-right">
-                        {checkDetails}
                         <label htmlFor="fixed-header-drawer-exp">{this.label()}</label>
                         <div className="mdl-textfield__expandable-holder">
                             <input className="mdl-textfield__input" type="text" name="sample"
                                    id="fixed-header-drawer-exp" onBlur={this.checkCompatability} onKeyPress={this.handleUrlChange} />
                         </div>
+                        {checkDetails}
                     </div>
                 </div>
                 <Dialog title="Messages from CDC check" messages={messages} ref="dialog" />
@@ -72,7 +72,7 @@ const CDC = React.createClass({
 
 const TestIndicator = React.createClass({
     render: function () {
-        return <div onClick={this.props.indicatorClick} className="material-icons mdl-badge mdl-badge--overlap md-48" data-badge={this.props.badge}>compare_arrows</div>
+        return <i onClick={this.props.indicatorClick} style={{cursor: "hand"}} className="material-icons md-48">{this.props.badge}</i>
     }
 });
 
