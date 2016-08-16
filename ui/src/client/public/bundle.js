@@ -218,7 +218,7 @@
 	        this.putUpdate(json);
 	    },
 	    checkCompatability: function checkCompatability(e) {
-	        if (!e.key || e.key === 'Enter') {
+	        if ((!e.key || e.key === 'Enter') && isValidURL(e.target.value)) {
 	            console.log('do it!', e.target.value);
 	        }
 	    },
@@ -322,6 +322,12 @@
 	    }
 	});
 	_reactDom2.default.render(_react2.default.createElement(UI, { url: '/mj-endpoints' }), document.getElementById('app'));
+	
+	function isValidURL(str) {
+	    var a = document.createElement('a');
+	    a.href = str;
+	    return a.host && a.host != window.location.host;
+	}
 
 /***/ },
 /* 1 */

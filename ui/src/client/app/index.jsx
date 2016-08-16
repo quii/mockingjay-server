@@ -151,7 +151,7 @@ const UI = React.createClass({
         this.putUpdate(json);
     },
     checkCompatability: function(e) {
-        if (!e.key || e.key === 'Enter') {
+        if ((!e.key || e.key === 'Enter') && isValidURL(e.target.value)) {
             console.log('do it!', e.target.value);
         }
     },
@@ -227,3 +227,9 @@ ReactDOM.render(
     <UI url="/mj-endpoints"/>,
     document.getElementById('app')
 );
+
+function isValidURL(str) {
+    var a  = document.createElement('a');
+    a.href = str;
+    return (a.host && a.host != window.location.host);
+}
