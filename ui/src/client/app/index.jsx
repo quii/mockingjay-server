@@ -91,9 +91,9 @@ const UI = React.createClass({
         ))
         const endpointLinks = this.state.data.map(endpoint => {
             let cssClass = "mdl-navigation__link";
-            // if(endpoint.Name===this.state.activeEndpoint){
-            //     cssClass += " mdl-color--accent-contrast mdl-color-text--primary";
-            // }
+            if(endpoint.Name===this.state.activeEndpoint){
+                cssClass += " mdl-color--primary-contrast mdl-color-text--accent";
+            }
 
             return (
                 <a

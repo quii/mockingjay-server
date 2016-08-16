@@ -160,9 +160,9 @@
 	        ));
 	        var endpointLinks = this.state.data.map(function (endpoint) {
 	            var cssClass = "mdl-navigation__link";
-	            // if(endpoint.Name===this.state.activeEndpoint){
-	            //     cssClass += " mdl-color--accent-contrast mdl-color-text--primary";
-	            // }
+	            if (endpoint.Name === _this.state.activeEndpoint) {
+	                cssClass += " mdl-color--primary-contrast mdl-color-text--accent";
+	            }
 	
 	            return _react2.default.createElement(
 	                'a',
@@ -22822,10 +22822,18 @@
 	var CDC = _react2.default.createClass({
 	    displayName: 'CDC',
 	
+	    getInitialState: function getInitialState() {
+	        return {
+	            remoteUrl: location.origin
+	        };
+	    },
+	    componentWillMount: function componentWillMount() {
+	        this.checkCompatability();
+	    },
 	    checkCompatability: function checkCompatability() {
-	        if (this.state && this.state.url && this.state.url !== null) {
+	        if (this.state && this.state.remoteUrl && this.state.remoteUrl !== null) {
 	            $.ajax({
-	                url: this.state.url,
+	                url: this.props.url + "?url=" + this.state.remoteUrl,
 	                dataType: 'json',
 	                cache: false,
 	                success: function (data) {
@@ -22843,19 +22851,13 @@
 	        });
 	
 	        if ((!e.key || e.key === 'Enter') && isValidURL(e.target.value)) {
-	            var url = this.props.url + "?url=" + e.target.value;
-	
 	            this.setState({
-	                url: url
+	                remoteUrl: e.target.value
 	            }, this.checkCompatability);
 	        }
 	    },
 	    label: function label() {
-	        if (this.state && this.state.data) {
-	            return "Automatically checking your endpoints are equivalent to whats at";
-	        } else {
-	            return "Click to enter a URL to compare your endpoints against to check they're correct";
-	        }
+	        return "Automatically checking your endpoints are equivalent to (click to change)";
 	    },
 	    indicatorClick: function indicatorClick() {
 	        this.refs['dialog'].showModal();
@@ -22889,7 +22891,7 @@
 	                        'div',
 	                        { className: 'mdl-textfield__expandable-holder' },
 	                        _react2.default.createElement('input', { className: 'mdl-textfield__input', type: 'text', name: 'sample',
-	                            id: 'fixed-header-drawer-exp', onBlur: this.checkCompatability, onKeyPress: this.handleUrlChange })
+	                            id: 'fixed-header-drawer-exp', onBlur: this.checkCompatability, onKeyPress: this.handleUrlChange, defaultValue: this.state.remoteUrl })
 	                    ),
 	                    checkDetails
 	                )

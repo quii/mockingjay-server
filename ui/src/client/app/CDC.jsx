@@ -2,10 +2,18 @@ import React from 'react';
 import dialogPolyfill from 'dialog-polyfill';
 
 const CDC = React.createClass({
+    getInitialState: function () {
+        return {
+            remoteUrl: location.origin
+        }
+    },
+    componentWillMount: function () {
+        this.checkCompatability()
+    },
     checkCompatability: function () {
-        if(this.state && this.state.url && this.state.url!==null) {
+        if(this.state && this.state.remoteUrl && this.state.remoteUrl!==null) {
             $.ajax({
-                url: this.state.url,
+                url: this.props.url + "?url=" + this.state.remoteUrl,
                 dataType: 'json',
                 cache: false,
                 success: function (data) {
@@ -23,19 +31,13 @@ const CDC = React.createClass({
         });
 
         if ((!e.key || e.key === 'Enter') && isValidURL(e.target.value)) {
-            const url = this.props.url + "?url=" + e.target.value;
-
             this.setState({
-                url
+                remoteUrl: e.target.value
             }, this.checkCompatability);
         }
     },
     label: function () {
-        if(this.state && this.state.data){
-            return "Automatically checking your endpoints are equivalent to whats at"
-        }else{
-            return "Click to enter a URL to compare your endpoints against to check they're correct"
-        }
+            return "Automatically checking your endpoints are equivalent to (click to change)"
     },
     indicatorClick: function () {
         this.refs['dialog'].showModal();
@@ -58,7 +60,7 @@ const CDC = React.createClass({
                         <label htmlFor="fixed-header-drawer-exp">{this.label()}</label>
                         <div className="mdl-textfield__expandable-holder">
                             <input className="mdl-textfield__input" type="text" name="sample"
-                                   id="fixed-header-drawer-exp" onBlur={this.checkCompatability} onKeyPress={this.handleUrlChange} />
+                                   id="fixed-header-drawer-exp" onBlur={this.checkCompatability} onKeyPress={this.handleUrlChange} defaultValue={this.state.remoteUrl} />
                         </div>
                         {checkDetails}
                     </div>

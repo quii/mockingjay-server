@@ -1,3 +1,17 @@
+- name: Hello, World!
+  cdcdisabled: false
+  request:
+    uri: /v1/intel/123
+    method: GET
+  response:
+    code: 200
+    body: |-
+      {
+      "intelId": 123,
+      "headline": "whatever"
+      }
+    headers:
+      Content-Type: application/json
 - name: Test endpoint
   cdcdisabled: false
   request:
@@ -16,7 +30,6 @@
   response:
     code: 200
     body: hello, world
-    headers: {}
 - name: Failing endpoint
   cdcdisabled: false
   request:
@@ -26,7 +39,6 @@
   response:
     code: 500
     body: Oh bugger
-    headers: {}
 - name: Endpoint not used for CDC
   cdcdisabled: true
   request:
@@ -36,7 +48,6 @@
   response:
     code: 500
     body: Oh no
-    headers: {}
 - name: Posting forms
   cdcdisabled: false
   request:
@@ -48,4 +59,3 @@
   response:
     code: 201
     body: Created
-    headers: {}

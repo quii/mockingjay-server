@@ -548,6 +548,10 @@ ul, ol {
     -webkit-font-smoothing: antialiased
 }
 
+.light-primary-colour{
+    background-color: #BBDEFB;
+}
+
 .mdl-color-text--red {
     color: #f44336 !important
 }
@@ -2752,7 +2756,7 @@ ul, ol {
     background-color: rgb(63, 81, 181) !important
 }
 
-.mdl-color--primary-contrast {
+mdl-color-text {
     background-color: rgb(255, 255, 255) !important
 }
 
