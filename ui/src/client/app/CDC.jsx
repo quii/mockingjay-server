@@ -1,4 +1,5 @@
 import React from 'react';
+import dialogPolyfill from 'dialog-polyfill';
 
 const CDC = React.createClass({
     checkCompatability: function () {
@@ -8,7 +9,6 @@ const CDC = React.createClass({
                 dataType: 'json',
                 cache: false,
                 success: function (data) {
-                    console.log('checked it yo');
                     this.setState({data: data});
                 }.bind(this),
                 error: function (xhr, status, err) {
@@ -37,12 +37,17 @@ const CDC = React.createClass({
             return "Click to enter a URL to compare your endpoints against to check they're correct"
         }
     },
+    indicatorClick: function () {
+        this.refs['dialog'].showModal();
+    },
     render: function () {
-        let checkDetails;
+        let checkDetails, messages;
         if(this.state && this.state.data){
-            checkDetails = this.state.data.Passed ? passing : failing;
+            checkDetails = this.state.data.Passed ? <TestIndicator indicatorClick={this.indicatorClick} badge="✓"/> : <TestIndicator indicatorClick={this.indicatorClick} badge="✘" />;
+            messages = this.state.data.Messages;
         }else{
-            checkDetails = dunno;
+            checkDetails = <TestIndicator indicatorClick={this.indicatorClick} badge="?" />;
+            messages = [];
         }
         return (
             <header className="mdl-layout__header">
@@ -58,6 +63,7 @@ const CDC = React.createClass({
                         </div>
                     </div>
                 </div>
+                <Dialog title="Messages from CDC check" messages={messages} ref="dialog" />
             </header>
 
         )
@@ -66,13 +72,45 @@ const CDC = React.createClass({
 
 const TestIndicator = React.createClass({
     render: function () {
-        return <div className="material-icons mdl-badge mdl-badge--overlap md-48" data-badge={this.props.badge}>compare_arrows</div>
+        return <div onClick={this.props.indicatorClick} className="material-icons mdl-badge mdl-badge--overlap md-48" data-badge={this.props.badge}>compare_arrows</div>
     }
 });
 
-const passing = <TestIndicator badge="✓"/>
-const failing = <TestIndicator badge="✘" />
-const dunno = <TestIndicator badge="?" />
+
+const Dialog = React.createClass({
+    componentDidMount: function () {
+        const dialog = document.querySelector('dialog');
+
+        if(!dialog.showModal) {
+            dialogPolyfill.registerDialog(dialog);
+        }
+    },
+    showModal: function () {
+        if(this.props.messages && this.props.messages.length > 0) {
+            document.querySelector('dialog').showModal();
+        }
+    },
+    close: function () {
+        document.querySelector('dialog').close();
+    },
+    render: function () {
+        let errs;
+        if(this.props.messages) {
+            errs = this.props.messages.map(m => <li>{m}</li>)
+        }
+        return (
+            <dialog className="mdl-dialog" style={{width:"700px"}}>
+                <h4 className="mdl-dialog__title">{this.props.title}</h4>
+                <div className="mdl-dialog__content" style={{"font-family": "Courier"}}>
+                    <ul>{errs}</ul>
+                </div>
+                <div className="mdl-dialog__actions">
+                    <button type="button" onClick={this.close} className="mdl-button">Close</button>
+                </div>
+            </dialog>
+        )
+    }
+})
 
 function isValidURL(str) {
     var a  = document.createElement('a');

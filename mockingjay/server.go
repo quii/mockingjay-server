@@ -137,7 +137,7 @@ func (s *Server) checkCompatability(url string, w http.ResponseWriter) {
 
 	msgBuffer := new(bytes.Buffer)
 
-	compatLogger := log.New(msgBuffer, "mockingjay-server", log.Ldate|log.Ltime)
+	compatLogger := log.New(msgBuffer, "", 0)
 	compatChecker := NewCompatabilityChecker(compatLogger, DefaultHTTPTimeoutSeconds)
 
 	compatible := compatChecker.CheckCompatibility(s.Endpoints, url)
