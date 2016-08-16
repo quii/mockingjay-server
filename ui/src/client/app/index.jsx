@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Endpoint from './endpoints.jsx';
+import CDC from './CDC.jsx'
 import _ from 'lodash';
 
 const UI = React.createClass({
@@ -89,9 +90,9 @@ const UI = React.createClass({
         ))
         const endpointLinks = this.state.data.map(endpoint => {
             let cssClass = "mdl-navigation__link";
-            if(endpoint.Name===this.state.activeEndpoint){
-                cssClass += " mdl-color--accent-contrast mdl-color-text--primary";
-            }
+            // if(endpoint.Name===this.state.activeEndpoint){
+            //     cssClass += " mdl-color--accent-contrast mdl-color-text--primary";
+            // }
 
             return (
                 <a
@@ -150,11 +151,6 @@ const UI = React.createClass({
 
         this.putUpdate(json);
     },
-    checkCompatability: function(e) {
-        if ((!e.key || e.key === 'Enter') && isValidURL(e.target.value)) {
-            console.log('do it!', e.target.value);
-        }
-    },
     renderCurrentEndpoint: function(){
         if(this.state.activeEndpoint) {
             const index = _.findIndex(this.state.data, ep => ep.Name==this.state.activeEndpoint)
@@ -187,29 +183,14 @@ const UI = React.createClass({
         return (
         <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
 
-            <header className="mdl-layout__header">
-                <div className="mdl-layout__header-row">
-                    <div className="mdl-layout-spacer"></div>
-                    <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable
-                  mdl-textfield--floating-label mdl-textfield--align-right">
-                        <label className=""
-                               htmlFor="fixed-header-drawer-exp">
-                            <i className="material-icons">playlist_add_check</i>Check endpoints against real URL
-                        </label>
-                        <div className="mdl-textfield__expandable-holder">
-                            <input className="mdl-textfield__input" type="text" name="sample"
-                                   id="fixed-header-drawer-exp" onBlur={this.checkCompatability} onKeyPress={this.checkCompatability} />
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <CDC url="/mj-check-compatability" />
             <div className="mdl-layout__drawer">
                 <h1 className="mdl-layout-title mdl-color-text--primary">mockingjay server</h1>
                 <nav className="mdl-navigation">
                     {this.getMenuLinks()}
                 </nav>
             </div>
-            <main className="mdl-layout__content">
+            <main className="mdl-layout__content mdl-color--grey-100">
                 <div className="page-content">
                     {this.renderCurrentEndpoint()}
                 </div>
@@ -227,9 +208,3 @@ ReactDOM.render(
     <UI url="/mj-endpoints"/>,
     document.getElementById('app')
 );
-
-function isValidURL(str) {
-    var a  = document.createElement('a');
-    a.href = str;
-    return (a.host && a.host != window.location.host);
-}

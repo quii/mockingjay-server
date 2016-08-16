@@ -1,3 +1,10 @@
+/**
+ * material-design-lite - Material Design Components in CSS, JS and HTML
+ * @version v1.2.0
+ * @license Apache-2.0
+ * @copyright 2015 Google, Inc.
+ * @link https://github.com/google/material-design-lite
+ */
 @charset "UTF-8";
 html {
     color: rgba(0, 0, 0, .87)
@@ -242,7 +249,7 @@ p {
 }
 
 a {
-    color: rgb(255, 64, 129);
+    color: rgb(255, 171, 64);
     font-weight: 500
 }
 
@@ -2754,11 +2761,11 @@ ul, ol {
 }
 
 .mdl-color--accent {
-    background-color: rgb(255, 64, 129) !important
+    background-color: rgb(255, 171, 64) !important
 }
 
 .mdl-color--accent-contrast {
-    background-color: rgb(255, 255, 255) !important
+    background-color: rgb(66, 66, 66) !important
 }
 
 .mdl-color-text--primary {
@@ -2774,11 +2781,11 @@ ul, ol {
 }
 
 .mdl-color-text--accent {
-    color: rgb(255, 64, 129) !important
+    color: rgb(255, 171, 64) !important
 }
 
 .mdl-color-text--accent-contrast {
-    color: rgb(255, 255, 255) !important
+    color: rgb(66, 66, 66) !important
 }
 
 .mdl-ripple {
@@ -2848,16 +2855,16 @@ ul, ol {
     -ms-flex-align: center;
     align-items: center;
     position: absolute;
-    top: -11px;
+    top: -0px;
     right: -24px;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 16px;
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: rgb(255, 64, 129);
-    color: rgb(255, 255, 255)
+    background: rgb(255, 171, 64);
+    color: rgb(66, 66, 66)
 }
 
 .mdl-button .mdl-badge[data-badge]:after {
@@ -2866,8 +2873,8 @@ ul, ol {
 }
 
 .mdl-badge.mdl-badge--no-background[data-badge]:after {
-    color: rgb(255, 64, 129);
-    background: rgba(255, 255, 255, .2);
+    color: rgb(255, 171, 64);
+    background: rgba(66, 66, 66, .2);
     box-shadow: 0 0 1px gray
 }
 
@@ -3017,24 +3024,24 @@ input.mdl-button[type="submit"] {
 }
 
 .mdl-button--fab.mdl-button--colored {
-    background: rgb(255, 64, 129);
-    color: rgb(255, 255, 255)
+    background: rgb(255, 171, 64);
+    color: rgb(66, 66, 66)
 }
 
 .mdl-button--fab.mdl-button--colored:hover {
-    background-color: rgb(255, 64, 129)
+    background-color: rgb(255, 171, 64)
 }
 
 .mdl-button--fab.mdl-button--colored:focus:not(:active) {
-    background-color: rgb(255, 64, 129)
+    background-color: rgb(255, 171, 64)
 }
 
 .mdl-button--fab.mdl-button--colored:active {
-    background-color: rgb(255, 64, 129)
+    background-color: rgb(255, 171, 64)
 }
 
 .mdl-button--fab.mdl-button--colored .mdl-ripple {
-    background: rgb(255, 255, 255)
+    background: rgb(66, 66, 66)
 }
 
 .mdl-button--icon {
@@ -3106,16 +3113,16 @@ input.mdl-button[type="submit"] {
 }
 
 .mdl-button--accent.mdl-button--accent {
-    color: rgb(255, 64, 129)
+    color: rgb(255, 171, 64)
 }
 
 .mdl-button--accent.mdl-button--accent .mdl-ripple {
-    background: rgb(255, 255, 255)
+    background: rgb(66, 66, 66)
 }
 
 .mdl-button--accent.mdl-button--accent.mdl-button--raised, .mdl-button--accent.mdl-button--accent.mdl-button--fab {
-    color: rgb(255, 255, 255);
-    background-color: rgb(255, 64, 129)
+    color: rgb(66, 66, 66);
+    background-color: rgb(255, 171, 64)
 }
 
 .mdl-button[disabled][disabled], .mdl-button.mdl-button--disabled.mdl-button--disabled {
@@ -3163,7 +3170,7 @@ input.mdl-button[type="submit"] {
 }
 
 .mdl-card__media {
-    background-color: rgb(255, 64, 129);
+    background-color: rgb(255, 171, 64);
     background-repeat: repeat;
     background-position: 50% 50%;
     background-size: cover;
@@ -5180,7 +5187,7 @@ fieldset[disabled] .mdl-checkbox .mdl-checkbox__ripple-container .mdl-ripple, .m
     bottom: 0;
     left: 0;
     position: absolute;
-    background: rgb(255, 64, 129);
+    background: rgb(255, 171, 64);
     -webkit-animation: border-expand .2s cubic-bezier(.4, 0, .4, 1) .01s alternate forwards;
     animation: border-expand .2s cubic-bezier(.4, 0, .4, 1) .01s alternate forwards;
     transition: all 1s cubic-bezier(.4, 0, 1, 1)
@@ -5716,7 +5723,7 @@ _:-ms-input-placeholder, :root .mdl-slider.mdl-slider.is-upgraded {
 .mdl-snackbar__action {
     background: 0 0;
     border: none;
-    color: rgb(255, 64, 129);
+    color: rgb(255, 171, 64);
     float: right;
     padding: 14px 24px 14px 12px;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;

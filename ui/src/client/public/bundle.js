@@ -61,6 +61,10 @@
 	
 	var _endpoints2 = _interopRequireDefault(_endpoints);
 	
+	var _CDC = __webpack_require__(/*! ./CDC.jsx */ 179);
+	
+	var _CDC2 = _interopRequireDefault(_CDC);
+	
 	var _lodash = __webpack_require__(/*! lodash */ 177);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
@@ -155,9 +159,9 @@
 	        ));
 	        var endpointLinks = this.state.data.map(function (endpoint) {
 	            var cssClass = "mdl-navigation__link";
-	            if (endpoint.Name === _this.state.activeEndpoint) {
-	                cssClass += " mdl-color--accent-contrast mdl-color-text--primary";
-	            }
+	            // if(endpoint.Name===this.state.activeEndpoint){
+	            //     cssClass += " mdl-color--accent-contrast mdl-color-text--primary";
+	            // }
 	
 	            return _react2.default.createElement(
 	                'a',
@@ -217,11 +221,6 @@
 	
 	        this.putUpdate(json);
 	    },
-	    checkCompatability: function checkCompatability(e) {
-	        if ((!e.key || e.key === 'Enter') && isValidURL(e.target.value)) {
-	            console.log('do it!', e.target.value);
-	        }
-	    },
 	    renderCurrentEndpoint: function renderCurrentEndpoint() {
 	        var _this2 = this;
 	
@@ -259,36 +258,7 @@
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'mdl-layout mdl-js-layout mdl-layout--fixed-drawer' },
-	            _react2.default.createElement(
-	                'header',
-	                { className: 'mdl-layout__header' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'mdl-layout__header-row' },
-	                    _react2.default.createElement('div', { className: 'mdl-layout-spacer' }),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right' },
-	                        _react2.default.createElement(
-	                            'label',
-	                            { className: '',
-	                                htmlFor: 'fixed-header-drawer-exp' },
-	                            _react2.default.createElement(
-	                                'i',
-	                                { className: 'material-icons' },
-	                                'playlist_add_check'
-	                            ),
-	                            'Check endpoints against real URL'
-	                        ),
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'mdl-textfield__expandable-holder' },
-	                            _react2.default.createElement('input', { className: 'mdl-textfield__input', type: 'text', name: 'sample',
-	                                id: 'fixed-header-drawer-exp', onBlur: this.checkCompatability, onKeyPress: this.checkCompatability })
-	                        )
-	                    )
-	                )
-	            ),
+	            _react2.default.createElement(_CDC2.default, { url: '/mj-check-compatability' }),
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'mdl-layout__drawer' },
@@ -305,7 +275,7 @@
 	            ),
 	            _react2.default.createElement(
 	                'main',
-	                { className: 'mdl-layout__content' },
+	                { className: 'mdl-layout__content mdl-color--grey-100' },
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'page-content' },
@@ -322,12 +292,6 @@
 	    }
 	});
 	_reactDom2.default.render(_react2.default.createElement(UI, { url: '/mj-endpoints' }), document.getElementById('app'));
-	
-	function isValidURL(str) {
-	    var a = document.createElement('a');
-	    a.href = str;
-	    return a.host && a.host != window.location.host;
-	}
 
 /***/ },
 /* 1 */
@@ -39592,6 +39556,118 @@
 		return module;
 	}
 
+
+/***/ },
+/* 179 */
+/*!********************************!*\
+  !*** ./src/client/app/CDC.jsx ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var CDC = _react2.default.createClass({
+	    displayName: 'CDC',
+	
+	    checkCompatability: function checkCompatability() {
+	        if (this.state.url) {
+	            $.ajax({
+	                url: this.state.url,
+	                dataType: 'json',
+	                cache: false,
+	                success: function (data) {
+	                    this.setState({ data: data });
+	                }.bind(this),
+	                error: function (xhr, status, err) {
+	                    console.error(this.props.url, status, err.toString());
+	                }.bind(this)
+	            });
+	        }
+	    },
+	    handleUrlChange: function handleUrlChange(e) {
+	        this.setState({
+	            data: null
+	        });
+	
+	        if ((!e.key || e.key === 'Enter') && isValidURL(e.target.value)) {
+	            var url = this.props.url + "?url=" + e.target.value;
+	
+	            this.setState({
+	                url: url
+	            });
+	
+	            this.checkCompatability();
+	        }
+	    },
+	    render: function render() {
+	        var checkDetails = void 0;
+	        if (this.state && this.state.data) {
+	            checkDetails = this.state.data.Passed ? passing : failing;
+	        } else {
+	            checkDetails = dunno;
+	        }
+	        return _react2.default.createElement(
+	            'header',
+	            { className: 'mdl-layout__header' },
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'mdl-layout__header-row' },
+	                _react2.default.createElement('div', { className: 'mdl-layout-spacer' }),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right' },
+	                    checkDetails,
+	                    _react2.default.createElement(
+	                        'label',
+	                        { className: '',
+	                            htmlFor: 'fixed-header-drawer-exp' },
+	                        'Check endpoints against real URL'
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'mdl-textfield__expandable-holder' },
+	                        _react2.default.createElement('input', { className: 'mdl-textfield__input', type: 'text', name: 'sample',
+	                            id: 'fixed-header-drawer-exp', onBlur: this.checkCompatability, onKeyPress: this.handleUrlChange })
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+	
+	var TestIndicator = _react2.default.createClass({
+	    displayName: 'TestIndicator',
+	
+	    render: function render() {
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'material-icons mdl-badge mdl-badge--overlap md-48', 'data-badge': this.props.badge },
+	            'compare_arrows'
+	        );
+	    }
+	});
+	
+	var passing = _react2.default.createElement(TestIndicator, { badge: '✓' });
+	var failing = _react2.default.createElement(TestIndicator, { badge: '✘' });
+	var dunno = _react2.default.createElement(TestIndicator, { badge: '?' });
+	
+	function isValidURL(str) {
+	    var a = document.createElement('a');
+	    a.href = str;
+	    return a.host;
+	}
+	
+	exports.default = CDC;
 
 /***/ }
 /******/ ]);
