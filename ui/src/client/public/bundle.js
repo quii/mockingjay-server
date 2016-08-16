@@ -39587,6 +39587,7 @@
 	                dataType: 'json',
 	                cache: false,
 	                success: function (data) {
+	                    console.log('checked it yo');
 	                    this.setState({ data: data });
 	                }.bind(this),
 	                error: function (xhr, status, err) {
@@ -39605,9 +39606,14 @@
 	
 	            this.setState({
 	                url: url
-	            });
-	
-	            this.checkCompatability();
+	            }, this.checkCompatability);
+	        }
+	    },
+	    label: function label() {
+	        if (this.state && this.state.data) {
+	            return "Automatically checking your endpoints are equivalent to whats at";
+	        } else {
+	            return "Click to enter a URL to compare your endpoints against to check they're correct";
 	        }
 	    },
 	    render: function render() {
@@ -39630,9 +39636,8 @@
 	                    checkDetails,
 	                    _react2.default.createElement(
 	                        'label',
-	                        { className: '',
-	                            htmlFor: 'fixed-header-drawer-exp' },
-	                        'Check endpoints against real URL'
+	                        { htmlFor: 'fixed-header-drawer-exp' },
+	                        this.label()
 	                    ),
 	                    _react2.default.createElement(
 	                        'div',

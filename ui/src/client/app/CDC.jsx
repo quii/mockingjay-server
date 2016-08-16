@@ -8,6 +8,7 @@ const CDC = React.createClass({
                 dataType: 'json',
                 cache: false,
                 success: function (data) {
+                    console.log('checked it yo');
                     this.setState({data: data});
                 }.bind(this),
                 error: function (xhr, status, err) {
@@ -26,9 +27,14 @@ const CDC = React.createClass({
 
             this.setState({
                 url
-            });
-
-            this.checkCompatability();
+            }, this.checkCompatability);
+        }
+    },
+    label: function () {
+        if(this.state && this.state.data){
+            return "Automatically checking your endpoints are equivalent to whats at"
+        }else{
+            return "Click to enter a URL to compare your endpoints against to check they're correct"
         }
     },
     render: function () {
@@ -45,10 +51,7 @@ const CDC = React.createClass({
                     <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable
                   mdl-textfield--floating-label mdl-textfield--align-right">
                         {checkDetails}
-                        <label className=""
-                               htmlFor="fixed-header-drawer-exp">
-                            Check endpoints against real URL
-                        </label>
+                        <label htmlFor="fixed-header-drawer-exp">{this.label()}</label>
                         <div className="mdl-textfield__expandable-holder">
                             <input className="mdl-textfield__input" type="text" name="sample"
                                    id="fixed-header-drawer-exp" onBlur={this.checkCompatability} onKeyPress={this.handleUrlChange} />
