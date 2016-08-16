@@ -102,6 +102,7 @@
 	            cache: false,
 	            data: update,
 	            success: function (data) {
+	                this.refs['cdc'].checkCompatability();
 	                this.setState({ data: data });
 	            }.bind(this),
 	            error: function (xhr, status, err) {
@@ -258,7 +259,7 @@
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'mdl-layout mdl-js-layout mdl-layout--fixed-drawer' },
-	            _react2.default.createElement(_CDC2.default, { url: '/mj-check-compatability' }),
+	            _react2.default.createElement(_CDC2.default, { ref: 'cdc', url: '/mj-check-compatability' }),
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'mdl-layout__drawer' },
@@ -39580,7 +39581,7 @@
 	    displayName: 'CDC',
 	
 	    checkCompatability: function checkCompatability() {
-	        if (this.state.url) {
+	        if (this.state && this.state.url && this.state.url !== null) {
 	            $.ajax({
 	                url: this.state.url,
 	                dataType: 'json',

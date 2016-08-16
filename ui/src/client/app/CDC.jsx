@@ -2,7 +2,7 @@ import React from 'react';
 
 const CDC = React.createClass({
     checkCompatability: function () {
-        if(this.state.url) {
+        if(this.state && this.state.url && this.state.url!==null) {
             $.ajax({
                 url: this.state.url,
                 dataType: 'json',

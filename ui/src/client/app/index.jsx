@@ -33,6 +33,7 @@ const UI = React.createClass({
             cache: false,
             data: update,
             success: function(data) {
+                this.refs['cdc'].checkCompatability();
                 this.setState({data: data});
             }.bind(this),
             error: function(xhr, status, err) {
@@ -183,7 +184,7 @@ const UI = React.createClass({
         return (
         <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
 
-            <CDC url="/mj-check-compatability" />
+            <CDC ref="cdc" url="/mj-check-compatability" />
             <div className="mdl-layout__drawer">
                 <h1 className="mdl-layout-title mdl-color-text--primary">mockingjay server</h1>
                 <nav className="mdl-navigation">
