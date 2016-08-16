@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"github.com/quii/mockingjay-server/mockingjay"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"log"
@@ -19,7 +20,7 @@ var (
 const testYAMLPath = "examples/example.yaml"
 
 func init() {
-	app = defaultApplication(log.New(ioutil.Discard, "", 0), defaultHTTPTimeoutSeconds)
+	app = defaultApplication(log.New(ioutil.Discard, "", 0), mockingjay.DefaultHTTPTimeoutSeconds)
 	svr, err := app.CreateServer(testYAMLPath, "", false, nil)
 
 	if err != nil {
@@ -30,7 +31,7 @@ func init() {
 }
 
 func TestIssue42(t *testing.T) {
-	failApp := defaultApplication(log.New(ioutil.Discard, "", 0), defaultHTTPTimeoutSeconds)
+	failApp := defaultApplication(log.New(ioutil.Discard, "", 0), mockingjay.DefaultHTTPTimeoutSeconds)
 	failSvr, _ := failApp.CreateServer("examples/issue42.yaml", "", false, nil)
 	svr := httptest.NewServer(failSvr)
 	defer svr.Close()

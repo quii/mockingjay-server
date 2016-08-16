@@ -1,20 +1,18 @@
-package main
+package mockingjay
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
 	"time"
-
-	"github.com/quii/mockingjay-server/mockingjay"
-	"github.com/stretchr/testify/assert"
 )
 
 var (
-	checker = NewCompatabilityChecker(log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime), defaultHTTPTimeoutSeconds)
+	checker = NewCompatabilityChecker(log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime), DefaultHTTPTimeoutSeconds)
 )
 
 func TestItIgnoresEndpointsNotSetToCDC(t *testing.T) {
@@ -29,7 +27,7 @@ func TestItIgnoresEndpointsNotSetToCDC(t *testing.T) {
      code: 200
      body: 'ok'
 `
-	endpoints, _ := mockingjay.NewFakeEndpoints([]byte(yaml))
+	endpoints, _ := NewFakeEndpoints([]byte(yaml))
 
 	realServerThatsNotCompatible := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, ":(")
@@ -52,7 +50,7 @@ func TestItMatchesHeaders(t *testing.T) {
      headers:
        content-type: text/json
 `
-	endpoints, err := mockingjay.NewFakeEndpoints([]byte(yaml))
+	endpoints, err := NewFakeEndpoints([]byte(yaml))
 
 	assert.Nil(t, err)
 
@@ -167,7 +165,7 @@ func TestItIsIncompatibleWhenRealServerIsntReachable(t *testing.T) {
 
 func TestItHandlesBadURLsInConfig(t *testing.T) {
 	yaml := fmt.Sprintf(yamlFormat, "not a real url", "foobar")
-	fakeEndPoints, _ := mockingjay.NewFakeEndpoints([]byte(yaml))
+	fakeEndPoints, _ := NewFakeEndpoints([]byte(yaml))
 
 	assert.False(t, checker.CheckCompatibility(fakeEndPoints, "also not a real url"))
 }
@@ -195,7 +193,7 @@ func TestWhitespaceSensitivity(t *testing.T) {
     code: 200
     body: '{"token": "1234abc"}'
         `
-	fakeEndPoints, _ := mockingjay.NewFakeEndpoints([]byte(y))
+	fakeEndPoints, _ := NewFakeEndpoints([]byte(y))
 	realServer := makeFakeDownstreamServer(`{"token":    "1234abc"}`, noSleep)
 
 	assert.True(t, checker.CheckCompatibility(fakeEndPoints, realServer.URL))
@@ -227,11 +225,11 @@ func makeFakeDownstreamServer(responseBody string, sleepTime time.Duration) *htt
 	}))
 }
 
-func makeEndpoints(body string) []mockingjay.FakeEndpoint {
-	e, _ := mockingjay.NewFakeEndpoints([]byte(testYAML(body)))
+func makeEndpoints(body string) []FakeEndpoint {
+	e, _ := NewFakeEndpoints([]byte(makeTestYAML(body)))
 	return e
 }
 
-func testYAML(responseBody string) string {
+func makeTestYAML(responseBody string) string {
 	return fmt.Sprintf(yamlFormat, defaultRequestURI, responseBody)
 }

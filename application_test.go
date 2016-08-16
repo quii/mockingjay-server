@@ -109,7 +109,18 @@ func testApplication() *application {
 
 func testMockingJayConfig() []mockingjay.FakeEndpoint {
 
-	m, err := mockingjay.NewFakeEndpoints([]byte(testYAML("hello, world")))
+	yaml := `
+---
+ - name: Test endpoint
+   request:
+     uri: /hello
+     method: GET
+   response:
+     code: 200
+     body: 'hello, world'
+`
+
+	m, err := mockingjay.NewFakeEndpoints([]byte(yaml))
 
 	if err != nil {
 		log.Fatal(err)

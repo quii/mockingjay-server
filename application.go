@@ -46,7 +46,7 @@ func defaultApplication(logger *log.Logger, httpTimeout time.Duration) (app *app
 	app = new(application)
 	app.configLoader = globFileLoader
 	app.mockingjayLoader = mockingjay.NewFakeEndpoints
-	app.compatabilityChecker = NewCompatabilityChecker(logger, httpTimeout)
+	app.compatabilityChecker = mockingjay.NewCompatabilityChecker(logger, httpTimeout)
 	app.mockingjayServerMaker = mockingjay.NewServer
 	app.monkeyServerMaker = monkey.NewServer
 	app.logger = logger
