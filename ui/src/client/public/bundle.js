@@ -114,7 +114,7 @@
 	    add: function add() {
 	        var data = _lodash2.default.cloneDeep(this.state.data);
 	
-	        var newEndpointName = "Hello, World!";
+	        var newEndpointName = guid();
 	
 	        var newEndpoint = {
 	            Name: newEndpointName,
@@ -155,13 +155,31 @@
 	            'a',
 	            {
 	                onClick: this.add,
-	                className: 'mdl-navigation__link' },
+	                className: 'mdl-navigation__link mdl-color-text--primary-dark' },
+	            _react2.default.createElement(
+	                'i',
+	                { className: 'material-icons md-32' },
+	                'add'
+	            ),
 	            'Add new endoint'
 	        ));
+	
 	        var endpointLinks = this.state.data.map(function (endpoint) {
 	            var cssClass = "mdl-navigation__link";
+	            var name = endpoint.Name;
+	
 	            if (endpoint.Name === _this.state.activeEndpoint) {
 	                cssClass += " mdl-color--primary-contrast mdl-color-text--accent";
+	                name = _react2.default.createElement(
+	                    'div',
+	                    null,
+	                    _react2.default.createElement(
+	                        'i',
+	                        { className: 'material-icons md-32' },
+	                        'fingerprint'
+	                    ),
+	                    endpoint.Name
+	                );
 	            }
 	
 	            return _react2.default.createElement(
@@ -172,7 +190,7 @@
 	                    onClick: function onClick(event) {
 	                        return _this.openEditor(endpoint.Name, event);
 	                    } },
-	                endpoint.Name
+	                name
 	            );
 	        });
 	
@@ -293,6 +311,13 @@
 	    }
 	});
 	_reactDom2.default.render(_react2.default.createElement(UI, { url: '/mj-endpoints' }), document.getElementById('app'));
+	
+	function guid() {
+	    function s4() {
+	        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+	    }
+	    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+	}
 
 /***/ },
 /* 1 */

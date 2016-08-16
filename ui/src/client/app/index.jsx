@@ -45,7 +45,7 @@ const UI = React.createClass({
     add: function () {
         let data = _.cloneDeep(this.state.data);
 
-        const newEndpointName = "Hello, World!";
+        const newEndpointName = guid();
 
         const newEndpoint = {
             Name: newEndpointName,
@@ -86,21 +86,27 @@ const UI = React.createClass({
         items.push((
             <a
                 onClick={this.add}
-                className="mdl-navigation__link">
-                Add new endoint</a>
-        ))
+                className="mdl-navigation__link mdl-color-text--primary-dark">
+                <i className="material-icons md-32">add</i>Add new endoint</a>
+        ));
+
         const endpointLinks = this.state.data.map(endpoint => {
             let cssClass = "mdl-navigation__link";
+            let name = endpoint.Name
+
             if(endpoint.Name===this.state.activeEndpoint){
                 cssClass += " mdl-color--primary-contrast mdl-color-text--accent";
+                name = <div><i className="material-icons md-32">fingerprint</i>{endpoint.Name}</div>
             }
+
+
 
             return (
                 <a
                     ref={'menu-'+endpoint.Name}
                     className={cssClass}
                     onClick={(event)=>this.openEditor(endpoint.Name, event)}>
-                    {endpoint.Name}
+                    {name}
                 </a>
             )
         });
@@ -209,3 +215,13 @@ ReactDOM.render(
     <UI url="/mj-endpoints"/>,
     document.getElementById('app')
 );
+
+function guid() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+}

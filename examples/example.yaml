@@ -1,61 +1,18 @@
-- name: Hello, World!
+- name: 28b1ecf1-72ad-5f7a-2bff-94537784a8a8
   cdcdisabled: false
   request:
-    uri: /v1/intel/123
+    uri: /hello
+    method: GET
+  response:
+    code: 200
+    body: World!
+- name: Pretend get article authors
+  cdcdisabled: false
+  request:
+    uri: /article/authors/123-456
     method: GET
   response:
     code: 200
     body: |-
-      {
-      "intelId": 123,
-      "headline": "whatever"
-      }
-    headers:
-      Content-Type: application/json
-- name: Test endpoint
-  cdcdisabled: false
-  request:
-    uri: /helloooo
-    method: GET
-  response:
-    code: 200
-    body: '{"message": "hello, world"}'
-    headers:
-      content-type: text/json
-- name: Test endpoint 2
-  cdcdisabled: false
-  request:
-    uri: /world
-    method: DELETE
-  response:
-    code: 200
-    body: hello, world
-- name: Failing endpoint
-  cdcdisabled: false
-  request:
-    uri: /card
-    method: POST
-    body: Greetings
-  response:
-    code: 500
-    body: Oh bugger
-- name: Endpoint not used for CDC
-  cdcdisabled: true
-  request:
-    uri: /burp
-    method: POST
-    body: Belch
-  response:
-    code: 500
-    body: Oh no
-- name: Posting forms
-  cdcdisabled: false
-  request:
-    uri: /cats
-    method: POST
-    form:
-      age: "10"
-      name: Hudson
-  response:
-    code: 201
-    body: Created
+      Chris James
+      Ruth Baker
