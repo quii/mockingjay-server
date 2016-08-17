@@ -134,9 +134,13 @@ const EndpointForm = React.createClass({
                                                           onChange={this.props.onChange}/>
                 </div>
 
-                <button onClick={this.props.finishEditing} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
-                    Save
-                </button>
+                <div style={{margin:"2% 2% 2% 3%"}}>
+                    <button onClick={this.props.finishEditing} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
+                        Save
+                    </button>
+                </div>
+
+
             </div>
         )
     }

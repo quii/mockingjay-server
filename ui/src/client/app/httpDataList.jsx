@@ -39,16 +39,17 @@ export const HttpDataEditor = React.createClass({
             numberOfItems: this.state.numberOfItems+1
         });
     },
-    updateMap: function(ref){
+    updateMap: function(){
         const newState = {};
         for(let i=0; i < Object.keys(this.refs).length; i+=2){
             var keyName = Object.keys(this.refs)[i];
             var valueName = Object.keys(this.refs)[i+1];
 
+
             const k = this.refs[keyName].value;
             const v = this.refs[valueName].value;
 
-            if(k!=="" && v!=="") {
+            if(k!=="" || v!=="") {
                 newState[k] = v;
             }
         }
@@ -62,32 +63,22 @@ export const HttpDataEditor = React.createClass({
     createInput: function (ref, key, val) {
         return (
         <div className="mdl-textfield mdl-js-textfield">
-            <input ref={ref+"key"} className="mdl-textfield__input" type="text" name={this.props.name} value={key} onChange={this.updateMap} />
+            <input ref={ref+"key"} className="mdl-textfield__input" type="text" value={key} onChange={this.updateMap} />
             <i className="material-icons">chevron_right</i>
-            <input ref={ref+"value"} className="mdl-textfield__input" type="text" name={this.props.name} value={val} onChange={this.updateMap} />
+            <input ref={ref+"value"} className="mdl-textfield__input" type="text" value={val} onChange={this.updateMap} />
         </div>
         )
-
     },
     render: function () {
         const label = this.props.label || this.props.name;
-        const items = mapKeyVals(this.props.items, (key, val, i) => {
+        const items = mapKeyVals(this.props.items, (key, val, i) => this.createInput(this.props.name+i, key, val));
+        items.push(this.createInput(this.props.name+(items.length+1), "", ""));
 
-
-            return (<li key={rand()}>
-                <input onChange={this.updateMap} ref={i+"key"} type="text" value={key}/>
-                <i className="material-icons">chevron_right</i>
-                <input onChange={this.updateMap} ref={i+"value"} type="text" value={val}/>
-            </li>);
-        });
-        const remainingItems = this.state.numberOfItems - items.length;
+        const remainingItems = this.state.numberOfItems+1 - items.length;
 
         for(let i=0; i < remainingItems; i++){
-            items.push(<li key={rand()}>
-                <input onChange={this.updateMap} ref={i+items.length+"key"} type="text"/> ->
-                <input onChange={this.updateMap} ref={i+items.length+"value"} type="text"/>
-
-            </li>)
+            const newItem = this.createInput(this.props.name+(i+items.length), "", "")
+            items.push(newItem)
         }
 
         return <HttpDataView onClick={this.addItem} name={label} items={items}/>
@@ -96,12 +87,10 @@ export const HttpDataEditor = React.createClass({
 
 const HttpDataView = React.createClass({
     render: function () {
-        const addButton = <button onClick={this.props.onClick}>+</button>
         return (
             <div className="list-editor">
                 <label>{this.props.name}</label>
                 <ul>{this.props.items}</ul>
-                {addButton}
             </div>
         )
     }

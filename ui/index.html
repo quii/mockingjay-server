@@ -50,23 +50,25 @@
             cursor: default;
         }
 
-        .list-editor input{
-            border: none;
-            border-bottom: 1px solid rgba(0, 0, 0, .12);
-            display: block;
-            font-size: 16px;
-            font-family: "Helvetica", "Arial", sans-serif;
-            margin: 0;
-            padding: 4px 0;
-            /*width: 100%;*/
-            background: 0 0;
-            text-align: left;
-            color: inherit;
-            float: left;
-        }
-
         .list-editor li {
             list-style: none;
+        }
+
+        .list-editor .mdl-textfield{
+            width:100%;
+        }
+
+        .list-editor i, .list-editor input{
+            float:left;
+            margin:0 2% 0 0
+        }
+
+        .list-editor input{
+            width:30%;
+        }
+
+        textarea{
+            font-family: Courier;
         }
     </style>
 </head>

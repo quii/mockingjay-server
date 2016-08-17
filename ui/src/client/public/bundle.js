@@ -22444,9 +22444,13 @@
 	                    onChange: this.props.onChange })
 	            ),
 	            _react2.default.createElement(
-	                'button',
-	                { onClick: this.props.finishEditing, className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent' },
-	                'Save'
+	                'div',
+	                { style: { margin: "2% 2% 2% 3%" } },
+	                _react2.default.createElement(
+	                    'button',
+	                    { onClick: this.props.finishEditing, className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent' },
+	                    'Save'
+	                )
 	            )
 	        );
 	    }
@@ -22559,7 +22563,7 @@
 	            numberOfItems: this.state.numberOfItems + 1
 	        });
 	    },
-	    updateMap: function updateMap(ref) {
+	    updateMap: function updateMap() {
 	        var newState = {};
 	        for (var i = 0; i < Object.keys(this.refs).length; i += 2) {
 	            var keyName = Object.keys(this.refs)[i];
@@ -22568,7 +22572,7 @@
 	            var k = this.refs[keyName].value;
 	            var v = this.refs[valueName].value;
 	
-	            if (k !== "" && v !== "") {
+	            if (k !== "" || v !== "") {
 	                newState[k] = v;
 	            }
 	        }
@@ -22583,13 +22587,13 @@
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'mdl-textfield mdl-js-textfield' },
-	            _react2.default.createElement('input', { ref: ref + "key", className: 'mdl-textfield__input', type: 'text', name: this.props.name, value: key, onChange: this.updateMap }),
+	            _react2.default.createElement('input', { ref: ref + "key", className: 'mdl-textfield__input', type: 'text', value: key, onChange: this.updateMap }),
 	            _react2.default.createElement(
 	                'i',
 	                { className: 'material-icons' },
 	                'chevron_right'
 	            ),
-	            _react2.default.createElement('input', { ref: ref + "value", className: 'mdl-textfield__input', type: 'text', name: this.props.name, value: val, onChange: this.updateMap })
+	            _react2.default.createElement('input', { ref: ref + "value", className: 'mdl-textfield__input', type: 'text', value: val, onChange: this.updateMap })
 	        );
 	    },
 	    render: function render() {
@@ -22597,29 +22601,15 @@
 	
 	        var label = this.props.label || this.props.name;
 	        var items = mapKeyVals(this.props.items, function (key, val, i) {
-	
-	            return _react2.default.createElement(
-	                'li',
-	                { key: (0, _util.rand)() },
-	                _react2.default.createElement('input', { onChange: _this.updateMap, ref: i + "key", type: 'text', value: key }),
-	                _react2.default.createElement(
-	                    'i',
-	                    { className: 'material-icons' },
-	                    'chevron_right'
-	                ),
-	                _react2.default.createElement('input', { onChange: _this.updateMap, ref: i + "value", type: 'text', value: val })
-	            );
+	            return _this.createInput(_this.props.name + i, key, val);
 	        });
-	        var remainingItems = this.state.numberOfItems - items.length;
+	        items.push(this.createInput(this.props.name + (items.length + 1), "", ""));
+	
+	        var remainingItems = this.state.numberOfItems + 1 - items.length;
 	
 	        for (var i = 0; i < remainingItems; i++) {
-	            items.push(_react2.default.createElement(
-	                'li',
-	                { key: (0, _util.rand)() },
-	                _react2.default.createElement('input', { onChange: this.updateMap, ref: i + items.length + "key", type: 'text' }),
-	                ' ->',
-	                _react2.default.createElement('input', { onChange: this.updateMap, ref: i + items.length + "value", type: 'text' })
-	            ));
+	            var newItem = this.createInput(this.props.name + (i + items.length), "", "");
+	            items.push(newItem);
 	        }
 	
 	        return _react2.default.createElement(HttpDataView, { onClick: this.addItem, name: label, items: items });
@@ -22630,11 +22620,6 @@
 	    displayName: 'HttpDataView',
 	
 	    render: function render() {
-	        var addButton = _react2.default.createElement(
-	            'button',
-	            { onClick: this.props.onClick },
-	            '+'
-	        );
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'list-editor' },
@@ -22647,8 +22632,7 @@
 	                'ul',
 	                null,
 	                this.props.items
-	            ),
-	            addButton
+	            )
 	        );
 	    }
 	});
