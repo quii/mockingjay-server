@@ -22386,7 +22386,6 @@
 	
 	    componentDidMount: function componentDidMount() {
 	        componentHandler.upgradeDom();
-	        console.log('upgraded dat dom');
 	    },
 	    render: function render() {
 	        return _react2.default.createElement(
@@ -22395,7 +22394,17 @@
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'mdl-card mdl-shadow--2dp' },
-	                _react2.default.createElement(TextEntry, { name: 'name', value: this.props.originalValues.name, onChange: this.props.onChange })
+	                _react2.default.createElement(TextField, { name: 'name', value: this.props.originalValues.name, onChange: this.props.onChange }),
+	                _react2.default.createElement(
+	                    'label',
+	                    { 'class': 'mdl-checkbox mdl-js-checkbox', 'for': 'cdcDisabled' },
+	                    _react2.default.createElement('input', { type: 'checkbox', onClick: this.props.onCheckboxChange, name: 'cdcDisabled', 'class': 'mdl-checkbox__input', defaultChecked: this.props.originalValues.cdcDisabled }),
+	                    _react2.default.createElement(
+	                        'span',
+	                        { 'class': 'mdl-checkbox__label' },
+	                        'CDC Disabled?'
+	                    )
+	                )
 	            ),
 	            _react2.default.createElement(
 	                'div',
@@ -22409,83 +22418,10 @@
 	                        'Request'
 	                    )
 	                ),
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'CDC Disabled?'
-	                ),
-	                _react2.default.createElement('input', { type: 'checkbox',
-	                    defaultChecked: this.props.originalValues.cdcDisabled,
-	                    name: 'cdcDisabled', onClick: this.props.onCheckboxChange }),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'Method'
-	                ),
-	                _react2.default.createElement(
-	                    'select',
-	                    { name: 'method', value: this.props.originalValues.method, onChange: this.props.onChange },
-	                    _react2.default.createElement(
-	                        'option',
-	                        { value: 'GET' },
-	                        'GET'
-	                    ),
-	                    _react2.default.createElement(
-	                        'option',
-	                        { value: 'POST' },
-	                        'POST'
-	                    ),
-	                    _react2.default.createElement(
-	                        'option',
-	                        { value: 'DELETE' },
-	                        'DELETE'
-	                    ),
-	                    _react2.default.createElement(
-	                        'option',
-	                        { value: 'PUT' },
-	                        'PUT'
-	                    ),
-	                    _react2.default.createElement(
-	                        'option',
-	                        { value: 'PATCH' },
-	                        'PATCH'
-	                    ),
-	                    _react2.default.createElement(
-	                        'option',
-	                        { value: 'OPTIONS' },
-	                        'OPTIONS'
-	                    )
-	                ),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'URI'
-	                ),
-	                _react2.default.createElement('input', { type: 'text', name: 'uri', value: this.props.originalValues.uri,
-	                    onChange: this.props.onChange }),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'Regex URI'
-	                ),
-	                _react2.default.createElement('input', { type: 'text', name: 'regex', value: this.props.originalValues.regex,
-	                    onChange: this.props.onChange }),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'Body'
-	                ),
-	                _react2.default.createElement(
-	                    'textarea',
-	                    { name: 'reqBody',
-	                        onChange: this.props.onChange },
-	                    this.props.originalValues.reqBody
-	                ),
-	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(TextField, { name: 'uri', value: this.props.originalValues.uri, onChange: this.props.onChange }),
+	                _react2.default.createElement(TextField, { name: 'regex', value: this.props.originalValues.regex, onChange: this.props.onChange }),
+	                _react2.default.createElement(MethodSwitcher, { selected: this.props.originalValues.method, onChange: this.props.onChange }),
+	                _react2.default.createElement(TextArea, { name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
 	                _react2.default.createElement(
 	                    'label',
 	                    null,
@@ -22550,14 +22486,69 @@
 	    }
 	});
 	
-	var TextEntry = _react2.default.createClass({
-	    displayName: 'TextEntry',
+	var MethodSwitcher = _react2.default.createClass({
+	    displayName: 'MethodSwitcher',
+	
+	
+	    selectedCSS: "mdl-button mdl-js-button mdl-button--raised mdl-button--accent",
+	    notSelectedCSS: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored",
+	    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
+	
+	    handleClick: function handleClick(e) {
+	        this.props.onChange({
+	            target: {
+	                name: 'method',
+	                value: e.target.innerText
+	            }
+	        });
+	    },
+	    createButton: function createButton(methodName, selectedMethod) {
+	        var clz = methodName === selectedMethod ? this.selectedCSS : this.notSelectedCSS;
+	        return _react2.default.createElement(
+	            'button',
+	            { style: { "margin-right": "10px" }, className: clz, onClick: this.handleClick },
+	            methodName
+	        );
+	    },
+	    render: function render() {
+	        var _this = this;
+	
+	        var buttons = this.methods.map(function (m) {
+	            return _this.createButton(m, _this.props.selected);
+	        });
+	        return _react2.default.createElement(
+	            'div',
+	            null,
+	            buttons
+	        );
+	    }
+	});
+	
+	var TextField = _react2.default.createClass({
+	    displayName: 'TextField',
 	
 	    render: function render() {
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
 	            _react2.default.createElement('input', { ref: 'user', className: 'mdl-textfield__input', type: 'text', name: this.props.name, value: this.props.value, onChange: this.props.onChange }),
+	            _react2.default.createElement(
+	                'label',
+	                { className: 'mdl-textfield__label', htmlFor: this.props.name },
+	                this.props.name
+	            )
+	        );
+	    }
+	});
+	
+	var TextArea = _react2.default.createClass({
+	    displayName: 'TextArea',
+	
+	    render: function render() {
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
+	            _react2.default.createElement('textarea', { ref: 'user', className: 'mdl-textfield__input', type: 'text', rows: '5', name: this.props.name, value: this.props.value, onChange: this.props.onChange }),
 	            _react2.default.createElement(
 	                'label',
 	                { className: 'mdl-textfield__label', htmlFor: this.props.name },

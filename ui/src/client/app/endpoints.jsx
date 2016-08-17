@@ -93,13 +93,16 @@ const Endpoint = React.createClass({
 const EndpointForm = React.createClass({
     componentDidMount: function () {
         componentHandler.upgradeDom();
-        console.log('upgraded dat dom');
     },
     render: function () {
         return (
             <div>
                 <div className="mdl-card mdl-shadow--2dp">
-                    <TextEntry name="name" value={this.props.originalValues.name} onChange={this.props.onChange} />
+                    <TextField name="name" value={this.props.originalValues.name} onChange={this.props.onChange} />
+                    <label class="mdl-checkbox mdl-js-checkbox" for="cdcDisabled">
+                        <input type="checkbox" onClick={this.props.onCheckboxChange} name="cdcDisabled" class="mdl-checkbox__input" defaultChecked={this.props.originalValues.cdcDisabled} />
+                            <span class="mdl-checkbox__label">CDC Disabled?</span>
+                    </label>
                 </div>
 
                 <div className="mdl-card mdl-shadow--2dp">
@@ -107,25 +110,12 @@ const EndpointForm = React.createClass({
                         <h3 className="mdl-card__title-text">Request</h3>
                     </div>
 
-                    <label>CDC Disabled?</label><input type="checkbox"
-                                                       defaultChecked={this.props.originalValues.cdcDisabled}
-                                                       name="cdcDisabled" onClick={this.props.onCheckboxChange}/><br />
-                    <label>Method</label>
-                    <select name="method" value={this.props.originalValues.method} onChange={this.props.onChange}>
-                        <option value="GET">GET</option>
-                        <option value="POST">POST</option>
-                        <option value="DELETE">DELETE</option>
-                        <option value="PUT">PUT</option>
-                        <option value="PATCH">PATCH</option>
-                        <option value="OPTIONS">OPTIONS</option>
-                    </select>
-                    <br />
-                    <label>URI</label><input type="text" name="uri" value={this.props.originalValues.uri}
-                                             onChange={this.props.onChange}/><br />
-                    <label>Regex URI</label><input type="text" name="regex" value={this.props.originalValues.regex}
-                                                   onChange={this.props.onChange}/><br />
-                    <label>Body</label><textarea name="reqBody"
-                                                 onChange={this.props.onChange}>{this.props.originalValues.reqBody}</textarea><br />
+                    <TextField name="uri" value={this.props.originalValues.uri} onChange={this.props.onChange} />
+                    <TextField name="regex" value={this.props.originalValues.regex} onChange={this.props.onChange} />
+                    <MethodSwitcher selected={this.props.originalValues.method} onChange={this.props.onChange} />
+                    <TextArea name="reqBody" value={this.props.originalValues.reqBody} onChange={this.props.onChange} />
+
+
                     <label>Form</label><HttpDataEditor name="form" items={this.props.originalValues.form}
                                                        onChange={this.props.onChange}/>
                     <label>Headers</label><HttpDataEditor name="reqHeaders" items={this.props.originalValues.reqHeaders}
@@ -152,16 +142,52 @@ const EndpointForm = React.createClass({
     }
 });
 
-const TextEntry = React.createClass({
+const MethodSwitcher = React.createClass({
+
+    selectedCSS: "mdl-button mdl-js-button mdl-button--raised mdl-button--accent",
+    notSelectedCSS:  "mdl-button mdl-js-button mdl-button--raised mdl-button--colored",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
+
+    handleClick: function (e) {
+        this.props.onChange({
+            target: {
+                name: 'method',
+                value:e.target.innerText
+            }
+        })
+    },
+    createButton: function (methodName, selectedMethod) {
+        const clz = methodName===selectedMethod ? this.selectedCSS : this.notSelectedCSS;
+        return <button style={{"margin-right": "10px"}} className={clz} onClick={this.handleClick}>{methodName}</button>
+    },
+    render: function () {
+        const buttons = this.methods.map(m => this.createButton(m, this.props.selected));
+        return <div>{buttons}</div>
+    }
+});
+
+const TextField = React.createClass({
     render: function () {
         return (
             <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input ref="user" className="mdl-textfield__input" type="text" name={this.props.name} value={this.props.value} onChange={this.props.onChange} />
                 <label className="mdl-textfield__label" htmlFor={this.props.name}>{this.props.name}</label>
+                {/*<span class="mdl-textfield__error">Only alphabet and no spaces, please!</span>  add pattern to enable validation http://webdesign.tutsplus.com/tutorials/learning-material-design-lite-text-fields--cms-24614*/}
             </div>
         )
     }
-})
+});
+
+const TextArea = React.createClass({
+    render: function () {
+        return (
+            <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <textarea ref="user" className="mdl-textfield__input" type="text" rows="5" name={this.props.name} value={this.props.value} onChange={this.props.onChange} />
+                <label className="mdl-textfield__label" htmlFor={this.props.name}>{this.props.name}</label>
+            </div>
+        )
+    }
+});
 
 
 const Chip = React.createClass({
