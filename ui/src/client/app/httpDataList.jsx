@@ -59,11 +59,24 @@ export const HttpDataEditor = React.createClass({
             }
         })
     },
+    createInput: function (ref, key, val) {
+        return (
+        <div className="mdl-textfield mdl-js-textfield">
+            <input ref={ref+"key"} className="mdl-textfield__input" type="text" name={this.props.name} value={key} onChange={this.updateMap} />
+            <i className="material-icons">chevron_right</i>
+            <input ref={ref+"value"} className="mdl-textfield__input" type="text" name={this.props.name} value={val} onChange={this.updateMap} />
+        </div>
+        )
+
+    },
     render: function () {
         const label = this.props.label || this.props.name;
         const items = mapKeyVals(this.props.items, (key, val, i) => {
+
+
             return (<li key={rand()}>
-                <input onChange={this.updateMap} ref={i+"key"} type="text" value={key}/> ->
+                <input onChange={this.updateMap} ref={i+"key"} type="text" value={key}/>
+                <i className="material-icons">chevron_right</i>
                 <input onChange={this.updateMap} ref={i+"value"} type="text" value={val}/>
             </li>);
         });
@@ -77,23 +90,20 @@ export const HttpDataEditor = React.createClass({
             </li>)
         }
 
-        items.push(<li key={rand()}><button onClick={this.addItem}>+</button></li>);
-        return <HttpDataView name={label} items={items}/>
+        return <HttpDataView onClick={this.addItem} name={label} items={items}/>
     }
 });
 
 const HttpDataView = React.createClass({
     render: function () {
-        if (this.props.items && this.props.items.length > 0) {
-            return (
-                <div className={this.props.name}>
-                    <h5>{this.props.name}</h5>
-                    <ul>{this.props.items}</ul>
-                </div>
-            )
-        } else {
-            return null;
-        }
+        const addButton = <button onClick={this.props.onClick}>+</button>
+        return (
+            <div className="list-editor">
+                <label>{this.props.name}</label>
+                <ul>{this.props.items}</ul>
+                {addButton}
+            </div>
+        )
     }
 })
 

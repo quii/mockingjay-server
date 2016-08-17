@@ -22579,16 +22579,34 @@
 	            }
 	        });
 	    },
+	    createInput: function createInput(ref, key, val) {
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'mdl-textfield mdl-js-textfield' },
+	            _react2.default.createElement('input', { ref: ref + "key", className: 'mdl-textfield__input', type: 'text', name: this.props.name, value: key, onChange: this.updateMap }),
+	            _react2.default.createElement(
+	                'i',
+	                { className: 'material-icons' },
+	                'chevron_right'
+	            ),
+	            _react2.default.createElement('input', { ref: ref + "value", className: 'mdl-textfield__input', type: 'text', name: this.props.name, value: val, onChange: this.updateMap })
+	        );
+	    },
 	    render: function render() {
 	        var _this = this;
 	
 	        var label = this.props.label || this.props.name;
 	        var items = mapKeyVals(this.props.items, function (key, val, i) {
+	
 	            return _react2.default.createElement(
 	                'li',
 	                { key: (0, _util.rand)() },
 	                _react2.default.createElement('input', { onChange: _this.updateMap, ref: i + "key", type: 'text', value: key }),
-	                ' ->',
+	                _react2.default.createElement(
+	                    'i',
+	                    { className: 'material-icons' },
+	                    'chevron_right'
+	                ),
 	                _react2.default.createElement('input', { onChange: _this.updateMap, ref: i + "value", type: 'text', value: val })
 	            );
 	        });
@@ -22604,16 +22622,7 @@
 	            ));
 	        }
 	
-	        items.push(_react2.default.createElement(
-	            'li',
-	            { key: (0, _util.rand)() },
-	            _react2.default.createElement(
-	                'button',
-	                { onClick: this.addItem },
-	                '+'
-	            )
-	        ));
-	        return _react2.default.createElement(HttpDataView, { name: label, items: items });
+	        return _react2.default.createElement(HttpDataView, { onClick: this.addItem, name: label, items: items });
 	    }
 	});
 	
@@ -22621,24 +22630,26 @@
 	    displayName: 'HttpDataView',
 	
 	    render: function render() {
-	        if (this.props.items && this.props.items.length > 0) {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: this.props.name },
-	                _react2.default.createElement(
-	                    'h5',
-	                    null,
-	                    this.props.name
-	                ),
-	                _react2.default.createElement(
-	                    'ul',
-	                    null,
-	                    this.props.items
-	                )
-	            );
-	        } else {
-	            return null;
-	        }
+	        var addButton = _react2.default.createElement(
+	            'button',
+	            { onClick: this.props.onClick },
+	            '+'
+	        );
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'list-editor' },
+	            _react2.default.createElement(
+	                'label',
+	                null,
+	                this.props.name
+	            ),
+	            _react2.default.createElement(
+	                'ul',
+	                null,
+	                this.props.items
+	            ),
+	            addButton
+	        );
 	    }
 	});
 	
