@@ -4,10 +4,11 @@ import {rand} from './util';
 export const HttpDataList = React.createClass({
     render: function () {
         const items = mapKeyVals(this.props.items, (key, val) => <tr key={rand()}><td className="mdl-data-table__cell--non-numeric">{key}</td><td className="mdl-data-table__cell--non-numeric">{val}</td></tr>);
+        const label = this.props.label || this.props.name;
         if(items.length>0) {
             return <div>
                 <div className="mdl-card__title mdl-card--expand">
-                    <h6 className="mdl-card__title-text">{this.props.name}</h6>
+                    <h6 className="mdl-card__title-text">{label}</h6>
                 </div>
                 <table className="mdl-data-table mdl-js-data-table mdl-data-table">
                 <thead>
@@ -59,6 +60,7 @@ export const HttpDataEditor = React.createClass({
         })
     },
     render: function () {
+        const label = this.props.label || this.props.name;
         const items = mapKeyVals(this.props.items, (key, val, i) => {
             return (<li key={rand()}>
                 <input onChange={this.updateMap} ref={i+"key"} type="text" value={key}/> ->
@@ -76,7 +78,7 @@ export const HttpDataEditor = React.createClass({
         }
 
         items.push(<li key={rand()}><button onClick={this.addItem}>+</button></li>);
-        return <HttpDataView name={this.props.name} items={items}/>
+        return <HttpDataView name={label} items={items}/>
     }
 });
 

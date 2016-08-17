@@ -99,7 +99,7 @@ const EndpointForm = React.createClass({
         return (
             <div>
                 <div className="mdl-card mdl-shadow--2dp">
-                    <TextField name="name" value={this.props.originalValues.name} onChange={this.props.onChange} />
+                    <TextField name="name" label="Endpoint name" value={this.props.originalValues.name} onChange={this.props.onChange} />
                     <label className="mdl-checkbox mdl-js-checkbox" htmlFor="cdcDisabled">
                         <input type="checkbox" onClick={this.props.onCheckboxChange} name="cdcDisabled" className="mdl-checkbox__input" defaultChecked={this.props.originalValues.cdcDisabled} />
                             <span className="mdl-checkbox__label">CDC Disabled?</span>
@@ -111,15 +111,15 @@ const EndpointForm = React.createClass({
                         <h3 className="mdl-card__title-text">Request</h3>
                     </div>
 
-                    <TextField name="uri" value={this.props.originalValues.uri} onChange={this.props.onChange} />
-                    <TextField name="regex" value={this.props.originalValues.regex} onChange={this.props.onChange} />
+                    <TextField label="URI" name="uri" value={this.props.originalValues.uri} onChange={this.props.onChange} />
+                    <TextField label="Regex URI (optional)" name="regex" value={this.props.originalValues.regex} onChange={this.props.onChange} />
                     <MethodSwitcher selected={this.props.originalValues.method} onChange={this.props.onChange} />
-                    <TextArea name="reqBody" value={this.props.originalValues.reqBody} onChange={this.props.onChange} />
+                    <TextArea label="Body" name="reqBody" value={this.props.originalValues.reqBody} onChange={this.props.onChange} />
 
 
-                    <label>Form</label><HttpDataEditor name="form" items={this.props.originalValues.form}
+                    <HttpDataEditor label="Form" name="form" items={this.props.originalValues.form}
                                                        onChange={this.props.onChange}/>
-                    <label>Headers</label><HttpDataEditor name="reqHeaders" items={this.props.originalValues.reqHeaders}
+                    <HttpDataEditor label="Headers" name="reqHeaders" items={this.props.originalValues.reqHeaders}
                                                           onChange={this.props.onChange}/>
                 </div>
 
@@ -127,10 +127,10 @@ const EndpointForm = React.createClass({
                     <div className="mdl-card__title" style={{width: "90%"}}>
                         <h3 className="mdl-card__title-text">Response</h3>
                     </div>
-                    <TextField name="code" value={this.props.originalValues.code} onChange={this.props.onChange} />
+                    <TextField label="Status code" name="code" value={this.props.originalValues.code} onChange={this.props.onChange} />
 
-                    <TextArea name="body" value={this.props.originalValues.body} onChange={this.props.onChange} />
-                    <label>Headers</label><HttpDataEditor name="resHeaders" items={this.props.originalValues.resHeaders}
+                    <TextArea label="Body" name="body" value={this.props.originalValues.body} onChange={this.props.onChange} />
+                    <HttpDataEditor label="Headers" name="resHeaders" items={this.props.originalValues.resHeaders}
                                                           onChange={this.props.onChange}/>
                 </div>
 

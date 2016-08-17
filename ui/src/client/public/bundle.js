@@ -22393,7 +22393,7 @@
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'mdl-card mdl-shadow--2dp' },
-	                _react2.default.createElement(_formbits.TextField, { name: 'name', value: this.props.originalValues.name, onChange: this.props.onChange }),
+	                _react2.default.createElement(_formbits.TextField, { name: 'name', label: 'Endpoint name', value: this.props.originalValues.name, onChange: this.props.onChange }),
 	                _react2.default.createElement(
 	                    'label',
 	                    { className: 'mdl-checkbox mdl-js-checkbox', htmlFor: 'cdcDisabled' },
@@ -22417,23 +22417,13 @@
 	                        'Request'
 	                    )
 	                ),
-	                _react2.default.createElement(_formbits.TextField, { name: 'uri', value: this.props.originalValues.uri, onChange: this.props.onChange }),
-	                _react2.default.createElement(_formbits.TextField, { name: 'regex', value: this.props.originalValues.regex, onChange: this.props.onChange }),
+	                _react2.default.createElement(_formbits.TextField, { label: 'URI', name: 'uri', value: this.props.originalValues.uri, onChange: this.props.onChange }),
+	                _react2.default.createElement(_formbits.TextField, { label: 'Regex URI (optional)', name: 'regex', value: this.props.originalValues.regex, onChange: this.props.onChange }),
 	                _react2.default.createElement(_formbits.MethodSwitcher, { selected: this.props.originalValues.method, onChange: this.props.onChange }),
-	                _react2.default.createElement(_formbits.TextArea, { name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'Form'
-	                ),
-	                _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'form', items: this.props.originalValues.form,
+	                _react2.default.createElement(_formbits.TextArea, { label: 'Body', name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
+	                _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Form', name: 'form', items: this.props.originalValues.form,
 	                    onChange: this.props.onChange }),
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'Headers'
-	                ),
-	                _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'reqHeaders', items: this.props.originalValues.reqHeaders,
+	                _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Headers', name: 'reqHeaders', items: this.props.originalValues.reqHeaders,
 	                    onChange: this.props.onChange })
 	            ),
 	            _react2.default.createElement(
@@ -22448,14 +22438,9 @@
 	                        'Response'
 	                    )
 	                ),
-	                _react2.default.createElement(_formbits.TextField, { name: 'code', value: this.props.originalValues.code, onChange: this.props.onChange }),
-	                _react2.default.createElement(_formbits.TextArea, { name: 'body', value: this.props.originalValues.body, onChange: this.props.onChange }),
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'Headers'
-	                ),
-	                _react2.default.createElement(_httpDataList.HttpDataEditor, { name: 'resHeaders', items: this.props.originalValues.resHeaders,
+	                _react2.default.createElement(_formbits.TextField, { label: 'Status code', name: 'code', value: this.props.originalValues.code, onChange: this.props.onChange }),
+	                _react2.default.createElement(_formbits.TextArea, { label: 'Body', name: 'body', value: this.props.originalValues.body, onChange: this.props.onChange }),
+	                _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Headers', name: 'resHeaders', items: this.props.originalValues.resHeaders,
 	                    onChange: this.props.onChange })
 	            ),
 	            _react2.default.createElement(
@@ -22513,6 +22498,7 @@
 	                )
 	            );
 	        });
+	        var label = this.props.label || this.props.name;
 	        if (items.length > 0) {
 	            return _react2.default.createElement(
 	                'div',
@@ -22523,7 +22509,7 @@
 	                    _react2.default.createElement(
 	                        'h6',
 	                        { className: 'mdl-card__title-text' },
-	                        this.props.name
+	                        label
 	                    )
 	                ),
 	                _react2.default.createElement(
@@ -22596,6 +22582,7 @@
 	    render: function render() {
 	        var _this = this;
 	
+	        var label = this.props.label || this.props.name;
 	        var items = mapKeyVals(this.props.items, function (key, val, i) {
 	            return _react2.default.createElement(
 	                'li',
@@ -22626,7 +22613,7 @@
 	                '+'
 	            )
 	        ));
-	        return _react2.default.createElement(HttpDataView, { name: this.props.name, items: items });
+	        return _react2.default.createElement(HttpDataView, { name: label, items: items });
 	    }
 	});
 	
@@ -22764,6 +22751,7 @@
 	
 	    render: function render() {
 	        var value = this.props.value || "";
+	        var label = this.props.label || this.props.name;
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
@@ -22771,7 +22759,7 @@
 	            _react2.default.createElement(
 	                'label',
 	                { className: 'mdl-textfield__label', htmlFor: this.props.name },
-	                this.props.name
+	                label
 	            )
 	        );
 	    }
@@ -22781,6 +22769,7 @@
 	    displayName: 'TextArea',
 	
 	    render: function render() {
+	        var label = this.props.label || this.props.name;
 	        return _react2.default.createElement(
 	            'div',
 	            { style: { width: "100%" }, className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
@@ -22788,7 +22777,7 @@
 	            _react2.default.createElement(
 	                'label',
 	                { className: 'mdl-textfield__label', htmlFor: this.props.name },
-	                this.props.name
+	                label
 	            )
 	        );
 	    }
