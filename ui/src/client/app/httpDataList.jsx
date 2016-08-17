@@ -63,21 +63,21 @@ export const HttpDataEditor = React.createClass({
     createInput: function (ref, key, val) {
         return (
         <div className="mdl-textfield mdl-js-textfield">
-            <input ref={ref+"key"} className="mdl-textfield__input" type="text" value={key} onChange={this.updateMap} />
+            <input ref={this.props.name+ref+"key"} pattern={this.props.keyPattern} className="mdl-textfield__input" type="text" value={key} onChange={this.updateMap} />
             <i className="material-icons">chevron_right</i>
-            <input ref={ref+"value"} className="mdl-textfield__input" type="text" value={val} onChange={this.updateMap} />
+            <input ref={this.props.name+ref+"value"} pattern={this.props.valPattern} className="mdl-textfield__input" type="text" value={val} onChange={this.updateMap} />
         </div>
         )
     },
     render: function () {
         const label = this.props.label || this.props.name;
-        const items = mapKeyVals(this.props.items, (key, val, i) => this.createInput(this.props.name+i, key, val));
-        items.push(this.createInput(this.props.name+(items.length+1), "", ""));
+        const items = mapKeyVals(this.props.items, (key, val, i) => this.createInput(i, key, val));
+        items.push(this.createInput(items.length+1, "", ""));
 
         const remainingItems = this.state.numberOfItems+1 - items.length;
 
         for(let i=0; i < remainingItems; i++){
-            const newItem = this.createInput(this.props.name+(i+items.length), "", "")
+            const newItem = this.createInput(i+items.length, "", "")
             items.push(newItem)
         }
 

@@ -119,7 +119,7 @@ const EndpointForm = React.createClass({
 
                     <HttpDataEditor label="Form" name="form" items={this.props.originalValues.form}
                                                        onChange={this.props.onChange}/>
-                    <HttpDataEditor label="Headers" name="reqHeaders" items={this.props.originalValues.reqHeaders}
+                    <HttpDataEditor label="Headers" keyPattern="[A-Za-z0-9\S]{1,25}" valPattern="[A-Za-z0-9\S]{1,25}" name="reqHeaders" items={this.props.originalValues.reqHeaders}
                                                           onChange={this.props.onChange}/>
                 </div>
 

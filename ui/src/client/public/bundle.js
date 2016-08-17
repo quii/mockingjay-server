@@ -22423,7 +22423,7 @@
 	                _react2.default.createElement(_formbits.TextArea, { label: 'Body', name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
 	                _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Form', name: 'form', items: this.props.originalValues.form,
 	                    onChange: this.props.onChange }),
-	                _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Headers', name: 'reqHeaders', items: this.props.originalValues.reqHeaders,
+	                _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Headers', keyPattern: '[A-Za-z0-9\\S]{1,25}', valPattern: '[A-Za-z0-9\\S]{1,25}', name: 'reqHeaders', items: this.props.originalValues.reqHeaders,
 	                    onChange: this.props.onChange })
 	            ),
 	            _react2.default.createElement(
@@ -22587,13 +22587,13 @@
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'mdl-textfield mdl-js-textfield' },
-	            _react2.default.createElement('input', { ref: ref + "key", className: 'mdl-textfield__input', type: 'text', value: key, onChange: this.updateMap }),
+	            _react2.default.createElement('input', { ref: this.props.name + ref + "key", pattern: this.props.keyPattern, className: 'mdl-textfield__input', type: 'text', value: key, onChange: this.updateMap }),
 	            _react2.default.createElement(
 	                'i',
 	                { className: 'material-icons' },
 	                'chevron_right'
 	            ),
-	            _react2.default.createElement('input', { ref: ref + "value", className: 'mdl-textfield__input', type: 'text', value: val, onChange: this.updateMap })
+	            _react2.default.createElement('input', { ref: this.props.name + ref + "value", pattern: this.props.valPattern, className: 'mdl-textfield__input', type: 'text', value: val, onChange: this.updateMap })
 	        );
 	    },
 	    render: function render() {
@@ -22601,14 +22601,14 @@
 	
 	        var label = this.props.label || this.props.name;
 	        var items = mapKeyVals(this.props.items, function (key, val, i) {
-	            return _this.createInput(_this.props.name + i, key, val);
+	            return _this.createInput(i, key, val);
 	        });
-	        items.push(this.createInput(this.props.name + (items.length + 1), "", ""));
+	        items.push(this.createInput(items.length + 1, "", ""));
 	
 	        var remainingItems = this.state.numberOfItems + 1 - items.length;
 	
 	        for (var i = 0; i < remainingItems; i++) {
-	            var newItem = this.createInput(this.props.name + (i + items.length), "", "");
+	            var newItem = this.createInput(i + items.length, "", "");
 	            items.push(newItem);
 	        }
 	
