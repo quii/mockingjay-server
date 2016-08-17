@@ -238,6 +238,10 @@
 	
 	        var json = JSON.stringify(data);
 	
+	        this.setState({
+	            activeEndpoint: newEndpointState.name
+	        });
+	
 	        this.putUpdate(json);
 	    },
 	    renderCurrentEndpoint: function renderCurrentEndpoint() {
