@@ -127,7 +127,7 @@ const EndpointForm = React.createClass({
                     <div className="mdl-card__title" style={{width: "90%"}}>
                         <h3 className="mdl-card__title-text">Response</h3>
                     </div>
-                    <TextField label="Status code" name="code" value={this.props.originalValues.code} onChange={this.props.onChange} />
+                    <TextField label="Status code" pattern="[0-9][0-9][0-9]" errMsg="Not valid HTTP status" name="code" value={this.props.originalValues.code} onChange={this.props.onChange} />
 
                     <TextArea label="Body" name="body" value={this.props.originalValues.body} onChange={this.props.onChange} />
                     <HttpDataEditor label="Headers" name="resHeaders" items={this.props.originalValues.resHeaders}

@@ -22438,7 +22438,7 @@
 	                        'Response'
 	                    )
 	                ),
-	                _react2.default.createElement(_formbits.TextField, { label: 'Status code', name: 'code', value: this.props.originalValues.code, onChange: this.props.onChange }),
+	                _react2.default.createElement(_formbits.TextField, { label: 'Status code', pattern: '[0-9][0-9][0-9]', errMsg: 'Not valid HTTP status', name: 'code', value: this.props.originalValues.code, onChange: this.props.onChange }),
 	                _react2.default.createElement(_formbits.TextArea, { label: 'Body', name: 'body', value: this.props.originalValues.body, onChange: this.props.onChange }),
 	                _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Headers', name: 'resHeaders', items: this.props.originalValues.resHeaders,
 	                    onChange: this.props.onChange })
@@ -22747,15 +22747,21 @@
 	    render: function render() {
 	        var value = this.props.value || "";
 	        var label = this.props.label || this.props.name;
+	        var errorSpan = this.props.errMsg ? _react2.default.createElement(
+	            'span',
+	            { className: 'mdl-textfield__error' },
+	            this.props.errMsg
+	        ) : null;
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
-	            _react2.default.createElement('input', { ref: 'user', className: 'mdl-textfield__input', type: 'text', name: this.props.name, value: value, onChange: this.props.onChange }),
+	            _react2.default.createElement('input', { pattern: this.props.pattern, ref: 'user', className: 'mdl-textfield__input', type: 'text', name: this.props.name, value: value, onChange: this.props.onChange }),
 	            _react2.default.createElement(
 	                'label',
 	                { className: 'mdl-textfield__label', htmlFor: this.props.name },
 	                label
-	            )
+	            ),
+	            errorSpan
 	        );
 	    }
 	});

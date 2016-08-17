@@ -28,12 +28,13 @@ export const MethodSwitcher = React.createClass({
 export const TextField = React.createClass({
     render: function () {
         const value = this.props.value || "";
-        const label = this.props.label || this.props.name
+        const label = this.props.label || this.props.name;
+        const errorSpan = this.props.errMsg ? <span className="mdl-textfield__error">{this.props.errMsg}</span> : null
         return (
             <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input ref="user" className="mdl-textfield__input" type="text" name={this.props.name} value={value} onChange={this.props.onChange} />
+                <input pattern={this.props.pattern} ref="user" className="mdl-textfield__input" type="text" name={this.props.name} value={value} onChange={this.props.onChange} />
                 <label className="mdl-textfield__label" htmlFor={this.props.name}>{label}</label>
-                {/*<span class="mdl-textfield__error">Only alphabet and no spaces, please!</span>  add pattern to enable validation http://webdesign.tutsplus.com/tutorials/learning-material-design-lite-text-fields--cms-24614*/}
+                {errorSpan}
             </div>
         )
     }
