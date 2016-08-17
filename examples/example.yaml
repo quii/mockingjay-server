@@ -1,4 +1,12 @@
-- name: Pooddd
+- name: ce0594da-aeee-b5b2-74bb-cbaf2c55d8b2
+  cdcdisabled: false
+  request:
+    uri: /hello22
+    method: GET
+  response:
+    code: 200
+    body: World!
+- name: bob
   cdcdisabled: false
   request:
     uri: /hello22

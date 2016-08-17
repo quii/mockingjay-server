@@ -22384,21 +22384,18 @@
 	var EndpointForm = _react2.default.createClass({
 	    displayName: 'EndpointForm',
 	
+	    componentDidMount: function componentDidMount() {
+	        componentHandler.upgradeDom();
+	        console.log('upgraded dat dom');
+	    },
 	    render: function render() {
 	        return _react2.default.createElement(
 	            'div',
-	            { className: '' },
+	            null,
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'mdl-card mdl-shadow--2dp' },
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'Name'
-	                ),
-	                _react2.default.createElement('input', { type: 'text', name: 'name', value: this.props.originalValues.name,
-	                    onChange: this.props.onChange }),
-	                _react2.default.createElement('br', null)
+	                _react2.default.createElement(TextEntry, { name: 'name', value: this.props.originalValues.name, onChange: this.props.onChange })
 	            ),
 	            _react2.default.createElement(
 	                'div',
@@ -22548,6 +22545,23 @@
 	                'button',
 	                { onClick: this.props.finishEditing, className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent' },
 	                'Save'
+	            )
+	        );
+	    }
+	});
+	
+	var TextEntry = _react2.default.createClass({
+	    displayName: 'TextEntry',
+	
+	    render: function render() {
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
+	            _react2.default.createElement('input', { ref: 'user', className: 'mdl-textfield__input', type: 'text', name: this.props.name, value: this.props.value, onChange: this.props.onChange }),
+	            _react2.default.createElement(
+	                'label',
+	                { className: 'mdl-textfield__label', htmlFor: this.props.name },
+	                this.props.name
 	            )
 	        );
 	    }

@@ -91,13 +91,15 @@ const Endpoint = React.createClass({
 });
 
 const EndpointForm = React.createClass({
+    componentDidMount: function () {
+        componentHandler.upgradeDom();
+        console.log('upgraded dat dom');
+    },
     render: function () {
         return (
-            <div className="">
-
+            <div>
                 <div className="mdl-card mdl-shadow--2dp">
-                    <label>Name</label><input type="text" name="name" value={this.props.originalValues.name}
-                                             onChange={this.props.onChange}/><br />
+                    <TextEntry name="name" value={this.props.originalValues.name} onChange={this.props.onChange} />
                 </div>
 
                 <div className="mdl-card mdl-shadow--2dp">
@@ -145,6 +147,17 @@ const EndpointForm = React.createClass({
                 <button onClick={this.props.finishEditing} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
                     Save
                 </button>
+            </div>
+        )
+    }
+});
+
+const TextEntry = React.createClass({
+    render: function () {
+        return (
+            <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input ref="user" className="mdl-textfield__input" type="text" name={this.props.name} value={this.props.value} onChange={this.props.onChange} />
+                <label className="mdl-textfield__label" htmlFor={this.props.name}>{this.props.name}</label>
             </div>
         )
     }
