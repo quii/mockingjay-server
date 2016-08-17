@@ -1,5 +1,6 @@
 import React from 'react';
 import dialogPolyfill from 'dialog-polyfill';
+import {rand} from './util';
 
 const CDC = React.createClass({
     getInitialState: function () {
@@ -98,12 +99,12 @@ const Dialog = React.createClass({
     render: function () {
         let errs;
         if(this.props.messages) {
-            errs = this.props.messages.map(m => <li>{m}</li>)
+            errs = this.props.messages.map(m => <li key={rand()}>{m}</li>)
         }
         return (
             <dialog className="mdl-dialog" style={{width:"700px"}}>
                 <h4 className="mdl-dialog__title">{this.props.title}</h4>
-                <div className="mdl-dialog__content" style={{"font-family": "Courier"}}>
+                <div className="mdl-dialog__content" style={{"fontFamily": "Courier"}}>
                     <ul>{errs}</ul>
                 </div>
                 <div className="mdl-dialog__actions">
@@ -119,5 +120,6 @@ function isValidURL(str) {
     a.href = str;
     return a.host;
 }
+
 
 export default CDC;

@@ -1,4 +1,5 @@
 import React from 'react';
+import {rand} from './util';
 
 export const HttpDataList = React.createClass({
     render: function () {
@@ -59,7 +60,7 @@ export const HttpDataEditor = React.createClass({
     },
     render: function () {
         const items = mapKeyVals(this.props.items, (key, val, i) => {
-            return (<li>
+            return (<li key={rand()}>
                 <input onChange={this.updateMap} ref={i+"key"} type="text" value={key}/> ->
                 <input onChange={this.updateMap} ref={i+"value"} type="text" value={val}/>
             </li>);
@@ -67,14 +68,14 @@ export const HttpDataEditor = React.createClass({
         const remainingItems = this.state.numberOfItems - items.length;
 
         for(let i=0; i < remainingItems; i++){
-            items.push(<li>
+            items.push(<li key={rand()}>
                 <input onChange={this.updateMap} ref={i+items.length+"key"} type="text"/> ->
                 <input onChange={this.updateMap} ref={i+items.length+"value"} type="text"/>
 
             </li>)
         }
 
-        items.push(<li><button onClick={this.addItem}>+</button></li>);
+        items.push(<li key={rand()}><button onClick={this.addItem}>+</button></li>);
         return <HttpDataView name={this.props.name} items={items}/>
     }
 });

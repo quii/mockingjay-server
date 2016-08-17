@@ -1,8 +1,16 @@
+- name: 86daa9db-6d24-f5f6-5a82-ed9e3f1fe3dc
+  cdcdisabled: false
+  request:
+    uri: /hello
+    method: GET
+  response:
+    code: 200
+    body: World!
 - name: ce0594da-aeee-b5b2-74bb-cbaf2c55d8b2
   cdcdisabled: true
   request:
     uri: /hello22
-    method: HEAD
+    method: GET
   response:
     code: 200
     body: World!

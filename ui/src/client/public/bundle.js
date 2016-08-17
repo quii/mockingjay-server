@@ -69,6 +69,8 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
+	var _util = __webpack_require__(/*! ./util */ 186);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var UI = _react2.default.createClass({
@@ -114,7 +116,7 @@
 	    add: function add() {
 	        var data = _lodash2.default.cloneDeep(this.state.data);
 	
-	        var newEndpointName = guid();
+	        var newEndpointName = (0, _util.guid)();
 	
 	        var newEndpoint = {
 	            Name: newEndpointName,
@@ -154,6 +156,7 @@
 	        items.push(_react2.default.createElement(
 	            'a',
 	            {
+	                key: (0, _util.guid)(),
 	                onClick: this.add,
 	                className: 'mdl-navigation__link mdl-color-text--primary-dark' },
 	            _react2.default.createElement(
@@ -185,6 +188,7 @@
 	            return _react2.default.createElement(
 	                'a',
 	                {
+	                    key: (0, _util.guid)(),
 	                    ref: 'menu-' + endpoint.Name,
 	                    className: cssClass,
 	                    onClick: function onClick(event) {
@@ -315,13 +319,6 @@
 	    }
 	});
 	_reactDom2.default.render(_react2.default.createElement(UI, { url: '/mj-endpoints' }), document.getElementById('app'));
-	
-	function guid() {
-	    function s4() {
-	        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-	    }
-	    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-	}
 
 /***/ },
 /* 1 */
@@ -22270,6 +22267,8 @@
 	
 	var _httpDataList = __webpack_require__(/*! ./httpDataList.jsx */ 176);
 	
+	var _formbits = __webpack_require__(/*! ./formbits.jsx */ 182);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -22331,9 +22330,9 @@
 	                        'Request'
 	                    )
 	                ),
-	                _react2.default.createElement(Chip, { icon: 'cloud', value: this.state.method + " " + this.state.uri }),
-	                _react2.default.createElement(Chip, { icon: 'face', value: this.state.regex }),
-	                _react2.default.createElement(Body, { label: 'Body', value: this.state.reqBody }),
+	                _react2.default.createElement(_formbits.Code, { icon: 'cloud', value: this.state.method + " " + this.state.uri }),
+	                _react2.default.createElement(_formbits.Code, { icon: 'face', value: this.state.regex }),
+	                _react2.default.createElement(_formbits.Body, { label: 'Body', value: this.state.reqBody }),
 	                _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: this.state.reqHeaders }),
 	                _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: this.state.form })
 	            ),
@@ -22349,8 +22348,8 @@
 	                        'Response'
 	                    )
 	                ),
-	                _react2.default.createElement(Chip, { icon: 'face', value: this.state.code }),
-	                _react2.default.createElement(Body, { label: 'Body', value: this.state.body }),
+	                _react2.default.createElement(_formbits.Code, { icon: 'face', value: this.state.code }),
+	                _react2.default.createElement(_formbits.Body, { label: 'Body', value: this.state.body }),
 	                _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: this.state.resHeaders })
 	            ),
 	            _react2.default.createElement(
@@ -22394,14 +22393,14 @@
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'mdl-card mdl-shadow--2dp' },
-	                _react2.default.createElement(TextField, { name: 'name', value: this.props.originalValues.name, onChange: this.props.onChange }),
+	                _react2.default.createElement(_formbits.TextField, { name: 'name', value: this.props.originalValues.name, onChange: this.props.onChange }),
 	                _react2.default.createElement(
 	                    'label',
-	                    { 'class': 'mdl-checkbox mdl-js-checkbox', 'for': 'cdcDisabled' },
-	                    _react2.default.createElement('input', { type: 'checkbox', onClick: this.props.onCheckboxChange, name: 'cdcDisabled', 'class': 'mdl-checkbox__input', defaultChecked: this.props.originalValues.cdcDisabled }),
+	                    { className: 'mdl-checkbox mdl-js-checkbox', htmlFor: 'cdcDisabled' },
+	                    _react2.default.createElement('input', { type: 'checkbox', onClick: this.props.onCheckboxChange, name: 'cdcDisabled', className: 'mdl-checkbox__input', defaultChecked: this.props.originalValues.cdcDisabled }),
 	                    _react2.default.createElement(
 	                        'span',
-	                        { 'class': 'mdl-checkbox__label' },
+	                        { className: 'mdl-checkbox__label' },
 	                        'CDC Disabled?'
 	                    )
 	                )
@@ -22418,10 +22417,10 @@
 	                        'Request'
 	                    )
 	                ),
-	                _react2.default.createElement(TextField, { name: 'uri', value: this.props.originalValues.uri, onChange: this.props.onChange }),
-	                _react2.default.createElement(TextField, { name: 'regex', value: this.props.originalValues.regex, onChange: this.props.onChange }),
-	                _react2.default.createElement(MethodSwitcher, { selected: this.props.originalValues.method, onChange: this.props.onChange }),
-	                _react2.default.createElement(TextArea, { name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
+	                _react2.default.createElement(_formbits.TextField, { name: 'uri', value: this.props.originalValues.uri, onChange: this.props.onChange }),
+	                _react2.default.createElement(_formbits.TextField, { name: 'regex', value: this.props.originalValues.regex, onChange: this.props.onChange }),
+	                _react2.default.createElement(_formbits.MethodSwitcher, { selected: this.props.originalValues.method, onChange: this.props.onChange }),
+	                _react2.default.createElement(_formbits.TextArea, { name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
 	                _react2.default.createElement(
 	                    'label',
 	                    null,
@@ -22449,26 +22448,8 @@
 	                        'Response'
 	                    )
 	                ),
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'Status code'
-	                ),
-	                _react2.default.createElement('input', { type: 'text', name: 'code', value: this.props.originalValues.code,
-	                    onChange: this.props.onChange }),
-	                _react2.default.createElement('br', null),
-	                _react2.default.createElement(
-	                    'label',
-	                    null,
-	                    'Body'
-	                ),
-	                _react2.default.createElement(
-	                    'textarea',
-	                    { name: 'body',
-	                        onChange: this.props.onChange },
-	                    this.props.originalValues.body
-	                ),
-	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(_formbits.TextField, { name: 'code', value: this.props.originalValues.code, onChange: this.props.onChange }),
+	                _react2.default.createElement(_formbits.TextArea, { name: 'body', value: this.props.originalValues.body, onChange: this.props.onChange }),
 	                _react2.default.createElement(
 	                    'label',
 	                    null,
@@ -22486,146 +22467,6 @@
 	    }
 	});
 	
-	var MethodSwitcher = _react2.default.createClass({
-	    displayName: 'MethodSwitcher',
-	
-	
-	    selectedCSS: "mdl-button mdl-js-button mdl-button--raised mdl-button--accent",
-	    notSelectedCSS: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored",
-	    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
-	
-	    handleClick: function handleClick(e) {
-	        this.props.onChange({
-	            target: {
-	                name: 'method',
-	                value: e.target.innerText
-	            }
-	        });
-	    },
-	    createButton: function createButton(methodName, selectedMethod) {
-	        var clz = methodName === selectedMethod ? this.selectedCSS : this.notSelectedCSS;
-	        return _react2.default.createElement(
-	            'button',
-	            { style: { "margin-right": "10px" }, className: clz, onClick: this.handleClick },
-	            methodName
-	        );
-	    },
-	    render: function render() {
-	        var _this = this;
-	
-	        var buttons = this.methods.map(function (m) {
-	            return _this.createButton(m, _this.props.selected);
-	        });
-	        return _react2.default.createElement(
-	            'div',
-	            null,
-	            buttons
-	        );
-	    }
-	});
-	
-	var TextField = _react2.default.createClass({
-	    displayName: 'TextField',
-	
-	    render: function render() {
-	        return _react2.default.createElement(
-	            'div',
-	            { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
-	            _react2.default.createElement('input', { ref: 'user', className: 'mdl-textfield__input', type: 'text', name: this.props.name, value: this.props.value, onChange: this.props.onChange }),
-	            _react2.default.createElement(
-	                'label',
-	                { className: 'mdl-textfield__label', htmlFor: this.props.name },
-	                this.props.name
-	            )
-	        );
-	    }
-	});
-	
-	var TextArea = _react2.default.createClass({
-	    displayName: 'TextArea',
-	
-	    render: function render() {
-	        return _react2.default.createElement(
-	            'div',
-	            { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
-	            _react2.default.createElement('textarea', { ref: 'user', className: 'mdl-textfield__input', type: 'text', rows: '5', name: this.props.name, value: this.props.value, onChange: this.props.onChange }),
-	            _react2.default.createElement(
-	                'label',
-	                { className: 'mdl-textfield__label', htmlFor: this.props.name },
-	                this.props.name
-	            )
-	        );
-	    }
-	});
-	
-	var Chip = _react2.default.createClass({
-	    displayName: 'Chip',
-	
-	    render: function render() {
-	        if (this.props.value) {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'mdl-card__supporting-text' },
-	                _react2.default.createElement(
-	                    'code',
-	                    { className: 'mdl-color-text--accent' },
-	                    this.props.value
-	                )
-	            );
-	        } else {
-	            return null;
-	        }
-	    }
-	});
-	
-	var Body = _react2.default.createClass({
-	    displayName: 'Body',
-	
-	    isJSON: function isJSON() {
-	        try {
-	            JSON.parse(this.props.value);
-	            return true;
-	        } catch (e) {
-	            return false;
-	        }
-	    },
-	    renderText: function renderText() {
-	        if (this.isJSON()) {
-	            return JSON.stringify(JSON.parse(this.props.value), null, 2);
-	        } else {
-	            return this.props.value;
-	        }
-	    },
-	    render: function render() {
-	        if (this.props.value) {
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'mdl-card__title mdl-card--expand' },
-	                    _react2.default.createElement(
-	                        'h6',
-	                        { className: 'mdl-card__title-text' },
-	                        this.props.label
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'mdl-card__supporting-text' },
-	                    _react2.default.createElement(
-	                        'pre',
-	                        { className: 'mdl-color-text--primary' },
-	                        this.renderText()
-	                    )
-	                )
-	            );
-	        } else {
-	            return null;
-	        }
-	    }
-	});
-	
 	exports.default = Endpoint;
 
 /***/ },
@@ -22635,7 +22476,7 @@
   \*****************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -22648,64 +22489,66 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _util = __webpack_require__(/*! ./util */ 186);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var HttpDataList = exports.HttpDataList = _react2.default.createClass({
-	    displayName: "HttpDataList",
+	    displayName: 'HttpDataList',
 	
 	    render: function render() {
 	        var items = mapKeyVals(this.props.items, function (key, val) {
 	            return _react2.default.createElement(
-	                "tr",
+	                'tr',
 	                null,
 	                _react2.default.createElement(
-	                    "td",
-	                    { className: "mdl-data-table__cell--non-numeric" },
+	                    'td',
+	                    { className: 'mdl-data-table__cell--non-numeric' },
 	                    key
 	                ),
 	                _react2.default.createElement(
-	                    "td",
-	                    { className: "mdl-data-table__cell--non-numeric" },
+	                    'td',
+	                    { className: 'mdl-data-table__cell--non-numeric' },
 	                    val
 	                )
 	            );
 	        });
 	        if (items.length > 0) {
 	            return _react2.default.createElement(
-	                "div",
+	                'div',
 	                null,
 	                _react2.default.createElement(
-	                    "div",
-	                    { className: "mdl-card__title mdl-card--expand" },
+	                    'div',
+	                    { className: 'mdl-card__title mdl-card--expand' },
 	                    _react2.default.createElement(
-	                        "h6",
-	                        { className: "mdl-card__title-text" },
+	                        'h6',
+	                        { className: 'mdl-card__title-text' },
 	                        this.props.name
 	                    )
 	                ),
 	                _react2.default.createElement(
-	                    "table",
-	                    { className: "mdl-data-table mdl-js-data-table mdl-data-table" },
+	                    'table',
+	                    { className: 'mdl-data-table mdl-js-data-table mdl-data-table' },
 	                    _react2.default.createElement(
-	                        "thead",
+	                        'thead',
 	                        null,
 	                        _react2.default.createElement(
-	                            "tr",
+	                            'tr',
 	                            null,
 	                            _react2.default.createElement(
-	                                "th",
-	                                { className: "mdl-data-table__cell--non-numeric" },
-	                                "Name"
+	                                'th',
+	                                { className: 'mdl-data-table__cell--non-numeric' },
+	                                'Name'
 	                            ),
 	                            _react2.default.createElement(
-	                                "th",
-	                                { className: "mdl-data-table__cell--non-numeric" },
-	                                "Value"
+	                                'th',
+	                                { className: 'mdl-data-table__cell--non-numeric' },
+	                                'Value'
 	                            )
 	                        )
 	                    ),
 	                    _react2.default.createElement(
-	                        "tbody",
+	                        'tbody',
 	                        null,
 	                        items
 	                    )
@@ -22718,7 +22561,7 @@
 	});
 	
 	var HttpDataEditor = exports.HttpDataEditor = _react2.default.createClass({
-	    displayName: "HttpDataEditor",
+	    displayName: 'HttpDataEditor',
 	
 	    getInitialState: function getInitialState() {
 	        return {
@@ -22755,32 +22598,32 @@
 	
 	        var items = mapKeyVals(this.props.items, function (key, val, i) {
 	            return _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement("input", { onChange: _this.updateMap, ref: i + "key", type: "text", value: key }),
-	                " ->",
-	                _react2.default.createElement("input", { onChange: _this.updateMap, ref: i + "value", type: "text", value: val })
+	                'li',
+	                { key: (0, _util.rand)() },
+	                _react2.default.createElement('input', { onChange: _this.updateMap, ref: i + "key", type: 'text', value: key }),
+	                ' ->',
+	                _react2.default.createElement('input', { onChange: _this.updateMap, ref: i + "value", type: 'text', value: val })
 	            );
 	        });
 	        var remainingItems = this.state.numberOfItems - items.length;
 	
 	        for (var i = 0; i < remainingItems; i++) {
 	            items.push(_react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement("input", { onChange: this.updateMap, ref: i + items.length + "key", type: "text" }),
-	                " ->",
-	                _react2.default.createElement("input", { onChange: this.updateMap, ref: i + items.length + "value", type: "text" })
+	                'li',
+	                { key: (0, _util.rand)() },
+	                _react2.default.createElement('input', { onChange: this.updateMap, ref: i + items.length + "key", type: 'text' }),
+	                ' ->',
+	                _react2.default.createElement('input', { onChange: this.updateMap, ref: i + items.length + "value", type: 'text' })
 	            ));
 	        }
 	
 	        items.push(_react2.default.createElement(
-	            "li",
-	            null,
+	            'li',
+	            { key: (0, _util.rand)() },
 	            _react2.default.createElement(
-	                "button",
+	                'button',
 	                { onClick: this.addItem },
-	                "+"
+	                '+'
 	            )
 	        ));
 	        return _react2.default.createElement(HttpDataView, { name: this.props.name, items: items });
@@ -22788,20 +22631,20 @@
 	});
 	
 	var HttpDataView = _react2.default.createClass({
-	    displayName: "HttpDataView",
+	    displayName: 'HttpDataView',
 	
 	    render: function render() {
 	        if (this.props.items && this.props.items.length > 0) {
 	            return _react2.default.createElement(
-	                "div",
+	                'div',
 	                { className: this.props.name },
 	                _react2.default.createElement(
-	                    "h5",
+	                    'h5',
 	                    null,
 	                    this.props.name
 	                ),
 	                _react2.default.createElement(
-	                    "ul",
+	                    'ul',
 	                    null,
 	                    this.props.items
 	                )
@@ -22825,7 +22668,7 @@
 	            };
 	        }();
 	
-	        if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
+	        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	    }
 	    return [];
 	}
@@ -22850,6 +22693,8 @@
 	var _dialogPolyfill = __webpack_require__(/*! dialog-polyfill */ 178);
 	
 	var _dialogPolyfill2 = _interopRequireDefault(_dialogPolyfill);
+	
+	var _util = __webpack_require__(/*! ./util */ 186);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22971,7 +22816,7 @@
 	            errs = this.props.messages.map(function (m) {
 	                return _react2.default.createElement(
 	                    'li',
-	                    null,
+	                    { key: (0, _util.rand)() },
 	                    m
 	                );
 	            });
@@ -22986,7 +22831,7 @@
 	            ),
 	            _react2.default.createElement(
 	                'div',
-	                { className: 'mdl-dialog__content', style: { "font-family": "Courier" } },
+	                { className: 'mdl-dialog__content', style: { "fontFamily": "Courier" } },
 	                _react2.default.createElement(
 	                    'ul',
 	                    null,
@@ -40309,6 +40154,192 @@
 	}.call(this));
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(/*! ./../webpack/buildin/module.js */ 179)(module)))
+
+/***/ },
+/* 182 */
+/*!*************************************!*\
+  !*** ./src/client/app/formbits.jsx ***!
+  \*************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Body = exports.Code = exports.TextArea = exports.TextField = exports.MethodSwitcher = undefined;
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _util = __webpack_require__(/*! ./util */ 186);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var MethodSwitcher = exports.MethodSwitcher = _react2.default.createClass({
+	    displayName: 'MethodSwitcher',
+	
+	
+	    selectedCSS: "mdl-button mdl-js-button mdl-button--raised mdl-button--accent",
+	    notSelectedCSS: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored",
+	    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
+	
+	    handleClick: function handleClick(e) {
+	        this.props.onChange({
+	            target: {
+	                name: 'method',
+	                value: e.target.innerText
+	            }
+	        });
+	    },
+	    createButton: function createButton(methodName, selectedMethod) {
+	        var clz = methodName === selectedMethod ? this.selectedCSS : this.notSelectedCSS;
+	        return _react2.default.createElement(
+	            'button',
+	            { key: (0, _util.rand)(), style: { "marginRight": "10px" }, className: clz, onClick: this.handleClick },
+	            methodName
+	        );
+	    },
+	    render: function render() {
+	        var _this = this;
+	
+	        var buttons = this.methods.map(function (m) {
+	            return _this.createButton(m, _this.props.selected);
+	        });
+	        return _react2.default.createElement(
+	            'div',
+	            null,
+	            buttons
+	        );
+	    }
+	});
+	
+	var TextField = exports.TextField = _react2.default.createClass({
+	    displayName: 'TextField',
+	
+	    render: function render() {
+	        var value = this.props.value || "";
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
+	            _react2.default.createElement('input', { ref: 'user', className: 'mdl-textfield__input', type: 'text', name: this.props.name, value: value, onChange: this.props.onChange }),
+	            _react2.default.createElement(
+	                'label',
+	                { className: 'mdl-textfield__label', htmlFor: this.props.name },
+	                this.props.name
+	            )
+	        );
+	    }
+	});
+	
+	var TextArea = exports.TextArea = _react2.default.createClass({
+	    displayName: 'TextArea',
+	
+	    render: function render() {
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
+	            _react2.default.createElement('textarea', { ref: 'user', className: 'mdl-textfield__input', type: 'text', rows: '5', name: this.props.name, value: this.props.value, onChange: this.props.onChange }),
+	            _react2.default.createElement(
+	                'label',
+	                { className: 'mdl-textfield__label', htmlFor: this.props.name },
+	                this.props.name
+	            )
+	        );
+	    }
+	});
+	
+	var Code = exports.Code = _react2.default.createClass({
+	    displayName: 'Code',
+	
+	    render: function render() {
+	        if (this.props.value) {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'mdl-card__supporting-text' },
+	                _react2.default.createElement(
+	                    'code',
+	                    { className: 'mdl-color-text--accent' },
+	                    this.props.value
+	                )
+	            );
+	        } else {
+	            return null;
+	        }
+	    }
+	});
+	
+	var Body = exports.Body = _react2.default.createClass({
+	    displayName: 'Body',
+	
+	    isJSON: function isJSON() {
+	        try {
+	            JSON.parse(this.props.value);
+	            return true;
+	        } catch (e) {
+	            return false;
+	        }
+	    },
+	    renderText: function renderText() {
+	        if (this.isJSON()) {
+	            return JSON.stringify(JSON.parse(this.props.value), null, 2);
+	        } else {
+	            return this.props.value;
+	        }
+	    },
+	    render: function render() {
+	        if (this.props.value) {
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-card__title mdl-card--expand' },
+	                    _react2.default.createElement(
+	                        'h6',
+	                        { className: 'mdl-card__title-text' },
+	                        this.props.label
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-card__supporting-text' },
+	                    _react2.default.createElement(
+	                        'pre',
+	                        { className: 'mdl-color-text--primary' },
+	                        this.renderText()
+	                    )
+	                )
+	            );
+	        } else {
+	            return null;
+	        }
+	    }
+	});
+
+/***/ },
+/* 183 */,
+/* 184 */,
+/* 185 */,
+/* 186 */
+/*!********************************!*\
+  !*** ./src/client/app/util.js ***!
+  \********************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var rand = exports.rand = function rand() {
+	    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+	};
+	
+	var guid = exports.guid = function guid() {
+	    return rand() + rand() + '-' + rand() + '-' + rand() + '-' + rand() + '-' + rand() + rand() + rand();
+	};
 
 /***/ }
 /******/ ]);

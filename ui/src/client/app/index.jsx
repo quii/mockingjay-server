@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import Endpoint from './endpoints.jsx';
 import CDC from './CDC.jsx'
 import _ from 'lodash';
+import {guid} from './util';
 
 const UI = React.createClass({
     getInitialState: function() {
@@ -85,6 +86,7 @@ const UI = React.createClass({
         const items = []
         items.push((
             <a
+                key={guid()}
                 onClick={this.add}
                 className="mdl-navigation__link mdl-color-text--primary-dark">
                 <i className="material-icons md-32">add</i>Add new endoint</a>
@@ -103,6 +105,7 @@ const UI = React.createClass({
 
             return (
                 <a
+                    key={guid()}
                     ref={'menu-'+endpoint.Name}
                     className={cssClass}
                     onClick={(event)=>this.openEditor(endpoint.Name, event)}>
@@ -219,13 +222,3 @@ ReactDOM.render(
     <UI url="/mj-endpoints"/>,
     document.getElementById('app')
 );
-
-function guid() {
-    function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-        s4() + '-' + s4() + s4() + s4();
-}
