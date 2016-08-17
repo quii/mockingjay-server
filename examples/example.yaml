@@ -1,44 +1,49 @@
-- name: Awesome super time
-  cdcdisabled: false
-  request:
-    uri: /hello
-    method: GET
-  response:
-    code: 200
-    body: World!
-- name: ce0594da-aeee-b5b2-74bb-cbaf2c55d8b2
-  cdcdisabled: true
-  request:
-    uri: /hello22
-    method: GET
-  response:
-    code: 200
-    body: World!
-- name: bob
-  cdcdisabled: false
-  request:
-    uri: /hurricane
-    method: PUT
-    form:
-      name: Chris
-  response:
-    code: 200
-    body: World!
-- name: 28b1ecf1-72ad-5f7a-2bff-94537784a8a8
-  cdcdisabled: false
-  request:
-    uri: /hello
-    method: GET
-  response:
-    code: 200
-    body: World!
-- name: Pretend get article authors
-  cdcdisabled: false
-  request:
-    uri: /article/authors/123-456
-    method: GET
-  response:
-    code: 200
-    body: |-
-      Chris James
-      Ruth Baker
+---
+ - name: Test endpoint
+   request:
+     uri: /hello
+     method: GET
+   response:
+     code: 200
+     body: '{"message": "hello, world"}'
+     headers:
+       content-type: text/json
+
+ - name: Test endpoint 2
+   request:
+     uri: /world
+     method: DELETE
+   response:
+     code: 200
+     body: hello, world
+
+ - name: Failing endpoint
+   request:
+     uri: /card
+     method: POST
+     body: Greetings
+   response:
+     code: 500
+     body: Oh bugger
+
+ - name: Endpoint not used for CDC
+   cdcdisabled: true
+   request:
+     uri: /burp
+     method: POST
+     body: Belch
+   response:
+     code: 500
+     body: Oh no
+
+ - name: Posting forms
+   cdcdisabled: false
+   request:
+     uri: /cats
+     method: POST
+     form:
+      age: 10
+      name: Hudson
+   response:
+     code: 201
+     body: Created
