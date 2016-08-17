@@ -41,7 +41,7 @@ export const TextField = React.createClass({
 export const TextArea = React.createClass({
     render: function () {
         return (
-            <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <div style={{width: "100%"}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <textarea ref="user" className="mdl-textfield__input" type="text" rows="5" name={this.props.name} value={this.props.value} onChange={this.props.onChange} />
                 <label className="mdl-textfield__label" htmlFor={this.props.name}>{this.props.name}</label>
             </div>

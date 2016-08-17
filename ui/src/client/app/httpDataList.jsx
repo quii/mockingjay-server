@@ -3,7 +3,7 @@ import {rand} from './util';
 
 export const HttpDataList = React.createClass({
     render: function () {
-        const items = mapKeyVals(this.props.items, (key, val) => <tr><td className="mdl-data-table__cell--non-numeric">{key}</td><td className="mdl-data-table__cell--non-numeric">{val}</td></tr>);
+        const items = mapKeyVals(this.props.items, (key, val) => <tr key={rand()}><td className="mdl-data-table__cell--non-numeric">{key}</td><td className="mdl-data-table__cell--non-numeric">{val}</td></tr>);
         if(items.length>0) {
             return <div>
                 <div className="mdl-card__title mdl-card--expand">

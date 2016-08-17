@@ -61,15 +61,15 @@
 	
 	var _endpoints2 = _interopRequireDefault(_endpoints);
 	
-	var _CDC = __webpack_require__(/*! ./CDC.jsx */ 177);
+	var _CDC = __webpack_require__(/*! ./CDC.jsx */ 179);
 	
 	var _CDC2 = _interopRequireDefault(_CDC);
 	
-	var _lodash = __webpack_require__(/*! lodash */ 181);
+	var _lodash = __webpack_require__(/*! lodash */ 183);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _util = __webpack_require__(/*! ./util */ 186);
+	var _util = __webpack_require__(/*! ./util */ 177);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22267,7 +22267,7 @@
 	
 	var _httpDataList = __webpack_require__(/*! ./httpDataList.jsx */ 176);
 	
-	var _formbits = __webpack_require__(/*! ./formbits.jsx */ 182);
+	var _formbits = __webpack_require__(/*! ./formbits.jsx */ 178);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22489,7 +22489,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _util = __webpack_require__(/*! ./util */ 186);
+	var _util = __webpack_require__(/*! ./util */ 177);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22500,7 +22500,7 @@
 	        var items = mapKeyVals(this.props.items, function (key, val) {
 	            return _react2.default.createElement(
 	                'tr',
-	                null,
+	                { key: (0, _util.rand)() },
 	                _react2.default.createElement(
 	                    'td',
 	                    { className: 'mdl-data-table__cell--non-numeric' },
@@ -22676,6 +22676,195 @@
 /***/ },
 /* 177 */
 /*!********************************!*\
+  !*** ./src/client/app/util.js ***!
+  \********************************/
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var rand = exports.rand = function rand() {
+	    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+	};
+	
+	var guid = exports.guid = function guid() {
+	    return rand() + rand() + '-' + rand() + '-' + rand() + '-' + rand() + '-' + rand() + rand() + rand();
+	};
+	
+	var isValidURL = exports.isValidURL = function isValidURL(str) {
+	    var a = document.createElement('a');
+	    a.href = str;
+	    return a.host;
+	};
+
+/***/ },
+/* 178 */
+/*!*************************************!*\
+  !*** ./src/client/app/formbits.jsx ***!
+  \*************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Body = exports.Code = exports.TextArea = exports.TextField = exports.MethodSwitcher = undefined;
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _util = __webpack_require__(/*! ./util */ 177);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var MethodSwitcher = exports.MethodSwitcher = _react2.default.createClass({
+	    displayName: 'MethodSwitcher',
+	
+	
+	    selectedCSS: "mdl-button mdl-js-button mdl-button--raised mdl-button--accent",
+	    notSelectedCSS: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored",
+	    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
+	
+	    handleClick: function handleClick(e) {
+	        this.props.onChange({
+	            target: {
+	                name: 'method',
+	                value: e.target.innerText
+	            }
+	        });
+	    },
+	    createButton: function createButton(methodName, selectedMethod) {
+	        var clz = methodName === selectedMethod ? this.selectedCSS : this.notSelectedCSS;
+	        return _react2.default.createElement(
+	            'button',
+	            { key: (0, _util.rand)(), style: { "marginRight": "10px" }, className: clz, onClick: this.handleClick },
+	            methodName
+	        );
+	    },
+	    render: function render() {
+	        var _this = this;
+	
+	        var buttons = this.methods.map(function (m) {
+	            return _this.createButton(m, _this.props.selected);
+	        });
+	        return _react2.default.createElement(
+	            'div',
+	            null,
+	            buttons
+	        );
+	    }
+	});
+	
+	var TextField = exports.TextField = _react2.default.createClass({
+	    displayName: 'TextField',
+	
+	    render: function render() {
+	        var value = this.props.value || "";
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
+	            _react2.default.createElement('input', { ref: 'user', className: 'mdl-textfield__input', type: 'text', name: this.props.name, value: value, onChange: this.props.onChange }),
+	            _react2.default.createElement(
+	                'label',
+	                { className: 'mdl-textfield__label', htmlFor: this.props.name },
+	                this.props.name
+	            )
+	        );
+	    }
+	});
+	
+	var TextArea = exports.TextArea = _react2.default.createClass({
+	    displayName: 'TextArea',
+	
+	    render: function render() {
+	        return _react2.default.createElement(
+	            'div',
+	            { style: { width: "100%" }, className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
+	            _react2.default.createElement('textarea', { ref: 'user', className: 'mdl-textfield__input', type: 'text', rows: '5', name: this.props.name, value: this.props.value, onChange: this.props.onChange }),
+	            _react2.default.createElement(
+	                'label',
+	                { className: 'mdl-textfield__label', htmlFor: this.props.name },
+	                this.props.name
+	            )
+	        );
+	    }
+	});
+	
+	var Code = exports.Code = _react2.default.createClass({
+	    displayName: 'Code',
+	
+	    render: function render() {
+	        if (this.props.value) {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'mdl-card__supporting-text' },
+	                _react2.default.createElement(
+	                    'code',
+	                    { className: 'mdl-color-text--accent' },
+	                    this.props.value
+	                )
+	            );
+	        } else {
+	            return null;
+	        }
+	    }
+	});
+	
+	var Body = exports.Body = _react2.default.createClass({
+	    displayName: 'Body',
+	
+	    isJSON: function isJSON() {
+	        try {
+	            JSON.parse(this.props.value);
+	            return true;
+	        } catch (e) {
+	            return false;
+	        }
+	    },
+	    renderText: function renderText() {
+	        if (this.isJSON()) {
+	            return JSON.stringify(JSON.parse(this.props.value), null, 2);
+	        } else {
+	            return this.props.value;
+	        }
+	    },
+	    render: function render() {
+	        if (this.props.value) {
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-card__title mdl-card--expand' },
+	                    _react2.default.createElement(
+	                        'h6',
+	                        { className: 'mdl-card__title-text' },
+	                        this.props.label
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-card__supporting-text' },
+	                    _react2.default.createElement(
+	                        'pre',
+	                        { className: 'mdl-color-text--primary' },
+	                        this.renderText()
+	                    )
+	                )
+	            );
+	        } else {
+	            return null;
+	        }
+	    }
+	});
+
+/***/ },
+/* 179 */
+/*!********************************!*\
   !*** ./src/client/app/CDC.jsx ***!
   \********************************/
 /***/ function(module, exports, __webpack_require__) {
@@ -22690,11 +22879,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _dialogPolyfill = __webpack_require__(/*! dialog-polyfill */ 178);
+	var _dialogPolyfill = __webpack_require__(/*! dialog-polyfill */ 180);
 	
 	var _dialogPolyfill2 = _interopRequireDefault(_dialogPolyfill);
 	
-	var _util = __webpack_require__(/*! ./util */ 186);
+	var _util = __webpack_require__(/*! ./util */ 177);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -22852,7 +23041,7 @@
 	exports.default = CDC;
 
 /***/ },
-/* 178 */
+/* 180 */
 /*!**********************************************!*\
   !*** ./~/dialog-polyfill/dialog-polyfill.js ***!
   \**********************************************/
@@ -23364,7 +23553,7 @@
 	  if (typeof module === 'object' && typeof module['exports'] === 'object') {
 	    // CommonJS support
 	    module['exports'] = dialogPolyfill;
-	  } else if ("function" === 'function' && 'amd' in __webpack_require__(/*! !webpack amd define */ 180)) {
+	  } else if ("function" === 'function' && 'amd' in __webpack_require__(/*! !webpack amd define */ 182)) {
 	    // AMD support
 	    !(__WEBPACK_AMD_DEFINE_RESULT__ = function() { return dialogPolyfill; }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	  } else {
@@ -23373,10 +23562,10 @@
 	  }
 	})();
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../webpack/buildin/module.js */ 179)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../webpack/buildin/module.js */ 181)(module)))
 
 /***/ },
-/* 179 */
+/* 181 */
 /*!***********************************!*\
   !*** (webpack)/buildin/module.js ***!
   \***********************************/
@@ -23395,7 +23584,7 @@
 
 
 /***/ },
-/* 180 */
+/* 182 */
 /*!***************************************!*\
   !*** (webpack)/buildin/amd-define.js ***!
   \***************************************/
@@ -23405,7 +23594,7 @@
 
 
 /***/ },
-/* 181 */
+/* 183 */
 /*!****************************!*\
   !*** ./~/lodash/lodash.js ***!
   \****************************/
@@ -40145,199 +40334,7 @@
 	  }
 	}.call(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(/*! ./../webpack/buildin/module.js */ 179)(module)))
-
-/***/ },
-/* 182 */
-/*!*************************************!*\
-  !*** ./src/client/app/formbits.jsx ***!
-  \*************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.Body = exports.Code = exports.TextArea = exports.TextField = exports.MethodSwitcher = undefined;
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _util = __webpack_require__(/*! ./util */ 186);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var MethodSwitcher = exports.MethodSwitcher = _react2.default.createClass({
-	    displayName: 'MethodSwitcher',
-	
-	
-	    selectedCSS: "mdl-button mdl-js-button mdl-button--raised mdl-button--accent",
-	    notSelectedCSS: "mdl-button mdl-js-button mdl-button--raised mdl-button--colored",
-	    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
-	
-	    handleClick: function handleClick(e) {
-	        this.props.onChange({
-	            target: {
-	                name: 'method',
-	                value: e.target.innerText
-	            }
-	        });
-	    },
-	    createButton: function createButton(methodName, selectedMethod) {
-	        var clz = methodName === selectedMethod ? this.selectedCSS : this.notSelectedCSS;
-	        return _react2.default.createElement(
-	            'button',
-	            { key: (0, _util.rand)(), style: { "marginRight": "10px" }, className: clz, onClick: this.handleClick },
-	            methodName
-	        );
-	    },
-	    render: function render() {
-	        var _this = this;
-	
-	        var buttons = this.methods.map(function (m) {
-	            return _this.createButton(m, _this.props.selected);
-	        });
-	        return _react2.default.createElement(
-	            'div',
-	            null,
-	            buttons
-	        );
-	    }
-	});
-	
-	var TextField = exports.TextField = _react2.default.createClass({
-	    displayName: 'TextField',
-	
-	    render: function render() {
-	        var value = this.props.value || "";
-	        return _react2.default.createElement(
-	            'div',
-	            { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
-	            _react2.default.createElement('input', { ref: 'user', className: 'mdl-textfield__input', type: 'text', name: this.props.name, value: value, onChange: this.props.onChange }),
-	            _react2.default.createElement(
-	                'label',
-	                { className: 'mdl-textfield__label', htmlFor: this.props.name },
-	                this.props.name
-	            )
-	        );
-	    }
-	});
-	
-	var TextArea = exports.TextArea = _react2.default.createClass({
-	    displayName: 'TextArea',
-	
-	    render: function render() {
-	        return _react2.default.createElement(
-	            'div',
-	            { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
-	            _react2.default.createElement('textarea', { ref: 'user', className: 'mdl-textfield__input', type: 'text', rows: '5', name: this.props.name, value: this.props.value, onChange: this.props.onChange }),
-	            _react2.default.createElement(
-	                'label',
-	                { className: 'mdl-textfield__label', htmlFor: this.props.name },
-	                this.props.name
-	            )
-	        );
-	    }
-	});
-	
-	var Code = exports.Code = _react2.default.createClass({
-	    displayName: 'Code',
-	
-	    render: function render() {
-	        if (this.props.value) {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'mdl-card__supporting-text' },
-	                _react2.default.createElement(
-	                    'code',
-	                    { className: 'mdl-color-text--accent' },
-	                    this.props.value
-	                )
-	            );
-	        } else {
-	            return null;
-	        }
-	    }
-	});
-	
-	var Body = exports.Body = _react2.default.createClass({
-	    displayName: 'Body',
-	
-	    isJSON: function isJSON() {
-	        try {
-	            JSON.parse(this.props.value);
-	            return true;
-	        } catch (e) {
-	            return false;
-	        }
-	    },
-	    renderText: function renderText() {
-	        if (this.isJSON()) {
-	            return JSON.stringify(JSON.parse(this.props.value), null, 2);
-	        } else {
-	            return this.props.value;
-	        }
-	    },
-	    render: function render() {
-	        if (this.props.value) {
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'mdl-card__title mdl-card--expand' },
-	                    _react2.default.createElement(
-	                        'h6',
-	                        { className: 'mdl-card__title-text' },
-	                        this.props.label
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'mdl-card__supporting-text' },
-	                    _react2.default.createElement(
-	                        'pre',
-	                        { className: 'mdl-color-text--primary' },
-	                        this.renderText()
-	                    )
-	                )
-	            );
-	        } else {
-	            return null;
-	        }
-	    }
-	});
-
-/***/ },
-/* 183 */,
-/* 184 */,
-/* 185 */,
-/* 186 */
-/*!********************************!*\
-  !*** ./src/client/app/util.js ***!
-  \********************************/
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var rand = exports.rand = function rand() {
-	    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-	};
-	
-	var guid = exports.guid = function guid() {
-	    return rand() + rand() + '-' + rand() + '-' + rand() + '-' + rand() + '-' + rand() + rand() + rand();
-	};
-	
-	var isValidURL = exports.isValidURL = function isValidURL(str) {
-	    var a = document.createElement('a');
-	    a.href = str;
-	    return a.host;
-	};
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(/*! ./../webpack/buildin/module.js */ 181)(module)))
 
 /***/ }
 /******/ ]);
