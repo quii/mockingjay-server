@@ -22729,15 +22729,13 @@
 	            data: null
 	        });
 	
-	        if ((!e.key || e.key === 'Enter') && isValidURL(e.target.value)) {
+	        if ((!e.key || e.key === 'Enter') && (0, _util.isValidURL)(e.target.value)) {
 	            this.setState({
 	                remoteUrl: e.target.value
 	            }, this.checkCompatability);
 	        }
 	    },
-	    label: function label() {
-	        return "Automatically checking your endpoints are equivalent to (click to change)";
-	    },
+	    label: "Automatically checking your endpoints are equivalent to (click to change)",
 	    indicatorClick: function indicatorClick() {
 	        this.refs['dialog'].showModal();
 	    },
@@ -22764,7 +22762,7 @@
 	                    _react2.default.createElement(
 	                        'label',
 	                        { htmlFor: 'fixed-header-drawer-exp' },
-	                        this.label()
+	                        this.label
 	                    ),
 	                    _react2.default.createElement(
 	                        'div',
@@ -22850,12 +22848,6 @@
 	        );
 	    }
 	});
-	
-	function isValidURL(str) {
-	    var a = document.createElement('a');
-	    a.href = str;
-	    return a.host;
-	}
 	
 	exports.default = CDC;
 
@@ -40339,6 +40331,12 @@
 	
 	var guid = exports.guid = function guid() {
 	    return rand() + rand() + '-' + rand() + '-' + rand() + '-' + rand() + '-' + rand() + rand() + rand();
+	};
+	
+	var isValidURL = exports.isValidURL = function isValidURL(str) {
+	    var a = document.createElement('a');
+	    a.href = str;
+	    return a.host;
 	};
 
 /***/ }

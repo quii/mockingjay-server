@@ -1,6 +1,6 @@
 import React from 'react';
 import dialogPolyfill from 'dialog-polyfill';
-import {rand} from './util';
+import {rand, isValidURL} from './util';
 
 const CDC = React.createClass({
     getInitialState: function () {
@@ -37,9 +37,7 @@ const CDC = React.createClass({
             }, this.checkCompatability);
         }
     },
-    label: function () {
-            return "Automatically checking your endpoints are equivalent to (click to change)"
-    },
+    label: "Automatically checking your endpoints are equivalent to (click to change)",
     indicatorClick: function () {
         this.refs['dialog'].showModal();
     },
@@ -58,7 +56,7 @@ const CDC = React.createClass({
                     <div className="mdl-layout-spacer"></div>
                     <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable
                   mdl-textfield--floating-label mdl-textfield--align-right">
-                        <label htmlFor="fixed-header-drawer-exp">{this.label()}</label>
+                        <label htmlFor="fixed-header-drawer-exp">{this.label}</label>
                         <div className="mdl-textfield__expandable-holder">
                             <input className="mdl-textfield__input" type="text" name="sample"
                                    id="fixed-header-drawer-exp" onBlur={this.checkCompatability} onKeyPress={this.handleUrlChange} defaultValue={this.state.remoteUrl} />
@@ -113,13 +111,7 @@ const Dialog = React.createClass({
             </dialog>
         )
     }
-})
-
-function isValidURL(str) {
-    var a  = document.createElement('a');
-    a.href = str;
-    return a.host;
-}
+});
 
 
 export default CDC;
