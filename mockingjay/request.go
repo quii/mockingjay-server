@@ -85,8 +85,6 @@ func (r Request) AsHTTPRequest(baseURL string) (req *http.Request, err error) {
 		req.Header.Add("content-type", "application/x-www-form-urlencoded")
 	}
 
-	log.Println("mj req body is", r.Body, "request body is", req.Body)
-
 	return
 }
 
