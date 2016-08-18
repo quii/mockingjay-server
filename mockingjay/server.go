@@ -54,6 +54,7 @@ const requestsURL = "/requests"
 const endpointsURL = "/mj-endpoints"
 const newEndpointURL = "/mj-new-endpoint"
 const checkcompatabilityURL = "/mj-check-compatability"
+const curlMJURL = "/mj-curl"
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
@@ -65,6 +66,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		s.listAvailableRequests(w)
 	case checkcompatabilityURL:
 		s.checkCompatability(r.URL.Query().Get("url"), w)
+	case curlMJURL:
+		s.curl(w, r.URL.Query().Get("name"), r.URL.Query().Get("baseURL"))
 	default:
 		mjRequest := NewRequest(r)
 
@@ -204,4 +207,27 @@ func (s *Server) createEndpoint(w http.ResponseWriter, r *http.Request) {
 	s.Endpoints = append(s.Endpoints, newEndpoint)
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+//todo: test me
+func (s *Server) curl(w http.ResponseWriter, endpointName string, baseURL string) {
+	if endpointName == "" || baseURL == "" {
+		http.Error(w, "Please provide both [name] and [baseURL] querystring parameters", http.StatusBadRequest)
+		return
+	}
+
+	for _, endpoint := range s.Endpoints {
+		if endpoint.Name == endpointName {
+			curl, err := endpoint.Request.AsCURL(baseURL)
+
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+
+			fmt.Fprint(w, curl)
+			return
+		}
+	}
+
+	http.Error(w, "Couldn't find endpoint", http.StatusNotFound)
 }

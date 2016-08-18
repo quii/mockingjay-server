@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/moul/http2curl"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -44,6 +45,18 @@ func (r Request) errors() error {
 		return errEmptyMethod
 	}
 	return nil
+}
+
+func (r Request) AsCURL(baseURL string) (string, error) {
+	asHttpReq, err := r.AsHTTPRequest(baseURL)
+
+	if err != nil {
+		return "", err
+	}
+
+	curl, err := http2curl.GetCurlCommand(asHttpReq)
+
+	return curl.String(), err
 }
 
 // AsHTTPRequest tries to create a http.Request from a given baseURL

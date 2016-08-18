@@ -16,6 +16,12 @@
 			"revisionTime": "2016-01-29T19:31:06Z"
 		},
 		{
+			"checksumSHA1": "5ftkjfUwI9A6xCQ1PwIAd5+qlo0=",
+			"path": "github.com/elazarl/go-bindata-assetfs",
+			"revision": "e1a2a7ec64b07d04ac9ebb072404fe8b7b60de1b",
+			"revisionTime": "2016-08-03T19:23:04Z"
+		},
+		{
 			"checksumSHA1": "sfjIP/dDU7t4DhhrWLZYkSiXFdQ=",
 			"path": "github.com/fatih/structs",
 			"revision": "b4641b79cf37cd07961c25c5460be637ab27da76",
@@ -26,6 +32,12 @@
 			"path": "github.com/johnmuth/xmlcompare",
 			"revision": "1142c04325f04ebfcb479007b9e16522487155c5",
 			"revisionTime": "2015-05-18T09:49:49Z"
+		},
+		{
+			"checksumSHA1": "O7lIX71vTepwRVcnXbV3Fzq0z5U=",
+			"path": "github.com/moul/http2curl",
+			"revision": "b1479103caacaa39319f75e7f57fc545287fca0d",
+			"revisionTime": "2016-05-20T21:31:28Z"
 		},
 		{
 			"checksumSHA1": "zKKp5SZ3d3ycKe4EKMNT0BqAWBw=",
