@@ -53,6 +53,9 @@ export const HttpDataEditor = React.createClass({
                 newState[k] = v;
             }
         }
+
+        //todo: filter out empty values from state, this is messing up stuff. Should probably fix in server too.
+
         this.props.onChange({
             target: {
                 name: this.props.name,

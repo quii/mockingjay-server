@@ -22269,6 +22269,8 @@
 	
 	var _formbits = __webpack_require__(/*! ./formbits.jsx */ 178);
 	
+	var _curl = __webpack_require__(/*! ./curl.jsx */ 184);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -22352,6 +22354,7 @@
 	                _react2.default.createElement(_formbits.Body, { label: 'Body', value: this.state.body }),
 	                _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: this.state.resHeaders })
 	            ),
+	            _react2.default.createElement(_curl.Curl, { url: location.origin, name: this.state.name }),
 	            _react2.default.createElement(
 	                'div',
 	                { style: { margin: "2% 2% 2% 3%" } },
@@ -22590,6 +22593,9 @@
 	                newState[k] = v;
 	            }
 	        }
+	
+	        //todo: filter out empty values from state, this is messing up stuff. Should probably fix in server too.
+	
 	        this.props.onChange({
 	            target: {
 	                name: this.props.name,
@@ -40349,6 +40355,71 @@
 	}.call(this));
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(/*! ./../webpack/buildin/module.js */ 181)(module)))
+
+/***/ },
+/* 184 */
+/*!*********************************!*\
+  !*** ./src/client/app/curl.jsx ***!
+  \*********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Curl = undefined;
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Curl = exports.Curl = _react2.default.createClass({
+	    displayName: 'Curl',
+	
+	    componentWillMount: function componentWillMount() {
+	
+	        var baseURL = location.origin;
+	        if (this.props.baseURL) {
+	            baseURL = this.props.baseURL;
+	        }
+	
+	        var url = '/mj-curl?name=' + this.props.name + '&baseURL=' + baseURL;
+	        console.log('getting curl from', url);
+	        $.ajax({
+	            url: url,
+	            cache: false,
+	            success: function (data) {
+	                console.log('lalala', data);
+	                this.setState({ curl: data });
+	            }.bind(this),
+	            error: function (xhr, status, err) {
+	                console.error(this.props.url, status, err.toString());
+	            }.bind(this)
+	        });
+	    },
+	    render: function render() {
+	        if (this.state) {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'mdl-card mdl-shadow--2dp' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-card__supporting-text' },
+	                    _react2.default.createElement(
+	                        'code',
+	                        null,
+	                        this.state.curl
+	                    )
+	                )
+	            );
+	        } else {
+	            return null;
+	        }
+	    }
+	});
 
 /***/ }
 /******/ ]);
