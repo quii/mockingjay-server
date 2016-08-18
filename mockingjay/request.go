@@ -1,7 +1,6 @@
 package mockingjay
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -71,7 +70,7 @@ func (r Request) AsHTTPRequest(baseURL string) (req *http.Request, err error) {
 		body = form.Encode()
 	}
 
-	req, err = http.NewRequest(r.Method, baseURL+r.URI, ioutil.NopCloser(bytes.NewBufferString(body)))
+	req, err = http.NewRequest(r.Method, baseURL+r.URI, strings.NewReader(body))
 
 	if err != nil {
 		return
