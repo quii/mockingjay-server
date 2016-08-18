@@ -1,5 +1,6 @@
 import React from 'react';
 import {rand} from './util';
+import _ from 'lodash';
 
 export const HttpDataList = React.createClass({
     render: function () {
@@ -54,12 +55,12 @@ export const HttpDataEditor = React.createClass({
             }
         }
 
-        //todo: filter out empty values from state, this is messing up stuff. Should probably fix in server too.
+        const change = _.isEmpty(newState) ? null : newState;
 
         this.props.onChange({
             target: {
                 name: this.props.name,
-                value: newState
+                value: change
             }
         })
     },

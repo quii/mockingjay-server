@@ -45,6 +45,10 @@ const Endpoint = React.createClass({
             [e.target.name]: e.target.value === 'on'
         })
     },
+    couldBeDodgyCurlFormStuff: function () {
+        const noHeaders = !this.state.reqHeaders || Object.keys(this.state.reqHeaders).length===0;
+        return this.state.reqBody!=="" && noHeaders;
+    },
     render: function () {
 
         const view = (
@@ -70,7 +74,7 @@ const Endpoint = React.createClass({
                     <HttpDataList name="Headers" items={this.state.resHeaders}/>
                 </div>
 
-                <Curl url={location.origin} name={this.state.name} />
+                <Curl url={location.origin} name={this.state.name} showPostHint={this.couldBeDodgyCurlFormStuff()} />
 
                 <div style={{margin:"2% 2% 2% 3%"}}>
                     <button style={{margin:"0% 1% 0% 0%"}} onClick={this.startEditing} className="mdl-button mdl-button--raised mdl-button--accent">
