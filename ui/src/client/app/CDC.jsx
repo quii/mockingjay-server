@@ -31,13 +31,17 @@ const CDC = React.createClass({
             data: null
         });
 
-        if ((!e.key || e.key === 'Enter') && isValidURL(e.target.value)) {
+        if (isValidURL(e.target.value)) {
             this.setState({
                 remoteUrl: e.target.value
             }, this.checkCompatability);
         }
     },
-    label: "Automatically checking your endpoints are equivalent to (click to change)",
+    inputWidth: function () {
+        let w = this.state.remoteUrl.length*12
+        return w < 350 ? 350 : w
+    },
+    label: "Auto-checking endpoints are equivalent to",
     indicatorClick: function () {
         this.refs['dialog'].showModal();
     },
@@ -50,18 +54,21 @@ const CDC = React.createClass({
             checkDetails = <TestIndicator indicatorClick={this.indicatorClick} badge="sentiment_neutral" />;
             messages = [];
         }
+
         return (
             <header className="mdl-layout__header">
                 <div className="mdl-layout__header-row">
-                    <div className="mdl-layout-spacer"></div>
-                    <div className="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+                    <div className="cdc mdl-textfield mdl-js-textfield mdl-textfield--expandable
                   mdl-textfield--floating-label mdl-textfield--align-right">
-                        <label htmlFor="fixed-header-drawer-exp">{this.label}</label>
+                        {checkDetails}
+
                         <div className="mdl-textfield__expandable-holder">
-                            <input className="mdl-textfield__input" type="text" name="sample"
+                            <input style={{width: this.inputWidth()}} className="mdl-textfield__input" type="text" name="sample"
                                    id="fixed-header-drawer-exp" onBlur={this.checkCompatability} onKeyPress={this.handleUrlChange} defaultValue={this.state.remoteUrl} />
                         </div>
-                        {checkDetails}
+
+                        <label htmlFor="fixed-header-drawer-exp">{this.label}</label>
+
                     </div>
                 </div>
                 <Dialog title="Messages from CDC check" messages={messages} ref="dialog" />

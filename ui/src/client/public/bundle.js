@@ -22922,13 +22922,17 @@
 	            data: null
 	        });
 	
-	        if ((!e.key || e.key === 'Enter') && (0, _util.isValidURL)(e.target.value)) {
+	        if ((0, _util.isValidURL)(e.target.value)) {
 	            this.setState({
 	                remoteUrl: e.target.value
 	            }, this.checkCompatability);
 	        }
 	    },
-	    label: "Automatically checking your endpoints are equivalent to (click to change)",
+	    inputWidth: function inputWidth() {
+	        var w = this.state.remoteUrl.length * 12;
+	        return w < 350 ? 350 : w;
+	    },
+	    label: "Auto-checking endpoints are equivalent to",
 	    indicatorClick: function indicatorClick() {
 	        this.refs['dialog'].showModal();
 	    },
@@ -22942,28 +22946,28 @@
 	            checkDetails = _react2.default.createElement(TestIndicator, { indicatorClick: this.indicatorClick, badge: 'sentiment_neutral' });
 	            messages = [];
 	        }
+	
 	        return _react2.default.createElement(
 	            'header',
 	            { className: 'mdl-layout__header' },
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'mdl-layout__header-row' },
-	                _react2.default.createElement('div', { className: 'mdl-layout-spacer' }),
 	                _react2.default.createElement(
 	                    'div',
-	                    { className: 'mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right' },
+	                    { className: 'cdc mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right' },
+	                    checkDetails,
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'mdl-textfield__expandable-holder' },
+	                        _react2.default.createElement('input', { style: { width: this.inputWidth() }, className: 'mdl-textfield__input', type: 'text', name: 'sample',
+	                            id: 'fixed-header-drawer-exp', onBlur: this.checkCompatability, onKeyPress: this.handleUrlChange, defaultValue: this.state.remoteUrl })
+	                    ),
 	                    _react2.default.createElement(
 	                        'label',
 	                        { htmlFor: 'fixed-header-drawer-exp' },
 	                        this.label
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'mdl-textfield__expandable-holder' },
-	                        _react2.default.createElement('input', { className: 'mdl-textfield__input', type: 'text', name: 'sample',
-	                            id: 'fixed-header-drawer-exp', onBlur: this.checkCompatability, onKeyPress: this.handleUrlChange, defaultValue: this.state.remoteUrl })
-	                    ),
-	                    checkDetails
+	                    )
 	                )
 	            ),
 	            _react2.default.createElement(Dialog, { title: 'Messages from CDC check', messages: messages, ref: 'dialog' })
