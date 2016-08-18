@@ -12,7 +12,7 @@ const CDC = React.createClass({
         this.checkCompatability()
     },
     checkCompatability: function () {
-        if(this.state && this.state.remoteUrl && this.state.remoteUrl!==null) {
+        if (this.state && this.state.remoteUrl && this.state.remoteUrl !== null) {
             $.ajax({
                 url: this.props.url + "?url=" + this.state.remoteUrl,
                 dataType: 'json',
@@ -26,7 +26,7 @@ const CDC = React.createClass({
             });
         }
     },
-    handleUrlChange: function(e) {
+    handleUrlChange: function (e) {
         this.setState({
             data: null
         });
@@ -38,49 +38,55 @@ const CDC = React.createClass({
         }
     },
     inputWidth: function () {
-        let w = this.state.remoteUrl.length*12
+        let w = this.state.remoteUrl.length * 12
         return w < 350 ? 350 : w
+    },
+    sentiment: function () {
+        let sentiment;
+        if (this.state && this.state.data) {
+            sentiment = this.state.data.Passed ? "sentiment_satisfied" : "sentiment_very_dissatisfied";
+        } else {
+            sentiment = "sentiment_neutral";
+        }
+        return sentiment;
     },
     label: "Auto-checking endpoints are equivalent to",
     indicatorClick: function () {
         this.refs['dialog'].showModal();
     },
     render: function () {
-        let checkDetails, messages;
-        if(this.state && this.state.data){
-            checkDetails = this.state.data.Passed ? <TestIndicator indicatorClick={this.indicatorClick} badge="sentiment_satisfied"/> : <TestIndicator indicatorClick={this.indicatorClick} badge="sentiment_very_dissatisfied" />;
-            messages = this.state.data.Messages;
-        }else{
-            checkDetails = <TestIndicator indicatorClick={this.indicatorClick} badge="sentiment_neutral" />;
-            messages = [];
-        }
-
         return (
             <header className="mdl-layout__header">
                 <div className="mdl-layout__header-row">
                     <div className="cdc mdl-textfield mdl-js-textfield mdl-textfield--expandable
                   mdl-textfield--floating-label mdl-textfield--align-right">
-                        {checkDetails}
+                        <TestIndicator indicatorClick={this.indicatorClick} badge={this.sentiment()}/>
 
                         <div className="mdl-textfield__expandable-holder">
-                            <input style={{width: this.inputWidth()}} className="mdl-textfield__input" type="text" name="sample"
-                                   id="fixed-header-drawer-exp" onBlur={this.checkCompatability} onKeyPress={this.handleUrlChange} defaultValue={this.state.remoteUrl} />
+                            <input style={{width: this.inputWidth()}} className="mdl-textfield__input" type="text"
+                                   name="sample"
+                                   id="fixed-header-drawer-exp" onBlur={this.checkCompatability}
+                                   onKeyPress={this.handleUrlChange} defaultValue={this.state.remoteUrl}/>
                         </div>
 
                         <label htmlFor="fixed-header-drawer-exp">{this.label}</label>
 
                     </div>
                 </div>
-                <Dialog title="Messages from CDC check" messages={messages} ref="dialog" />
+                <Dialog
+                    title="Messages from CDC check"
+                    messages={this.state && this.state.data ? this.state.data.Messages : []}
+                    ref="dialog"
+                />
             </header>
-
         )
     }
 });
 
 const TestIndicator = React.createClass({
     render: function () {
-        return <i onClick={this.props.indicatorClick} style={{cursor: "hand"}} className="material-icons md-48">{this.props.badge}</i>
+        return <i onClick={this.props.indicatorClick} style={{cursor: "hand"}}
+                  className="material-icons md-48">{this.props.badge}</i>
     }
 });
 
@@ -89,12 +95,12 @@ const Dialog = React.createClass({
     componentDidMount: function () {
         const dialog = document.querySelector('dialog');
 
-        if(!dialog.showModal) {
+        if (!dialog.showModal) {
             dialogPolyfill.registerDialog(dialog);
         }
     },
     showModal: function () {
-        if(this.props.messages && this.props.messages.length > 0) {
+        if (this.props.messages && this.props.messages.length > 0) {
             document.querySelector('dialog').showModal();
         }
     },
@@ -103,11 +109,11 @@ const Dialog = React.createClass({
     },
     render: function () {
         let errs;
-        if(this.props.messages) {
+        if (this.props.messages) {
             errs = this.props.messages.map(m => <li key={rand()}>{m}</li>)
         }
         return (
-            <dialog className="mdl-dialog" style={{width:"700px"}}>
+            <dialog className="mdl-dialog" style={{width: "700px"}}>
                 <h4 className="mdl-dialog__title">{this.props.title}</h4>
                 <div className="mdl-dialog__content" style={{"fontFamily": "Courier"}}>
                     <ul>{errs}</ul>

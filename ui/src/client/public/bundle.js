@@ -22932,21 +22932,20 @@
 	        var w = this.state.remoteUrl.length * 12;
 	        return w < 350 ? 350 : w;
 	    },
+	    sentiment: function sentiment() {
+	        var sentiment = void 0;
+	        if (this.state && this.state.data) {
+	            sentiment = this.state.data.Passed ? "sentiment_satisfied" : "sentiment_very_dissatisfied";
+	        } else {
+	            sentiment = "sentiment_neutral";
+	        }
+	        return sentiment;
+	    },
 	    label: "Auto-checking endpoints are equivalent to",
 	    indicatorClick: function indicatorClick() {
 	        this.refs['dialog'].showModal();
 	    },
 	    render: function render() {
-	        var checkDetails = void 0,
-	            messages = void 0;
-	        if (this.state && this.state.data) {
-	            checkDetails = this.state.data.Passed ? _react2.default.createElement(TestIndicator, { indicatorClick: this.indicatorClick, badge: 'sentiment_satisfied' }) : _react2.default.createElement(TestIndicator, { indicatorClick: this.indicatorClick, badge: 'sentiment_very_dissatisfied' });
-	            messages = this.state.data.Messages;
-	        } else {
-	            checkDetails = _react2.default.createElement(TestIndicator, { indicatorClick: this.indicatorClick, badge: 'sentiment_neutral' });
-	            messages = [];
-	        }
-	
 	        return _react2.default.createElement(
 	            'header',
 	            { className: 'mdl-layout__header' },
@@ -22956,12 +22955,14 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'cdc mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right' },
-	                    checkDetails,
+	                    _react2.default.createElement(TestIndicator, { indicatorClick: this.indicatorClick, badge: this.sentiment() }),
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'mdl-textfield__expandable-holder' },
-	                        _react2.default.createElement('input', { style: { width: this.inputWidth() }, className: 'mdl-textfield__input', type: 'text', name: 'sample',
-	                            id: 'fixed-header-drawer-exp', onBlur: this.checkCompatability, onKeyPress: this.handleUrlChange, defaultValue: this.state.remoteUrl })
+	                        _react2.default.createElement('input', { style: { width: this.inputWidth() }, className: 'mdl-textfield__input', type: 'text',
+	                            name: 'sample',
+	                            id: 'fixed-header-drawer-exp', onBlur: this.checkCompatability,
+	                            onKeyPress: this.handleUrlChange, defaultValue: this.state.remoteUrl })
 	                    ),
 	                    _react2.default.createElement(
 	                        'label',
@@ -22970,7 +22971,11 @@
 	                    )
 	                )
 	            ),
-	            _react2.default.createElement(Dialog, { title: 'Messages from CDC check', messages: messages, ref: 'dialog' })
+	            _react2.default.createElement(Dialog, {
+	                title: 'Messages from CDC check',
+	                messages: this.state && this.state.data ? this.state.data.Messages : [],
+	                ref: 'dialog'
+	            })
 	        );
 	    }
 	});
@@ -22981,7 +22986,8 @@
 	    render: function render() {
 	        return _react2.default.createElement(
 	            'i',
-	            { onClick: this.props.indicatorClick, style: { cursor: "hand" }, className: 'material-icons md-48' },
+	            { onClick: this.props.indicatorClick, style: { cursor: "hand" },
+	                className: 'material-icons md-48' },
 	            this.props.badge
 	        );
 	    }
