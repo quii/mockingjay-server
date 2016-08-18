@@ -8,6 +8,21 @@
     <meta charset="utf-8">
     <title>Mockingjay server</title>
     <style>
+        .mdl-layout__drawer{
+            width:300px;
+        }
+        .mdl-layout--fixed-drawer > .mdl-layout__content{
+            margin-left:300px;
+        }
+        .mdl-textfield{
+            width:96%;
+        }
+        .mdl-textfield__input{
+            font-family: Courier;
+        }
+        .mdl-textfield__input, .mdl-textfield__label, .list-editor label, .method-switcher, .mdl-textfield__error{
+            margin-left:15px;
+        }
         .is-active{
             font-weight:bold;
         }
@@ -64,11 +79,15 @@
         }
 
         .list-editor input{
-            width:30%;
+            width:45%;
         }
 
-        textarea{
-            font-family: Courier;
+        textarea.mdl-textfield__input{
+            width:96%;
+        }
+
+        abbr{
+            border-bottom:1px dashed rgb(63, 81, 181);
         }
     </style>
 </head>

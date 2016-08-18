@@ -98,13 +98,6 @@ const EndpointForm = React.createClass({
     render: function () {
         return (
             <div>
-                <div className="mdl-card mdl-shadow--2dp">
-                    <TextField name="name" label="Endpoint name" value={this.props.originalValues.name} onChange={this.props.onChange} />
-                    <label className="mdl-checkbox mdl-js-checkbox" htmlFor="cdcDisabled">
-                        <input type="checkbox" onClick={this.props.onCheckboxChange} name="cdcDisabled" className="mdl-checkbox__input" defaultChecked={this.props.originalValues.cdcDisabled} />
-                            <span className="mdl-checkbox__label">CDC Disabled?</span>
-                    </label>
-                </div>
 
                 <div className="mdl-card mdl-shadow--2dp">
                     <div className="mdl-card__title" style={{width: "90%"}}>
@@ -132,6 +125,17 @@ const EndpointForm = React.createClass({
                     <TextArea label="Body" name="body" value={this.props.originalValues.body} onChange={this.props.onChange} />
                     <HttpDataEditor label="Headers" name="resHeaders" items={this.props.originalValues.resHeaders}
                                                           onChange={this.props.onChange}/>
+                </div>
+
+                <div className="mdl-card mdl-shadow--2dp">
+                    <div className="mdl-card__title" style={{width: "90%"}}>
+                        <h3 className="mdl-card__title-text">Misc.</h3>
+                    </div>
+                    <TextField name="name" label="Endpoint name" value={this.props.originalValues.name} onChange={this.props.onChange} />
+                    <label className="mdl-checkbox mdl-js-checkbox" htmlFor="cdcDisabled">
+                        <input type="checkbox" onClick={this.props.onCheckboxChange} name="cdcDisabled" className="mdl-checkbox__input" defaultChecked={this.props.originalValues.cdcDisabled} />
+                        <span className="mdl-checkbox__label"><abbr title="Consumer driven contract">CDC</abbr> Disabled?</span>
+                    </label>
                 </div>
 
                 <div style={{margin:"2% 2% 2% 3%"}}>

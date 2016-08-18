@@ -21,7 +21,7 @@ export const MethodSwitcher = React.createClass({
     },
     render: function () {
         const buttons = this.methods.map(m => this.createButton(m, this.props.selected));
-        return <div>{buttons}</div>
+        return <div className="method-switcher">{buttons}</div>
     }
 });
 

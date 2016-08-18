@@ -22393,21 +22393,6 @@
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'mdl-card mdl-shadow--2dp' },
-	                _react2.default.createElement(_formbits.TextField, { name: 'name', label: 'Endpoint name', value: this.props.originalValues.name, onChange: this.props.onChange }),
-	                _react2.default.createElement(
-	                    'label',
-	                    { className: 'mdl-checkbox mdl-js-checkbox', htmlFor: 'cdcDisabled' },
-	                    _react2.default.createElement('input', { type: 'checkbox', onClick: this.props.onCheckboxChange, name: 'cdcDisabled', className: 'mdl-checkbox__input', defaultChecked: this.props.originalValues.cdcDisabled }),
-	                    _react2.default.createElement(
-	                        'span',
-	                        { className: 'mdl-checkbox__label' },
-	                        'CDC Disabled?'
-	                    )
-	                )
-	            ),
-	            _react2.default.createElement(
-	                'div',
-	                { className: 'mdl-card mdl-shadow--2dp' },
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'mdl-card__title', style: { width: "90%" } },
@@ -22442,6 +22427,35 @@
 	                _react2.default.createElement(_formbits.TextArea, { label: 'Body', name: 'body', value: this.props.originalValues.body, onChange: this.props.onChange }),
 	                _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Headers', name: 'resHeaders', items: this.props.originalValues.resHeaders,
 	                    onChange: this.props.onChange })
+	            ),
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'mdl-card mdl-shadow--2dp' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'mdl-card__title', style: { width: "90%" } },
+	                    _react2.default.createElement(
+	                        'h3',
+	                        { className: 'mdl-card__title-text' },
+	                        'Misc.'
+	                    )
+	                ),
+	                _react2.default.createElement(_formbits.TextField, { name: 'name', label: 'Endpoint name', value: this.props.originalValues.name, onChange: this.props.onChange }),
+	                _react2.default.createElement(
+	                    'label',
+	                    { className: 'mdl-checkbox mdl-js-checkbox', htmlFor: 'cdcDisabled' },
+	                    _react2.default.createElement('input', { type: 'checkbox', onClick: this.props.onCheckboxChange, name: 'cdcDisabled', className: 'mdl-checkbox__input', defaultChecked: this.props.originalValues.cdcDisabled }),
+	                    _react2.default.createElement(
+	                        'span',
+	                        { className: 'mdl-checkbox__label' },
+	                        _react2.default.createElement(
+	                            'abbr',
+	                            { title: 'Consumer driven contract' },
+	                            'CDC'
+	                        ),
+	                        ' Disabled?'
+	                    )
+	                )
 	            ),
 	            _react2.default.createElement(
 	                'div',
@@ -22735,7 +22749,7 @@
 	        });
 	        return _react2.default.createElement(
 	            'div',
-	            null,
+	            { className: 'method-switcher' },
 	            buttons
 	        );
 	    }
