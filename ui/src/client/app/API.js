@@ -1,6 +1,35 @@
 import Promise from 'bluebird';
 import request from 'superagent';
 
+function getJSONFromURL(url) {
+  return new Promise((resolve, reject) => {
+    request
+      .get(url)
+      .end((err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res.text);
+        }
+      });
+  }).then(body => JSON.parse(body));
+}
+
+function putToURL(url, data) {
+  return new Promise((resolve, reject) => {
+    request
+      .put(url)
+      .send(data)
+      .end((err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res.text);
+        }
+      });
+  }).then(body => JSON.parse(body));
+}
+
 class API {
 
   constructor(baseURL) {
@@ -10,35 +39,15 @@ class API {
   }
 
   getEndpoints() {
-    console.log('api being used');
-    return new Promise((resolve, reject) => {
-      request
-        .get(this.baseURL)
-        .end((err, res) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(res.text);
-          }
-        });
-    }).then(body => JSON.parse(body));
+    return getJSONFromURL(this.baseURL);
+  }
+
+  checkCompatability(remoteURL) {
+    return getJSONFromURL(`${this.baseURL}?url=${remoteURL}`);
   }
 
   updateEndpoints(data) {
-    console.log('api being for put');
-
-    return new Promise((resolve, reject) => {
-      request
-        .put(this.baseURL)
-        .send(data)
-        .end((err, res) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(res.text);
-          }
-        });
-    }).then(body => JSON.parse(body));
+    return putToURL(this.baseURL, data);
   }
 
 }

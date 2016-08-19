@@ -1,13 +1,16 @@
 import React from 'react';
-import request from 'superagent';
 import { isValidURL } from '../util';
 import TestIndicator from './testIndicator.jsx';
 import Dialog from './dialog.jsx';
+import API from '../API';
 
 class CDC extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.api = new API(this.props.url);
+
     this.state = {
       remoteUrl: location.origin,
     };
@@ -60,15 +63,9 @@ class CDC extends React.Component {
 
   checkCompatability() {
     if (this.state && this.state.remoteUrl && this.state.remoteUrl !== null) {
-      request
-        .get(`${this.props.url}?url=${this.state.remoteUrl}`)
-        .end((err, res) => {
-          if (err) {
-            console.error(this.props.url, status, err.toString());
-          } else {
-            this.setState({ data: JSON.parse(res.text) });
-          }
-        });
+      this.api.checkCompatability(this.state.remoteUrl)
+        .then(data => this.setState({data}))
+        .catch(err => console.error(this.props.url, status, err.toString()));
     }
   }
 
@@ -90,7 +87,7 @@ class CDC extends React.Component {
             className="cdc mdl-textfield mdl-js-textfield mdl-textfield--expandable
               mdl-textfield--floating-label mdl-textfield--align-right"
           >
-            <TestIndicator indicatorClick={this.indicatorClick} badge={this.sentiment()} />
+            <TestIndicator indicatorClick={this.indicatorClick} badge={this.sentiment()}/>
             {input}
             <label htmlFor="fixed-header-drawer-exp">{this.label}</label>
 

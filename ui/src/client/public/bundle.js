@@ -40916,10 +40916,6 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _superagent = __webpack_require__(/*! superagent */ 37);
-	
-	var _superagent2 = _interopRequireDefault(_superagent);
-	
 	var _util = __webpack_require__(/*! ../util */ 184);
 	
 	var _testIndicator = __webpack_require__(/*! ./testIndicator.jsx */ 192);
@@ -40929,6 +40925,10 @@
 	var _dialog = __webpack_require__(/*! ./dialog.jsx */ 193);
 	
 	var _dialog2 = _interopRequireDefault(_dialog);
+	
+	var _API = __webpack_require__(/*! ../API */ 207);
+	
+	var _API2 = _interopRequireDefault(_API);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -40945,6 +40945,8 @@
 	    _classCallCheck(this, CDC);
 	
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CDC).call(this, props));
+	
+	    _this.api = new _API2.default(_this.props.url);
 	
 	    _this.state = {
 	      remoteUrl: location.origin
@@ -41009,12 +41011,10 @@
 	      var _this2 = this;
 	
 	      if (this.state && this.state.remoteUrl && this.state.remoteUrl !== null) {
-	        _superagent2.default.get(this.props.url + '?url=' + this.state.remoteUrl).end(function (err, res) {
-	          if (err) {
-	            console.error(_this2.props.url, status, err.toString());
-	          } else {
-	            _this2.setState({ data: JSON.parse(res.text) });
-	          }
+	        this.api.checkCompatability(this.state.remoteUrl).then(function (data) {
+	          return _this2.setState({ data: data });
+	        }).catch(function (err) {
+	          return console.error(_this2.props.url, status, err.toString());
 	        });
 	      }
 	    }
@@ -48364,6 +48364,34 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	function getJSONFromURL(url) {
+	  return new _bluebird2.default(function (resolve, reject) {
+	    _superagent2.default.get(url).end(function (err, res) {
+	      if (err) {
+	        reject(err);
+	      } else {
+	        resolve(res.text);
+	      }
+	    });
+	  }).then(function (body) {
+	    return JSON.parse(body);
+	  });
+	}
+	
+	function putToURL(url, data) {
+	  return new _bluebird2.default(function (resolve, reject) {
+	    _superagent2.default.put(url).send(data).end(function (err, res) {
+	      if (err) {
+	        reject(err);
+	      } else {
+	        resolve(res.text);
+	      }
+	    });
+	  }).then(function (body) {
+	    return JSON.parse(body);
+	  });
+	}
+	
 	var API = function () {
 	  function API(baseURL) {
 	    _classCallCheck(this, API);
@@ -48376,39 +48404,17 @@
 	  _createClass(API, [{
 	    key: 'getEndpoints',
 	    value: function getEndpoints() {
-	      var _this = this;
-	
-	      console.log('api being used');
-	      return new _bluebird2.default(function (resolve, reject) {
-	        _superagent2.default.get(_this.baseURL).end(function (err, res) {
-	          if (err) {
-	            reject(err);
-	          } else {
-	            resolve(res.text);
-	          }
-	        });
-	      }).then(function (body) {
-	        return JSON.parse(body);
-	      });
+	      return getJSONFromURL(this.baseURL);
+	    }
+	  }, {
+	    key: 'checkCompatability',
+	    value: function checkCompatability(remoteURL) {
+	      return getJSONFromURL(this.baseURL + '?url=' + remoteURL);
 	    }
 	  }, {
 	    key: 'updateEndpoints',
 	    value: function updateEndpoints(data) {
-	      var _this2 = this;
-	
-	      console.log('api being for put');
-	
-	      return new _bluebird2.default(function (resolve, reject) {
-	        _superagent2.default.put(_this2.baseURL).send(data).end(function (err, res) {
-	          if (err) {
-	            reject(err);
-	          } else {
-	            resolve(res.text);
-	          }
-	        });
-	      }).then(function (body) {
-	        return JSON.parse(body);
-	      });
+	      return putToURL(this.baseURL, data);
 	    }
 	  }]);
 	
