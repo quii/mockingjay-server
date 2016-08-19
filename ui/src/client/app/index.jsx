@@ -1,8 +1,8 @@
 import React from 'react';
+import _ from 'lodash';
 import ReactDOM from 'react-dom';
 import Endpoint from './endpoints.jsx';
-import CDC from './CDC.jsx';
-import _ from 'lodash';
+import CDC from './cdc/CDC.jsx';
 import { guid } from './util';
 
 const UI = React.createClass({

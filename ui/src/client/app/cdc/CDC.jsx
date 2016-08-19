@@ -1,7 +1,8 @@
 import React from 'react';
 import request from 'superagent';
-import dialogPolyfill from 'dialog-polyfill';
-import { rand, isValidURL } from './util';
+import { isValidURL } from '../util';
+import TestIndicator from './testIndicator.jsx';
+import Dialog from './dialog.jsx';
 
 class CDC extends React.Component {
 
@@ -63,7 +64,6 @@ class CDC extends React.Component {
           if (err) {
             console.error(this.props.url, status, err.toString());
           } else {
-            console.log('XXX', res.text);
             this.setState({ data: JSON.parse(res.text) });
           }
         });
@@ -111,59 +111,6 @@ CDC.propTypes = {
 
 CDC.label = 'Auto-checking endpoints are equivalent to';
 
-const TestIndicator = React.createClass({
-  propTypes: {
-    badge: React.PropTypes.string.isRequired,
-    indicatorClick: React.PropTypes.func.isRequired,
-  },
-  render() {
-    return (
-      <i
-        onClick={this.props.indicatorClick} style={{ cursor: 'hand' }}
-        className="material-icons md-48"
-      >{this.props.badge}</i>);
-  },
-});
-
-
-const Dialog = React.createClass({
-  propTypes: {
-    messages: React.PropTypes.array.isRequired,
-    title: React.PropTypes.string.isRequired,
-  },
-  componentDidMount() {
-    const dialog = document.querySelector('dialog');
-
-    if (!dialog.showModal) {
-      dialogPolyfill.registerDialog(dialog);
-    }
-  },
-  showModal() {
-    if (this.props.messages && this.props.messages.length > 0) {
-      document.querySelector('dialog').showModal();
-    }
-  },
-  close() {
-    document.querySelector('dialog').close();
-  },
-  render() {
-    let errs;
-    if (this.props.messages) {
-      errs = this.props.messages.map(m => <li key={rand()}>{m}</li>);
-    }
-    return (
-      <dialog className="mdl-dialog" style={{ width: '700px' }}>
-        <h4 className="mdl-dialog__title">{this.props.title}</h4>
-        <div className="mdl-dialog__content" style={{ fontFamily: 'Courier' }}>
-          <ul>{errs}</ul>
-        </div>
-        <div className="mdl-dialog__actions">
-          <button type="button" onClick={this.close} className="mdl-button">Close</button>
-        </div>
-      </dialog>
-    );
-  },
-});
 
 
 export default CDC;
