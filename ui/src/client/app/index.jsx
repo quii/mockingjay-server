@@ -152,7 +152,6 @@ const UI = React.createClass({
           />);
       }
     }
-    return null;
   },
   render() {
     return (

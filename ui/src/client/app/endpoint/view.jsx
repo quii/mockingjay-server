@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Curl from '../curl.jsx';
+import Curl from './curl.jsx';
 import Body from '../form-controllers/body.jsx';
 import Code from '../form-controllers/code.jsx';
 import { HttpDataList } from '../form-controllers/httpDataList.jsx';

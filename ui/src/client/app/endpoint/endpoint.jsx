@@ -52,7 +52,6 @@ const Endpoint = React.createClass({
         finishEditing={this.finishEditing}
         originalValues={this.state}
         onChange={this.updateValue}
-        delete={this.delete}
         onCheckboxChange={this.updateCheckbox}
       />);
     }
@@ -70,6 +69,7 @@ const Endpoint = React.createClass({
         resHeaders={this.state.resHeaders}
         name={this.state.name}
         startEditing={this.startEditing}
+        deleteEndpoint={this.delete}
       />
     );
   },
