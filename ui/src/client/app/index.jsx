@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 import Endpoint from './endpoint/endpoint.jsx';
 import CDC from './cdc/CDC.jsx';
 import { guid } from './util';
+import Navigation from './navigation.jsx';
 
 const UI = React.createClass({
   getInitialState() {
@@ -77,42 +78,6 @@ const UI = React.createClass({
         message: msg,
       }
     );
-  },
-  getMenuLinks() {
-    const items = [];
-    items.push((
-      <a
-        key={guid()}
-        onClick={this.add}
-        className="mdl-navigation__link mdl-color-text--primary-dark"
-      >
-        <i className="material-icons md-32">add</i>Add new endoint</a>
-    ));
-
-    const endpointLinks = this.state.data.map(endpoint => {
-      let cssClass = 'mdl-navigation__link';
-      let name = endpoint.Name;
-
-      if (endpoint.Name === this.state.activeEndpoint) {
-        cssClass += ' mdl-color--primary-contrast mdl-color-text--accent';
-        name = <div><i className="material-icons md-32">fingerprint</i>{endpoint.Name}</div>;
-      }
-
-
-      return (
-        <a
-          key={guid()}
-          ref={'menu-' + endpoint.Name}
-          className={cssClass}
-          onClick={(event) => this.openEditor(endpoint.Name, event)}
-        >
-          {name}
-        </a>
-      );
-    });
-
-    items.push(endpointLinks);
-    return items;
   },
   openEditor(endpointName) {
     this.setState({
@@ -196,9 +161,12 @@ const UI = React.createClass({
         <CDC ref="cdc" url="/mj-check-compatability"/>
         <div className="mdl-layout__drawer">
           <h1 className="mdl-layout-title mdl-color-text--primary">mockingjay server</h1>
-          <nav className="mdl-navigation">
-            {this.getMenuLinks()}
-          </nav>
+          <Navigation
+            openEditor={this.openEditor}
+            addEndpoint={this.add}
+            endpoints={this.state.data}
+            activeEndpoint={this.state.activeEndpoint}
+          />
         </div>
         <main className="mdl-layout__content mdl-color--grey-100">
           <div className="page-content">

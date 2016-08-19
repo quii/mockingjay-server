@@ -1,3 +1,11 @@
+- name: 2217-8788-a475-180c
+  cdcdisabled: false
+  request:
+    uri: /hello
+    method: GET
+  response:
+    code: 200
+    body: World!
 - name: Test endpoint
   cdcdisabled: false
   request:

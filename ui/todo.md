@@ -16,7 +16,7 @@ This will ensure a basic level of not completely awfulness.
 - Find `todo` marked in code
 - Not much tests around new endpoints created
 - No tests at all around the react stuff!
-- `index.jsx` is a mess. Need to break out functionality into smaller pieces, such as the left menu.
+- `index.jsx` is a mess. Need to break out functionality into smaller pieces.
 - CSS is a mess, needs to be tidied. Is there a tool to remove unused things because there will be loads
 
 ### useful links

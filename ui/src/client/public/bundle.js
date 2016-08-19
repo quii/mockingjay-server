@@ -75,6 +75,10 @@
 	
 	var _util = __webpack_require__(/*! ./util */ 184);
 	
+	var _navigation = __webpack_require__(/*! ./navigation.jsx */ 203);
+	
+	var _navigation2 = _interopRequireDefault(_navigation);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var UI = _react2.default.createClass({
@@ -146,60 +150,6 @@
 	      message: msg
 	    });
 	  },
-	  getMenuLinks: function getMenuLinks() {
-	    var _this3 = this;
-	
-	    var items = [];
-	    items.push(_react2.default.createElement(
-	      'a',
-	      {
-	        key: (0, _util.guid)(),
-	        onClick: this.add,
-	        className: 'mdl-navigation__link mdl-color-text--primary-dark'
-	      },
-	      _react2.default.createElement(
-	        'i',
-	        { className: 'material-icons md-32' },
-	        'add'
-	      ),
-	      'Add new endoint'
-	    ));
-	
-	    var endpointLinks = this.state.data.map(function (endpoint) {
-	      var cssClass = 'mdl-navigation__link';
-	      var name = endpoint.Name;
-	
-	      if (endpoint.Name === _this3.state.activeEndpoint) {
-	        cssClass += ' mdl-color--primary-contrast mdl-color-text--accent';
-	        name = _react2.default.createElement(
-	          'div',
-	          null,
-	          _react2.default.createElement(
-	            'i',
-	            { className: 'material-icons md-32' },
-	            'fingerprint'
-	          ),
-	          endpoint.Name
-	        );
-	      }
-	
-	      return _react2.default.createElement(
-	        'a',
-	        {
-	          key: (0, _util.guid)(),
-	          ref: 'menu-' + endpoint.Name,
-	          className: cssClass,
-	          onClick: function onClick(event) {
-	            return _this3.openEditor(endpoint.Name, event);
-	          }
-	        },
-	        name
-	      );
-	    });
-	
-	    items.push(endpointLinks);
-	    return items;
-	  },
 	  openEditor: function openEditor(endpointName) {
 	    this.setState({
 	      activeEndpoint: endpointName
@@ -248,14 +198,14 @@
 	    this.putUpdate(json);
 	  },
 	  renderCurrentEndpoint: function renderCurrentEndpoint() {
-	    var _this4 = this;
+	    var _this3 = this;
 	
 	    if (this.state.activeEndpoint) {
 	      var index = _lodash2.default.findIndex(this.state.data, function (ep) {
-	        return ep.Name == _this4.state.activeEndpoint;
+	        return ep.Name == _this3.state.activeEndpoint;
 	      });
 	      var endpoint = this.state.data.find(function (ep) {
-	        return ep.Name === _this4.state.activeEndpoint;
+	        return ep.Name === _this3.state.activeEndpoint;
 	      });
 	      if (endpoint) {
 	        return _react2.default.createElement(_endpoint2.default, {
@@ -293,11 +243,12 @@
 	          { className: 'mdl-layout-title mdl-color-text--primary' },
 	          'mockingjay server'
 	        ),
-	        _react2.default.createElement(
-	          'nav',
-	          { className: 'mdl-navigation' },
-	          this.getMenuLinks()
-	        )
+	        _react2.default.createElement(_navigation2.default, {
+	          openEditor: this.openEditor,
+	          addEndpoint: this.add,
+	          endpoints: this.state.data,
+	          activeEndpoint: this.state.activeEndpoint
+	        })
 	      ),
 	      _react2.default.createElement(
 	        'main',
@@ -42723,6 +42674,100 @@
 	  }
 	  return [];
 	}
+
+/***/ },
+/* 203 */
+/*!***************************************!*\
+  !*** ./src/client/app/navigation.jsx ***!
+  \***************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _util = __webpack_require__(/*! ./util */ 184);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function makeAddButton(onClick) {
+	  return _react2.default.createElement(
+	    'a',
+	    {
+	      key: (0, _util.guid)(),
+	      onClick: onClick,
+	      className: 'mdl-navigation__link mdl-color-text--primary-dark'
+	    },
+	    _react2.default.createElement(
+	      'i',
+	      { className: 'material-icons md-32' },
+	      'add'
+	    ),
+	    'Add new endoint'
+	  );
+	}
+	
+	function Navigation(_ref) {
+	  var addEndpoint = _ref.addEndpoint;
+	  var endpoints = _ref.endpoints;
+	  var activeEndpoint = _ref.activeEndpoint;
+	  var openEditor = _ref.openEditor;
+	
+	
+	  var endpointLinks = endpoints.map(function (endpoint) {
+	    var cssClass = 'mdl-navigation__link';
+	    var name = endpoint.Name;
+	
+	    if (endpoint.Name === activeEndpoint) {
+	      cssClass += ' mdl-color--primary-contrast mdl-color-text--accent';
+	      name = _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'i',
+	          { className: 'material-icons md-32' },
+	          'fingerprint'
+	        ),
+	        endpoint.Name
+	      );
+	    }
+	
+	    return _react2.default.createElement(
+	      'a',
+	      {
+	        key: (0, _util.guid)(),
+	        className: cssClass,
+	        onClick: function onClick(event) {
+	          return openEditor(endpoint.Name, event);
+	        }
+	      },
+	      name
+	    );
+	  });
+	
+	  endpointLinks.push(makeAddButton(addEndpoint));
+	
+	  return _react2.default.createElement(
+	    'nav',
+	    { className: 'mdl-navigation' },
+	    endpointLinks
+	  );
+	}
+	
+	Navigation.propTypes = {
+	  addEndpoint: _react2.default.PropTypes.func.isRequired,
+	  openEditor: _react2.default.PropTypes.func.isRequired,
+	  endpoints: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.object).isRequired,
+	  activeEndpoint: _react2.default.PropTypes.string
+	};
+	
+	exports.default = Navigation;
 
 /***/ }
 /******/ ]);
