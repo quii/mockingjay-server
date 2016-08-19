@@ -7,6 +7,13 @@ const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
 
 class MethodSwitcher extends React.Component {
 
+  constructor(props) {
+    super(props);
+
+    this.handleClick = this.handleClick.bind(this);
+    this.createButton = this.createButton.bind(this);
+  }
+
   handleClick(e) {
     this.props.onChange({
       target: {

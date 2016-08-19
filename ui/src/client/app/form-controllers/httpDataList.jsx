@@ -1,5 +1,5 @@
 import React from 'react';
-import { rand } from './util';
+import { rand } from '../util';
 import _ from 'lodash';
 
 export const HttpDataList = React.createClass({

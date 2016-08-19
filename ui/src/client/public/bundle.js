@@ -65,9 +65,9 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _endpoints = __webpack_require__(/*! ./endpoints.jsx */ 182);
+	var _endpoint = __webpack_require__(/*! ./endpoint/endpoint.jsx */ 196);
 	
-	var _endpoints2 = _interopRequireDefault(_endpoints);
+	var _endpoint2 = _interopRequireDefault(_endpoint);
 	
 	var _CDC = __webpack_require__(/*! ./cdc/CDC.jsx */ 191);
 	
@@ -258,7 +258,7 @@
 	        return ep.Name === _this4.state.activeEndpoint;
 	      });
 	      if (endpoint) {
-	        return _react2.default.createElement(_endpoints2.default, {
+	        return _react2.default.createElement(_endpoint2.default, {
 	          index: index,
 	          'delete': this.deleteEndpoint,
 	          key: endpoint.Name,
@@ -310,7 +310,8 @@
 	      ),
 	      _react2.default.createElement(
 	        'div',
-	        { 'aria-live': 'assertive', 'aria-atomic': 'true', 'aria-relevant': 'text', className: 'mdl-snackbar mdl-js-snackbar' },
+	        { 'aria-live': 'assertive', 'aria-atomic': 'true', 'aria-relevant': 'text',
+	          className: 'mdl-snackbar mdl-js-snackbar' },
 	        _react2.default.createElement('div', { className: 'mdl-snackbar__text' }),
 	        _react2.default.createElement('button', { type: 'button', className: 'mdl-snackbar__action' })
 	      )
@@ -40586,458 +40587,8 @@
 	module.exports = ReactMount.renderSubtreeIntoContainer;
 
 /***/ },
-/* 182 */
-/*!**************************************!*\
-  !*** ./src/client/app/endpoints.jsx ***!
-  \**************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _httpDataList = __webpack_require__(/*! ./httpDataList.jsx */ 183);
-	
-	var _curl = __webpack_require__(/*! ./curl.jsx */ 185);
-	
-	var _curl2 = _interopRequireDefault(_curl);
-	
-	var _body = __webpack_require__(/*! ./form-controllers/body.jsx */ 186);
-	
-	var _body2 = _interopRequireDefault(_body);
-	
-	var _textfield = __webpack_require__(/*! ./form-controllers/textfield.jsx */ 187);
-	
-	var _textfield2 = _interopRequireDefault(_textfield);
-	
-	var _textarea = __webpack_require__(/*! ./form-controllers/textarea.jsx */ 188);
-	
-	var _textarea2 = _interopRequireDefault(_textarea);
-	
-	var _code = __webpack_require__(/*! ./form-controllers/code.jsx */ 189);
-	
-	var _code2 = _interopRequireDefault(_code);
-	
-	var _methodSwitcher = __webpack_require__(/*! ./form-controllers/methodSwitcher.jsx */ 190);
-	
-	var _methodSwitcher2 = _interopRequireDefault(_methodSwitcher);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-	
-	var Endpoint = _react2.default.createClass({
-	  displayName: 'Endpoint',
-	  getInitialState: function getInitialState() {
-	    return {
-	      index: this.props.index,
-	      cdcDisabled: this.props.cdcDisabled,
-	      isEditing: false,
-	      name: this.props.name,
-	      method: this.props.method,
-	      uri: this.props.uri,
-	      regex: this.props.regex,
-	      reqBody: this.props.reqBody,
-	      form: this.props.form,
-	      reqHeaders: this.props.reqHeaders,
-	      code: this.props.code,
-	      body: this.props.body,
-	      resHeaders: this.props.resHeaders
-	    };
-	  },
-	  startEditing: function startEditing() {
-	    this.setState({
-	      isEditing: true
-	    });
-	  },
-	  delete: function _delete() {
-	    this.props.delete();
-	  },
-	  finishEditing: function finishEditing() {
-	    this.setState({
-	      isEditing: false
-	    });
-	    this.props.updateServer();
-	  },
-	  updateValue: function updateValue(e) {
-	    this.setState(_defineProperty({}, e.target.name, e.target.value));
-	  },
-	  updateCheckbox: function updateCheckbox(e) {
-	    this.setState(_defineProperty({}, e.target.name, e.target.value === 'on'));
-	  },
-	  couldBeDodgyCurlFormStuff: function couldBeDodgyCurlFormStuff() {
-	    var noHeaders = !this.state.reqHeaders || Object.keys(this.state.reqHeaders).length === 0;
-	    return this.state.reqBody !== '' && noHeaders;
-	  },
-	  render: function render() {
-	    var view = _react2.default.createElement(
-	      'div',
-	      null,
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'mdl-card mdl-shadow--2dp' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'mdl-card__title', style: { width: '90%' } },
-	          _react2.default.createElement(
-	            'h3',
-	            { className: 'mdl-card__title-text' },
-	            'Request'
-	          )
-	        ),
-	        _react2.default.createElement(_code2.default, { icon: 'cloud', value: this.state.method + ' ' + this.state.uri }),
-	        _react2.default.createElement(_code2.default, { icon: 'face', value: this.state.regex }),
-	        _react2.default.createElement(_body2.default, { label: 'Body', value: this.state.reqBody }),
-	        _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: this.state.reqHeaders }),
-	        _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: this.state.form })
-	      ),
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'mdl-card mdl-shadow--2dp' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'mdl-card__title', style: { width: '90%' } },
-	          _react2.default.createElement(
-	            'h3',
-	            { className: 'mdl-card__title-text' },
-	            'Response'
-	          )
-	        ),
-	        _react2.default.createElement(_code2.default, { icon: 'face', value: this.state.code.toString() }),
-	        _react2.default.createElement(_body2.default, { label: 'Body', value: this.state.body }),
-	        _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: this.state.resHeaders })
-	      ),
-	      _react2.default.createElement(_curl2.default, { baseURL: location.origin, name: this.state.name, showPostHint: this.couldBeDodgyCurlFormStuff() }),
-	      _react2.default.createElement(
-	        'div',
-	        { style: { margin: '2% 2% 2% 3%' } },
-	        _react2.default.createElement(
-	          'button',
-	          { style: { margin: '0% 1% 0% 0%' }, onClick: this.startEditing, className: 'mdl-button mdl-button--raised mdl-button--accent' },
-	          'Edit'
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.delete, className: 'mdl-button mdl-button--raised mdl-button--primary' },
-	          'Delete'
-	        )
-	      )
-	    );
-	
-	    var form = _react2.default.createElement(EndpointForm, {
-	      name: this.state.name,
-	      finishEditing: this.finishEditing,
-	      originalValues: this.state,
-	      onChange: this.updateValue,
-	      onCheckboxChange: this.updateCheckbox
-	    });
-	
-	    return this.state.isEditing ? form : view;
-	  }
-	});
-	
-	var EndpointForm = _react2.default.createClass({
-	  displayName: 'EndpointForm',
-	  componentDidMount: function componentDidMount() {
-	    componentHandler.upgradeDom();
-	  },
-	  render: function render() {
-	    return _react2.default.createElement(
-	      'div',
-	      null,
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'mdl-card mdl-shadow--2dp' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'mdl-card__title', style: { width: '90%' } },
-	          _react2.default.createElement(
-	            'h3',
-	            { className: 'mdl-card__title-text' },
-	            'Request'
-	          )
-	        ),
-	        _react2.default.createElement(_textfield2.default, { label: 'URI', name: 'uri', value: this.props.originalValues.uri, onChange: this.props.onChange }),
-	        _react2.default.createElement(_textfield2.default, { label: 'Regex URI (optional)', name: 'regex', value: this.props.originalValues.regex, onChange: this.props.onChange }),
-	        _react2.default.createElement(_methodSwitcher2.default, { selected: this.props.originalValues.method, onChange: this.props.onChange }),
-	        _react2.default.createElement(_textarea2.default, { label: 'Body', name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
-	        _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Form', name: 'form', items: this.props.originalValues.form,
-	          onChange: this.props.onChange
-	        }),
-	        _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Headers', keyPattern: '[A-Za-z0-9\\S]{1,25}', valPattern: '[A-Za-z0-9\\S]{1,25}', name: 'reqHeaders', items: this.props.originalValues.reqHeaders,
-	          onChange: this.props.onChange
-	        })
-	      ),
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'mdl-card mdl-shadow--2dp' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'mdl-card__title', style: { width: '90%' } },
-	          _react2.default.createElement(
-	            'h3',
-	            { className: 'mdl-card__title-text' },
-	            'Response'
-	          )
-	        ),
-	        _react2.default.createElement(_textfield2.default, { label: 'Status code', pattern: '[0-9][0-9][0-9]', errMsg: 'Not valid HTTP status', name: 'code', value: this.props.originalValues.code.toString(), onChange: this.props.onChange }),
-	        _react2.default.createElement(_textarea2.default, { label: 'Body', name: 'body', value: this.props.originalValues.body, onChange: this.props.onChange }),
-	        _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Headers', name: 'resHeaders', items: this.props.originalValues.resHeaders,
-	          onChange: this.props.onChange
-	        })
-	      ),
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'mdl-card mdl-shadow--2dp' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'mdl-card__title', style: { width: '90%' } },
-	          _react2.default.createElement(
-	            'h3',
-	            { className: 'mdl-card__title-text' },
-	            'Misc.'
-	          )
-	        ),
-	        _react2.default.createElement(_textfield2.default, { name: 'name', label: 'Endpoint name', value: this.props.originalValues.name, onChange: this.props.onChange }),
-	        _react2.default.createElement(
-	          'label',
-	          { className: 'mdl-checkbox mdl-js-checkbox', htmlFor: 'cdcDisabled' },
-	          _react2.default.createElement('input', { type: 'checkbox', onClick: this.props.onCheckboxChange, name: 'cdcDisabled', className: 'mdl-checkbox__input', defaultChecked: this.props.originalValues.cdcDisabled }),
-	          _react2.default.createElement(
-	            'span',
-	            { className: 'mdl-checkbox__label' },
-	            _react2.default.createElement(
-	              'abbr',
-	              { title: 'Consumer driven contract' },
-	              'CDC'
-	            ),
-	            ' Disabled?'
-	          )
-	        )
-	      ),
-	      _react2.default.createElement(
-	        'div',
-	        { style: { margin: '2% 2% 2% 3%' } },
-	        _react2.default.createElement(
-	          'button',
-	          { onClick: this.props.finishEditing, className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent' },
-	          'Save'
-	        )
-	      )
-	    );
-	  }
-	});
-	
-	exports.default = Endpoint;
-
-/***/ },
-/* 183 */
-/*!*****************************************!*\
-  !*** ./src/client/app/httpDataList.jsx ***!
-  \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.HttpDataEditor = exports.HttpDataList = undefined;
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _util = __webpack_require__(/*! ./util */ 184);
-	
-	var _lodash = __webpack_require__(/*! lodash */ 35);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var HttpDataList = exports.HttpDataList = _react2.default.createClass({
-	  displayName: 'HttpDataList',
-	  render: function render() {
-	    var items = mapKeyVals(this.props.items, function (key, val) {
-	      return _react2.default.createElement(
-	        'tr',
-	        { key: (0, _util.rand)() },
-	        _react2.default.createElement(
-	          'td',
-	          { className: 'mdl-data-table__cell--non-numeric' },
-	          key
-	        ),
-	        _react2.default.createElement(
-	          'td',
-	          { className: 'mdl-data-table__cell--non-numeric' },
-	          val
-	        )
-	      );
-	    });
-	    var label = this.props.label || this.props.name;
-	    if (items.length > 0) {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'mdl-card__title mdl-card--expand' },
-	          _react2.default.createElement(
-	            'h6',
-	            { className: 'mdl-card__title-text' },
-	            label
-	          )
-	        ),
-	        _react2.default.createElement(
-	          'table',
-	          { className: 'mdl-data-table mdl-js-data-table mdl-data-table' },
-	          _react2.default.createElement(
-	            'thead',
-	            null,
-	            _react2.default.createElement(
-	              'tr',
-	              null,
-	              _react2.default.createElement(
-	                'th',
-	                { className: 'mdl-data-table__cell--non-numeric' },
-	                'Name'
-	              ),
-	              _react2.default.createElement(
-	                'th',
-	                { className: 'mdl-data-table__cell--non-numeric' },
-	                'Value'
-	              )
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'tbody',
-	            null,
-	            items
-	          )
-	        )
-	      );
-	    } else {
-	      return null;
-	    }
-	  }
-	});
-	
-	var HttpDataEditor = exports.HttpDataEditor = _react2.default.createClass({
-	  displayName: 'HttpDataEditor',
-	  getInitialState: function getInitialState() {
-	    return {
-	      numberOfItems: this.props.items ? Object.keys(this.props.items).length : 0
-	    };
-	  },
-	  addItem: function addItem() {
-	    this.setState({
-	      numberOfItems: this.state.numberOfItems + 1
-	    });
-	  },
-	  updateMap: function updateMap() {
-	    var newState = {};
-	    for (var i = 0; i < Object.keys(this.refs).length; i += 2) {
-	      var keyName = Object.keys(this.refs)[i];
-	      var valueName = Object.keys(this.refs)[i + 1];
-	
-	      var k = this.refs[keyName].value;
-	      var v = this.refs[valueName].value;
-	
-	      if (k !== '' || v !== '') {
-	        newState[k] = v;
-	      }
-	    }
-	
-	    var change = _lodash2.default.isEmpty(newState) ? null : newState;
-	
-	    this.props.onChange({
-	      target: {
-	        name: this.props.name,
-	        value: change
-	      }
-	    });
-	  },
-	  createInput: function createInput(ref, key, val) {
-	    return _react2.default.createElement(
-	      'div',
-	      { className: 'mdl-textfield mdl-js-textfield' },
-	      _react2.default.createElement('input', { ref: this.props.name + ref + 'key', pattern: this.props.keyPattern, className: 'mdl-textfield__input', type: 'text', value: key, onChange: this.updateMap }),
-	      _react2.default.createElement(
-	        'i',
-	        { className: 'material-icons' },
-	        'chevron_right'
-	      ),
-	      _react2.default.createElement('input', { ref: this.props.name + ref + 'value', pattern: this.props.valPattern, className: 'mdl-textfield__input', type: 'text', value: val, onChange: this.updateMap })
-	    );
-	  },
-	  render: function render() {
-	    var _this = this;
-	
-	    var label = this.props.label || this.props.name;
-	    var items = mapKeyVals(this.props.items, function (key, val, i) {
-	      return _this.createInput(i, key, val);
-	    });
-	    items.push(this.createInput(items.length + 1, '', ''));
-	
-	    var remainingItems = this.state.numberOfItems + 1 - items.length;
-	
-	    for (var i = 0; i < remainingItems; i++) {
-	      var newItem = this.createInput(i + items.length, '', '');
-	      items.push(newItem);
-	    }
-	
-	    return _react2.default.createElement(HttpDataView, { onClick: this.addItem, name: label, items: items });
-	  }
-	});
-	
-	var HttpDataView = _react2.default.createClass({
-	  displayName: 'HttpDataView',
-	  render: function render() {
-	    return _react2.default.createElement(
-	      'div',
-	      { className: 'list-editor' },
-	      _react2.default.createElement(
-	        'label',
-	        null,
-	        this.props.name
-	      ),
-	      _react2.default.createElement(
-	        'ul',
-	        null,
-	        this.props.items
-	      )
-	    );
-	  }
-	});
-	
-	function mapKeyVals(items, f) {
-	  if (items) {
-	    var _ret = function () {
-	      var i = -1;
-	      return {
-	        v: Object.keys(items).map(function (key) {
-	          i++;
-	          var value = items[key];
-	          return f(key, value, i);
-	        })
-	      };
-	    }();
-	
-	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-	  }
-	  return [];
-	}
-
-/***/ },
+/* 182 */,
+/* 183 */,
 /* 184 */
 /*!********************************!*\
   !*** ./src/client/app/util.js ***!
@@ -41452,10 +41003,14 @@
 	var MethodSwitcher = function (_React$Component) {
 	  _inherits(MethodSwitcher, _React$Component);
 	
-	  function MethodSwitcher() {
+	  function MethodSwitcher(props) {
 	    _classCallCheck(this, MethodSwitcher);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(MethodSwitcher).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(MethodSwitcher).call(this, props));
+	
+	    _this.handleClick = _this.handleClick.bind(_this);
+	    _this.createButton = _this.createButton.bind(_this);
+	    return _this;
 	  }
 	
 	  _createClass(MethodSwitcher, [{
@@ -41504,7 +41059,7 @@
 	
 	MethodSwitcher.propTypes = {
 	  onChange: _react2.default.PropTypes.func.isRequired,
-	  selected: _react2.default.PropTypes.bool.isRequired
+	  selected: _react2.default.PropTypes.string.isRequired
 	};
 	
 	exports.default = MethodSwitcher;
@@ -42395,6 +41950,779 @@
 
 	module.exports = function() { throw new Error("define cannot be used indirect"); };
 
+
+/***/ },
+/* 196 */
+/*!**********************************************!*\
+  !*** ./src/client/app/endpoint/endpoint.jsx ***!
+  \**********************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _view = __webpack_require__(/*! ./view.jsx */ 197);
+	
+	var _view2 = _interopRequireDefault(_view);
+	
+	var _form = __webpack_require__(/*! ./form.jsx */ 198);
+	
+	var _form2 = _interopRequireDefault(_form);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	var Endpoint = _react2.default.createClass({
+	  displayName: 'Endpoint',
+	  getInitialState: function getInitialState() {
+	    return {
+	      index: this.props.index,
+	      cdcDisabled: this.props.cdcDisabled,
+	      isEditing: false,
+	      name: this.props.name,
+	      method: this.props.method,
+	      uri: this.props.uri,
+	      regex: this.props.regex,
+	      reqBody: this.props.reqBody,
+	      form: this.props.form,
+	      reqHeaders: this.props.reqHeaders,
+	      code: this.props.code,
+	      body: this.props.body,
+	      resHeaders: this.props.resHeaders
+	    };
+	  },
+	  startEditing: function startEditing() {
+	    this.setState({
+	      isEditing: true
+	    });
+	  },
+	  delete: function _delete() {
+	    this.props.delete();
+	  },
+	  finishEditing: function finishEditing() {
+	    this.setState({
+	      isEditing: false
+	    });
+	    this.props.updateServer();
+	  },
+	  updateValue: function updateValue(e) {
+	    this.setState(_defineProperty({}, e.target.name, e.target.value));
+	  },
+	  updateCheckbox: function updateCheckbox(e) {
+	    this.setState(_defineProperty({}, e.target.name, e.target.value === 'on'));
+	  },
+	  render: function render() {
+	    if (this.state.isEditing) {
+	      return _react2.default.createElement(_form2.default, {
+	        name: this.state.name,
+	        finishEditing: this.finishEditing,
+	        originalValues: this.state,
+	        onChange: this.updateValue,
+	        'delete': this.delete,
+	        onCheckboxChange: this.updateCheckbox
+	      });
+	    }
+	
+	    return _react2.default.createElement(_view2.default, {
+	      method: this.state.method,
+	      uri: this.state.uri,
+	      regex: this.state.regex,
+	      reqBody: this.state.reqBody,
+	      reqHeaders: this.state.reqHeaders,
+	      form: this.state.form,
+	      code: this.state.code.toString(),
+	      body: this.state.body,
+	      resHeaders: this.state.resHeaders,
+	      name: this.state.name,
+	      startEditing: this.startEditing
+	    });
+	  }
+	});
+	
+	exports.default = Endpoint;
+
+/***/ },
+/* 197 */
+/*!******************************************!*\
+  !*** ./src/client/app/endpoint/view.jsx ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _curl = __webpack_require__(/*! ../curl.jsx */ 185);
+	
+	var _curl2 = _interopRequireDefault(_curl);
+	
+	var _body = __webpack_require__(/*! ../form-controllers/body.jsx */ 186);
+	
+	var _body2 = _interopRequireDefault(_body);
+	
+	var _code = __webpack_require__(/*! ../form-controllers/code.jsx */ 189);
+	
+	var _code2 = _interopRequireDefault(_code);
+	
+	var _httpDataList = __webpack_require__(/*! ../form-controllers/httpDataList.jsx */ 202);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function couldBeDodgyCurlFormStuff(reqHeaders, reqBody) {
+	  var noHeaders = !reqHeaders || Object.keys(reqHeaders).length === 0;
+	  return reqBody !== '' && noHeaders;
+	}
+	
+	function View(_ref) {
+	  var method = _ref.method;
+	  var uri = _ref.uri;
+	  var regex = _ref.regex;
+	  var reqBody = _ref.reqBody;
+	  var reqHeaders = _ref.reqHeaders;
+	  var form = _ref.form;
+	  var code = _ref.code;
+	  var body = _ref.body;
+	  var resHeaders = _ref.resHeaders;
+	  var name = _ref.name;
+	  var startEditing = _ref.startEditing;
+	  var deleteEndpoint = _ref.deleteEndpoint;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'mdl-card mdl-shadow--2dp' },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'mdl-card__title', style: { width: '90%' } },
+	        _react2.default.createElement(
+	          'h3',
+	          { className: 'mdl-card__title-text' },
+	          'Request'
+	        )
+	      ),
+	      _react2.default.createElement(_code2.default, { icon: 'cloud', value: method + ' ' + uri }),
+	      _react2.default.createElement(_code2.default, { icon: 'face', value: regex }),
+	      _react2.default.createElement(_body2.default, { label: 'Body', value: reqBody }),
+	      _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: reqHeaders }),
+	      _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: form })
+	    ),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'mdl-card mdl-shadow--2dp' },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'mdl-card__title', style: { width: '90%' } },
+	        _react2.default.createElement(
+	          'h3',
+	          { className: 'mdl-card__title-text' },
+	          'Response'
+	        )
+	      ),
+	      _react2.default.createElement(_code2.default, { icon: 'face', value: code.toString() }),
+	      _react2.default.createElement(_body2.default, { label: 'Body', value: body }),
+	      _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: resHeaders })
+	    ),
+	    _react2.default.createElement(_curl2.default, {
+	      baseURL: location.origin,
+	      name: name,
+	      showPostHint: couldBeDodgyCurlFormStuff(reqHeaders, reqBody)
+	    }),
+	    _react2.default.createElement(
+	      'div',
+	      { style: { margin: '2% 2% 2% 3%' } },
+	      _react2.default.createElement(
+	        'button',
+	        {
+	          style: { margin: '0% 1% 0% 0%' },
+	          onClick: startEditing,
+	          className: 'mdl-button mdl-button--raised mdl-button--accent'
+	        },
+	        'Edit'
+	      ),
+	      _react2.default.createElement(
+	        'button',
+	        {
+	          onClick: deleteEndpoint,
+	          className: 'mdl-button mdl-button--raised mdl-button--primary'
+	        },
+	        'Delete'
+	      )
+	    )
+	  );
+	}
+	
+	View.propTypes = {
+	  method: _react2.default.PropTypes.string.isRequired,
+	  uri: _react2.default.PropTypes.string.isRequired,
+	  regex: _react2.default.PropTypes.string,
+	  reqBody: _react2.default.PropTypes.string,
+	  reqHeaders: _react2.default.PropTypes.object,
+	  form: _react2.default.PropTypes.object,
+	  code: _react2.default.PropTypes.string.isRequired,
+	  body: _react2.default.PropTypes.string,
+	  resHeaders: _react2.default.PropTypes.object,
+	  name: _react2.default.PropTypes.string.isRequired,
+	  startEditing: _react2.default.PropTypes.func.isRequired,
+	  deleteEndpoint: _react2.default.PropTypes.func.isRequired
+	};
+	
+	exports.default = View;
+
+/***/ },
+/* 198 */
+/*!******************************************!*\
+  !*** ./src/client/app/endpoint/form.jsx ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _lodash = __webpack_require__(/*! lodash */ 35);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _requestEditor = __webpack_require__(/*! ./requestEditor.jsx */ 199);
+	
+	var _requestEditor2 = _interopRequireDefault(_requestEditor);
+	
+	var _responseEditor = __webpack_require__(/*! ./responseEditor.jsx */ 200);
+	
+	var _responseEditor2 = _interopRequireDefault(_responseEditor);
+	
+	var _miscInfoEditor = __webpack_require__(/*! ./miscInfoEditor.jsx */ 201);
+	
+	var _miscInfoEditor2 = _interopRequireDefault(_miscInfoEditor);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Form = function (_React$Component) {
+	  _inherits(Form, _React$Component);
+	
+	  function Form() {
+	    _classCallCheck(this, Form);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Form).apply(this, arguments));
+	  }
+	
+	  _createClass(Form, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      componentHandler.upgradeDom();
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var ultraProps = _lodash2.default.cloneDeep(this.props.originalValues);
+	      ultraProps.onChange = this.props.onChange;
+	      ultraProps.onCheckboxChange = this.props.onCheckboxChange;
+	      ultraProps.name = this.props.name;
+	
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        (0, _requestEditor2.default)(ultraProps),
+	        (0, _responseEditor2.default)(ultraProps),
+	        (0, _miscInfoEditor2.default)(ultraProps),
+	        _react2.default.createElement(
+	          'div',
+	          { style: { margin: '2% 2% 2% 3%' } },
+	          _react2.default.createElement(
+	            'button',
+	            {
+	              onClick: this.props.finishEditing,
+	              className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent' },
+	            'Save'
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return Form;
+	}(_react2.default.Component);
+	
+	Form.propTypes = {
+	  onChange: _react2.default.PropTypes.func.isRequired,
+	  onCheckboxChange: _react2.default.PropTypes.func.isRequired,
+	  finishEditing: _react2.default.PropTypes.func.isRequired,
+	  originalValues: _react2.default.PropTypes.object.isRequired,
+	  name: _react2.default.PropTypes.string.isRequired
+	};
+	
+	exports.default = Form;
+
+/***/ },
+/* 199 */
+/*!***************************************************!*\
+  !*** ./src/client/app/endpoint/requestEditor.jsx ***!
+  \***************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _httpDataList = __webpack_require__(/*! ../form-controllers/httpDataList.jsx */ 202);
+	
+	var _textfield = __webpack_require__(/*! ../form-controllers/textfield.jsx */ 187);
+	
+	var _textfield2 = _interopRequireDefault(_textfield);
+	
+	var _textarea = __webpack_require__(/*! ../form-controllers/textarea.jsx */ 188);
+	
+	var _textarea2 = _interopRequireDefault(_textarea);
+	
+	var _methodSwitcher = __webpack_require__(/*! ../form-controllers/methodSwitcher.jsx */ 190);
+	
+	var _methodSwitcher2 = _interopRequireDefault(_methodSwitcher);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function RequestEditor(_ref) {
+	  var onChange = _ref.onChange;
+	  var uri = _ref.uri;
+	  var regex = _ref.regex;
+	  var method = _ref.method;
+	  var reqBody = _ref.reqBody;
+	  var form = _ref.form;
+	  var reqHeaders = _ref.reqHeaders;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'mdl-card mdl-shadow--2dp' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'mdl-card__title', style: { width: '90%' } },
+	      _react2.default.createElement(
+	        'h3',
+	        { className: 'mdl-card__title-text' },
+	        'Request'
+	      )
+	    ),
+	    _react2.default.createElement(_textfield2.default, { label: 'URI', name: 'uri', value: uri, onChange: onChange }),
+	    _react2.default.createElement(_textfield2.default, { label: 'Regex URI (optional)', name: 'regex', value: regex, onChange: onChange }),
+	    _react2.default.createElement(_methodSwitcher2.default, { selected: method, onChange: onChange }),
+	    _react2.default.createElement(_textarea2.default, { label: 'Body', name: 'reqBody', value: reqBody, onChange: onChange }),
+	    _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'x-www-form-urlencoded', name: 'form', items: form, onChange: onChange }),
+	    _react2.default.createElement(_httpDataList.HttpDataEditor, {
+	      label: 'Headers',
+	      keyPattern: '[A-Za-z0-9\\S]{1,25}',
+	      valPattern: '[A-Za-z0-9\\S]{1,25}',
+	      name: 'reqHeaders',
+	      items: reqHeaders,
+	      onChange: onChange
+	    })
+	  );
+	}
+	
+	RequestEditor.propTypes = {
+	  onChange: _react2.default.PropTypes.func.isRequired,
+	  uri: _react2.default.PropTypes.string.isRequired,
+	  regex: _react2.default.PropTypes.string,
+	  method: _react2.default.PropTypes.string.isRequired,
+	  reqBody: _react2.default.PropTypes.string.isRequired,
+	  form: _react2.default.PropTypes.object.isRequired,
+	  reqHeaders: _react2.default.PropTypes.object.isRequired
+	};
+	
+	exports.default = RequestEditor;
+
+/***/ },
+/* 200 */
+/*!****************************************************!*\
+  !*** ./src/client/app/endpoint/responseEditor.jsx ***!
+  \****************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _httpDataList = __webpack_require__(/*! ../form-controllers/httpDataList.jsx */ 202);
+	
+	var _textfield = __webpack_require__(/*! ../form-controllers/textfield.jsx */ 187);
+	
+	var _textfield2 = _interopRequireDefault(_textfield);
+	
+	var _textarea = __webpack_require__(/*! ../form-controllers/textarea.jsx */ 188);
+	
+	var _textarea2 = _interopRequireDefault(_textarea);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function ResponseEditor(_ref) {
+	  var code = _ref.code;
+	  var body = _ref.body;
+	  var onChange = _ref.onChange;
+	  var resHeaders = _ref.resHeaders;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'mdl-card mdl-shadow--2dp' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'mdl-card__title', style: { width: '90%' } },
+	      _react2.default.createElement(
+	        'h3',
+	        { className: 'mdl-card__title-text' },
+	        'Response'
+	      )
+	    ),
+	    _react2.default.createElement(_textfield2.default, {
+	      label: 'Status code',
+	      pattern: '[0-9][0-9][0-9]',
+	      errMsg: 'Not valid HTTP status',
+	      name: 'code', value: code.toString(),
+	      onChange: onChange
+	    }),
+	    _react2.default.createElement(_textarea2.default, {
+	      label: 'Body',
+	      name: 'body',
+	      value: body,
+	      onChange: onChange
+	    }),
+	    _react2.default.createElement(_httpDataList.HttpDataEditor, {
+	      label: 'Headers',
+	      name: 'resHeaders',
+	      items: resHeaders,
+	      onChange: onChange
+	    })
+	  );
+	}
+	
+	ResponseEditor.propTypes = {
+	  onChange: _react2.default.PropTypes.func.isRequired,
+	  code: _react2.default.PropTypes.string.isRequired,
+	  body: _react2.default.PropTypes.string,
+	  resHeaders: _react2.default.PropTypes.object.isRequired
+	};
+	
+	exports.default = ResponseEditor;
+
+/***/ },
+/* 201 */
+/*!****************************************************!*\
+  !*** ./src/client/app/endpoint/miscInfoEditor.jsx ***!
+  \****************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _textfield = __webpack_require__(/*! ../form-controllers/textfield.jsx */ 187);
+	
+	var _textfield2 = _interopRequireDefault(_textfield);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function MiscInfoEditor(_ref) {
+	  var onChange = _ref.onChange;
+	  var onCheckboxChange = _ref.onCheckboxChange;
+	  var name = _ref.name;
+	  var cdcDisabled = _ref.cdcDisabled;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'mdl-card mdl-shadow--2dp' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'mdl-card__title', style: { width: '90%' } },
+	      _react2.default.createElement(
+	        'h3',
+	        { className: 'mdl-card__title-text' },
+	        'Misc.'
+	      )
+	    ),
+	    _react2.default.createElement(_textfield2.default, {
+	      name: 'name',
+	      label: 'Endpoint name',
+	      value: name,
+	      onChange: onChange
+	    }),
+	    _react2.default.createElement(
+	      'label',
+	      { className: 'mdl-checkbox mdl-js-checkbox', htmlFor: 'cdcDisabled' },
+	      _react2.default.createElement('input', {
+	        type: 'checkbox',
+	        onClick: onCheckboxChange,
+	        name: 'cdcDisabled',
+	        className: 'mdl-checkbox__input',
+	        defaultChecked: cdcDisabled
+	      }),
+	      _react2.default.createElement(
+	        'span',
+	        { className: 'mdl-checkbox__label' },
+	        _react2.default.createElement(
+	          'abbr',
+	          { title: 'Consumer driven contract' },
+	          'CDC'
+	        ),
+	        ' Disabled?'
+	      )
+	    )
+	  );
+	}
+	
+	MiscInfoEditor.propTypes = {
+	  onChange: _react2.default.PropTypes.func.isRequired,
+	  onCheckboxChange: _react2.default.PropTypes.func.isRequired,
+	  name: _react2.default.PropTypes.string.isRequired,
+	  cdcDisabled: _react2.default.PropTypes.bool.isRequired
+	};
+	
+	exports.default = MiscInfoEditor;
+
+/***/ },
+/* 202 */
+/*!**********************************************************!*\
+  !*** ./src/client/app/form-controllers/httpDataList.jsx ***!
+  \**********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.HttpDataEditor = exports.HttpDataList = undefined;
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _util = __webpack_require__(/*! ../util */ 184);
+	
+	var _lodash = __webpack_require__(/*! lodash */ 35);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var HttpDataList = exports.HttpDataList = _react2.default.createClass({
+	  displayName: 'HttpDataList',
+	  render: function render() {
+	    var items = mapKeyVals(this.props.items, function (key, val) {
+	      return _react2.default.createElement(
+	        'tr',
+	        { key: (0, _util.rand)() },
+	        _react2.default.createElement(
+	          'td',
+	          { className: 'mdl-data-table__cell--non-numeric' },
+	          key
+	        ),
+	        _react2.default.createElement(
+	          'td',
+	          { className: 'mdl-data-table__cell--non-numeric' },
+	          val
+	        )
+	      );
+	    });
+	    var label = this.props.label || this.props.name;
+	    if (items.length > 0) {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'mdl-card__title mdl-card--expand' },
+	          _react2.default.createElement(
+	            'h6',
+	            { className: 'mdl-card__title-text' },
+	            label
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'table',
+	          { className: 'mdl-data-table mdl-js-data-table mdl-data-table' },
+	          _react2.default.createElement(
+	            'thead',
+	            null,
+	            _react2.default.createElement(
+	              'tr',
+	              null,
+	              _react2.default.createElement(
+	                'th',
+	                { className: 'mdl-data-table__cell--non-numeric' },
+	                'Name'
+	              ),
+	              _react2.default.createElement(
+	                'th',
+	                { className: 'mdl-data-table__cell--non-numeric' },
+	                'Value'
+	              )
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'tbody',
+	            null,
+	            items
+	          )
+	        )
+	      );
+	    } else {
+	      return null;
+	    }
+	  }
+	});
+	
+	var HttpDataEditor = exports.HttpDataEditor = _react2.default.createClass({
+	  displayName: 'HttpDataEditor',
+	  getInitialState: function getInitialState() {
+	    return {
+	      numberOfItems: this.props.items ? Object.keys(this.props.items).length : 0
+	    };
+	  },
+	  addItem: function addItem() {
+	    this.setState({
+	      numberOfItems: this.state.numberOfItems + 1
+	    });
+	  },
+	  updateMap: function updateMap() {
+	    var newState = {};
+	    for (var i = 0; i < Object.keys(this.refs).length; i += 2) {
+	      var keyName = Object.keys(this.refs)[i];
+	      var valueName = Object.keys(this.refs)[i + 1];
+	
+	      var k = this.refs[keyName].value;
+	      var v = this.refs[valueName].value;
+	
+	      if (k !== '' || v !== '') {
+	        newState[k] = v;
+	      }
+	    }
+	
+	    var change = _lodash2.default.isEmpty(newState) ? null : newState;
+	
+	    this.props.onChange({
+	      target: {
+	        name: this.props.name,
+	        value: change
+	      }
+	    });
+	  },
+	  createInput: function createInput(ref, key, val) {
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'mdl-textfield mdl-js-textfield' },
+	      _react2.default.createElement('input', { ref: this.props.name + ref + 'key', pattern: this.props.keyPattern, className: 'mdl-textfield__input', type: 'text', value: key, onChange: this.updateMap }),
+	      _react2.default.createElement(
+	        'i',
+	        { className: 'material-icons' },
+	        'chevron_right'
+	      ),
+	      _react2.default.createElement('input', { ref: this.props.name + ref + 'value', pattern: this.props.valPattern, className: 'mdl-textfield__input', type: 'text', value: val, onChange: this.updateMap })
+	    );
+	  },
+	  render: function render() {
+	    var _this = this;
+	
+	    var label = this.props.label || this.props.name;
+	    var items = mapKeyVals(this.props.items, function (key, val, i) {
+	      return _this.createInput(i, key, val);
+	    });
+	    items.push(this.createInput(items.length + 1, '', ''));
+	
+	    var remainingItems = this.state.numberOfItems + 1 - items.length;
+	
+	    for (var i = 0; i < remainingItems; i++) {
+	      var newItem = this.createInput(i + items.length, '', '');
+	      items.push(newItem);
+	    }
+	
+	    return _react2.default.createElement(HttpDataView, { onClick: this.addItem, name: label, items: items });
+	  }
+	});
+	
+	var HttpDataView = _react2.default.createClass({
+	  displayName: 'HttpDataView',
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'list-editor' },
+	      _react2.default.createElement(
+	        'label',
+	        null,
+	        this.props.name
+	      ),
+	      _react2.default.createElement(
+	        'ul',
+	        null,
+	        this.props.items
+	      )
+	    );
+	  }
+	});
+	
+	function mapKeyVals(items, f) {
+	  if (items) {
+	    var _ret = function () {
+	      var i = -1;
+	      return {
+	        v: Object.keys(items).map(function (key) {
+	          i++;
+	          var value = items[key];
+	          return f(key, value, i);
+	        })
+	      };
+	    }();
+	
+	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	  }
+	  return [];
+	}
 
 /***/ }
 /******/ ]);

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import request from 'superagent';
 
 import ReactDOM from 'react-dom';
-import Endpoint from './endpoints.jsx';
+import Endpoint from './endpoint/endpoint.jsx';
 import CDC from './cdc/CDC.jsx';
 import { guid } from './util';
 
@@ -76,18 +76,18 @@ const UI = React.createClass({
       {
         message: msg,
       }
-        );
+    );
   },
   getMenuLinks() {
     const items = [];
     items.push((
-            <a
-              key={guid()}
-              onClick={this.add}
-              className="mdl-navigation__link mdl-color-text--primary-dark"
-            >
-                <i className="material-icons md-32">add</i>Add new endoint</a>
-        ));
+      <a
+        key={guid()}
+        onClick={this.add}
+        className="mdl-navigation__link mdl-color-text--primary-dark"
+      >
+        <i className="material-icons md-32">add</i>Add new endoint</a>
+    ));
 
     const endpointLinks = this.state.data.map(endpoint => {
       let cssClass = 'mdl-navigation__link';
@@ -100,15 +100,15 @@ const UI = React.createClass({
 
 
       return (
-                <a
-                  key={guid()}
-                  ref={'menu-' + endpoint.Name}
-                  className={cssClass}
-                  onClick={(event) => this.openEditor(endpoint.Name, event)}
-                >
-                    {name}
-                </a>
-            );
+        <a
+          key={guid()}
+          ref={'menu-' + endpoint.Name}
+          className={cssClass}
+          onClick={(event) => this.openEditor(endpoint.Name, event)}
+        >
+          {name}
+        </a>
+      );
     });
 
     items.push(endpointLinks);
@@ -167,54 +167,55 @@ const UI = React.createClass({
       const endpoint = this.state.data.find(ep => ep.Name === this.state.activeEndpoint);
       if (endpoint) {
         return (
-                    <Endpoint
-                      index={index}
-                      delete={this.deleteEndpoint}
-                      key={endpoint.Name}
-                      ref={endpoint.Name}
-                      cdcDisabled={endpoint.CDCDisabled}
-                      updateServer={this.updateServer}
-                      name={endpoint.Name}
-                      method={endpoint.Request.Method}
-                      reqBody={endpoint.Request.Body}
-                      uri={endpoint.Request.URI}
-                      regex={endpoint.Request.RegexURI}
-                      reqHeaders={endpoint.Request.Headers}
-                      form={endpoint.Request.Form}
-                      code={endpoint.Response.Code}
-                      body={endpoint.Response.Body}
-                      resHeaders={endpoint.Response.Headers}
-                    />);
+          <Endpoint
+            index={index}
+            delete={this.deleteEndpoint}
+            key={endpoint.Name}
+            ref={endpoint.Name}
+            cdcDisabled={endpoint.CDCDisabled}
+            updateServer={this.updateServer}
+            name={endpoint.Name}
+            method={endpoint.Request.Method}
+            reqBody={endpoint.Request.Body}
+            uri={endpoint.Request.URI}
+            regex={endpoint.Request.RegexURI}
+            reqHeaders={endpoint.Request.Headers}
+            form={endpoint.Request.Form}
+            code={endpoint.Response.Code}
+            body={endpoint.Response.Body}
+            resHeaders={endpoint.Response.Headers}
+          />);
       }
     }
     return null;
   },
   render() {
     return (
-        <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
+      <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
 
-            <CDC ref="cdc" url="/mj-check-compatability" />
-            <div className="mdl-layout__drawer">
-                <h1 className="mdl-layout-title mdl-color-text--primary">mockingjay server</h1>
-                <nav className="mdl-navigation">
-                    {this.getMenuLinks()}
-                </nav>
-            </div>
-            <main className="mdl-layout__content mdl-color--grey-100">
-                <div className="page-content">
-                    {this.renderCurrentEndpoint()}
-                </div>
-            </main>
-            <div aria-live="assertive" aria-atomic="true" aria-relevant="text" className="mdl-snackbar mdl-js-snackbar">
-                <div className="mdl-snackbar__text"></div>
-                <button type="button" className="mdl-snackbar__action"></button>
-            </div>
+        <CDC ref="cdc" url="/mj-check-compatability"/>
+        <div className="mdl-layout__drawer">
+          <h1 className="mdl-layout-title mdl-color-text--primary">mockingjay server</h1>
+          <nav className="mdl-navigation">
+            {this.getMenuLinks()}
+          </nav>
         </div>
+        <main className="mdl-layout__content mdl-color--grey-100">
+          <div className="page-content">
+            {this.renderCurrentEndpoint()}
+          </div>
+        </main>
+        <div aria-live="assertive" aria-atomic="true" aria-relevant="text"
+             className="mdl-snackbar mdl-js-snackbar">
+          <div className="mdl-snackbar__text"></div>
+          <button type="button" className="mdl-snackbar__action"></button>
+        </div>
+      </div>
 
-        );
+    );
   },
 });
 ReactDOM.render(
-    <UI url="/mj-endpoints" />,
-    document.getElementById('app')
+  <UI url="/mj-endpoints"/>,
+  document.getElementById('app')
 );
