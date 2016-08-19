@@ -40614,6 +40614,10 @@
 	
 	var _textfield2 = _interopRequireDefault(_textfield);
 	
+	var _textarea = __webpack_require__(/*! ./form-controllers/textarea.jsx */ 194);
+	
+	var _textarea2 = _interopRequireDefault(_textarea);
+	
 	var _code = __webpack_require__(/*! ./form-controllers/code.jsx */ 193);
 	
 	var _code2 = _interopRequireDefault(_code);
@@ -40756,7 +40760,7 @@
 	        _react2.default.createElement(_textfield2.default, { label: 'URI', name: 'uri', value: this.props.originalValues.uri, onChange: this.props.onChange }),
 	        _react2.default.createElement(_textfield2.default, { label: 'Regex URI (optional)', name: 'regex', value: this.props.originalValues.regex, onChange: this.props.onChange }),
 	        _react2.default.createElement(_formbits.MethodSwitcher, { selected: this.props.originalValues.method, onChange: this.props.onChange }),
-	        _react2.default.createElement(_formbits.TextArea, { label: 'Body', name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
+	        _react2.default.createElement(_textarea2.default, { label: 'Body', name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
 	        _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Form', name: 'form', items: this.props.originalValues.form,
 	          onChange: this.props.onChange
 	        }),
@@ -40777,7 +40781,7 @@
 	          )
 	        ),
 	        _react2.default.createElement(_textfield2.default, { label: 'Status code', pattern: '[0-9][0-9][0-9]', errMsg: 'Not valid HTTP status', name: 'code', value: this.props.originalValues.code.toString(), onChange: this.props.onChange }),
-	        _react2.default.createElement(_formbits.TextArea, { label: 'Body', name: 'body', value: this.props.originalValues.body, onChange: this.props.onChange }),
+	        _react2.default.createElement(_textarea2.default, { label: 'Body', name: 'body', value: this.props.originalValues.body, onChange: this.props.onChange }),
 	        _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Headers', name: 'resHeaders', items: this.props.originalValues.resHeaders,
 	          onChange: this.props.onChange
 	        })
@@ -41065,7 +41069,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.Body = exports.TextArea = exports.MethodSwitcher = undefined;
+	exports.Body = exports.MethodSwitcher = undefined;
 	
 	var _react = __webpack_require__(/*! react */ 1);
 	
@@ -41109,23 +41113,6 @@
 	      'div',
 	      { className: 'method-switcher' },
 	      buttons
-	    );
-	  }
-	});
-	
-	var TextArea = exports.TextArea = _react2.default.createClass({
-	  displayName: 'TextArea',
-	  render: function render() {
-	    var label = this.props.label || this.props.name;
-	    return _react2.default.createElement(
-	      'div',
-	      { style: { width: '100%' }, className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
-	      _react2.default.createElement('textarea', { ref: 'user', className: 'mdl-textfield__input', type: 'text', rows: '5', name: this.props.name, value: this.props.value, onChange: this.props.onChange }),
-	      _react2.default.createElement(
-	        'label',
-	        { className: 'mdl-textfield__label', htmlFor: this.props.name },
-	        label
-	      )
 	    );
 	  }
 	});
@@ -42288,6 +42275,63 @@
 	};
 	
 	exports.default = Code;
+
+/***/ },
+/* 194 */
+/*!******************************************************!*\
+  !*** ./src/client/app/form-controllers/textarea.jsx ***!
+  \******************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function TextArea(_ref) {
+	  var label = _ref.label;
+	  var name = _ref.name;
+	  var value = _ref.value;
+	  var onChange = _ref.onChange;
+	
+	  var defaultLabel = label || name;
+	  return _react2.default.createElement(
+	    'div',
+	    {
+	      style: { width: '100%' },
+	      className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label'
+	    },
+	    _react2.default.createElement('textarea', {
+	      className: 'mdl-textfield__input',
+	      type: 'text',
+	      rows: '5',
+	      name: name,
+	      value: value,
+	      onChange: onChange
+	    }),
+	    _react2.default.createElement(
+	      'label',
+	      { className: 'mdl-textfield__label', htmlFor: name },
+	      defaultLabel
+	    )
+	  );
+	}
+	
+	TextArea.propTypes = {
+	  label: _react2.default.PropTypes.string,
+	  name: _react2.default.PropTypes.string.isRequired,
+	  value: _react2.default.PropTypes.string.isRequired,
+	  onChange: _react2.default.PropTypes.func.isRequired
+	};
+	
+	exports.default = TextArea;
 
 /***/ }
 /******/ ]);

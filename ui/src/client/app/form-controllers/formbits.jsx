@@ -25,18 +25,6 @@ export const MethodSwitcher = React.createClass({
   },
 });
 
-export const TextArea = React.createClass({
-  render() {
-    const label = this.props.label || this.props.name;
-    return (
-            <div style={{ width: '100%' }} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <textarea ref="user" className="mdl-textfield__input" type="text" rows="5" name={this.props.name} value={this.props.value} onChange={this.props.onChange} />
-                <label className="mdl-textfield__label" htmlFor={this.props.name}>{label}</label>
-            </div>
-        );
-  },
-});
-
 
 export const Body = React.createClass({
   isJSON() {
