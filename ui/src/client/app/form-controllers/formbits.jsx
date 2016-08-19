@@ -1,5 +1,5 @@
 import React from 'react';
-import { rand } from './util';
+import { rand } from '../util';
 
 export const MethodSwitcher = React.createClass({
 
@@ -22,21 +22,6 @@ export const MethodSwitcher = React.createClass({
   render() {
     const buttons = this.methods.map(m => this.createButton(m, this.props.selected));
     return <div className="method-switcher">{buttons}</div>;
-  },
-});
-
-export const TextField = React.createClass({
-  render() {
-    const value = this.props.value || '';
-    const label = this.props.label || this.props.name;
-    const errorSpan = this.props.errMsg ? <span className="mdl-textfield__error">{this.props.errMsg}</span> : null;
-    return (
-            <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input pattern={this.props.pattern} ref="user" className="mdl-textfield__input" type="text" name={this.props.name} value={value} onChange={this.props.onChange} />
-                <label className="mdl-textfield__label" htmlFor={this.props.name}>{label}</label>
-                {errorSpan}
-            </div>
-        );
   },
 });
 

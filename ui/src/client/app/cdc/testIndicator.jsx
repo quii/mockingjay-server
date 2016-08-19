@@ -13,5 +13,4 @@ TestIndicator.propTypes = {
   indicatorClick: React.PropTypes.func.isRequired,
 };
 
-
 export default TestIndicator;

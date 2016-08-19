@@ -1,7 +1,7 @@
 - name: Test endpoint
   cdcdisabled: false
   request:
-    uri: /hello
+    uri: /hello-there
     method: GET
     headers:
       Content-Type: application/json

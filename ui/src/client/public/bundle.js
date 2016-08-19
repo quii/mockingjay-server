@@ -69,7 +69,7 @@
 	
 	var _endpoints2 = _interopRequireDefault(_endpoints);
 	
-	var _CDC = __webpack_require__(/*! ./cdc/CDC.jsx */ 187);
+	var _CDC = __webpack_require__(/*! ./cdc/CDC.jsx */ 188);
 	
 	var _CDC2 = _interopRequireDefault(_CDC);
 	
@@ -40604,11 +40604,15 @@
 	
 	var _httpDataList = __webpack_require__(/*! ./httpDataList.jsx */ 183);
 	
-	var _formbits = __webpack_require__(/*! ./formbits.jsx */ 185);
+	var _formbits = __webpack_require__(/*! ./form-controllers/formbits.jsx */ 185);
 	
 	var _curl = __webpack_require__(/*! ./curl.jsx */ 186);
 	
 	var _curl2 = _interopRequireDefault(_curl);
+	
+	var _textfield = __webpack_require__(/*! ./form-controllers/textfield.jsx */ 187);
+	
+	var _textfield2 = _interopRequireDefault(_textfield);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -40745,8 +40749,8 @@
 	            'Request'
 	          )
 	        ),
-	        _react2.default.createElement(_formbits.TextField, { label: 'URI', name: 'uri', value: this.props.originalValues.uri, onChange: this.props.onChange }),
-	        _react2.default.createElement(_formbits.TextField, { label: 'Regex URI (optional)', name: 'regex', value: this.props.originalValues.regex, onChange: this.props.onChange }),
+	        _react2.default.createElement(_textfield2.default, { label: 'URI', name: 'uri', value: this.props.originalValues.uri, onChange: this.props.onChange }),
+	        _react2.default.createElement(_textfield2.default, { label: 'Regex URI (optional)', name: 'regex', value: this.props.originalValues.regex, onChange: this.props.onChange }),
 	        _react2.default.createElement(_formbits.MethodSwitcher, { selected: this.props.originalValues.method, onChange: this.props.onChange }),
 	        _react2.default.createElement(_formbits.TextArea, { label: 'Body', name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
 	        _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Form', name: 'form', items: this.props.originalValues.form,
@@ -40768,7 +40772,7 @@
 	            'Response'
 	          )
 	        ),
-	        _react2.default.createElement(_formbits.TextField, { label: 'Status code', pattern: '[0-9][0-9][0-9]', errMsg: 'Not valid HTTP status', name: 'code', value: this.props.originalValues.code, onChange: this.props.onChange }),
+	        _react2.default.createElement(_textfield2.default, { label: 'Status code', pattern: '[0-9][0-9][0-9]', errMsg: 'Not valid HTTP status', name: 'code', value: this.props.originalValues.code, onChange: this.props.onChange }),
 	        _react2.default.createElement(_formbits.TextArea, { label: 'Body', name: 'body', value: this.props.originalValues.body, onChange: this.props.onChange }),
 	        _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Headers', name: 'resHeaders', items: this.props.originalValues.resHeaders,
 	          onChange: this.props.onChange
@@ -40786,7 +40790,7 @@
 	            'Misc.'
 	          )
 	        ),
-	        _react2.default.createElement(_formbits.TextField, { name: 'name', label: 'Endpoint name', value: this.props.originalValues.name, onChange: this.props.onChange }),
+	        _react2.default.createElement(_textfield2.default, { name: 'name', label: 'Endpoint name', value: this.props.originalValues.name, onChange: this.props.onChange }),
 	        _react2.default.createElement(
 	          'label',
 	          { className: 'mdl-checkbox mdl-js-checkbox', htmlFor: 'cdcDisabled' },
@@ -41047,9 +41051,9 @@
 
 /***/ },
 /* 185 */
-/*!*************************************!*\
-  !*** ./src/client/app/formbits.jsx ***!
-  \*************************************/
+/*!******************************************************!*\
+  !*** ./src/client/app/form-controllers/formbits.jsx ***!
+  \******************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41057,13 +41061,13 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.Body = exports.Code = exports.TextArea = exports.TextField = exports.MethodSwitcher = undefined;
+	exports.Body = exports.Code = exports.TextArea = exports.MethodSwitcher = undefined;
 	
 	var _react = __webpack_require__(/*! react */ 1);
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _util = __webpack_require__(/*! ./util */ 184);
+	var _util = __webpack_require__(/*! ../util */ 184);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -41101,30 +41105,6 @@
 	      'div',
 	      { className: 'method-switcher' },
 	      buttons
-	    );
-	  }
-	});
-	
-	var TextField = exports.TextField = _react2.default.createClass({
-	  displayName: 'TextField',
-	  render: function render() {
-	    var value = this.props.value || '';
-	    var label = this.props.label || this.props.name;
-	    var errorSpan = this.props.errMsg ? _react2.default.createElement(
-	      'span',
-	      { className: 'mdl-textfield__error' },
-	      this.props.errMsg
-	    ) : null;
-	    return _react2.default.createElement(
-	      'div',
-	      { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
-	      _react2.default.createElement('input', { pattern: this.props.pattern, ref: 'user', className: 'mdl-textfield__input', type: 'text', name: this.props.name, value: value, onChange: this.props.onChange }),
-	      _react2.default.createElement(
-	        'label',
-	        { className: 'mdl-textfield__label', htmlFor: this.props.name },
-	        label
-	      ),
-	      errorSpan
 	    );
 	  }
 	});
@@ -41330,6 +41310,73 @@
 
 /***/ },
 /* 187 */
+/*!*******************************************************!*\
+  !*** ./src/client/app/form-controllers/textfield.jsx ***!
+  \*******************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var errSpan = function errSpan(msg) {
+	  return msg ? _react2.default.createElement(
+	    'span',
+	    { className: 'mdl-textfield__error' },
+	    msg
+	  ) : null;
+	};
+	
+	function TextField(_ref) {
+	  var value = _ref.value;
+	  var label = _ref.label;
+	  var errMsg = _ref.errMsg;
+	  var pattern = _ref.pattern;
+	  var name = _ref.name;
+	  var onChange = _ref.onChange;
+	
+	  var defaultedValue = value || '';
+	  var defaultedLabel = label || name;
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label' },
+	    _react2.default.createElement('input', {
+	      pattern: pattern,
+	      className: 'mdl-textfield__input',
+	      type: 'text', name: name,
+	      value: defaultedValue,
+	      onChange: onChange
+	    }),
+	    _react2.default.createElement(
+	      'label',
+	      { className: 'mdl-textfield__label', htmlFor: name },
+	      defaultedLabel
+	    ),
+	    errSpan(errMsg)
+	  );
+	}
+	
+	TextField.propTypes = {
+	  value: _react2.default.PropTypes.string,
+	  label: _react2.default.PropTypes.string,
+	  errMsg: _react2.default.PropTypes.string,
+	  pattern: _react2.default.PropTypes.string,
+	  name: _react2.default.PropTypes.string.isRequired,
+	  onChange: _react2.default.PropTypes.func.isRequired
+	};
+	
+	exports.default = TextField;
+
+/***/ },
+/* 188 */
 /*!************************************!*\
   !*** ./src/client/app/cdc/CDC.jsx ***!
   \************************************/
@@ -41353,11 +41400,11 @@
 	
 	var _util = __webpack_require__(/*! ../util */ 184);
 	
-	var _testIndicator = __webpack_require__(/*! ./testIndicator.jsx */ 188);
+	var _testIndicator = __webpack_require__(/*! ./testIndicator.jsx */ 189);
 	
 	var _testIndicator2 = _interopRequireDefault(_testIndicator);
 	
-	var _dialog = __webpack_require__(/*! ./dialog.jsx */ 189);
+	var _dialog = __webpack_require__(/*! ./dialog.jsx */ 190);
 	
 	var _dialog2 = _interopRequireDefault(_dialog);
 	
@@ -41504,7 +41551,7 @@
 	exports.default = CDC;
 
 /***/ },
-/* 188 */
+/* 189 */
 /*!**********************************************!*\
   !*** ./src/client/app/cdc/testIndicator.jsx ***!
   \**********************************************/
@@ -41544,7 +41591,7 @@
 	exports.default = TestIndicator;
 
 /***/ },
-/* 189 */
+/* 190 */
 /*!***************************************!*\
   !*** ./src/client/app/cdc/dialog.jsx ***!
   \***************************************/
@@ -41562,7 +41609,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _dialogPolyfill = __webpack_require__(/*! dialog-polyfill */ 190);
+	var _dialogPolyfill = __webpack_require__(/*! dialog-polyfill */ 191);
 	
 	var _dialogPolyfill2 = _interopRequireDefault(_dialogPolyfill);
 	
@@ -41663,7 +41710,7 @@
 	exports.default = Dialog;
 
 /***/ },
-/* 190 */
+/* 191 */
 /*!**********************************************!*\
   !*** ./~/dialog-polyfill/dialog-polyfill.js ***!
   \**********************************************/
@@ -42191,7 +42238,7 @@
 	  dialogPolyfill['forceRegisterDialog'] = dialogPolyfill.forceRegisterDialog;
 	  dialogPolyfill['registerDialog'] = dialogPolyfill.registerDialog;
 	
-	  if ("function" === 'function' && 'amd' in __webpack_require__(/*! !webpack amd define */ 191)) {
+	  if ("function" === 'function' && 'amd' in __webpack_require__(/*! !webpack amd define */ 192)) {
 	    // AMD support
 	    !(__WEBPACK_AMD_DEFINE_RESULT__ = function() { return dialogPolyfill; }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	  } else if (typeof module === 'object' && typeof module['exports'] === 'object') {
@@ -42206,7 +42253,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../webpack/buildin/module.js */ 36)(module)))
 
 /***/ },
-/* 191 */
+/* 192 */
 /*!***************************************!*\
   !*** (webpack)/buildin/amd-define.js ***!
   \***************************************/

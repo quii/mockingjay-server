@@ -1,7 +1,8 @@
 import React from 'react';
 import { HttpDataList, HttpDataEditor } from './httpDataList.jsx';
-import { Code, MethodSwitcher, Body, TextArea, TextField } from './formbits.jsx';
+import { Code, MethodSwitcher, Body, TextArea } from './form-controllers/formbits.jsx';
 import Curl from './curl.jsx';
+import TextField from './form-controllers/textfield.jsx';
 
 const Endpoint = React.createClass({
   getInitialState() {
