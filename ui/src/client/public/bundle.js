@@ -41381,6 +41381,7 @@
 	      remoteUrl: location.origin
 	    };
 	
+	    _this.label = 'Auto-checking endpoints are equivalent to';
 	    _this.setDialog = _this.setDialog.bind(_this);
 	    _this.handleUrlChange = _this.handleUrlChange.bind(_this);
 	    _this.indicatorClick = _this.indicatorClick.bind(_this);
@@ -41499,8 +41500,6 @@
 	  url: _react2.default.PropTypes.string.isRequired,
 	  indicatorClick: _react2.default.PropTypes.func
 	};
-	
-	CDC.label = 'Auto-checking endpoints are equivalent to';
 	
 	exports.default = CDC;
 

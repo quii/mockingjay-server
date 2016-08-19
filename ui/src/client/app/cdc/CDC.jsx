@@ -12,6 +12,7 @@ class CDC extends React.Component {
       remoteUrl: location.origin,
     };
 
+    this.label = 'Auto-checking endpoints are equivalent to';
     this.setDialog = this.setDialog.bind(this);
     this.handleUrlChange = this.handleUrlChange.bind(this);
     this.indicatorClick = this.indicatorClick.bind(this);
@@ -109,8 +110,6 @@ CDC.propTypes = {
   url: React.PropTypes.string.isRequired,
   indicatorClick: React.PropTypes.func,
 };
-
-CDC.label = 'Auto-checking endpoints are equivalent to';
 
 
 export default CDC;
