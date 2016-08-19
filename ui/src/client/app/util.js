@@ -8,3 +8,12 @@ export const isValidURL = (str) => {
   a.href = str;
   return a.host;
 };
+
+export function isJSON(value) {
+  try {
+    JSON.parse(value);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

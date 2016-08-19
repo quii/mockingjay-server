@@ -69,7 +69,7 @@
 	
 	var _endpoints2 = _interopRequireDefault(_endpoints);
 	
-	var _CDC = __webpack_require__(/*! ./cdc/CDC.jsx */ 188);
+	var _CDC = __webpack_require__(/*! ./cdc/CDC.jsx */ 191);
 	
 	var _CDC2 = _interopRequireDefault(_CDC);
 	
@@ -40604,23 +40604,29 @@
 	
 	var _httpDataList = __webpack_require__(/*! ./httpDataList.jsx */ 183);
 	
-	var _formbits = __webpack_require__(/*! ./form-controllers/formbits.jsx */ 185);
-	
-	var _curl = __webpack_require__(/*! ./curl.jsx */ 186);
+	var _curl = __webpack_require__(/*! ./curl.jsx */ 185);
 	
 	var _curl2 = _interopRequireDefault(_curl);
+	
+	var _body = __webpack_require__(/*! ./form-controllers/body.jsx */ 186);
+	
+	var _body2 = _interopRequireDefault(_body);
 	
 	var _textfield = __webpack_require__(/*! ./form-controllers/textfield.jsx */ 187);
 	
 	var _textfield2 = _interopRequireDefault(_textfield);
 	
-	var _textarea = __webpack_require__(/*! ./form-controllers/textarea.jsx */ 194);
+	var _textarea = __webpack_require__(/*! ./form-controllers/textarea.jsx */ 188);
 	
 	var _textarea2 = _interopRequireDefault(_textarea);
 	
-	var _code = __webpack_require__(/*! ./form-controllers/code.jsx */ 193);
+	var _code = __webpack_require__(/*! ./form-controllers/code.jsx */ 189);
 	
 	var _code2 = _interopRequireDefault(_code);
+	
+	var _methodSwitcher = __webpack_require__(/*! ./form-controllers/methodSwitcher.jsx */ 190);
+	
+	var _methodSwitcher2 = _interopRequireDefault(_methodSwitcher);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -40687,7 +40693,7 @@
 	        ),
 	        _react2.default.createElement(_code2.default, { icon: 'cloud', value: this.state.method + ' ' + this.state.uri }),
 	        _react2.default.createElement(_code2.default, { icon: 'face', value: this.state.regex }),
-	        _react2.default.createElement(_formbits.Body, { label: 'Body', value: this.state.reqBody }),
+	        _react2.default.createElement(_body2.default, { label: 'Body', value: this.state.reqBody }),
 	        _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: this.state.reqHeaders }),
 	        _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: this.state.form })
 	      ),
@@ -40704,7 +40710,7 @@
 	          )
 	        ),
 	        _react2.default.createElement(_code2.default, { icon: 'face', value: this.state.code.toString() }),
-	        _react2.default.createElement(_formbits.Body, { label: 'Body', value: this.state.body }),
+	        _react2.default.createElement(_body2.default, { label: 'Body', value: this.state.body }),
 	        _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: this.state.resHeaders })
 	      ),
 	      _react2.default.createElement(_curl2.default, { baseURL: location.origin, name: this.state.name, showPostHint: this.couldBeDodgyCurlFormStuff() }),
@@ -40759,7 +40765,7 @@
 	        ),
 	        _react2.default.createElement(_textfield2.default, { label: 'URI', name: 'uri', value: this.props.originalValues.uri, onChange: this.props.onChange }),
 	        _react2.default.createElement(_textfield2.default, { label: 'Regex URI (optional)', name: 'regex', value: this.props.originalValues.regex, onChange: this.props.onChange }),
-	        _react2.default.createElement(_formbits.MethodSwitcher, { selected: this.props.originalValues.method, onChange: this.props.onChange }),
+	        _react2.default.createElement(_methodSwitcher2.default, { selected: this.props.originalValues.method, onChange: this.props.onChange }),
 	        _react2.default.createElement(_textarea2.default, { label: 'Body', name: 'reqBody', value: this.props.originalValues.reqBody, onChange: this.props.onChange }),
 	        _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Form', name: 'form', items: this.props.originalValues.form,
 	          onChange: this.props.onChange
@@ -41043,6 +41049,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.isJSON = isJSON;
 	var rand = exports.rand = function rand() {
 	  return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
 	};
@@ -41056,116 +41063,18 @@
 	  a.href = str;
 	  return a.host;
 	};
+	
+	function isJSON(value) {
+	  try {
+	    JSON.parse(value);
+	    return true;
+	  } catch (e) {
+	    return false;
+	  }
+	}
 
 /***/ },
 /* 185 */
-/*!******************************************************!*\
-  !*** ./src/client/app/form-controllers/formbits.jsx ***!
-  \******************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.Body = exports.MethodSwitcher = undefined;
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _util = __webpack_require__(/*! ../util */ 184);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var MethodSwitcher = exports.MethodSwitcher = _react2.default.createClass({
-	  displayName: 'MethodSwitcher',
-	
-	
-	  selectedCSS: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent',
-	  notSelectedCSS: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored',
-	  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-	
-	  handleClick: function handleClick(e) {
-	    this.props.onChange({
-	      target: {
-	        name: 'method',
-	        value: e.target.innerText
-	      }
-	    });
-	  },
-	  createButton: function createButton(methodName, selectedMethod) {
-	    var clz = methodName === selectedMethod ? this.selectedCSS : this.notSelectedCSS;
-	    return _react2.default.createElement(
-	      'button',
-	      { key: (0, _util.rand)(), style: { 'marginRight': '10px' }, className: clz, onClick: this.handleClick },
-	      methodName
-	    );
-	  },
-	  render: function render() {
-	    var _this = this;
-	
-	    var buttons = this.methods.map(function (m) {
-	      return _this.createButton(m, _this.props.selected);
-	    });
-	    return _react2.default.createElement(
-	      'div',
-	      { className: 'method-switcher' },
-	      buttons
-	    );
-	  }
-	});
-	
-	var Body = exports.Body = _react2.default.createClass({
-	  displayName: 'Body',
-	  isJSON: function isJSON() {
-	    try {
-	      JSON.parse(this.props.value);
-	      return true;
-	    } catch (e) {
-	      return false;
-	    }
-	  },
-	  renderText: function renderText() {
-	    if (this.isJSON()) {
-	      return JSON.stringify(JSON.parse(this.props.value), null, 2);
-	    } else {
-	      return this.props.value;
-	    }
-	  },
-	  render: function render() {
-	    if (this.props.value) {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'mdl-card__title mdl-card--expand' },
-	          _react2.default.createElement(
-	            'h6',
-	            { className: 'mdl-card__title-text' },
-	            this.props.label
-	          )
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'mdl-card__supporting-text' },
-	          _react2.default.createElement(
-	            'pre',
-	            { className: 'mdl-color-text--primary' },
-	            this.renderText()
-	          )
-	        )
-	      );
-	    } else {
-	      return null;
-	    }
-	  }
-	});
-
-/***/ },
-/* 186 */
 /*!*********************************!*\
   !*** ./src/client/app/curl.jsx ***!
   \*********************************/
@@ -41281,6 +41190,67 @@
 	exports.default = Curl;
 
 /***/ },
+/* 186 */
+/*!**************************************************!*\
+  !*** ./src/client/app/form-controllers/body.jsx ***!
+  \**************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _util = __webpack_require__(/*! ../util */ 184);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function Body(_ref) {
+	  var value = _ref.value;
+	  var label = _ref.label;
+	
+	  var text = value || '';
+	  if ((0, _util.isJSON)(value)) {
+	    text = JSON.stringify(JSON.parse(value), null, 2);
+	  }
+	
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'mdl-card__title mdl-card--expand' },
+	      _react2.default.createElement(
+	        'h6',
+	        { className: 'mdl-card__title-text' },
+	        label
+	      )
+	    ),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'mdl-card__supporting-text' },
+	      _react2.default.createElement(
+	        'pre',
+	        { className: 'mdl-color-text--primary' },
+	        text
+	      )
+	    )
+	  );
+	}
+	
+	Body.propTypes = {
+	  value: _react2.default.PropTypes.string,
+	  label: _react2.default.PropTypes.string
+	};
+	
+	exports.default = Body;
+
+/***/ },
 /* 187 */
 /*!*******************************************************!*\
   !*** ./src/client/app/form-controllers/textfield.jsx ***!
@@ -41349,6 +41319,198 @@
 
 /***/ },
 /* 188 */
+/*!******************************************************!*\
+  !*** ./src/client/app/form-controllers/textarea.jsx ***!
+  \******************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function TextArea(_ref) {
+	  var label = _ref.label;
+	  var name = _ref.name;
+	  var value = _ref.value;
+	  var onChange = _ref.onChange;
+	
+	  var defaultLabel = label || name;
+	  return _react2.default.createElement(
+	    'div',
+	    {
+	      style: { width: '100%' },
+	      className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label'
+	    },
+	    _react2.default.createElement('textarea', {
+	      className: 'mdl-textfield__input',
+	      type: 'text',
+	      rows: '5',
+	      name: name,
+	      value: value,
+	      onChange: onChange
+	    }),
+	    _react2.default.createElement(
+	      'label',
+	      { className: 'mdl-textfield__label', htmlFor: name },
+	      defaultLabel
+	    )
+	  );
+	}
+	
+	TextArea.propTypes = {
+	  label: _react2.default.PropTypes.string,
+	  name: _react2.default.PropTypes.string.isRequired,
+	  value: _react2.default.PropTypes.string.isRequired,
+	  onChange: _react2.default.PropTypes.func.isRequired
+	};
+	
+	exports.default = TextArea;
+
+/***/ },
+/* 189 */
+/*!**************************************************!*\
+  !*** ./src/client/app/form-controllers/code.jsx ***!
+  \**************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function Code(_ref) {
+	  var value = _ref.value;
+	
+	  if (value) {
+	    return _react2.default.createElement(
+	      "div",
+	      { className: "mdl-card__supporting-text" },
+	      _react2.default.createElement(
+	        "code",
+	        { className: "mdl-color-text--accent" },
+	        value
+	      )
+	    );
+	  }
+	  return null;
+	}
+	
+	Code.propTypes = {
+	  value: _react2.default.PropTypes.string
+	};
+	
+	exports.default = Code;
+
+/***/ },
+/* 190 */
+/*!************************************************************!*\
+  !*** ./src/client/app/form-controllers/methodSwitcher.jsx ***!
+  \************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _util = __webpack_require__(/*! ../util */ 184);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var selectedCSS = 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent';
+	var notSelectedCSS = 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored';
+	var methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
+	
+	var MethodSwitcher = function (_React$Component) {
+	  _inherits(MethodSwitcher, _React$Component);
+	
+	  function MethodSwitcher() {
+	    _classCallCheck(this, MethodSwitcher);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(MethodSwitcher).apply(this, arguments));
+	  }
+	
+	  _createClass(MethodSwitcher, [{
+	    key: 'handleClick',
+	    value: function handleClick(e) {
+	      this.props.onChange({
+	        target: {
+	          name: 'method',
+	          value: e.target.innerText
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'createButton',
+	    value: function createButton(methodName, selectedMethod) {
+	      var clz = methodName === selectedMethod ? selectedCSS : notSelectedCSS;
+	      return _react2.default.createElement(
+	        'button',
+	        {
+	          key: (0, _util.rand)(),
+	          style: { marginRight: '10px' },
+	          className: clz,
+	          onClick: this.handleClick
+	        },
+	        methodName
+	      );
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+	
+	      var buttons = methods.map(function (m) {
+	        return _this2.createButton(m, _this2.props.selected);
+	      });
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'method-switcher' },
+	        buttons
+	      );
+	    }
+	  }]);
+	
+	  return MethodSwitcher;
+	}(_react2.default.Component);
+	
+	MethodSwitcher.propTypes = {
+	  onChange: _react2.default.PropTypes.func.isRequired,
+	  selected: _react2.default.PropTypes.bool.isRequired
+	};
+	
+	exports.default = MethodSwitcher;
+
+/***/ },
+/* 191 */
 /*!************************************!*\
   !*** ./src/client/app/cdc/CDC.jsx ***!
   \************************************/
@@ -41372,11 +41534,11 @@
 	
 	var _util = __webpack_require__(/*! ../util */ 184);
 	
-	var _testIndicator = __webpack_require__(/*! ./testIndicator.jsx */ 189);
+	var _testIndicator = __webpack_require__(/*! ./testIndicator.jsx */ 192);
 	
 	var _testIndicator2 = _interopRequireDefault(_testIndicator);
 	
-	var _dialog = __webpack_require__(/*! ./dialog.jsx */ 190);
+	var _dialog = __webpack_require__(/*! ./dialog.jsx */ 193);
 	
 	var _dialog2 = _interopRequireDefault(_dialog);
 	
@@ -41523,7 +41685,7 @@
 	exports.default = CDC;
 
 /***/ },
-/* 189 */
+/* 192 */
 /*!**********************************************!*\
   !*** ./src/client/app/cdc/testIndicator.jsx ***!
   \**********************************************/
@@ -41563,7 +41725,7 @@
 	exports.default = TestIndicator;
 
 /***/ },
-/* 190 */
+/* 193 */
 /*!***************************************!*\
   !*** ./src/client/app/cdc/dialog.jsx ***!
   \***************************************/
@@ -41581,7 +41743,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _dialogPolyfill = __webpack_require__(/*! dialog-polyfill */ 191);
+	var _dialogPolyfill = __webpack_require__(/*! dialog-polyfill */ 194);
 	
 	var _dialogPolyfill2 = _interopRequireDefault(_dialogPolyfill);
 	
@@ -41682,7 +41844,7 @@
 	exports.default = Dialog;
 
 /***/ },
-/* 191 */
+/* 194 */
 /*!**********************************************!*\
   !*** ./~/dialog-polyfill/dialog-polyfill.js ***!
   \**********************************************/
@@ -42210,7 +42372,7 @@
 	  dialogPolyfill['forceRegisterDialog'] = dialogPolyfill.forceRegisterDialog;
 	  dialogPolyfill['registerDialog'] = dialogPolyfill.registerDialog;
 	
-	  if ("function" === 'function' && 'amd' in __webpack_require__(/*! !webpack amd define */ 192)) {
+	  if ("function" === 'function' && 'amd' in __webpack_require__(/*! !webpack amd define */ 195)) {
 	    // AMD support
 	    !(__WEBPACK_AMD_DEFINE_RESULT__ = function() { return dialogPolyfill; }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	  } else if (typeof module === 'object' && typeof module['exports'] === 'object') {
@@ -42225,7 +42387,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../webpack/buildin/module.js */ 36)(module)))
 
 /***/ },
-/* 192 */
+/* 195 */
 /*!***************************************!*\
   !*** (webpack)/buildin/amd-define.js ***!
   \***************************************/
@@ -42233,105 +42395,6 @@
 
 	module.exports = function() { throw new Error("define cannot be used indirect"); };
 
-
-/***/ },
-/* 193 */
-/*!**************************************************!*\
-  !*** ./src/client/app/form-controllers/code.jsx ***!
-  \**************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function Code(_ref) {
-	  var value = _ref.value;
-	
-	  if (value) {
-	    return _react2.default.createElement(
-	      "div",
-	      { className: "mdl-card__supporting-text" },
-	      _react2.default.createElement(
-	        "code",
-	        { className: "mdl-color-text--accent" },
-	        value
-	      )
-	    );
-	  }
-	  return null;
-	}
-	
-	Code.propTypes = {
-	  value: _react2.default.PropTypes.string
-	};
-	
-	exports.default = Code;
-
-/***/ },
-/* 194 */
-/*!******************************************************!*\
-  !*** ./src/client/app/form-controllers/textarea.jsx ***!
-  \******************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function TextArea(_ref) {
-	  var label = _ref.label;
-	  var name = _ref.name;
-	  var value = _ref.value;
-	  var onChange = _ref.onChange;
-	
-	  var defaultLabel = label || name;
-	  return _react2.default.createElement(
-	    'div',
-	    {
-	      style: { width: '100%' },
-	      className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label'
-	    },
-	    _react2.default.createElement('textarea', {
-	      className: 'mdl-textfield__input',
-	      type: 'text',
-	      rows: '5',
-	      name: name,
-	      value: value,
-	      onChange: onChange
-	    }),
-	    _react2.default.createElement(
-	      'label',
-	      { className: 'mdl-textfield__label', htmlFor: name },
-	      defaultLabel
-	    )
-	  );
-	}
-	
-	TextArea.propTypes = {
-	  label: _react2.default.PropTypes.string,
-	  name: _react2.default.PropTypes.string.isRequired,
-	  value: _react2.default.PropTypes.string.isRequired,
-	  onChange: _react2.default.PropTypes.func.isRequired
-	};
-	
-	exports.default = TextArea;
 
 /***/ }
 /******/ ]);
