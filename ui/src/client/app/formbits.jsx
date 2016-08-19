@@ -1,5 +1,5 @@
 import React from 'react';
-import {rand} from './util';
+import { rand } from './util';
 
 export const MethodSwitcher = React.createClass({
 
@@ -7,26 +7,26 @@ export const MethodSwitcher = React.createClass({
   notSelectedCSS: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
 
-  handleClick: function (e) {
+  handleClick(e) {
     this.props.onChange({
       target: {
         name: 'method',
-        value: e.target.innerText
-      }
+        value: e.target.innerText,
+      },
     });
   },
-  createButton: function (methodName, selectedMethod) {
+  createButton(methodName, selectedMethod) {
     const clz = methodName === selectedMethod ? this.selectedCSS : this.notSelectedCSS;
-    return <button key={rand()} style={{'marginRight': '10px'}} className={clz} onClick={this.handleClick}>{methodName}</button>;
+    return <button key={rand()} style={{ 'marginRight': '10px' }} className={clz} onClick={this.handleClick}>{methodName}</button>;
   },
-  render: function () {
+  render() {
     const buttons = this.methods.map(m => this.createButton(m, this.props.selected));
     return <div className="method-switcher">{buttons}</div>;
-  }
+  },
 });
 
 export const TextField = React.createClass({
-  render: function () {
+  render() {
     const value = this.props.value || '';
     const label = this.props.label || this.props.name;
     const errorSpan = this.props.errMsg ? <span className="mdl-textfield__error">{this.props.errMsg}</span> : null;
@@ -37,34 +37,34 @@ export const TextField = React.createClass({
                 {errorSpan}
             </div>
         );
-  }
+  },
 });
 
 export const TextArea = React.createClass({
-  render: function () {
+  render() {
     const label = this.props.label || this.props.name;
     return (
-            <div style={{width: '100%'}} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <div style={{ width: '100%' }} className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <textarea ref="user" className="mdl-textfield__input" type="text" rows="5" name={this.props.name} value={this.props.value} onChange={this.props.onChange} />
                 <label className="mdl-textfield__label" htmlFor={this.props.name}>{label}</label>
             </div>
         );
-  }
+  },
 });
 
 
 export const Code = React.createClass({
-  render: function () {
+  render() {
     if (this.props.value) {
       return <div className="mdl-card__supporting-text"><code className="mdl-color-text--accent">{this.props.value}</code></div>;
     } else {
       return null;
     }
-  }
+  },
 });
 
 export const Body = React.createClass({
-  isJSON: function () {
+  isJSON() {
     try {
       JSON.parse(this.props.value);
       return true;
@@ -73,14 +73,14 @@ export const Body = React.createClass({
           return false;
         }
   },
-  renderText: function () {
+  renderText() {
     if (this.isJSON()) {
       return JSON.stringify(JSON.parse(this.props.value), null, 2);
     } else {
       return this.props.value;
     }
   },
-  render: function () {
+  render() {
     if (this.props.value) {
       return (
                 <div>
@@ -95,5 +95,5 @@ export const Body = React.createClass({
     } else {
       return null;
     }
-  }
+  },
 });

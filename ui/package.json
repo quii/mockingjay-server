@@ -15,12 +15,17 @@
     "webpack": "^1.13.1"
   },
   "devDependencies": {
-    "babel-eslint": "^6.1.2"
+    "babel-eslint": "^6.1.2",
+    "eslint": "^3.3.1",
+    "eslint-config-airbnb": "^10.0.1",
+    "eslint-plugin-import": "^1.13.0",
+    "eslint-plugin-jsx-a11y": "^2.1.0",
+    "eslint-plugin-react": "^6.1.2"
   },
   "scripts": {
     "dev": "webpack -d --watch",
     "build": "npm run lint && webpack -p",
-    "lint": "eslint . --ext .js --ext .jsx --cache --ignore-path .gitignore --fix"
+    "lint": "eslint --ext .js --ext .jsx --cache --ignore-path .gitignore --fix src/*"
   },
   "author": "Chris James",
   "license": "ISC"

@@ -3,30 +3,30 @@ import ReactDOM from 'react-dom';
 import Endpoint from './endpoints.jsx';
 import CDC from './CDC.jsx';
 import _ from 'lodash';
-import {guid} from './util';
+import { guid } from './util';
 
 const UI = React.createClass({
-  getInitialState: function () {
+  getInitialState() {
     return {
       data: [],
       activeEndpoint: null,
-      endpointIds: []
+      endpointIds: [],
     };
   },
-  componentDidMount: function () {
+  componentDidMount() {
     $.ajax({
       url: this.props.url,
       dataType: 'json',
       cache: false,
       success: function (data) {
-        this.setState({data: data});
+        this.setState({ data });
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.url, status, err.toString());
-      }.bind(this)
+      }.bind(this),
     });
   },
-  putUpdate: function (update) {
+  putUpdate(update) {
     $.ajax({
       url: this.props.url,
       dataType: 'json',
@@ -35,16 +35,16 @@ const UI = React.createClass({
       data: update,
       success: function (data) {
         this.refs['cdc'].checkCompatability();
-        this.setState({data: data});
+        this.setState({ data });
       }.bind(this),
       error: function (xhr, status, err) {
         this.toasty(`Problem with PUT to ${this.props.url} ${err.toString()}`);
         console.error(this.props.url, status, err.toString());
-      }.bind(this)
+      }.bind(this),
     });
   },
-  add: function () {
-    let data = _.cloneDeep(this.state.data);
+  add() {
+    const data = _.cloneDeep(this.state.data);
 
     const newEndpointName = guid();
 
@@ -53,12 +53,12 @@ const UI = React.createClass({
       CDCDisabled: false,
       Request: {
         URI: '/hello',
-        Method: 'GET'
+        Method: 'GET',
       },
       Response: {
         Code: 200,
-        Body: 'World!'
-      }
+        Body: 'World!',
+      },
     };
 
     data.unshift(newEndpoint);
@@ -66,28 +66,29 @@ const UI = React.createClass({
     this.setState({
       data,
       activeEndpoint: newEndpointName,
-      endpointIds: []
+      endpointIds: [],
     });
 
     const json = JSON.stringify(data);
 
     this.putUpdate(json);
   },
-  toasty: function (msg) {
+  toasty(msg) {
     const notification = document.querySelector('.mdl-js-snackbar');
     notification.MaterialSnackbar.showSnackbar(
       {
-        message: msg
+        message: msg,
       }
         );
   },
-  getMenuLinks: function () {
+  getMenuLinks() {
     const items = [];
     items.push((
             <a
-                key={guid()}
-                onClick={this.add}
-                className="mdl-navigation__link mdl-color-text--primary-dark">
+              key={guid()}
+              onClick={this.add}
+              className="mdl-navigation__link mdl-color-text--primary-dark"
+            >
                 <i className="material-icons md-32">add</i>Add new endoint</a>
         ));
 
@@ -95,7 +96,7 @@ const UI = React.createClass({
       let cssClass = 'mdl-navigation__link';
       let name = endpoint.Name;
 
-      if(endpoint.Name === this.state.activeEndpoint) {
+      if (endpoint.Name === this.state.activeEndpoint) {
         cssClass += ' mdl-color--primary-contrast mdl-color-text--accent';
         name = <div><i className="material-icons md-32">fingerprint</i>{endpoint.Name}</div>;
       }
@@ -103,10 +104,11 @@ const UI = React.createClass({
 
       return (
                 <a
-                    key={guid()}
-                    ref={'menu-' + endpoint.Name}
-                    className={cssClass}
-                    onClick={(event)=>this.openEditor(endpoint.Name, event)}>
+                  key={guid()}
+                  ref={'menu-' + endpoint.Name}
+                  className={cssClass}
+                  onClick={(event) => this.openEditor(endpoint.Name, event)}
+                >
                     {name}
                 </a>
             );
@@ -115,15 +117,15 @@ const UI = React.createClass({
     items.push(endpointLinks);
     return items;
   },
-  openEditor: function (endpointName) {
+  openEditor(endpointName) {
     this.setState({
-      activeEndpoint: endpointName
+      activeEndpoint: endpointName,
     });
   },
-  deleteEndpoint: function () {
+  deleteEndpoint() {
     const indexToDelete = this.refs[this.state.activeEndpoint].state.index;
 
-    let data = _.cloneDeep(this.state.data);
+    const data = _.cloneDeep(this.state.data);
     data.splice(indexToDelete, 1);
     const json = JSON.stringify(data);
 
@@ -131,10 +133,10 @@ const UI = React.createClass({
 
     this.putUpdate(json);
   },
-  updateServer: function () {
+  updateServer() {
     const newEndpointState = this.refs[this.state.activeEndpoint].state;
 
-    let data = _.cloneDeep(this.state.data);
+    const data = _.cloneDeep(this.state.data);
 
     data[newEndpointState.index] = {
       Name: newEndpointState.name,
@@ -145,52 +147,52 @@ const UI = React.createClass({
         Method: newEndpointState.method,
         Body: newEndpointState.reqBody,
         Form: newEndpointState.form,
-        Headers: newEndpointState.reqHeaders
+        Headers: newEndpointState.reqHeaders,
       },
       Response: {
         Code: parseInt(newEndpointState.code),
         Body: newEndpointState.body,
-        Headers: newEndpointState.resHeaders
-      }
+        Headers: newEndpointState.resHeaders,
+      },
     };
 
     const json = JSON.stringify(data);
 
     this.setState({
-      activeEndpoint: newEndpointState.name
+      activeEndpoint: newEndpointState.name,
     });
 
     this.putUpdate(json);
   },
-  renderCurrentEndpoint: function () {
-    if(this.state.activeEndpoint) {
+  renderCurrentEndpoint() {
+    if (this.state.activeEndpoint) {
       const index = _.findIndex(this.state.data, ep => ep.Name == this.state.activeEndpoint);
       const endpoint = this.state.data.find(ep => ep.Name === this.state.activeEndpoint);
-      if(endpoint) {
+      if (endpoint) {
         return (
                     <Endpoint
-                        index={index}
-                        delete={this.deleteEndpoint}
-                        key={endpoint.Name}
-                        ref={endpoint.Name}
-                        cdcDisabled={endpoint.CDCDisabled}
-                        updateServer={this.updateServer}
-                        name={endpoint.Name}
-                        method={endpoint.Request.Method}
-                        reqBody={endpoint.Request.Body}
-                        uri={endpoint.Request.URI}
-                        regex={endpoint.Request.RegexURI}
-                        reqHeaders={endpoint.Request.Headers}
-                        form={endpoint.Request.Form}
-                        code={endpoint.Response.Code}
-                        body={endpoint.Response.Body}
-                        resHeaders={endpoint.Response.Headers}
+                      index={index}
+                      delete={this.deleteEndpoint}
+                      key={endpoint.Name}
+                      ref={endpoint.Name}
+                      cdcDisabled={endpoint.CDCDisabled}
+                      updateServer={this.updateServer}
+                      name={endpoint.Name}
+                      method={endpoint.Request.Method}
+                      reqBody={endpoint.Request.Body}
+                      uri={endpoint.Request.URI}
+                      regex={endpoint.Request.RegexURI}
+                      reqHeaders={endpoint.Request.Headers}
+                      form={endpoint.Request.Form}
+                      code={endpoint.Response.Code}
+                      body={endpoint.Response.Body}
+                      resHeaders={endpoint.Response.Headers}
                     />);
       }
     }
     return null;
   },
-  render: function () {
+  render() {
     return (
         <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
 
@@ -213,9 +215,9 @@ const UI = React.createClass({
         </div>
 
         );
-  }
+  },
 });
 ReactDOM.render(
-    <UI url="/mj-endpoints"/>,
+    <UI url="/mj-endpoints" />,
     document.getElementById('app')
 );
