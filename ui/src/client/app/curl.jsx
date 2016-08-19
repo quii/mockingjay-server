@@ -1,4 +1,5 @@
 import React from 'react';
+import request from 'superagent';
 
 export const Curl = React.createClass({
   componentWillMount() {
@@ -8,16 +9,15 @@ export const Curl = React.createClass({
     }
 
     const url = `/mj-curl?name=${this.props.name}&baseURL=${baseURL}`;
-    $.ajax({
-      url,
-      cache: false,
-      success: function (data) {
-        this.setState({ curl: data });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this),
-    });
+    request
+      .get(url)
+      .end((err, res) => {
+        if (err) {
+          console.error(this.props.url, status, err.toString());
+        } else {
+          this.setState({ curl: res.text });
+        }
+      });
   },
   hint() {
     if (this.props.showPostHint) {

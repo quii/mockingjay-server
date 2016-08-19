@@ -1,5 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
+import request from 'superagent';
+
 import ReactDOM from 'react-dom';
 import Endpoint from './endpoints.jsx';
 import CDC from './cdc/CDC.jsx';
@@ -14,34 +16,29 @@ const UI = React.createClass({
     };
   },
   componentDidMount() {
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      cache: false,
-      success: function (data) {
-        this.setState({ data });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this),
-    });
+    request
+      .get(this.props.url)
+      .end((err, res) => {
+        if (err) {
+          console.error(this.props.url, status, err.toString());
+        } else {
+          this.setState({ data: JSON.parse(res.text) });
+        }
+      });
   },
   putUpdate(update) {
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      type: 'PUT',
-      cache: false,
-      data: update,
-      success: function (data) {
-        this.refs['cdc'].checkCompatability();
-        this.setState({ data });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        this.toasty(`Problem with PUT to ${this.props.url} ${err.toString()}`);
-        console.error(this.props.url, status, err.toString());
-      }.bind(this),
-    });
+    request
+      .put(this.props.url)
+      .send(update)
+      .end((err, res) => {
+        if (err) {
+          this.toasty(`Problem with PUT to ${this.props.url} ${err.toString()}`);
+          console.error(this.props.url, status, err.toString());
+        } else {
+          this.refs.cdc.checkCompatability();
+          this.setState({ data: JSON.parse(res.text) });
+        }
+      });
   },
   add() {
     const data = _.cloneDeep(this.state.data);

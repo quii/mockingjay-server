@@ -113,5 +113,4 @@ CDC.propTypes = {
 CDC.label = 'Auto-checking endpoints are equivalent to';
 
 
-
 export default CDC;

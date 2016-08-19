@@ -11,7 +11,7 @@ function TestIndicator({ indicatorClick, badge }) {
 TestIndicator.propTypes = {
   badge: React.PropTypes.string.isRequired,
   indicatorClick: React.PropTypes.func.isRequired,
-}
+};
 
 
 export default TestIndicator;

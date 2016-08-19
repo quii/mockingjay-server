@@ -2,7 +2,7 @@
   cdcdisabled: false
   request:
     uri: /hello
-    method: PUT
+    method: GET
     headers:
       Content-Type: application/json
     body: '{"hello": "world"}'
