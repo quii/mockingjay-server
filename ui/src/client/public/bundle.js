@@ -40608,6 +40608,8 @@
 	
 	var _curl = __webpack_require__(/*! ./curl.jsx */ 186);
 	
+	var _curl2 = _interopRequireDefault(_curl);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -40693,7 +40695,7 @@
 	        _react2.default.createElement(_formbits.Body, { label: 'Body', value: this.state.body }),
 	        _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: this.state.resHeaders })
 	      ),
-	      _react2.default.createElement(_curl.Curl, { url: location.origin, name: this.state.name, showPostHint: this.couldBeDodgyCurlFormStuff() }),
+	      _react2.default.createElement(_curl2.default, { baseURL: location.origin, name: this.state.name, showPostHint: this.couldBeDodgyCurlFormStuff() }),
 	      _react2.default.createElement(
 	        'div',
 	        { style: { margin: '2% 2% 2% 3%' } },
@@ -41222,7 +41224,8 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.Curl = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _react = __webpack_require__(/*! react */ 1);
 	
@@ -41234,74 +41237,96 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var Curl = exports.Curl = _react2.default.createClass({
-	  displayName: 'Curl',
-	  componentWillMount: function componentWillMount() {
-	    var _this = this;
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	    var baseURL = location.origin;
-	    if (this.props.baseURL) {
-	      baseURL = this.props.baseURL;
-	    }
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
-	    var url = '/mj-curl?name=' + this.props.name + '&baseURL=' + baseURL;
-	    _superagent2.default.get(url).end(function (err, res) {
-	      if (err) {
-	        console.error(_this.props.url, status, err.toString());
-	      } else {
-	        _this.setState({ curl: res.text });
-	      }
-	    });
-	  },
-	  hint: function hint() {
-	    if (this.props.showPostHint) {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'mdl-card__supporting-text hint' },
-	        _react2.default.createElement(
-	          'code',
-	          null,
-	          'curl'
-	        ),
-	        '\'s default behaviour with -d is to send ',
-	        _react2.default.createElement(
-	          'code',
-	          null,
-	          'application/x-www-form-urlencoded'
-	        ),
-	        ' header if no other headers are specified. MJ will not match this request unless you specify form values ',
-	        _react2.default.createElement(
-	          'strong',
-	          null,
-	          'or'
-	        ),
-	        ' the http header in the request explicitly.'
-	      );
-	    } else {
-	      return null;
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Curl = function (_React$Component) {
+	  _inherits(Curl, _React$Component);
+	
+	  function Curl() {
+	    _classCallCheck(this, Curl);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Curl).apply(this, arguments));
+	  }
+	
+	  _createClass(Curl, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      var _this2 = this;
+	
+	      _superagent2.default.get('/mj-curl?name=' + this.props.name + '&baseURL=' + this.props.baseURL).end(function (err, res) {
+	        if (err) {
+	          console.error(_this2.props.baseURL, status, err.toString());
+	        } else {
+	          _this2.setState({ curl: res.text });
+	        }
+	      });
 	    }
-	  },
-	  render: function render() {
-	    if (this.state) {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'mdl-card mdl-shadow--2dp' },
-	        _react2.default.createElement(
+	  }, {
+	    key: 'hint',
+	    value: function hint() {
+	      if (this.props.showPostHint) {
+	        return _react2.default.createElement(
 	          'div',
-	          { className: 'mdl-card__supporting-text' },
+	          { className: 'mdl-card__supporting-text hint' },
 	          _react2.default.createElement(
 	            'code',
 	            null,
-	            this.state.curl
-	          )
-	        ),
-	        this.hint()
-	      );
-	    } else {
+	            'curl'
+	          ),
+	          '\'s default behaviour with -d is to send',
+	          _react2.default.createElement(
+	            'code',
+	            null,
+	            'application/x-www-form-urlencoded'
+	          ),
+	          'header if no other headers are specified. MJ will not match this request unless you specify form values ',
+	          _react2.default.createElement(
+	            'strong',
+	            null,
+	            'or'
+	          ),
+	          ' the http header in the request explicitly.'
+	        );
+	      }
 	      return null;
 	    }
-	  }
-	});
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      if (this.state) {
+	        return _react2.default.createElement(
+	          'div',
+	          { className: 'mdl-card mdl-shadow--2dp' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'mdl-card__supporting-text' },
+	            _react2.default.createElement(
+	              'code',
+	              null,
+	              this.state.curl
+	            )
+	          ),
+	          this.hint()
+	        );
+	      }
+	      return null;
+	    }
+	  }]);
+	
+	  return Curl;
+	}(_react2.default.Component);
+	
+	Curl.propTypes = {
+	  baseURL: _react2.default.PropTypes.string.isRequired,
+	  name: _react2.default.PropTypes.string.isRequired,
+	  showPostHint: _react2.default.PropTypes.bool
+	};
+	
+	exports.default = Curl;
 
 /***/ },
 /* 187 */

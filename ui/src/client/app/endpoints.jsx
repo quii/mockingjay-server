@@ -1,7 +1,7 @@
 import React from 'react';
 import { HttpDataList, HttpDataEditor } from './httpDataList.jsx';
 import { Code, MethodSwitcher, Body, TextArea, TextField } from './formbits.jsx';
-import { Curl } from './curl.jsx';
+import Curl from './curl.jsx';
 
 const Endpoint = React.createClass({
   getInitialState() {
@@ -73,7 +73,7 @@ const Endpoint = React.createClass({
                     <HttpDataList name="Headers" items={this.state.resHeaders} />
                 </div>
 
-                <Curl url={location.origin} name={this.state.name} showPostHint={this.couldBeDodgyCurlFormStuff()} />
+                <Curl baseURL={location.origin} name={this.state.name} showPostHint={this.couldBeDodgyCurlFormStuff()} />
 
                 <div style={{ margin: '2% 2% 2% 3%' }}>
                     <button style={{ margin: '0% 1% 0% 0%' }} onClick={this.startEditing} className="mdl-button mdl-button--raised mdl-button--accent">
