@@ -1,12 +1,12 @@
 import React from 'react';
 import _ from 'lodash';
-import request from 'superagent';
 
 import ReactDOM from 'react-dom';
 import Endpoint from './endpoint/endpoint.jsx';
 import CDC from './cdc/CDC.jsx';
 import { guid } from './util';
 import Navigation from './navigation.jsx';
+import API from './API.js';
 
 const UI = React.createClass({
   getInitialState() {
@@ -16,31 +16,22 @@ const UI = React.createClass({
       endpointIds: [],
     };
   },
+
   componentDidMount() {
-    request
-      .get(this.props.url)
-      .end((err, res) => {
-        if (err) {
-          console.error(this.props.url, status, err.toString());
-        } else {
-          this.setState({ data: JSON.parse(res.text) });
-        }
-      });
+    const api = new API(this.props.url);
+    api.getEndpoints()
+      .then(data => this.setState({ data }))
+      .catch(err => console.error(this.props.url, status, err.toString()));
   },
+
   putUpdate(update) {
-    request
-      .put(this.props.url)
-      .send(update)
-      .end((err, res) => {
-        if (err) {
-          this.toasty(`Problem with PUT to ${this.props.url} ${err.toString()}`);
-          console.error(this.props.url, status, err.toString());
-        } else {
-          this.refs.cdc.checkCompatability();
-          this.setState({ data: JSON.parse(res.text) });
-        }
-      });
+    const api = new API(this.props.url);
+    api.updateEndpoints(update)
+      .then(data => this.setState({data}))
+      .then(() => this.refs.cdc.checkCompatability())
+      .catch(err => this.toasty(`Problem with PUT to ${this.props.url} ${err.toString()}`));
   },
+
   add() {
     const data = _.cloneDeep(this.state.data);
 

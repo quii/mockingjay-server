@@ -2,7 +2,7 @@
   cdcdisabled: false
   request:
     uri: /hello-there
-    method: GET
+    method: POST
     headers:
       Content-Type: application/json
     body: '{"hello": "world"}'
