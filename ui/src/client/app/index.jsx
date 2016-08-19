@@ -1,113 +1,75 @@
 import React from 'react';
-import _ from 'lodash';
 
 import ReactDOM from 'react-dom';
 import Endpoint from './endpoint/endpoint.jsx';
 import CDC from './cdc/CDC.jsx';
-import { guid } from './util';
 import Navigation from './navigation.jsx';
 import API from './API.js';
+import EndpointMachine from './EndpointMachine';
 
 class UI extends React.Component {
 
   constructor(props) {
     super(props);
 
-    this.baseURL = props.url;
-    this.api = new API(this.baseURL);
+    this.api = new API(props.url);
 
     this.state = {
-      data: [],
-      activeEndpoint: null,
-      endpointIds: [],
+      endpointMachine: new EndpointMachine([]),
     };
 
     this.componentDidMount = this.componentDidMount.bind(this);
+    this.putUpdate = this.putUpdate.bind(this);
     this.openEditor = this.openEditor.bind(this);
     this.add = this.add.bind(this);
     this.deleteEndpoint = this.deleteEndpoint.bind(this);
-    this.updateServer = this.updateServer.bind(this);
+    this.updateEndpoint = this.updateEndpoint.bind(this);
     this.renderCurrentEndpoint = this.renderCurrentEndpoint.bind(this);
+    this.currentEndpointName = this.currentEndpointName.bind(this);
   }
 
   componentDidMount() {
-    this.api.getEndpoints()
-      .then(data => this.setState({ data }))
-      .catch(err => console.error(this.baseURL, status, err.toString()));
+    return this.api.getEndpoints()
+      .tap(data => this.setState({ endpointMachine: new EndpointMachine(data) }))
+      .catch(err => console.error('Problem getting MJ endpoints', status, err.toString()));
   }
 
-  putUpdate(update) {
-    const api = new API(this.props.url);
-    api.updateEndpoints(update)
-      .then(data => this.setState({ data }))
+  putUpdate() {
+    return this.api.updateEndpoints(this.state.endpointMachine.asJSON())
+      .tap(data => {
+        this.setState({ endpointMachine: this.state.endpointMachine.updateEndpoints(data) });
+      })
       .then(() => this.refs.cdc.checkCompatability())
       .catch(err => this.toasty(`Problem with PUT to ${this.props.url} ${err.toString()}`));
   }
 
+  currentEndpointName() {
+    if (this.state) {
+      return this.state.endpointMachine ? this.state.endpointMachine.getEndpoint.Name : '';
+    }
+    return '';
+  }
+
   add() {
-    const data = _.cloneDeep(this.state.data);
-
-    const newEndpointName = guid();
-
-    const newEndpoint = {
-      Name: newEndpointName,
-      CDCDisabled: false,
-      Request: {
-        URI: '/hello',
-        Method: 'GET',
-      },
-      Response: {
-        Code: 200,
-        Body: 'World!',
-      },
-    };
-
-    data.unshift(newEndpoint);
-
     this.setState({
-      data,
-      activeEndpoint: newEndpointName,
-      endpointIds: [],
+      endpointMachine: this.state.endpointMachine.addNewEndpoint(),
     });
 
-    const json = JSON.stringify(data);
-
-    this.putUpdate(json);
-  }
-
-  toasty(msg) {
-    const notification = document.querySelector('.mdl-js-snackbar');
-    notification.MaterialSnackbar.showSnackbar(
-      {
-        message: msg,
-      }
-    );
-  }
-
-  openEditor(endpointName) {
-    this.setState({
-      activeEndpoint: endpointName,
-    });
+    return this.putUpdate();
   }
 
   deleteEndpoint() {
-    const indexToDelete = this.refs[this.state.activeEndpoint].state.index;
-
-    const data = _.cloneDeep(this.state.data);
-    data.splice(indexToDelete, 1);
-    const json = JSON.stringify(data);
-
+    this.setState({
+      endpointMachine: this.state.endpointMachine.deleteEndpoint(),
+    });
     this.toasty('Endpoint deleted');
-
-    this.putUpdate(json);
+    return this.putUpdate();
   }
 
-  updateServer() {
-    const newEndpointState = this.refs[this.state.activeEndpoint].state;
+  updateEndpoint() {
+    const newEndpointState = this.refs.activeEndpoint.state;
 
-    const data = _.cloneDeep(this.state.data);
-
-    data[newEndpointState.index] = {
+    const update = {
       Name: newEndpointState.name,
       CDCDisabled: newEndpointState.cdcDisabled,
       Request: {
@@ -125,40 +87,49 @@ class UI extends React.Component {
       },
     };
 
-    const json = JSON.stringify(data);
-
     this.setState({
-      activeEndpoint: newEndpointState.name,
+      endpointMachine: this.state.endpointMachine.updateEndpoint(update),
     });
 
-    this.putUpdate(json);
+    this.putUpdate();
+  }
+
+  toasty(msg) {
+    const notification = document.querySelector('.mdl-js-snackbar');
+    notification.MaterialSnackbar.showSnackbar(
+      {
+        message: msg,
+      }
+    );
+  }
+
+  openEditor(endpointName) {
+    this.setState({
+      endpointMachine: this.state.endpointMachine.selectEndpoint(endpointName),
+    });
   }
 
   renderCurrentEndpoint() {
-    if (this.state.activeEndpoint) {
-      const index = _.findIndex(this.state.data, ep => ep.Name == this.state.activeEndpoint);
-      const endpoint = this.state.data.find(ep => ep.Name === this.state.activeEndpoint);
-      if (endpoint) {
-        return (
-          <Endpoint
-            index={index}
-            delete={this.deleteEndpoint}
-            key={endpoint.Name}
-            ref={endpoint.Name}
-            cdcDisabled={endpoint.CDCDisabled}
-            updateServer={this.updateServer}
-            name={endpoint.Name}
-            method={endpoint.Request.Method}
-            reqBody={endpoint.Request.Body}
-            uri={endpoint.Request.URI}
-            regex={endpoint.Request.RegexURI}
-            reqHeaders={endpoint.Request.Headers}
-            form={endpoint.Request.Form}
-            code={endpoint.Response.Code}
-            body={endpoint.Response.Body}
-            resHeaders={endpoint.Response.Headers}
-          />);
-      }
+    const endpoint = this.state.endpointMachine.getEndpoint();
+    if (endpoint) {
+      return (
+        <Endpoint
+          delete={this.deleteEndpoint}
+          key={endpoint.Name}
+          ref='activeEndpoint'
+          cdcDisabled={endpoint.CDCDisabled}
+          updateServer={this.updateEndpoint}
+          name={endpoint.Name}
+          method={endpoint.Request.Method}
+          reqBody={endpoint.Request.Body}
+          uri={endpoint.Request.URI}
+          regex={endpoint.Request.RegexURI}
+          reqHeaders={endpoint.Request.Headers}
+          form={endpoint.Request.Form}
+          code={endpoint.Response.Code}
+          body={endpoint.Response.Body}
+          resHeaders={endpoint.Response.Headers}
+        />);
     }
     return null;
   }
@@ -173,8 +144,8 @@ class UI extends React.Component {
           <Navigation
             openEditor={this.openEditor}
             addEndpoint={this.add}
-            endpoints={this.state.data}
-            activeEndpoint={this.state.activeEndpoint}
+            endpoints={this.state.endpointMachine.getEndpoints()}
+            activeEndpoint={this.currentEndpointName()}
           />
         </div>
         <main className="mdl-layout__content mdl-color--grey-100">

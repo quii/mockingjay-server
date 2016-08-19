@@ -5,7 +5,7 @@
     method: POST
     headers:
       Content-Type: application/json
-    body: '{"hello": "world"}'
+    body: '{"hello": "worldyy"}'
   response:
     code: 200
     body: '{"message": "hello, world"}'

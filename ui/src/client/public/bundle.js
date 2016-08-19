@@ -55,10 +55,6 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _lodash = __webpack_require__(/*! lodash */ 35);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
 	var _reactDom = __webpack_require__(/*! react-dom */ 42);
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
@@ -71,8 +67,6 @@
 	
 	var _CDC2 = _interopRequireDefault(_CDC);
 	
-	var _util = __webpack_require__(/*! ./util */ 184);
-	
 	var _navigation = __webpack_require__(/*! ./navigation.jsx */ 203);
 	
 	var _navigation2 = _interopRequireDefault(_navigation);
@@ -80,6 +74,10 @@
 	var _API = __webpack_require__(/*! ./API.js */ 207);
 	
 	var _API2 = _interopRequireDefault(_API);
+	
+	var _EndpointMachine = __webpack_require__(/*! ./EndpointMachine */ 208);
+	
+	var _EndpointMachine2 = _interopRequireDefault(_EndpointMachine);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -97,21 +95,20 @@
 	
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(UI).call(this, props));
 	
-	    _this.baseURL = props.url;
-	    _this.api = new _API2.default(_this.baseURL);
+	    _this.api = new _API2.default(props.url);
 	
 	    _this.state = {
-	      data: [],
-	      activeEndpoint: null,
-	      endpointIds: []
+	      endpointMachine: new _EndpointMachine2.default([])
 	    };
 	
 	    _this.componentDidMount = _this.componentDidMount.bind(_this);
+	    _this.putUpdate = _this.putUpdate.bind(_this);
 	    _this.openEditor = _this.openEditor.bind(_this);
 	    _this.add = _this.add.bind(_this);
 	    _this.deleteEndpoint = _this.deleteEndpoint.bind(_this);
-	    _this.updateServer = _this.updateServer.bind(_this);
+	    _this.updateEndpoint = _this.updateEndpoint.bind(_this);
 	    _this.renderCurrentEndpoint = _this.renderCurrentEndpoint.bind(_this);
+	    _this.currentEndpointName = _this.currentEndpointName.bind(_this);
 	    return _this;
 	  }
 	
@@ -120,20 +117,19 @@
 	    value: function componentDidMount() {
 	      var _this2 = this;
 	
-	      this.api.getEndpoints().then(function (data) {
-	        return _this2.setState({ data: data });
+	      return this.api.getEndpoints().tap(function (data) {
+	        return _this2.setState({ endpointMachine: new _EndpointMachine2.default(data) });
 	      }).catch(function (err) {
-	        return console.error(_this2.baseURL, status, err.toString());
+	        return console.error('Problem getting MJ endpoints', status, err.toString());
 	      });
 	    }
 	  }, {
 	    key: 'putUpdate',
-	    value: function putUpdate(update) {
+	    value: function putUpdate() {
 	      var _this3 = this;
 	
-	      var api = new _API2.default(this.props.url);
-	      api.updateEndpoints(update).then(function (data) {
-	        return _this3.setState({ data: data });
+	      return this.api.updateEndpoints(this.state.endpointMachine.asJSON()).tap(function (data) {
+	        return _this3.setState({ endpointMachine: _this3.state.endpointMachine.updateEndpoints(data) });
 	      }).then(function () {
 	        return _this3.refs.cdc.checkCompatability();
 	      }).catch(function (err) {
@@ -141,73 +137,37 @@
 	      });
 	    }
 	  }, {
+	    key: 'currentEndpointName',
+	    value: function currentEndpointName() {
+	      if (this.state) {
+	        return this.state.endpointMachine ? this.state.endpointMachine.getEndpoint.Name : '';
+	      }
+	      return '';
+	    }
+	  }, {
 	    key: 'add',
 	    value: function add() {
-	      var data = _lodash2.default.cloneDeep(this.state.data);
-	
-	      var newEndpointName = (0, _util.guid)();
-	
-	      var newEndpoint = {
-	        Name: newEndpointName,
-	        CDCDisabled: false,
-	        Request: {
-	          URI: '/hello',
-	          Method: 'GET'
-	        },
-	        Response: {
-	          Code: 200,
-	          Body: 'World!'
-	        }
-	      };
-	
-	      data.unshift(newEndpoint);
-	
 	      this.setState({
-	        data: data,
-	        activeEndpoint: newEndpointName,
-	        endpointIds: []
+	        endpointMachine: this.state.endpointMachine.addNewEndpoint()
 	      });
 	
-	      var json = JSON.stringify(data);
-	
-	      this.putUpdate(json);
-	    }
-	  }, {
-	    key: 'toasty',
-	    value: function toasty(msg) {
-	      var notification = document.querySelector('.mdl-js-snackbar');
-	      notification.MaterialSnackbar.showSnackbar({
-	        message: msg
-	      });
-	    }
-	  }, {
-	    key: 'openEditor',
-	    value: function openEditor(endpointName) {
-	      this.setState({
-	        activeEndpoint: endpointName
-	      });
+	      return this.putUpdate();
 	    }
 	  }, {
 	    key: 'deleteEndpoint',
 	    value: function deleteEndpoint() {
-	      var indexToDelete = this.refs[this.state.activeEndpoint].state.index;
-	
-	      var data = _lodash2.default.cloneDeep(this.state.data);
-	      data.splice(indexToDelete, 1);
-	      var json = JSON.stringify(data);
-	
+	      this.setState({
+	        endpointMachine: this.state.endpointMachine.deleteEndpoint()
+	      });
 	      this.toasty('Endpoint deleted');
-	
-	      this.putUpdate(json);
+	      return this.putUpdate();
 	    }
 	  }, {
-	    key: 'updateServer',
-	    value: function updateServer() {
-	      var newEndpointState = this.refs[this.state.activeEndpoint].state;
+	    key: 'updateEndpoint',
+	    value: function updateEndpoint() {
+	      var newEndpointState = this.refs.activeEndpoint.state;
 	
-	      var data = _lodash2.default.cloneDeep(this.state.data);
-	
-	      data[newEndpointState.index] = {
+	      var update = {
 	        Name: newEndpointState.name,
 	        CDCDisabled: newEndpointState.cdcDisabled,
 	        Request: {
@@ -225,46 +185,49 @@
 	        }
 	      };
 	
-	      var json = JSON.stringify(data);
-	
 	      this.setState({
-	        activeEndpoint: newEndpointState.name
+	        endpointMachine: this.state.endpointMachine.updateEndpoint(update)
 	      });
 	
-	      this.putUpdate(json);
+	      this.putUpdate();
+	    }
+	  }, {
+	    key: 'toasty',
+	    value: function toasty(msg) {
+	      var notification = document.querySelector('.mdl-js-snackbar');
+	      notification.MaterialSnackbar.showSnackbar({
+	        message: msg
+	      });
+	    }
+	  }, {
+	    key: 'openEditor',
+	    value: function openEditor(endpointName) {
+	      this.setState({
+	        endpointMachine: this.state.endpointMachine.selectEndpoint(endpointName)
+	      });
 	    }
 	  }, {
 	    key: 'renderCurrentEndpoint',
 	    value: function renderCurrentEndpoint() {
-	      var _this4 = this;
-	
-	      if (this.state.activeEndpoint) {
-	        var index = _lodash2.default.findIndex(this.state.data, function (ep) {
-	          return ep.Name == _this4.state.activeEndpoint;
+	      var endpoint = this.state.endpointMachine.getEndpoint();
+	      if (endpoint) {
+	        return _react2.default.createElement(_endpoint2.default, {
+	          'delete': this.deleteEndpoint,
+	          key: endpoint.Name,
+	          ref: 'activeEndpoint',
+	          cdcDisabled: endpoint.CDCDisabled,
+	          updateServer: this.updateEndpoint,
+	          name: endpoint.Name,
+	          method: endpoint.Request.Method,
+	          reqBody: endpoint.Request.Body,
+	          uri: endpoint.Request.URI,
+	          regex: endpoint.Request.RegexURI,
+	          reqHeaders: endpoint.Request.Headers,
+	          form: endpoint.Request.Form,
+	          code: endpoint.Response.Code,
+	          body: endpoint.Response.Body,
+	          resHeaders: endpoint.Response.Headers
 	        });
-	        var endpoint = this.state.data.find(function (ep) {
-	          return ep.Name === _this4.state.activeEndpoint;
-	        });
-	        if (endpoint) {
-	          return _react2.default.createElement(_endpoint2.default, {
-	            index: index,
-	            'delete': this.deleteEndpoint,
-	            key: endpoint.Name,
-	            ref: endpoint.Name,
-	            cdcDisabled: endpoint.CDCDisabled,
-	            updateServer: this.updateServer,
-	            name: endpoint.Name,
-	            method: endpoint.Request.Method,
-	            reqBody: endpoint.Request.Body,
-	            uri: endpoint.Request.URI,
-	            regex: endpoint.Request.RegexURI,
-	            reqHeaders: endpoint.Request.Headers,
-	            form: endpoint.Request.Form,
-	            code: endpoint.Response.Code,
-	            body: endpoint.Response.Body,
-	            resHeaders: endpoint.Response.Headers
-	          });
-	        }
 	      }
 	      return null;
 	    }
@@ -286,8 +249,8 @@
 	          _react2.default.createElement(_navigation2.default, {
 	            openEditor: this.openEditor,
 	            addEndpoint: this.add,
-	            endpoints: this.state.data,
-	            activeEndpoint: this.state.activeEndpoint
+	            endpoints: this.state.endpointMachine.getEndpoints(),
+	            activeEndpoint: this.currentEndpointName()
 	          })
 	        ),
 	        _react2.default.createElement(
@@ -48471,6 +48434,120 @@
 	}();
 	
 	exports.default = API;
+
+/***/ },
+/* 208 */
+/*!*******************************************!*\
+  !*** ./src/client/app/EndpointMachine.js ***!
+  \*******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _lodash = __webpack_require__(/*! lodash */ 35);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _util = __webpack_require__(/*! ./util */ 184);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var EndpointMachine = function () {
+	  function EndpointMachine(endpoints) {
+	    _classCallCheck(this, EndpointMachine);
+	
+	    this.endpoints = endpoints;
+	    this.selectedEndpointIndex = null;
+	
+	    this.selectEndpoint = this.selectEndpoint.bind(this);
+	    this.getEndpoint = this.getEndpoint.bind(this);
+	    this.getEndpoints = this.getEndpoints.bind(this);
+	    this.updateEndpoint = this.updateEndpoint.bind(this);
+	    this.updateEndpoints = this.updateEndpoints.bind(this);
+	    this.addNewEndpoint = this.addNewEndpoint.bind(this);
+	    this.deleteEndpoint = this.deleteEndpoint.bind(this);
+	    this.asJSON = this.asJSON.bind(this);
+	  }
+	
+	  _createClass(EndpointMachine, [{
+	    key: 'selectEndpoint',
+	    value: function selectEndpoint(name) {
+	      this.selectedEndpointIndex = _lodash2.default.findIndex(this.endpoints, function (ep) {
+	        return ep.Name === name;
+	      });
+	      return this;
+	    }
+	  }, {
+	    key: 'getEndpoint',
+	    value: function getEndpoint() {
+	      return this.endpoints[this.selectedEndpointIndex];
+	    }
+	  }, {
+	    key: 'getEndpoints',
+	    value: function getEndpoints() {
+	      return this.endpoints;
+	    }
+	  }, {
+	    key: 'addNewEndpoint',
+	    value: function addNewEndpoint() {
+	      var newEndpointName = (0, _util.guid)();
+	
+	      var newEndpoint = {
+	        Name: newEndpointName,
+	        CDCDisabled: false,
+	        Request: {
+	          URI: '/hello',
+	          Method: 'GET'
+	        },
+	        Response: {
+	          Code: 200,
+	          Body: 'World!'
+	        }
+	      };
+	
+	      this.endpoints.unshift(newEndpoint);
+	      this.selectedEndpointIndex = 0;
+	
+	      return this;
+	    }
+	  }, {
+	    key: 'deleteEndpoint',
+	    value: function deleteEndpoint() {
+	      this.endpoints.splice(this.selectedEndpointIndex, 1);
+	      this.selectedEndpointIndex = null;
+	      return this;
+	    }
+	  }, {
+	    key: 'updateEndpoint',
+	    value: function updateEndpoint(updatedEndpoint) {
+	      this.endpoints[this.selectedEndpointIndex] = updatedEndpoint;
+	      return this;
+	    }
+	  }, {
+	    key: 'updateEndpoints',
+	    value: function updateEndpoints(update) {
+	      this.endpoints = update;
+	      return this;
+	    }
+	  }, {
+	    key: 'asJSON',
+	    value: function asJSON() {
+	      return JSON.stringify(this.getEndpoints());
+	    }
+	  }]);
+	
+	  return EndpointMachine;
+	}();
+	
+	exports.default = EndpointMachine;
 
 /***/ }
 /******/ ]);
