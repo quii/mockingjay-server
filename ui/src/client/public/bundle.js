@@ -129,9 +129,9 @@
 	      var _this3 = this;
 	
 	      return this.api.updateEndpoints(this.state.endpointMachine.asJSON()).tap(function (data) {
-	        return _this3.setState({ endpointMachine: _this3.state.endpointMachine.updateEndpoints(data) });
+	        _this3.setState({ endpointMachine: _this3.state.endpointMachine.updateEndpoints(data) });
 	      }).then(function () {
-	        return _this3.refs.cdc.checkCompatability();
+	        return _this3.cdc.checkCompatability();
 	      }).catch(function (err) {
 	        return _this3.toasty('Problem with PUT to ' + _this3.props.url + ' ' + err.toString());
 	      });
@@ -165,7 +165,7 @@
 	  }, {
 	    key: 'updateEndpoint',
 	    value: function updateEndpoint() {
-	      var newEndpointState = this.refs.activeEndpoint.state;
+	      var newEndpointState = this.activeEndpoint.state;
 	
 	      var update = {
 	        Name: newEndpointState.name,
@@ -209,12 +209,16 @@
 	  }, {
 	    key: 'renderCurrentEndpoint',
 	    value: function renderCurrentEndpoint() {
+	      var _this4 = this;
+	
 	      var endpoint = this.state.endpointMachine.getEndpoint();
 	      if (endpoint) {
 	        return _react2.default.createElement(_endpoint2.default, {
 	          'delete': this.deleteEndpoint,
 	          key: endpoint.Name,
-	          ref: 'activeEndpoint',
+	          ref: function ref(r) {
+	            _this4.activeEndpoint = r;
+	          },
 	          cdcDisabled: endpoint.CDCDisabled,
 	          updateServer: this.updateEndpoint,
 	          name: endpoint.Name,
@@ -234,10 +238,17 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this5 = this;
+	
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'mdl-layout mdl-js-layout mdl-layout--fixed-drawer' },
-	        _react2.default.createElement(_CDC2.default, { ref: 'cdc', url: '/mj-check-compatability' }),
+	        _react2.default.createElement(_CDC2.default, {
+	          ref: function ref(r) {
+	            _this5.cdc = r;
+	          },
+	          url: '/mj-check-compatability'
+	        }),
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'mdl-layout__drawer' },

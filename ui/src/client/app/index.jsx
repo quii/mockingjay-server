@@ -39,7 +39,7 @@ class UI extends React.Component {
       .tap(data => {
         this.setState({ endpointMachine: this.state.endpointMachine.updateEndpoints(data) });
       })
-      .then(() => this.refs.cdc.checkCompatability())
+      .then(() => this.cdc.checkCompatability())
       .catch(err => this.toasty(`Problem with PUT to ${this.props.url} ${err.toString()}`));
   }
 
@@ -67,7 +67,7 @@ class UI extends React.Component {
   }
 
   updateEndpoint() {
-    const newEndpointState = this.refs.activeEndpoint.state;
+    const newEndpointState = this.activeEndpoint.state;
 
     const update = {
       Name: newEndpointState.name,
@@ -116,7 +116,9 @@ class UI extends React.Component {
         <Endpoint
           delete={this.deleteEndpoint}
           key={endpoint.Name}
-          ref='activeEndpoint'
+          ref={r => {
+            this.activeEndpoint = r;
+          }}
           cdcDisabled={endpoint.CDCDisabled}
           updateServer={this.updateEndpoint}
           name={endpoint.Name}
@@ -138,7 +140,13 @@ class UI extends React.Component {
     return (
       <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
 
-        <CDC ref="cdc" url="/mj-check-compatability"/>
+        <CDC
+          ref={r => {
+            this.cdc = r;
+          }}
+          url="/mj-check-compatability"
+        />
+
         <div className="mdl-layout__drawer">
           <h1 className="mdl-layout-title mdl-color-text--primary">mockingjay server</h1>
           <Navigation
