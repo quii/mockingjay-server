@@ -49,6 +49,8 @@
 
 	'use strict';
 	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
 	var _react = __webpack_require__(/*! react */ 1);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -81,191 +83,238 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var UI = _react2.default.createClass({
-	  displayName: 'UI',
-	  getInitialState: function getInitialState() {
-	    return {
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var UI = function (_React$Component) {
+	  _inherits(UI, _React$Component);
+	
+	  function UI(props) {
+	    _classCallCheck(this, UI);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(UI).call(this, props));
+	
+	    _this.baseURL = props.url;
+	    _this.api = new _API2.default(_this.baseURL);
+	
+	    _this.state = {
 	      data: [],
 	      activeEndpoint: null,
 	      endpointIds: []
 	    };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    var _this = this;
 	
-	    var api = new _API2.default(this.props.url);
-	    api.getEndpoints().then(function (data) {
-	      return _this.setState({ data: data });
-	    }).catch(function (err) {
-	      return console.error(_this.props.url, status, err.toString());
-	    });
-	  },
-	  putUpdate: function putUpdate(update) {
-	    var _this2 = this;
+	    _this.componentDidMount = _this.componentDidMount.bind(_this);
+	    _this.openEditor = _this.openEditor.bind(_this);
+	    _this.add = _this.add.bind(_this);
+	    _this.deleteEndpoint = _this.deleteEndpoint.bind(_this);
+	    _this.updateServer = _this.updateServer.bind(_this);
+	    _this.renderCurrentEndpoint = _this.renderCurrentEndpoint.bind(_this);
+	    return _this;
+	  }
 	
-	    var api = new _API2.default(this.props.url);
-	    api.updateEndpoints(update).then(function (data) {
-	      return _this2.setState({ data: data });
-	    }).then(function () {
-	      return _this2.refs.cdc.checkCompatability();
-	    }).catch(function (err) {
-	      return _this2.toasty('Problem with PUT to ' + _this2.props.url + ' ' + err.toString());
-	    });
-	  },
-	  add: function add() {
-	    var data = _lodash2.default.cloneDeep(this.state.data);
+	  _createClass(UI, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _this2 = this;
 	
-	    var newEndpointName = (0, _util.guid)();
-	
-	    var newEndpoint = {
-	      Name: newEndpointName,
-	      CDCDisabled: false,
-	      Request: {
-	        URI: '/hello',
-	        Method: 'GET'
-	      },
-	      Response: {
-	        Code: 200,
-	        Body: 'World!'
-	      }
-	    };
-	
-	    data.unshift(newEndpoint);
-	
-	    this.setState({
-	      data: data,
-	      activeEndpoint: newEndpointName,
-	      endpointIds: []
-	    });
-	
-	    var json = JSON.stringify(data);
-	
-	    this.putUpdate(json);
-	  },
-	  toasty: function toasty(msg) {
-	    var notification = document.querySelector('.mdl-js-snackbar');
-	    notification.MaterialSnackbar.showSnackbar({
-	      message: msg
-	    });
-	  },
-	  openEditor: function openEditor(endpointName) {
-	    this.setState({
-	      activeEndpoint: endpointName
-	    });
-	  },
-	  deleteEndpoint: function deleteEndpoint() {
-	    var indexToDelete = this.refs[this.state.activeEndpoint].state.index;
-	
-	    var data = _lodash2.default.cloneDeep(this.state.data);
-	    data.splice(indexToDelete, 1);
-	    var json = JSON.stringify(data);
-	
-	    this.toasty('Endpoint deleted');
-	
-	    this.putUpdate(json);
-	  },
-	  updateServer: function updateServer() {
-	    var newEndpointState = this.refs[this.state.activeEndpoint].state;
-	
-	    var data = _lodash2.default.cloneDeep(this.state.data);
-	
-	    data[newEndpointState.index] = {
-	      Name: newEndpointState.name,
-	      CDCDisabled: newEndpointState.cdcDisabled,
-	      Request: {
-	        URI: newEndpointState.uri,
-	        RegexURI: newEndpointState.regex,
-	        Method: newEndpointState.method,
-	        Body: newEndpointState.reqBody,
-	        Form: newEndpointState.form,
-	        Headers: newEndpointState.reqHeaders
-	      },
-	      Response: {
-	        Code: parseInt(newEndpointState.code),
-	        Body: newEndpointState.body,
-	        Headers: newEndpointState.resHeaders
-	      }
-	    };
-	
-	    var json = JSON.stringify(data);
-	
-	    this.setState({
-	      activeEndpoint: newEndpointState.name
-	    });
-	
-	    this.putUpdate(json);
-	  },
-	  renderCurrentEndpoint: function renderCurrentEndpoint() {
-	    var _this3 = this;
-	
-	    if (this.state.activeEndpoint) {
-	      var index = _lodash2.default.findIndex(this.state.data, function (ep) {
-	        return ep.Name == _this3.state.activeEndpoint;
+	      this.api.getEndpoints().then(function (data) {
+	        return _this2.setState({ data: data });
+	      }).catch(function (err) {
+	        return console.error(_this2.baseURL, status, err.toString());
 	      });
-	      var endpoint = this.state.data.find(function (ep) {
-	        return ep.Name === _this3.state.activeEndpoint;
-	      });
-	      if (endpoint) {
-	        return _react2.default.createElement(_endpoint2.default, {
-	          index: index,
-	          'delete': this.deleteEndpoint,
-	          key: endpoint.Name,
-	          ref: endpoint.Name,
-	          cdcDisabled: endpoint.CDCDisabled,
-	          updateServer: this.updateServer,
-	          name: endpoint.Name,
-	          method: endpoint.Request.Method,
-	          reqBody: endpoint.Request.Body,
-	          uri: endpoint.Request.URI,
-	          regex: endpoint.Request.RegexURI,
-	          reqHeaders: endpoint.Request.Headers,
-	          form: endpoint.Request.Form,
-	          code: endpoint.Response.Code,
-	          body: endpoint.Response.Body,
-	          resHeaders: endpoint.Response.Headers
-	        });
-	      }
 	    }
-	  },
-	  render: function render() {
-	    return _react2.default.createElement(
-	      'div',
-	      { className: 'mdl-layout mdl-js-layout mdl-layout--fixed-drawer' },
-	      _react2.default.createElement(_CDC2.default, { ref: 'cdc', url: '/mj-check-compatability' }),
-	      _react2.default.createElement(
+	  }, {
+	    key: 'putUpdate',
+	    value: function putUpdate(update) {
+	      var _this3 = this;
+	
+	      var api = new _API2.default(this.props.url);
+	      api.updateEndpoints(update).then(function (data) {
+	        return _this3.setState({ data: data });
+	      }).then(function () {
+	        return _this3.refs.cdc.checkCompatability();
+	      }).catch(function (err) {
+	        return _this3.toasty('Problem with PUT to ' + _this3.props.url + ' ' + err.toString());
+	      });
+	    }
+	  }, {
+	    key: 'add',
+	    value: function add() {
+	      var data = _lodash2.default.cloneDeep(this.state.data);
+	
+	      var newEndpointName = (0, _util.guid)();
+	
+	      var newEndpoint = {
+	        Name: newEndpointName,
+	        CDCDisabled: false,
+	        Request: {
+	          URI: '/hello',
+	          Method: 'GET'
+	        },
+	        Response: {
+	          Code: 200,
+	          Body: 'World!'
+	        }
+	      };
+	
+	      data.unshift(newEndpoint);
+	
+	      this.setState({
+	        data: data,
+	        activeEndpoint: newEndpointName,
+	        endpointIds: []
+	      });
+	
+	      var json = JSON.stringify(data);
+	
+	      this.putUpdate(json);
+	    }
+	  }, {
+	    key: 'toasty',
+	    value: function toasty(msg) {
+	      var notification = document.querySelector('.mdl-js-snackbar');
+	      notification.MaterialSnackbar.showSnackbar({
+	        message: msg
+	      });
+	    }
+	  }, {
+	    key: 'openEditor',
+	    value: function openEditor(endpointName) {
+	      this.setState({
+	        activeEndpoint: endpointName
+	      });
+	    }
+	  }, {
+	    key: 'deleteEndpoint',
+	    value: function deleteEndpoint() {
+	      var indexToDelete = this.refs[this.state.activeEndpoint].state.index;
+	
+	      var data = _lodash2.default.cloneDeep(this.state.data);
+	      data.splice(indexToDelete, 1);
+	      var json = JSON.stringify(data);
+	
+	      this.toasty('Endpoint deleted');
+	
+	      this.putUpdate(json);
+	    }
+	  }, {
+	    key: 'updateServer',
+	    value: function updateServer() {
+	      var newEndpointState = this.refs[this.state.activeEndpoint].state;
+	
+	      var data = _lodash2.default.cloneDeep(this.state.data);
+	
+	      data[newEndpointState.index] = {
+	        Name: newEndpointState.name,
+	        CDCDisabled: newEndpointState.cdcDisabled,
+	        Request: {
+	          URI: newEndpointState.uri,
+	          RegexURI: newEndpointState.regex,
+	          Method: newEndpointState.method,
+	          Body: newEndpointState.reqBody,
+	          Form: newEndpointState.form,
+	          Headers: newEndpointState.reqHeaders
+	        },
+	        Response: {
+	          Code: parseInt(newEndpointState.code, 10),
+	          Body: newEndpointState.body,
+	          Headers: newEndpointState.resHeaders
+	        }
+	      };
+	
+	      var json = JSON.stringify(data);
+	
+	      this.setState({
+	        activeEndpoint: newEndpointState.name
+	      });
+	
+	      this.putUpdate(json);
+	    }
+	  }, {
+	    key: 'renderCurrentEndpoint',
+	    value: function renderCurrentEndpoint() {
+	      var _this4 = this;
+	
+	      if (this.state.activeEndpoint) {
+	        var index = _lodash2.default.findIndex(this.state.data, function (ep) {
+	          return ep.Name == _this4.state.activeEndpoint;
+	        });
+	        var endpoint = this.state.data.find(function (ep) {
+	          return ep.Name === _this4.state.activeEndpoint;
+	        });
+	        if (endpoint) {
+	          return _react2.default.createElement(_endpoint2.default, {
+	            index: index,
+	            'delete': this.deleteEndpoint,
+	            key: endpoint.Name,
+	            ref: endpoint.Name,
+	            cdcDisabled: endpoint.CDCDisabled,
+	            updateServer: this.updateServer,
+	            name: endpoint.Name,
+	            method: endpoint.Request.Method,
+	            reqBody: endpoint.Request.Body,
+	            uri: endpoint.Request.URI,
+	            regex: endpoint.Request.RegexURI,
+	            reqHeaders: endpoint.Request.Headers,
+	            form: endpoint.Request.Form,
+	            code: endpoint.Response.Code,
+	            body: endpoint.Response.Body,
+	            resHeaders: endpoint.Response.Headers
+	          });
+	        }
+	      }
+	      return null;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
 	        'div',
-	        { className: 'mdl-layout__drawer' },
-	        _react2.default.createElement(
-	          'h1',
-	          { className: 'mdl-layout-title mdl-color-text--primary' },
-	          'mockingjay server'
-	        ),
-	        _react2.default.createElement(_navigation2.default, {
-	          openEditor: this.openEditor,
-	          addEndpoint: this.add,
-	          endpoints: this.state.data,
-	          activeEndpoint: this.state.activeEndpoint
-	        })
-	      ),
-	      _react2.default.createElement(
-	        'main',
-	        { className: 'mdl-layout__content mdl-color--grey-100' },
+	        { className: 'mdl-layout mdl-js-layout mdl-layout--fixed-drawer' },
+	        _react2.default.createElement(_CDC2.default, { ref: 'cdc', url: '/mj-check-compatability' }),
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'page-content' },
-	          this.renderCurrentEndpoint()
+	          { className: 'mdl-layout__drawer' },
+	          _react2.default.createElement(
+	            'h1',
+	            { className: 'mdl-layout-title mdl-color-text--primary' },
+	            'mockingjay server'
+	          ),
+	          _react2.default.createElement(_navigation2.default, {
+	            openEditor: this.openEditor,
+	            addEndpoint: this.add,
+	            endpoints: this.state.data,
+	            activeEndpoint: this.state.activeEndpoint
+	          })
+	        ),
+	        _react2.default.createElement(
+	          'main',
+	          { className: 'mdl-layout__content mdl-color--grey-100' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'page-content' },
+	            this.renderCurrentEndpoint()
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { 'aria-live': 'assertive', 'aria-atomic': 'true', 'aria-relevant': 'text',
+	            className: 'mdl-snackbar mdl-js-snackbar' },
+	          _react2.default.createElement('div', { className: 'mdl-snackbar__text' }),
+	          _react2.default.createElement('button', { type: 'button', className: 'mdl-snackbar__action' })
 	        )
-	      ),
-	      _react2.default.createElement(
-	        'div',
-	        { 'aria-live': 'assertive', 'aria-atomic': 'true', 'aria-relevant': 'text',
-	          className: 'mdl-snackbar mdl-js-snackbar' },
-	        _react2.default.createElement('div', { className: 'mdl-snackbar__text' }),
-	        _react2.default.createElement('button', { type: 'button', className: 'mdl-snackbar__action' })
-	      )
-	    );
-	  }
-	});
+	      );
+	    }
+	  }]);
+	
+	  return UI;
+	}(_react2.default.Component);
+	
+	;
+	
 	_reactDom2.default.render(_react2.default.createElement(UI, { url: '/mj-endpoints' }), document.getElementById('app'));
 
 /***/ },

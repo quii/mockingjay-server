@@ -8,29 +8,41 @@ import { guid } from './util';
 import Navigation from './navigation.jsx';
 import API from './API.js';
 
-const UI = React.createClass({
-  getInitialState() {
-    return {
+class UI extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.baseURL = props.url;
+    this.api = new API(this.baseURL);
+
+    this.state = {
       data: [],
       activeEndpoint: null,
       endpointIds: [],
     };
-  },
+
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.openEditor = this.openEditor.bind(this);
+    this.add = this.add.bind(this);
+    this.deleteEndpoint = this.deleteEndpoint.bind(this);
+    this.updateServer = this.updateServer.bind(this);
+    this.renderCurrentEndpoint = this.renderCurrentEndpoint.bind(this);
+  }
 
   componentDidMount() {
-    const api = new API(this.props.url);
-    api.getEndpoints()
+    this.api.getEndpoints()
       .then(data => this.setState({ data }))
-      .catch(err => console.error(this.props.url, status, err.toString()));
-  },
+      .catch(err => console.error(this.baseURL, status, err.toString()));
+  }
 
   putUpdate(update) {
     const api = new API(this.props.url);
     api.updateEndpoints(update)
-      .then(data => this.setState({data}))
+      .then(data => this.setState({ data }))
       .then(() => this.refs.cdc.checkCompatability())
       .catch(err => this.toasty(`Problem with PUT to ${this.props.url} ${err.toString()}`));
-  },
+  }
 
   add() {
     const data = _.cloneDeep(this.state.data);
@@ -61,7 +73,8 @@ const UI = React.createClass({
     const json = JSON.stringify(data);
 
     this.putUpdate(json);
-  },
+  }
+
   toasty(msg) {
     const notification = document.querySelector('.mdl-js-snackbar');
     notification.MaterialSnackbar.showSnackbar(
@@ -69,12 +82,14 @@ const UI = React.createClass({
         message: msg,
       }
     );
-  },
+  }
+
   openEditor(endpointName) {
     this.setState({
       activeEndpoint: endpointName,
     });
-  },
+  }
+
   deleteEndpoint() {
     const indexToDelete = this.refs[this.state.activeEndpoint].state.index;
 
@@ -85,7 +100,8 @@ const UI = React.createClass({
     this.toasty('Endpoint deleted');
 
     this.putUpdate(json);
-  },
+  }
+
   updateServer() {
     const newEndpointState = this.refs[this.state.activeEndpoint].state;
 
@@ -103,7 +119,7 @@ const UI = React.createClass({
         Headers: newEndpointState.reqHeaders,
       },
       Response: {
-        Code: parseInt(newEndpointState.code),
+        Code: parseInt(newEndpointState.code, 10),
         Body: newEndpointState.body,
         Headers: newEndpointState.resHeaders,
       },
@@ -116,7 +132,8 @@ const UI = React.createClass({
     });
 
     this.putUpdate(json);
-  },
+  }
+
   renderCurrentEndpoint() {
     if (this.state.activeEndpoint) {
       const index = _.findIndex(this.state.data, ep => ep.Name == this.state.activeEndpoint);
@@ -143,7 +160,9 @@ const UI = React.createClass({
           />);
       }
     }
-  },
+    return null;
+  }
+
   render() {
     return (
       <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
@@ -171,8 +190,10 @@ const UI = React.createClass({
       </div>
 
     );
-  },
-});
+  }
+}
+;
+
 ReactDOM.render(
   <UI url="/mj-endpoints"/>,
   document.getElementById('app')
