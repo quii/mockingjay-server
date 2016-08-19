@@ -1,4 +1,5 @@
 import React from 'react';
+import request from 'superagent';
 import dialogPolyfill from 'dialog-polyfill';
 import { rand, isValidURL } from './util';
 
@@ -56,17 +57,16 @@ class CDC extends React.Component {
 
   checkCompatability() {
     if (this.state && this.state.remoteUrl && this.state.remoteUrl !== null) {
-      $.ajax({
-        url: `${this.props.url}?url=${this.state.remoteUrl}`,
-        dataType: 'json',
-        cache: false,
-        success: function (data) {
-          this.setState({data});
-        }.bind(this),
-        error: function (xhr, status, err) {
-          console.error(this.props.url, status, err.toString());
-        }.bind(this),
-      });
+      request
+        .get(`${this.props.url}?url=${this.state.remoteUrl}`)
+        .end((err, res) => {
+          if (err) {
+            console.error(this.props.url, status, err.toString());
+          } else {
+            console.log('XXX', res.text);
+            this.setState({ data: JSON.parse(res.text) });
+          }
+        });
     }
   }
 
@@ -119,7 +119,7 @@ const TestIndicator = React.createClass({
   render() {
     return (
       <i
-        onClick={this.props.indicatorClick} style={{cursor: 'hand'}}
+        onClick={this.props.indicatorClick} style={{ cursor: 'hand' }}
         className="material-icons md-48"
       >{this.props.badge}</i>);
   },
@@ -154,7 +154,7 @@ const Dialog = React.createClass({
     return (
       <dialog className="mdl-dialog" style={{ width: '700px' }}>
         <h4 className="mdl-dialog__title">{this.props.title}</h4>
-        <div className="mdl-dialog__content" style={{fontFamily: 'Courier'}}>
+        <div className="mdl-dialog__content" style={{ fontFamily: 'Courier' }}>
           <ul>{errs}</ul>
         </div>
         <div className="mdl-dialog__actions">
