@@ -1,90 +1,89 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Endpoint from './endpoints.jsx';
-import CDC from './CDC.jsx'
+import CDC from './CDC.jsx';
 import _ from 'lodash';
 import {guid} from './util';
 
 const UI = React.createClass({
-    getInitialState: function() {
-        return {
-            data: [],
-            activeEndpoint: null,
-            endpointIds: []
-        };
-    },
-    componentDidMount: function() {
-        $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                this.setState({data: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-    },
-    putUpdate: function(update) {
-        $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            type: 'PUT',
-            cache: false,
-            data: update,
-            success: function(data) {
-                this.refs['cdc'].checkCompatability();
-                this.setState({data: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                this.toasty(`Problem with PUT to ${this.props.url} ${err.toString()}`);
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-    },
-    add: function () {
-        let data = _.cloneDeep(this.state.data);
+  getInitialState: function () {
+    return {
+      data: [],
+      activeEndpoint: null,
+      endpointIds: []
+    };
+  },
+  componentDidMount: function () {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function (data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  putUpdate: function (update) {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      type: 'PUT',
+      cache: false,
+      data: update,
+      success: function (data) {
+        this.refs['cdc'].checkCompatability();
+        this.setState({data: data});
+      }.bind(this),
+      error: function (xhr, status, err) {
+        this.toasty(`Problem with PUT to ${this.props.url} ${err.toString()}`);
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  add: function () {
+    let data = _.cloneDeep(this.state.data);
 
-        const newEndpointName = guid();
+    const newEndpointName = guid();
 
-        const newEndpoint = {
-            Name: newEndpointName,
-            CDCDisabled: false,
-            Request: {
-                URI: "/hello",
-                Method: "GET"
-            },
-            Response: {
-                Code: 200,
-                Body: "World!",
-            }
-        };
+    const newEndpoint = {
+      Name: newEndpointName,
+      CDCDisabled: false,
+      Request: {
+        URI: '/hello',
+        Method: 'GET'
+      },
+      Response: {
+        Code: 200,
+        Body: 'World!'
+      }
+    };
 
-        data.unshift(newEndpoint);
+    data.unshift(newEndpoint);
 
-        this.setState({
-            data,
-            activeEndpoint: newEndpointName,
-            endpointIds: []
-        });
+    this.setState({
+      data,
+      activeEndpoint: newEndpointName,
+      endpointIds: []
+    });
 
-        const json = JSON.stringify(data);
+    const json = JSON.stringify(data);
 
-        this.putUpdate(json);
-
-    },
-    toasty: function (msg) {
-        const notification = document.querySelector('.mdl-js-snackbar');
-        notification.MaterialSnackbar.showSnackbar(
-            {
-                message: msg
-            }
+    this.putUpdate(json);
+  },
+  toasty: function (msg) {
+    const notification = document.querySelector('.mdl-js-snackbar');
+    notification.MaterialSnackbar.showSnackbar(
+      {
+        message: msg
+      }
         );
-    },
-    getMenuLinks: function () {
-        const items = []
-        items.push((
+  },
+  getMenuLinks: function () {
+    const items = [];
+    items.push((
             <a
                 key={guid()}
                 onClick={this.add}
@@ -92,85 +91,83 @@ const UI = React.createClass({
                 <i className="material-icons md-32">add</i>Add new endoint</a>
         ));
 
-        const endpointLinks = this.state.data.map(endpoint => {
-            let cssClass = "mdl-navigation__link";
-            let name = endpoint.Name
+    const endpointLinks = this.state.data.map(endpoint => {
+      let cssClass = 'mdl-navigation__link';
+      let name = endpoint.Name;
 
-            if(endpoint.Name===this.state.activeEndpoint){
-                cssClass += " mdl-color--primary-contrast mdl-color-text--accent";
-                name = <div><i className="material-icons md-32">fingerprint</i>{endpoint.Name}</div>
-            }
+      if(endpoint.Name === this.state.activeEndpoint) {
+        cssClass += ' mdl-color--primary-contrast mdl-color-text--accent';
+        name = <div><i className="material-icons md-32">fingerprint</i>{endpoint.Name}</div>;
+      }
 
 
-
-            return (
+      return (
                 <a
                     key={guid()}
-                    ref={'menu-'+endpoint.Name}
+                    ref={'menu-' + endpoint.Name}
                     className={cssClass}
                     onClick={(event)=>this.openEditor(endpoint.Name, event)}>
                     {name}
                 </a>
-            )
-        });
+            );
+    });
 
-        items.push(endpointLinks)
-        return items;
-    },
-    openEditor: function (endpointName) {
-        this.setState({
-            activeEndpoint: endpointName
-        })
-    },
-    deleteEndpoint: function(){
-        const indexToDelete = this.refs[this.state.activeEndpoint].state.index;
+    items.push(endpointLinks);
+    return items;
+  },
+  openEditor: function (endpointName) {
+    this.setState({
+      activeEndpoint: endpointName
+    });
+  },
+  deleteEndpoint: function () {
+    const indexToDelete = this.refs[this.state.activeEndpoint].state.index;
 
-        let data = _.cloneDeep( this.state.data);
-        data.splice(indexToDelete, 1);
-        const json = JSON.stringify(data);
+    let data = _.cloneDeep(this.state.data);
+    data.splice(indexToDelete, 1);
+    const json = JSON.stringify(data);
 
-        this.toasty("Endpoint deleted");
+    this.toasty('Endpoint deleted');
 
-        this.putUpdate(json);
+    this.putUpdate(json);
+  },
+  updateServer: function () {
+    const newEndpointState = this.refs[this.state.activeEndpoint].state;
 
-    },
-    updateServer: function () {
-        const newEndpointState = this.refs[this.state.activeEndpoint].state;
+    let data = _.cloneDeep(this.state.data);
 
-        let data = _.cloneDeep( this.state.data);
+    data[newEndpointState.index] = {
+      Name: newEndpointState.name,
+      CDCDisabled: newEndpointState.cdcDisabled,
+      Request: {
+        URI: newEndpointState.uri,
+        RegexURI: newEndpointState.regex,
+        Method: newEndpointState.method,
+        Body: newEndpointState.reqBody,
+        Form: newEndpointState.form,
+        Headers: newEndpointState.reqHeaders
+      },
+      Response: {
+        Code: parseInt(newEndpointState.code),
+        Body: newEndpointState.body,
+        Headers: newEndpointState.resHeaders
+      }
+    };
 
-        data[newEndpointState.index] = {
-            Name: newEndpointState.name,
-            CDCDisabled: newEndpointState.cdcDisabled,
-            Request: {
-                URI: newEndpointState.uri,
-                RegexURI: newEndpointState.regex,
-                Method: newEndpointState.method,
-                Body: newEndpointState.reqBody,
-                Form: newEndpointState.form,
-                Headers: newEndpointState.reqHeaders
-            },
-            Response: {
-                Code: parseInt(newEndpointState.code),
-                Body: newEndpointState.body,
-                Headers: newEndpointState.resHeaders
-            }
-        };
+    const json = JSON.stringify(data);
 
-        const json = JSON.stringify(data);
+    this.setState({
+      activeEndpoint: newEndpointState.name
+    });
 
-        this.setState({
-            activeEndpoint:newEndpointState.name
-        });
-
-        this.putUpdate(json);
-    },
-    renderCurrentEndpoint: function(){
-        if(this.state.activeEndpoint) {
-            const index = _.findIndex(this.state.data, ep => ep.Name==this.state.activeEndpoint)
-            const endpoint = this.state.data.find(ep => ep.Name===this.state.activeEndpoint);
-            if(endpoint) {
-                return (
+    this.putUpdate(json);
+  },
+  renderCurrentEndpoint: function () {
+    if(this.state.activeEndpoint) {
+      const index = _.findIndex(this.state.data, ep => ep.Name == this.state.activeEndpoint);
+      const endpoint = this.state.data.find(ep => ep.Name === this.state.activeEndpoint);
+      if(endpoint) {
+        return (
                     <Endpoint
                         index={index}
                         delete={this.deleteEndpoint}
@@ -189,12 +186,12 @@ const UI = React.createClass({
                         body={endpoint.Response.Body}
                         resHeaders={endpoint.Response.Headers}
                     />);
-            }
-        }
-        return null;
-    },
-    render: function () {
-        return (
+      }
+    }
+    return null;
+  },
+  render: function () {
+    return (
         <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
 
             <CDC ref="cdc" url="/mj-check-compatability" />
@@ -215,8 +212,8 @@ const UI = React.createClass({
             </div>
         </div>
 
-        )
-    }
+        );
+  }
 });
 ReactDOM.render(
     <UI url="/mj-endpoints"/>,
