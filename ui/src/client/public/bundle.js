@@ -40614,6 +40614,10 @@
 	
 	var _textfield2 = _interopRequireDefault(_textfield);
 	
+	var _code = __webpack_require__(/*! ./form-controllers/code.jsx */ 193);
+	
+	var _code2 = _interopRequireDefault(_code);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -40677,8 +40681,8 @@
 	            'Request'
 	          )
 	        ),
-	        _react2.default.createElement(_formbits.Code, { icon: 'cloud', value: this.state.method + ' ' + this.state.uri }),
-	        _react2.default.createElement(_formbits.Code, { icon: 'face', value: this.state.regex }),
+	        _react2.default.createElement(_code2.default, { icon: 'cloud', value: this.state.method + ' ' + this.state.uri }),
+	        _react2.default.createElement(_code2.default, { icon: 'face', value: this.state.regex }),
 	        _react2.default.createElement(_formbits.Body, { label: 'Body', value: this.state.reqBody }),
 	        _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: this.state.reqHeaders }),
 	        _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Form data', items: this.state.form })
@@ -40695,7 +40699,7 @@
 	            'Response'
 	          )
 	        ),
-	        _react2.default.createElement(_formbits.Code, { icon: 'face', value: this.state.code }),
+	        _react2.default.createElement(_code2.default, { icon: 'face', value: this.state.code.toString() }),
 	        _react2.default.createElement(_formbits.Body, { label: 'Body', value: this.state.body }),
 	        _react2.default.createElement(_httpDataList.HttpDataList, { name: 'Headers', items: this.state.resHeaders })
 	      ),
@@ -40772,7 +40776,7 @@
 	            'Response'
 	          )
 	        ),
-	        _react2.default.createElement(_textfield2.default, { label: 'Status code', pattern: '[0-9][0-9][0-9]', errMsg: 'Not valid HTTP status', name: 'code', value: this.props.originalValues.code, onChange: this.props.onChange }),
+	        _react2.default.createElement(_textfield2.default, { label: 'Status code', pattern: '[0-9][0-9][0-9]', errMsg: 'Not valid HTTP status', name: 'code', value: this.props.originalValues.code.toString(), onChange: this.props.onChange }),
 	        _react2.default.createElement(_formbits.TextArea, { label: 'Body', name: 'body', value: this.props.originalValues.body, onChange: this.props.onChange }),
 	        _react2.default.createElement(_httpDataList.HttpDataEditor, { label: 'Headers', name: 'resHeaders', items: this.props.originalValues.resHeaders,
 	          onChange: this.props.onChange
@@ -41061,7 +41065,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.Body = exports.Code = exports.TextArea = exports.MethodSwitcher = undefined;
+	exports.Body = exports.TextArea = exports.MethodSwitcher = undefined;
 	
 	var _react = __webpack_require__(/*! react */ 1);
 	
@@ -41123,25 +41127,6 @@
 	        label
 	      )
 	    );
-	  }
-	});
-	
-	var Code = exports.Code = _react2.default.createClass({
-	  displayName: 'Code',
-	  render: function render() {
-	    if (this.props.value) {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'mdl-card__supporting-text' },
-	        _react2.default.createElement(
-	          'code',
-	          { className: 'mdl-color-text--accent' },
-	          this.props.value
-	        )
-	      );
-	    } else {
-	      return null;
-	    }
 	  }
 	});
 	
@@ -42261,6 +42246,48 @@
 
 	module.exports = function() { throw new Error("define cannot be used indirect"); };
 
+
+/***/ },
+/* 193 */
+/*!**************************************************!*\
+  !*** ./src/client/app/form-controllers/code.jsx ***!
+  \**************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function Code(_ref) {
+	  var value = _ref.value;
+	
+	  if (value) {
+	    return _react2.default.createElement(
+	      "div",
+	      { className: "mdl-card__supporting-text" },
+	      _react2.default.createElement(
+	        "code",
+	        { className: "mdl-color-text--accent" },
+	        value
+	      )
+	    );
+	  }
+	  return null;
+	}
+	
+	Code.propTypes = {
+	  value: _react2.default.PropTypes.string
+	};
+	
+	exports.default = Code;
 
 /***/ }
 /******/ ]);

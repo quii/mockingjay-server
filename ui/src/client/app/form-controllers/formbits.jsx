@@ -38,16 +38,6 @@ export const TextArea = React.createClass({
 });
 
 
-export const Code = React.createClass({
-  render() {
-    if (this.props.value) {
-      return <div className="mdl-card__supporting-text"><code className="mdl-color-text--accent">{this.props.value}</code></div>;
-    } else {
-      return null;
-    }
-  },
-});
-
 export const Body = React.createClass({
   isJSON() {
     try {

@@ -1,8 +1,9 @@
 import React from 'react';
 import { HttpDataList, HttpDataEditor } from './httpDataList.jsx';
-import { Code, MethodSwitcher, Body, TextArea } from './form-controllers/formbits.jsx';
+import { MethodSwitcher, Body, TextArea } from './form-controllers/formbits.jsx';
 import Curl from './curl.jsx';
 import TextField from './form-controllers/textfield.jsx';
+import Code from './form-controllers/code.jsx';
 
 const Endpoint = React.createClass({
   getInitialState() {
@@ -69,7 +70,7 @@ const Endpoint = React.createClass({
                     <div className="mdl-card__title" style={{ width: '90%' }}>
                         <h3 className="mdl-card__title-text">Response</h3>
                     </div>
-                    <Code icon="face" value={this.state.code} />
+                    <Code icon="face" value={this.state.code.toString()} />
                     <Body label="Body" value={this.state.body} />
                     <HttpDataList name="Headers" items={this.state.resHeaders} />
                 </div>
@@ -129,7 +130,7 @@ const EndpointForm = React.createClass({
                     <div className="mdl-card__title" style={{ width: '90%' }}>
                         <h3 className="mdl-card__title-text">Response</h3>
                     </div>
-                    <TextField label="Status code" pattern="[0-9][0-9][0-9]" errMsg="Not valid HTTP status" name="code" value={this.props.originalValues.code} onChange={this.props.onChange} />
+                    <TextField label="Status code" pattern="[0-9][0-9][0-9]" errMsg="Not valid HTTP status" name="code" value={this.props.originalValues.code.toString()} onChange={this.props.onChange} />
 
                     <TextArea label="Body" name="body" value={this.props.originalValues.body} onChange={this.props.onChange} />
                     <HttpDataEditor label="Headers" name="resHeaders" items={this.props.originalValues.resHeaders}
