@@ -39782,6 +39782,7 @@
 	    _this.setDialog = _this.setDialog.bind(_this);
 	    _this.handleUrlChange = _this.handleUrlChange.bind(_this);
 	    _this.indicatorClick = _this.indicatorClick.bind(_this);
+	    _this.checkCompatability = _this.checkCompatability.bind(_this);
 	    return _this;
 	  }
 	

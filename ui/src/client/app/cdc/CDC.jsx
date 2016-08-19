@@ -15,6 +15,7 @@ class CDC extends React.Component {
     this.setDialog = this.setDialog.bind(this);
     this.handleUrlChange = this.handleUrlChange.bind(this);
     this.indicatorClick = this.indicatorClick.bind(this);
+    this.checkCompatability = this.checkCompatability.bind(this);
   }
 
   componentWillMount() {
