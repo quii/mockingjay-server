@@ -2,11 +2,12 @@ import React from 'react';
 
 class Toaster extends React.Component {
 
-  alert(msg) {
+  alert(msgs) {
+    const message = [].concat(msgs || []).join(', ');
     const notification = document.querySelector('.mdl-js-snackbar');
     notification.MaterialSnackbar.showSnackbar(
       {
-        message: msg,
+        message: message,
       }
     );
   }

@@ -49,8 +49,6 @@
 
 	'use strict';
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
 	var _react = __webpack_require__(/*! react */ 1);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -59,230 +57,23 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _endpoint = __webpack_require__(/*! ./endpoint/endpoint.jsx */ 196);
+	var _ui = __webpack_require__(/*! ./ui.jsx */ 211);
 	
-	var _endpoint2 = _interopRequireDefault(_endpoint);
-	
-	var _CDC = __webpack_require__(/*! ./cdc/CDC.jsx */ 191);
-	
-	var _CDC2 = _interopRequireDefault(_CDC);
-	
-	var _navigation = __webpack_require__(/*! ./navigation.jsx */ 203);
-	
-	var _navigation2 = _interopRequireDefault(_navigation);
+	var _ui2 = _interopRequireDefault(_ui);
 	
 	var _API = __webpack_require__(/*! ./API.js */ 207);
 	
 	var _API2 = _interopRequireDefault(_API);
 	
-	var _EndpointMachine = __webpack_require__(/*! ./EndpointMachine */ 208);
+	var _EndpointService = __webpack_require__(/*! ./EndpointService */ 210);
 	
-	var _EndpointMachine2 = _interopRequireDefault(_EndpointMachine);
-	
-	var _Toaster = __webpack_require__(/*! ./Toaster.jsx */ 209);
-	
-	var _Toaster2 = _interopRequireDefault(_Toaster);
+	var _EndpointService2 = _interopRequireDefault(_EndpointService);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var service = new _EndpointService2.default(new _API2.default('/mj-endpoints'));
 	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var UI = function (_React$Component) {
-	  _inherits(UI, _React$Component);
-	
-	  function UI(props) {
-	    _classCallCheck(this, UI);
-	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(UI).call(this, props));
-	
-	    _this.api = new _API2.default(props.url);
-	
-	    _this.state = {
-	      endpointMachine: new _EndpointMachine2.default([])
-	    };
-	
-	    _this.componentDidMount = _this.componentDidMount.bind(_this);
-	    _this.putUpdate = _this.putUpdate.bind(_this);
-	    _this.openEditor = _this.openEditor.bind(_this);
-	    _this.add = _this.add.bind(_this);
-	    _this.deleteEndpoint = _this.deleteEndpoint.bind(_this);
-	    _this.updateEndpoint = _this.updateEndpoint.bind(_this);
-	    _this.renderCurrentEndpoint = _this.renderCurrentEndpoint.bind(_this);
-	    _this.currentEndpointName = _this.currentEndpointName.bind(_this);
-	    return _this;
-	  }
-	
-	  _createClass(UI, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      var _this2 = this;
-	
-	      return this.api.getEndpoints().tap(function (data) {
-	        return _this2.setState({ endpointMachine: new _EndpointMachine2.default(data) });
-	      }).catch(function (err) {
-	        return console.error('Problem getting MJ endpoints', status, err.toString());
-	      });
-	    }
-	  }, {
-	    key: 'putUpdate',
-	    value: function putUpdate() {
-	      var _this3 = this;
-	
-	      return this.api.updateEndpoints(this.state.endpointMachine.asJSON()).tap(function (data) {
-	        _this3.setState({ endpointMachine: _this3.state.endpointMachine.updateEndpoints(data) });
-	      }).then(function () {
-	        return _this3.cdc.checkCompatability();
-	      }).catch(function (err) {
-	        return _this3.toaster.alert('Problem with PUT to ' + _this3.props.url + ' ' + err.toString());
-	      });
-	    }
-	  }, {
-	    key: 'currentEndpointName',
-	    value: function currentEndpointName() {
-	      if (this.state) {
-	        var currentEndpoint = this.state.endpointMachine.getEndpoint();
-	        return currentEndpoint ? currentEndpoint.Name : '';
-	      }
-	      return '';
-	    }
-	  }, {
-	    key: 'add',
-	    value: function add() {
-	      this.setState({
-	        endpointMachine: this.state.endpointMachine.addNewEndpoint()
-	      });
-	
-	      return this.putUpdate();
-	    }
-	  }, {
-	    key: 'deleteEndpoint',
-	    value: function deleteEndpoint() {
-	      this.setState({
-	        endpointMachine: this.state.endpointMachine.deleteEndpoint()
-	      });
-	      this.toaster.alert('Endpoint deleted');
-	      return this.putUpdate();
-	    }
-	  }, {
-	    key: 'updateEndpoint',
-	    value: function updateEndpoint() {
-	      var newEndpointState = this.activeEndpoint.state;
-	
-	      var update = {
-	        Name: newEndpointState.name,
-	        CDCDisabled: newEndpointState.cdcDisabled,
-	        Request: {
-	          URI: newEndpointState.uri,
-	          RegexURI: newEndpointState.regex,
-	          Method: newEndpointState.method,
-	          Body: newEndpointState.reqBody,
-	          Form: newEndpointState.form,
-	          Headers: newEndpointState.reqHeaders
-	        },
-	        Response: {
-	          Code: parseInt(newEndpointState.code, 10),
-	          Body: newEndpointState.body,
-	          Headers: newEndpointState.resHeaders
-	        }
-	      };
-	
-	      this.setState({
-	        endpointMachine: this.state.endpointMachine.updateEndpoint(update)
-	      });
-	
-	      this.putUpdate();
-	    }
-	  }, {
-	    key: 'openEditor',
-	    value: function openEditor(endpointName) {
-	      this.setState({
-	        endpointMachine: this.state.endpointMachine.selectEndpoint(endpointName)
-	      });
-	    }
-	  }, {
-	    key: 'renderCurrentEndpoint',
-	    value: function renderCurrentEndpoint() {
-	      var _this4 = this;
-	
-	      var endpoint = this.state.endpointMachine.getEndpoint();
-	      if (endpoint) {
-	        return _react2.default.createElement(_endpoint2.default, {
-	          'delete': this.deleteEndpoint,
-	          key: endpoint.Name,
-	          ref: function ref(r) {
-	            _this4.activeEndpoint = r;
-	          },
-	          cdcDisabled: endpoint.CDCDisabled,
-	          updateServer: this.updateEndpoint,
-	          name: endpoint.Name,
-	          method: endpoint.Request.Method,
-	          reqBody: endpoint.Request.Body,
-	          uri: endpoint.Request.URI,
-	          regex: endpoint.Request.RegexURI,
-	          reqHeaders: endpoint.Request.Headers,
-	          form: endpoint.Request.Form,
-	          code: endpoint.Response.Code,
-	          body: endpoint.Response.Body,
-	          resHeaders: endpoint.Response.Headers
-	        });
-	      }
-	      return null;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _this5 = this;
-	
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'mdl-layout mdl-js-layout mdl-layout--fixed-drawer' },
-	        _react2.default.createElement(_CDC2.default, {
-	          ref: function ref(r) {
-	            _this5.cdc = r;
-	          },
-	          url: '/mj-check-compatability'
-	        }),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'mdl-layout__drawer' },
-	          _react2.default.createElement(
-	            'h1',
-	            { className: 'mdl-layout-title mdl-color-text--primary' },
-	            'mockingjay server'
-	          ),
-	          _react2.default.createElement(_navigation2.default, {
-	            openEditor: this.openEditor,
-	            addEndpoint: this.add,
-	            endpoints: this.state.endpointMachine.getEndpoints(),
-	            activeEndpoint: this.currentEndpointName()
-	          })
-	        ),
-	        _react2.default.createElement(
-	          'main',
-	          { className: 'mdl-layout__content mdl-color--grey-100' },
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'page-content' },
-	            this.renderCurrentEndpoint()
-	          )
-	        ),
-	        _react2.default.createElement(_Toaster2.default, {
-	          ref: function ref(r) {
-	            _this5.toaster = r;
-	          }
-	        })
-	      );
-	    }
-	  }]);
-	
-	  return UI;
-	}(_react2.default.Component);
-	
-	_reactDom2.default.render(_react2.default.createElement(UI, { url: '/mj-endpoints' }), document.getElementById('app'));
+	_reactDom2.default.render(_react2.default.createElement(_ui2.default, { service: service }), document.getElementById('app'));
 
 /***/ },
 /* 1 */
@@ -48440,120 +48231,7 @@
 	exports.default = API;
 
 /***/ },
-/* 208 */
-/*!*******************************************!*\
-  !*** ./src/client/app/EndpointMachine.js ***!
-  \*******************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _lodash = __webpack_require__(/*! lodash */ 35);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _util = __webpack_require__(/*! ./util */ 184);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var EndpointMachine = function () {
-	  function EndpointMachine(endpoints) {
-	    _classCallCheck(this, EndpointMachine);
-	
-	    this.endpoints = endpoints;
-	    this.selectedEndpointIndex = null;
-	
-	    this.selectEndpoint = this.selectEndpoint.bind(this);
-	    this.getEndpoint = this.getEndpoint.bind(this);
-	    this.getEndpoints = this.getEndpoints.bind(this);
-	    this.updateEndpoint = this.updateEndpoint.bind(this);
-	    this.updateEndpoints = this.updateEndpoints.bind(this);
-	    this.addNewEndpoint = this.addNewEndpoint.bind(this);
-	    this.deleteEndpoint = this.deleteEndpoint.bind(this);
-	    this.asJSON = this.asJSON.bind(this);
-	  }
-	
-	  _createClass(EndpointMachine, [{
-	    key: 'selectEndpoint',
-	    value: function selectEndpoint(name) {
-	      this.selectedEndpointIndex = _lodash2.default.findIndex(this.endpoints, function (ep) {
-	        return ep.Name === name;
-	      });
-	      return this;
-	    }
-	  }, {
-	    key: 'getEndpoint',
-	    value: function getEndpoint() {
-	      return this.endpoints[this.selectedEndpointIndex];
-	    }
-	  }, {
-	    key: 'getEndpoints',
-	    value: function getEndpoints() {
-	      return this.endpoints;
-	    }
-	  }, {
-	    key: 'addNewEndpoint',
-	    value: function addNewEndpoint() {
-	      var newEndpointName = (0, _util.guid)();
-	
-	      var newEndpoint = {
-	        Name: newEndpointName,
-	        CDCDisabled: false,
-	        Request: {
-	          URI: '/hello',
-	          Method: 'GET'
-	        },
-	        Response: {
-	          Code: 200,
-	          Body: 'World!'
-	        }
-	      };
-	
-	      this.endpoints.unshift(newEndpoint);
-	      this.selectedEndpointIndex = 0;
-	
-	      return this;
-	    }
-	  }, {
-	    key: 'deleteEndpoint',
-	    value: function deleteEndpoint() {
-	      this.endpoints.splice(this.selectedEndpointIndex, 1);
-	      this.selectedEndpointIndex = null;
-	      return this;
-	    }
-	  }, {
-	    key: 'updateEndpoint',
-	    value: function updateEndpoint(updatedEndpoint) {
-	      this.endpoints[this.selectedEndpointIndex] = updatedEndpoint;
-	      return this;
-	    }
-	  }, {
-	    key: 'updateEndpoints',
-	    value: function updateEndpoints(update) {
-	      this.endpoints = update;
-	      return this;
-	    }
-	  }, {
-	    key: 'asJSON',
-	    value: function asJSON() {
-	      return JSON.stringify(this.getEndpoints());
-	    }
-	  }]);
-	
-	  return EndpointMachine;
-	}();
-	
-	exports.default = EndpointMachine;
-
-/***/ },
+/* 208 */,
 /* 209 */
 /*!************************************!*\
   !*** ./src/client/app/Toaster.jsx ***!
@@ -48591,10 +48269,11 @@
 	
 	  _createClass(Toaster, [{
 	    key: 'alert',
-	    value: function alert(msg) {
+	    value: function alert(msgs) {
+	      var message = [].concat(msgs || []).join(', ');
 	      var notification = document.querySelector('.mdl-js-snackbar');
 	      notification.MaterialSnackbar.showSnackbar({
-	        message: msg
+	        message: message
 	      });
 	    }
 	  }, {
@@ -48618,6 +48297,373 @@
 	}(_react2.default.Component);
 	
 	exports.default = Toaster;
+
+/***/ },
+/* 210 */
+/*!*******************************************!*\
+  !*** ./src/client/app/EndpointService.js ***!
+  \*******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _lodash = __webpack_require__(/*! lodash */ 35);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _util = __webpack_require__(/*! ./util */ 184);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var EndpointService = function () {
+	  function EndpointService(api) {
+	    _classCallCheck(this, EndpointService);
+	
+	    this.endpoints = [];
+	    this.selectedEndpointIndex = null;
+	    this.api = api;
+	
+	    this.selectEndpoint = this.selectEndpoint.bind(this);
+	    this.getEndpoint = this.getEndpoint.bind(this);
+	    this.getEndpoints = this.getEndpoints.bind(this);
+	    this.updateEndpoint = this.updateEndpoint.bind(this);
+	    this.addNewEndpoint = this.addNewEndpoint.bind(this);
+	    this.deleteEndpoint = this.deleteEndpoint.bind(this);
+	    this.init = this.init.bind(this);
+	    this.sendUpdateToServer = this.sendUpdateToServer.bind(this);
+	  }
+	
+	  _createClass(EndpointService, [{
+	    key: 'init',
+	    value: function init() {
+	      var _this = this;
+	
+	      return this.api.getEndpoints().then(function (endpoints) {
+	        _this.endpoints = endpoints;
+	      }).then(function () {
+	        return _this;
+	      });
+	    }
+	  }, {
+	    key: 'sendUpdateToServer',
+	    value: function sendUpdateToServer() {
+	      var _this2 = this;
+	
+	      return this.api.updateEndpoints(JSON.stringify(this.getEndpoints())).then(function (endpoints) {
+	        _this2.endpoints = endpoints;
+	      }).then(function () {
+	        return _this2;
+	      });
+	    }
+	  }, {
+	    key: 'selectEndpoint',
+	    value: function selectEndpoint(name) {
+	      this.selectedEndpointIndex = _lodash2.default.findIndex(this.endpoints, function (ep) {
+	        return ep.Name === name;
+	      });
+	      return this;
+	    }
+	  }, {
+	    key: 'getEndpoint',
+	    value: function getEndpoint() {
+	      return this.endpoints[this.selectedEndpointIndex];
+	    }
+	  }, {
+	    key: 'getEndpoints',
+	    value: function getEndpoints() {
+	      return this.endpoints;
+	    }
+	  }, {
+	    key: 'addNewEndpoint',
+	    value: function addNewEndpoint() {
+	      var newEndpoint = {
+	        Name: (0, _util.guid)(),
+	        CDCDisabled: false,
+	        Request: {
+	          URI: '/hello',
+	          Method: 'GET'
+	        },
+	        Response: {
+	          Code: 200,
+	          Body: 'World!'
+	        }
+	      };
+	
+	      this.endpoints.unshift(newEndpoint);
+	      this.selectedEndpointIndex = 0;
+	
+	      return this.sendUpdateToServer();
+	    }
+	  }, {
+	    key: 'deleteEndpoint',
+	    value: function deleteEndpoint() {
+	      this.endpoints.splice(this.selectedEndpointIndex, 1);
+	      this.selectedEndpointIndex = null;
+	      return this.sendUpdateToServer();
+	    }
+	  }, {
+	    key: 'updateEndpoint',
+	    value: function updateEndpoint(updatedEndpoint) {
+	      this.endpoints[this.selectedEndpointIndex] = updatedEndpoint;
+	      return this.sendUpdateToServer();
+	    }
+	  }]);
+	
+	  return EndpointService;
+	}();
+	
+	exports.default = EndpointService;
+
+/***/ },
+/* 211 */
+/*!*******************************!*\
+  !*** ./src/client/app/ui.jsx ***!
+  \*******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _endpoint = __webpack_require__(/*! ./endpoint/endpoint.jsx */ 196);
+	
+	var _endpoint2 = _interopRequireDefault(_endpoint);
+	
+	var _CDC = __webpack_require__(/*! ./cdc/CDC.jsx */ 191);
+	
+	var _CDC2 = _interopRequireDefault(_CDC);
+	
+	var _navigation = __webpack_require__(/*! ./navigation.jsx */ 203);
+	
+	var _navigation2 = _interopRequireDefault(_navigation);
+	
+	var _Toaster = __webpack_require__(/*! ./Toaster.jsx */ 209);
+	
+	var _Toaster2 = _interopRequireDefault(_Toaster);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var UI = function (_React$Component) {
+	  _inherits(UI, _React$Component);
+	
+	  function UI(props) {
+	    _classCallCheck(this, UI);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(UI).call(this, props));
+	
+	    _this.state = {
+	      endpointService: props.service
+	    };
+	
+	    _this.componentDidMount = _this.componentDidMount.bind(_this);
+	    _this.openEditor = _this.openEditor.bind(_this);
+	    _this.add = _this.add.bind(_this);
+	    _this.deleteEndpoint = _this.deleteEndpoint.bind(_this);
+	    _this.updateEndpoint = _this.updateEndpoint.bind(_this);
+	    _this.renderCurrentEndpoint = _this.renderCurrentEndpoint.bind(_this);
+	    _this.currentEndpointName = _this.currentEndpointName.bind(_this);
+	    _this.endpoints = _this.endpoints.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(UI, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _this2 = this;
+	
+	      return this.state.endpointService.init().tap(function (endpointService) {
+	        return _this2.setState({ endpointService: endpointService });
+	      }).catch(function (err) {
+	        return _this2.toaster.alert('Problem getting MJ endpoints', err.toString());
+	      });
+	    }
+	  }, {
+	    key: 'currentEndpointName',
+	    value: function currentEndpointName() {
+	      if (this.state) {
+	        var currentEndpoint = this.state.endpointService.getEndpoint();
+	        return currentEndpoint ? currentEndpoint.Name : '';
+	      }
+	
+	      return '';
+	    }
+	  }, {
+	    key: 'add',
+	    value: function add() {
+	      var _this3 = this;
+	
+	      return this.state.endpointService.addNewEndpoint().tap(function (endpointService) {
+	        return _this3.setState({ endpointService: endpointService });
+	      }).tap(function (endpointService) {
+	        _this3.toaster.alert('Endpoint "' + endpointService.getEndpoint().Name + '" added');
+	      }).catch(function (err) {
+	        return _this3.toaster.alert('Problem saving new endpoint', err.toString());
+	      });
+	    }
+	  }, {
+	    key: 'deleteEndpoint',
+	    value: function deleteEndpoint() {
+	      var _this4 = this;
+	
+	      var endpointName = this.state.endpointService.getEndpoint().Name;
+	      return this.state.endpointService.deleteEndpoint().tap(function (endpointService) {
+	        return _this4.setState({ endpointService: endpointService });
+	      }).tap(function () {
+	        return _this4.toaster.alert('Endpoint "' + endpointName + '" deleted');
+	      }).catch(function (err) {
+	        return _this4.toaster.alert('Problem deleting endpoint', err.toString());
+	      });
+	    }
+	  }, {
+	    key: 'updateEndpoint',
+	    value: function updateEndpoint() {
+	      var _this5 = this;
+	
+	      var newEndpointState = this.activeEndpoint.state;
+	
+	      var update = {
+	        Name: newEndpointState.name,
+	        CDCDisabled: newEndpointState.cdcDisabled,
+	        Request: {
+	          URI: newEndpointState.uri,
+	          RegexURI: newEndpointState.regex,
+	          Method: newEndpointState.method,
+	          Body: newEndpointState.reqBody,
+	          Form: newEndpointState.form,
+	          Headers: newEndpointState.reqHeaders
+	        },
+	        Response: {
+	          Code: parseInt(newEndpointState.code, 10),
+	          Body: newEndpointState.body,
+	          Headers: newEndpointState.resHeaders
+	        }
+	      };
+	
+	      return this.state.endpointService.updateEndpoint(update).tap(function (endpointService) {
+	        return _this5.setState({ endpointService: endpointService });
+	      }).tap(function () {
+	        return _this5.toaster.alert('Endpoint "' + update.Name + '" updated');
+	      }).catch(function (err) {
+	        return _this5.toaster.alert('Problem updating endpoints', err.toString());
+	      });
+	    }
+	  }, {
+	    key: 'openEditor',
+	    value: function openEditor(endpointName) {
+	      this.setState({
+	        endpointService: this.state.endpointService.selectEndpoint(endpointName)
+	      });
+	    }
+	  }, {
+	    key: 'endpoints',
+	    value: function endpoints() {
+	      if (this.state.endpointService) {
+	        return this.state.endpointService.getEndpoints();
+	      }
+	      return [];
+	    }
+	  }, {
+	    key: 'renderCurrentEndpoint',
+	    value: function renderCurrentEndpoint() {
+	      var _this6 = this;
+	
+	      var endpoint = this.state.endpointService.getEndpoint();
+	      if (endpoint) {
+	        return _react2.default.createElement(_endpoint2.default, {
+	          'delete': this.deleteEndpoint,
+	          key: endpoint.Name,
+	          ref: function ref(r) {
+	            _this6.activeEndpoint = r;
+	          },
+	          cdcDisabled: endpoint.CDCDisabled,
+	          updateServer: this.updateEndpoint,
+	          name: endpoint.Name,
+	          method: endpoint.Request.Method,
+	          reqBody: endpoint.Request.Body,
+	          uri: endpoint.Request.URI,
+	          regex: endpoint.Request.RegexURI,
+	          reqHeaders: endpoint.Request.Headers,
+	          form: endpoint.Request.Form,
+	          code: endpoint.Response.Code,
+	          body: endpoint.Response.Body,
+	          resHeaders: endpoint.Response.Headers
+	        });
+	      }
+	      return null;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this7 = this;
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'mdl-layout mdl-js-layout mdl-layout--fixed-drawer' },
+	        _react2.default.createElement(_CDC2.default, {
+	          ref: function ref(r) {
+	            _this7.cdc = r;
+	          },
+	          url: '/mj-check-compatability'
+	        }),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'mdl-layout__drawer' },
+	          _react2.default.createElement(
+	            'h1',
+	            { className: 'mdl-layout-title mdl-color-text--primary' },
+	            'mockingjay server'
+	          ),
+	          _react2.default.createElement(_navigation2.default, {
+	            openEditor: this.openEditor,
+	            addEndpoint: this.add,
+	            endpoints: this.endpoints(),
+	            activeEndpoint: this.currentEndpointName()
+	          })
+	        ),
+	        _react2.default.createElement(
+	          'main',
+	          { className: 'mdl-layout__content mdl-color--grey-100' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'page-content' },
+	            this.renderCurrentEndpoint()
+	          )
+	        ),
+	        _react2.default.createElement(_Toaster2.default, {
+	          ref: function ref(r) {
+	            _this7.toaster = r;
+	          }
+	        })
+	      );
+	    }
+	  }]);
+	
+	  return UI;
+	}(_react2.default.Component);
+	
+	exports.default = UI;
 
 /***/ }
 /******/ ]);

@@ -1,19 +1,36 @@
 import _ from 'lodash';
 import { guid } from './util';
 
-class EndpointMachine {
-  constructor(endpoints) {
-    this.endpoints = endpoints;
+class EndpointService {
+  constructor(api) {
+    this.endpoints = [];
     this.selectedEndpointIndex = null;
+    this.api = api;
 
     this.selectEndpoint = this.selectEndpoint.bind(this);
     this.getEndpoint = this.getEndpoint.bind(this);
     this.getEndpoints = this.getEndpoints.bind(this);
     this.updateEndpoint = this.updateEndpoint.bind(this);
-    this.updateEndpoints = this.updateEndpoints.bind(this);
     this.addNewEndpoint = this.addNewEndpoint.bind(this);
     this.deleteEndpoint = this.deleteEndpoint.bind(this);
-    this.asJSON = this.asJSON.bind(this);
+    this.init = this.init.bind(this);
+    this.sendUpdateToServer = this.sendUpdateToServer.bind(this);
+  }
+
+  init() {
+    return this.api.getEndpoints()
+      .then(endpoints => {
+        this.endpoints = endpoints;
+      })
+      .then(() => this);
+  }
+
+  sendUpdateToServer(){
+    return this.api.updateEndpoints(JSON.stringify(this.getEndpoints()))
+      .then(endpoints => {
+        this.endpoints = endpoints;
+      })
+      .then(() => this);
   }
 
   selectEndpoint(name) {
@@ -30,10 +47,8 @@ class EndpointMachine {
   }
 
   addNewEndpoint() {
-    const newEndpointName = guid();
-
     const newEndpoint = {
-      Name: newEndpointName,
+      Name: guid(),
       CDCDisabled: false,
       Request: {
         URI: '/hello',
@@ -48,29 +63,20 @@ class EndpointMachine {
     this.endpoints.unshift(newEndpoint);
     this.selectedEndpointIndex = 0;
 
-    return this;
+    return this.sendUpdateToServer();
   }
 
   deleteEndpoint() {
     this.endpoints.splice(this.selectedEndpointIndex, 1);
     this.selectedEndpointIndex = null;
-    return this;
+    return this.sendUpdateToServer();
   }
 
   updateEndpoint(updatedEndpoint) {
     this.endpoints[this.selectedEndpointIndex] = updatedEndpoint;
-    return this;
-  }
-
-  updateEndpoints(update) {
-    this.endpoints = update;
-    return this;
-  }
-
-  asJSON() {
-    return JSON.stringify(this.getEndpoints());
+    return this.sendUpdateToServer();
   }
 
 }
 
-export default EndpointMachine;
+export default EndpointService;
