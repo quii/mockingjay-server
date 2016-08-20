@@ -25,7 +25,8 @@ class Form extends React.Component {
         <div style={{ margin: '2% 2% 2% 3%' }}>
           <button
             onClick={this.props.finishEditing}
-            className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
+            className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent"
+          >
             Save
           </button>
         </div>

@@ -1,11 +1,3 @@
-- name: c919-29e8-d87e-f6d6
-  cdcdisabled: false
-  request:
-    uri: /hello
-    method: GET
-  response:
-    code: 200
-    body: World!
 - name: Test endpoint
   cdcdisabled: false
   request:

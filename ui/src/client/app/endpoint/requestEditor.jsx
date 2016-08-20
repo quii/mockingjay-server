@@ -4,7 +4,7 @@ import TextField from '../form-controllers/textfield.jsx';
 import TextArea from '../form-controllers/textarea.jsx';
 import MethodSwitcher from '../form-controllers/methodSwitcher.jsx';
 
-function RequestEditor({onChange, uri, regex, method,reqBody, form, reqHeaders}){
+function RequestEditor({ onChange, uri, regex, method, reqBody, form, reqHeaders }) {
   return (
     <div className="mdl-card mdl-shadow--2dp">
 
@@ -14,9 +14,9 @@ function RequestEditor({onChange, uri, regex, method,reqBody, form, reqHeaders})
 
       <TextField label="URI" name="uri" value={uri} onChange={onChange} />
       <TextField label="Regex URI (optional)" name="regex" value={regex} onChange={onChange} />
-      <MethodSwitcher selected={method} onChange={onChange}/>
-      <TextArea label="Body" name="reqBody" value={reqBody} onChange={onChange}/>
-      <HttpDataEditor label="x-www-form-urlencoded" name="form" items={form} onChange={onChange}/>
+      <MethodSwitcher selected={method} onChange={onChange} />
+      <TextArea label="Body" name="reqBody" value={reqBody} onChange={onChange} />
+      <HttpDataEditor label="x-www-form-urlencoded" name="form" items={form} onChange={onChange} />
 
       <HttpDataEditor
         label="Headers"

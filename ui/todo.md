@@ -7,7 +7,7 @@ This will ensure a basic level of not completely awfulness.
 - propTypes defined
 
 ## Further improvements
-- `PUT` endpoint needs to validate incoming requests better
+- `Improve MJs config validation, can still do a status of 900
 - Would be nice if saved yaml had newlines between endpoints
 - The UI currently implies you can have both a request body and a form, but that doesn't really make sense. Make the UI force user to fill one or the other.
 
@@ -16,7 +16,6 @@ This will ensure a basic level of not completely awfulness.
 - Find `todo` marked in code
 - Not much tests around new endpoints created
 - No tests at all around the react stuff!
-- `index.jsx` is a mess. Need to break out functionality into smaller pieces.
 - CSS is a mess, needs to be tidied. Is there a tool to remove unused things because there will be loads
 
 ### useful links

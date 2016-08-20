@@ -11,7 +11,6 @@ const requiredFunctions = [
 ];
 
 function ServiceProp(props, propName, componentName) {
-
   const functionsMissing = _.filter(requiredFunctions, (f) => props[propName][f] === undefined);
 
   if (functionsMissing.length > 0) {

@@ -12,7 +12,6 @@ function makeAddButton(onClick) {
 }
 
 function Navigation({ addEndpoint, endpoints, activeEndpoint, openEditor }) {
-
   const endpointLinks = endpoints.map(endpoint => {
     let cssClass = 'mdl-navigation__link';
     let name = endpoint.Name;
@@ -34,7 +33,6 @@ function Navigation({ addEndpoint, endpoints, activeEndpoint, openEditor }) {
   endpointLinks.push(makeAddButton(addEndpoint));
 
   return <nav className="mdl-navigation">{endpointLinks}</nav>;
-
 }
 
 Navigation.propTypes = {

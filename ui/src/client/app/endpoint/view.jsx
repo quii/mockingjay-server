@@ -31,20 +31,20 @@ function View({
         <div className="mdl-card__title" style={{ width: '90%' }}>
           <h3 className="mdl-card__title-text">Request</h3>
         </div>
-        <Code icon="cloud" value={`${method} ${uri}`}/>
-        <Code icon="face" value={regex}/>
-        <Body label="Body" value={reqBody}/>
-        <HttpDataList name="Headers" items={reqHeaders}/>
-        <HttpDataList name="Form data" items={form}/>
+        <Code icon="cloud" value={`${method} ${uri}`} />
+        <Code icon="face" value={regex} />
+        <Body label="Body" value={reqBody} />
+        <HttpDataList name="Headers" items={reqHeaders} />
+        <HttpDataList name="Form data" items={form} />
       </div>
 
       <div className="mdl-card mdl-shadow--2dp">
         <div className="mdl-card__title" style={{ width: '90%' }}>
           <h3 className="mdl-card__title-text">Response</h3>
         </div>
-        <Code icon="face" value={code.toString()}/>
-        <Body label="Body" value={body}/>
-        <HttpDataList name="Headers" items={resHeaders}/>
+        <Code icon="face" value={code.toString()} />
+        <Body label="Body" value={body} />
+        <HttpDataList name="Headers" items={resHeaders} />
       </div>
 
       <Curl

@@ -41369,7 +41369,8 @@
 	            'button',
 	            {
 	              onClick: this.props.finishEditing,
-	              className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent' },
+	              className: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent'
+	            },
 	            'Save'
 	          )
 	        )
@@ -42783,8 +42784,8 @@
 	  return new _bluebird2.default(function (resolve, reject) {
 	    _superagent2.default.put(url).send(data).end(function (err, res) {
 	      if (err) {
-	        var error = 'Got ' + res.statusText + ' when sending update to ' + url + '. Response: ' + res.text;
-	        reject(new Error(error));
+	        var msg = 'Got ' + res.statusText + ' when sending update to ' + url + '. Response: ' + res.text;
+	        reject(new Error(msg));
 	      } else {
 	        resolve(res.text);
 	      }
@@ -48439,7 +48440,6 @@
 	  var activeEndpoint = _ref.activeEndpoint;
 	  var openEditor = _ref.openEditor;
 	
-	
 	  var endpointLinks = endpoints.map(function (endpoint) {
 	    var cssClass = 'mdl-navigation__link';
 	    var name = endpoint.Name;
@@ -48583,7 +48583,6 @@
 	var requiredFunctions = ['init', 'getEndpoint', 'getEndpoints', 'addNewEndpoint', 'updateEndpoint', 'selectEndpoint', 'deleteEndpoint'];
 	
 	function ServiceProp(props, propName, componentName) {
-	
 	  var functionsMissing = _lodash2.default.filter(requiredFunctions, function (f) {
 	    return props[propName][f] === undefined;
 	  });

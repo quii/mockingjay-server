@@ -26,7 +26,7 @@ class EndpointService {
       .then(() => this);
   }
 
-  sendUpdateToServer(){
+  sendUpdateToServer() {
     return this.api.updateEndpoints(JSON.stringify(this.getEndpoints()))
       .then(endpoints => {
         this.endpoints = endpoints;

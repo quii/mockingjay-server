@@ -22,8 +22,8 @@ function putToURL(url, data) {
       .send(data)
       .end((err, res) => {
         if (err) {
-          const error = `Got ${res.statusText} when sending update to ${url}. Response: ${res.text}`;
-          reject(new Error(error));
+          const msg = `Got ${res.statusText} when sending update to ${url}. Response: ${res.text}`;
+          reject(new Error(msg));
         } else {
           resolve(res.text);
         }

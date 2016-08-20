@@ -64,7 +64,7 @@ class CDC extends React.Component {
   checkCompatability() {
     if (this.state && this.state.remoteUrl && this.state.remoteUrl !== null) {
       this.api.checkCompatability(this.state.remoteUrl)
-        .then(data => this.setState({data}))
+        .then(data => this.setState({ data }))
         .catch(err => console.error(this.props.url, status, err.toString()));
     }
   }
@@ -87,7 +87,7 @@ class CDC extends React.Component {
             className="cdc mdl-textfield mdl-js-textfield mdl-textfield--expandable
               mdl-textfield--floating-label mdl-textfield--align-right"
           >
-            <TestIndicator indicatorClick={this.indicatorClick} badge={this.sentiment()}/>
+            <TestIndicator indicatorClick={this.indicatorClick} badge={this.sentiment()} />
             {input}
             <label htmlFor="fixed-header-drawer-exp">{this.label}</label>
 

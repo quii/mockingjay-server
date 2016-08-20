@@ -160,7 +160,7 @@ class UI extends React.Component {
     return (
       <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
 
-        <CDC ref={this.setCDCRef} url="/mj-check-compatability"/>
+        <CDC ref={this.setCDCRef} url="/mj-check-compatability" />
 
         <div className="mdl-layout__drawer">
           <h1 className="mdl-layout-title mdl-color-text--primary">mockingjay server</h1>
@@ -178,7 +178,7 @@ class UI extends React.Component {
           </div>
         </main>
 
-        <Toaster ref={this.setToasterRef}/>
+        <Toaster ref={this.setToasterRef} />
 
       </div>
 
