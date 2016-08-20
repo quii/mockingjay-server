@@ -42783,7 +42783,8 @@
 	  return new _bluebird2.default(function (resolve, reject) {
 	    _superagent2.default.put(url).send(data).end(function (err, res) {
 	      if (err) {
-	        reject(err);
+	        var error = 'Got ' + res.statusText + ' when sending update to ' + url + '. Response: ' + res.text;
+	        reject(new Error(error));
 	      } else {
 	        resolve(res.text);
 	      }
