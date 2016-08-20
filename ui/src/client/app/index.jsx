@@ -6,6 +6,7 @@ import CDC from './cdc/CDC.jsx';
 import Navigation from './navigation.jsx';
 import API from './API.js';
 import EndpointMachine from './EndpointMachine';
+import Toaster from './Toaster.jsx';
 
 class UI extends React.Component {
 
@@ -40,12 +41,13 @@ class UI extends React.Component {
         this.setState({ endpointMachine: this.state.endpointMachine.updateEndpoints(data) });
       })
       .then(() => this.cdc.checkCompatability())
-      .catch(err => this.toasty(`Problem with PUT to ${this.props.url} ${err.toString()}`));
+      .catch(err => this.toaster.alert(`Problem with PUT to ${this.props.url} ${err.toString()}`));
   }
 
   currentEndpointName() {
     if (this.state) {
-      return this.state.endpointMachine ? this.state.endpointMachine.getEndpoint.Name : '';
+      const currentEndpoint = this.state.endpointMachine.getEndpoint();
+      return currentEndpoint ? currentEndpoint.Name : '';
     }
     return '';
   }
@@ -62,7 +64,7 @@ class UI extends React.Component {
     this.setState({
       endpointMachine: this.state.endpointMachine.deleteEndpoint(),
     });
-    this.toasty('Endpoint deleted');
+    this.toaster.alert('Endpoint deleted');
     return this.putUpdate();
   }
 
@@ -92,15 +94,6 @@ class UI extends React.Component {
     });
 
     this.putUpdate();
-  }
-
-  toasty(msg) {
-    const notification = document.querySelector('.mdl-js-snackbar');
-    notification.MaterialSnackbar.showSnackbar(
-      {
-        message: msg,
-      }
-    );
   }
 
   openEditor(endpointName) {
@@ -156,22 +149,24 @@ class UI extends React.Component {
             activeEndpoint={this.currentEndpointName()}
           />
         </div>
+
         <main className="mdl-layout__content mdl-color--grey-100">
           <div className="page-content">
             {this.renderCurrentEndpoint()}
           </div>
         </main>
-        <div aria-live="assertive" aria-atomic="true" aria-relevant="text"
-             className="mdl-snackbar mdl-js-snackbar">
-          <div className="mdl-snackbar__text"></div>
-          <button type="button" className="mdl-snackbar__action"></button>
-        </div>
+
+        <Toaster
+          ref={r => {
+            this.toaster = r;
+          }}
+        />
+
       </div>
 
     );
   }
 }
-;
 
 ReactDOM.render(
   <UI url="/mj-endpoints"/>,

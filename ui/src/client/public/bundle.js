@@ -79,6 +79,10 @@
 	
 	var _EndpointMachine2 = _interopRequireDefault(_EndpointMachine);
 	
+	var _Toaster = __webpack_require__(/*! ./Toaster.jsx */ 209);
+	
+	var _Toaster2 = _interopRequireDefault(_Toaster);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -133,14 +137,15 @@
 	      }).then(function () {
 	        return _this3.cdc.checkCompatability();
 	      }).catch(function (err) {
-	        return _this3.toasty('Problem with PUT to ' + _this3.props.url + ' ' + err.toString());
+	        return _this3.toaster.alert('Problem with PUT to ' + _this3.props.url + ' ' + err.toString());
 	      });
 	    }
 	  }, {
 	    key: 'currentEndpointName',
 	    value: function currentEndpointName() {
 	      if (this.state) {
-	        return this.state.endpointMachine ? this.state.endpointMachine.getEndpoint.Name : '';
+	        var currentEndpoint = this.state.endpointMachine.getEndpoint();
+	        return currentEndpoint ? currentEndpoint.Name : '';
 	      }
 	      return '';
 	    }
@@ -159,7 +164,7 @@
 	      this.setState({
 	        endpointMachine: this.state.endpointMachine.deleteEndpoint()
 	      });
-	      this.toasty('Endpoint deleted');
+	      this.toaster.alert('Endpoint deleted');
 	      return this.putUpdate();
 	    }
 	  }, {
@@ -190,14 +195,6 @@
 	      });
 	
 	      this.putUpdate();
-	    }
-	  }, {
-	    key: 'toasty',
-	    value: function toasty(msg) {
-	      var notification = document.querySelector('.mdl-js-snackbar');
-	      notification.MaterialSnackbar.showSnackbar({
-	        message: msg
-	      });
 	    }
 	  }, {
 	    key: 'openEditor',
@@ -273,21 +270,17 @@
 	            this.renderCurrentEndpoint()
 	          )
 	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { 'aria-live': 'assertive', 'aria-atomic': 'true', 'aria-relevant': 'text',
-	            className: 'mdl-snackbar mdl-js-snackbar' },
-	          _react2.default.createElement('div', { className: 'mdl-snackbar__text' }),
-	          _react2.default.createElement('button', { type: 'button', className: 'mdl-snackbar__action' })
-	        )
+	        _react2.default.createElement(_Toaster2.default, {
+	          ref: function ref(r) {
+	            _this5.toaster = r;
+	          }
+	        })
 	      );
 	    }
 	  }]);
 	
 	  return UI;
 	}(_react2.default.Component);
-	
-	;
 	
 	_reactDom2.default.render(_react2.default.createElement(UI, { url: '/mj-endpoints' }), document.getElementById('app'));
 
@@ -48559,6 +48552,72 @@
 	}();
 	
 	exports.default = EndpointMachine;
+
+/***/ },
+/* 209 */
+/*!************************************!*\
+  !*** ./src/client/app/Toaster.jsx ***!
+  \************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Toaster = function (_React$Component) {
+	  _inherits(Toaster, _React$Component);
+	
+	  function Toaster() {
+	    _classCallCheck(this, Toaster);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Toaster).apply(this, arguments));
+	  }
+	
+	  _createClass(Toaster, [{
+	    key: 'alert',
+	    value: function alert(msg) {
+	      var notification = document.querySelector('.mdl-js-snackbar');
+	      notification.MaterialSnackbar.showSnackbar({
+	        message: msg
+	      });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        {
+	          'aria-live': 'assertive',
+	          'aria-atomic': 'true',
+	          'aria-relevant': 'text',
+	          className: 'mdl-snackbar mdl-js-snackbar'
+	        },
+	        _react2.default.createElement('div', { className: 'mdl-snackbar__text' }),
+	        _react2.default.createElement('button', { type: 'button', className: 'mdl-snackbar__action' })
+	      );
+	    }
+	  }]);
+	
+	  return Toaster;
+	}(_react2.default.Component);
+	
+	exports.default = Toaster;
 
 /***/ }
 /******/ ]);
