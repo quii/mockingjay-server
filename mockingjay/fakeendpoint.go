@@ -38,7 +38,7 @@ func errDuplicateRequestsError(duplicates []string) error {
 	return fmt.Errorf("There were duplicated requests in YAML %v", duplicates)
 }
 
-// NewFakeEndpoints returns an array of Endpoints from a YAML byte array. Returns an error if YAML cannot be parsed
+// NewFakeEndpoints returns an array of Endpoints from a YAML byte array. Returns an error if YAML cannot be parsed or there are validation concerns
 func NewFakeEndpoints(data []byte) (endpoints []FakeEndpoint, err error) {
 	err = yaml.Unmarshal(data, &endpoints)
 

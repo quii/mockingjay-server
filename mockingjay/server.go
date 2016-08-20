@@ -19,6 +19,13 @@ type mjLogger interface {
 	Println(...interface{})
 }
 
+type endpointValidatorError struct {
+	EndpointName string
+	Message      string
+}
+
+type endpointsValidator func([]FakeEndpoint) []endpointValidatorError
+
 // Server allows you to configure a HTTP server for a slice of fake endpoints
 type Server struct {
 	Endpoints            []FakeEndpoint
@@ -116,7 +123,7 @@ func (s *Server) handleEndpoints(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 
-		err = json.Unmarshal(endpointBody, &updatedEndpoints)
+		updatedEndpoints, err = NewFakeEndpoints(endpointBody)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)

@@ -173,30 +173,30 @@ func TestItReturnsListOfEndpointsAndUpdates(t *testing.T) {
 	assert.Equal(t, endpointResponse[0], endpoint, "The endpoint returned doesnt match what the server was set up with")
 
 	updateBody := `[{
-	"Name": "Test endpoint updated",
-	"CDCDisabled": false,
-	"Request": {
-		"URI": "/hello",
-		"RegexURI": null,
-		"Method": null,
-		"Body": ""
+	"name": "Test endpoint updated",
+	"cdcdisabled": false,
+	"request": {
+		"uri": "/hello",
+		"regexuri": null,
+		"method": get,
+		"body": ""
 	},
-	"Response": {
-		"Code": 200,
-		"Body": "{\"message\": \"hello, world\"}"
+	"response": {
+		"code": 200,
+		"body": "{\"message\": \"hello, world\"}"
 	}
 }, {
-	"Name": "New endpoint",
-	"CDCDisabled": false,
-	"Request": {
-		"URI": "/world",
-		"RegexURI": null,
-		"Method": null,
-		"Body": ""
+	"name": "New endpoint",
+	"cdcdisabled": false,
+	"request": {
+		"uri": "/world",
+		"regexuri": null,
+		"method": get,
+		"body": ""
 	},
-	"Response": {
-		"Code": 200,
-		"Body": "hello, world"
+	"response": {
+		"code": 200,
+		"body": "hello, world"
 	}
 
 }]`
@@ -205,7 +205,7 @@ func TestItReturnsListOfEndpointsAndUpdates(t *testing.T) {
 
 	server.ServeHTTP(updateResponseReader, updateRequest)
 
-	assert.Equal(t, updateResponseReader.Code, http.StatusOK)
+	assert.Equal(t, http.StatusOK, updateResponseReader.Code, "Didnt work!", updateResponseReader.Body.String())
 	assert.Equal(t, updateResponseReader.HeaderMap["Content-Type"][0], "application/json")
 
 	var updatedEndpoints []FakeEndpoint
