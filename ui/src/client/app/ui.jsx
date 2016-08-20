@@ -34,7 +34,11 @@ class UI extends React.Component {
   restore() {
     return this.state.endpointService.init()
       .tap(endpointService => this.setState({ endpointService }))
-      .catch(err => this.toaster.alert('Problem getting MJ endpoints', err.toString()));
+      .catch(err => {
+        this.toaster.alert(
+          ['Problem getting MJ endpoints', err.toString()],
+          Toaster.ErrorDisplayTime);
+      });
   }
 
   currentEndpointName() {
@@ -53,7 +57,9 @@ class UI extends React.Component {
         this.toaster.alert(`Endpoint "${endpointService.getEndpoint().Name}" added`);
       })
       .catch(err => {
-        this.toaster.alert(['Problem creating new endpoint', err.toString()]);
+        this.toaster.alert(
+          ['Problem creating new endpoint', err.toString()],
+          Toaster.ErrorDisplayTime);
         return this.restore();
       });
   }
@@ -64,7 +70,7 @@ class UI extends React.Component {
       .tap(endpointService => this.setState({ endpointService }))
       .tap(() => this.toaster.alert(`Endpoint "${endpointName}" deleted`))
       .catch(err => {
-        this.toaster.alert(['Problem deleting endpoint', err.toString()])
+        this.toaster.alert(['Problem deleting endpoint', err.toString()], Toaster.ErrorDisplayTime);
         return this.restore();
       });
   }
@@ -97,7 +103,7 @@ class UI extends React.Component {
         this.toaster.alert([
           'Problem updating endpoints, restoring state (you may lose some changes)',
           err.toString(),
-        ]);
+        ], Toaster.ErrorDisplayTime);
         return this.restore();
       });
   }

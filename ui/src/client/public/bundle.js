@@ -22089,7 +22089,7 @@
 	      return this.state.endpointService.init().tap(function (endpointService) {
 	        return _this2.setState({ endpointService: endpointService });
 	      }).catch(function (err) {
-	        return _this2.toaster.alert('Problem getting MJ endpoints', err.toString());
+	        _this2.toaster.alert(['Problem getting MJ endpoints', err.toString()], _Toaster2.default.ErrorDisplayTime);
 	      });
 	    }
 	  }, {
@@ -22112,7 +22112,7 @@
 	      }).tap(function (endpointService) {
 	        _this3.toaster.alert('Endpoint "' + endpointService.getEndpoint().Name + '" added');
 	      }).catch(function (err) {
-	        _this3.toaster.alert(['Problem creating new endpoint', err.toString()]);
+	        _this3.toaster.alert(['Problem creating new endpoint', err.toString()], _Toaster2.default.ErrorDisplayTime);
 	        return _this3.restore();
 	      });
 	    }
@@ -22127,7 +22127,7 @@
 	      }).tap(function () {
 	        return _this4.toaster.alert('Endpoint "' + endpointName + '" deleted');
 	      }).catch(function (err) {
-	        _this4.toaster.alert(['Problem deleting endpoint', err.toString()]);
+	        _this4.toaster.alert(['Problem deleting endpoint', err.toString()], _Toaster2.default.ErrorDisplayTime);
 	        return _this4.restore();
 	      });
 	    }
@@ -22161,7 +22161,7 @@
 	      }).tap(function () {
 	        return _this5.toaster.alert('Endpoint "' + update.Name + '" updated');
 	      }).catch(function (err) {
-	        _this5.toaster.alert(['Problem updating endpoints, restoring state (you may lose some changes)', err.toString()]);
+	        _this5.toaster.alert(['Problem updating endpoints, restoring state (you may lose some changes)', err.toString()], _Toaster2.default.ErrorDisplayTime);
 	        return _this5.restore();
 	      });
 	    }
@@ -48528,10 +48528,13 @@
 	  _createClass(Toaster, [{
 	    key: 'alert',
 	    value: function alert(msgs) {
+	      var timeout = arguments.length <= 1 || arguments[1] === undefined ? 2750 : arguments[1];
+	
 	      var message = [].concat(msgs || []).join(', ');
 	      var notification = document.querySelector('.mdl-js-snackbar');
 	      notification.MaterialSnackbar.showSnackbar({
-	        message: message
+	        message: message,
+	        timeout: timeout
 	      });
 	    }
 	  }, {
@@ -48553,6 +48556,8 @@
 	
 	  return Toaster;
 	}(_react2.default.Component);
+	
+	Toaster.ErrorDisplayTime = 5000;
 	
 	exports.default = Toaster;
 

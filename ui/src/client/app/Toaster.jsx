@@ -2,12 +2,13 @@ import React from 'react';
 
 class Toaster extends React.Component {
 
-  alert(msgs) {
+  alert(msgs, timeout = 2750) {
     const message = [].concat(msgs || []).join(', ');
     const notification = document.querySelector('.mdl-js-snackbar');
     notification.MaterialSnackbar.showSnackbar(
       {
-        message: message,
+        message,
+        timeout,
       }
     );
   }
@@ -26,5 +27,7 @@ class Toaster extends React.Component {
     );
   }
 }
+
+Toaster.ErrorDisplayTime = 5000;
 
 export default Toaster;
