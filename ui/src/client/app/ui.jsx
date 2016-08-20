@@ -24,9 +24,14 @@ class UI extends React.Component {
     this.endpoints = this.endpoints.bind(this);
     this.setCDCRef = this.setCDCRef.bind(this);
     this.setToasterRef = this.setToasterRef.bind(this);
+    this.restore = this.restore.bind(this);
   }
 
   componentDidMount() {
+    return this.restore();
+  }
+
+  restore() {
     return this.state.endpointService.init()
       .tap(endpointService => this.setState({ endpointService }))
       .catch(err => this.toaster.alert('Problem getting MJ endpoints', err.toString()));
@@ -47,7 +52,10 @@ class UI extends React.Component {
       .tap((endpointService) => {
         this.toaster.alert(`Endpoint "${endpointService.getEndpoint().Name}" added`);
       })
-      .catch(err => this.toaster.alert('Problem saving new endpoint', err.toString()));
+      .catch(err => {
+        this.toaster.alert(['Problem creating new endpoint', err.toString()]);
+        return this.restore();
+      });
   }
 
   deleteEndpoint() {
@@ -55,39 +63,48 @@ class UI extends React.Component {
     return this.state.endpointService.deleteEndpoint()
       .tap(endpointService => this.setState({ endpointService }))
       .tap(() => this.toaster.alert(`Endpoint "${endpointName}" deleted`))
-      .catch(err => this.toaster.alert('Problem deleting endpoint', err.toString()));
+      .catch(err => {
+        this.toaster.alert(['Problem deleting endpoint', err.toString()])
+        return this.restore();
+      });
   }
 
   updateEndpoint() {
     const newEndpointState = this.activeEndpoint.state;
 
     const update = {
-      Name: newEndpointState.name,
-      CDCDisabled: newEndpointState.cdcDisabled,
-      Request: {
-        URI: newEndpointState.uri,
-        RegexURI: newEndpointState.regex,
-        Method: newEndpointState.method,
-        Body: newEndpointState.reqBody,
-        Form: newEndpointState.form,
-        Headers: newEndpointState.reqHeaders,
+      name: newEndpointState.name,
+      cdcdisabled: newEndpointState.cdcDisabled,
+      request: {
+        uri: newEndpointState.uri,
+        regexuri: newEndpointState.regex,
+        method: newEndpointState.method,
+        body: newEndpointState.reqBody,
+        form: newEndpointState.form,
+        headers: newEndpointState.reqHeaders,
       },
-      Response: {
-        Code: parseInt(newEndpointState.code, 10),
-        Body: newEndpointState.body,
-        Headers: newEndpointState.resHeaders,
+      response: {
+        code: parseInt(newEndpointState.code, 10),
+        body: newEndpointState.body,
+        headers: newEndpointState.resHeaders,
       },
     };
 
     return this.state.endpointService.updateEndpoint(update)
       .tap(endpointService => this.setState({ endpointService }))
       .tap(() => this.toaster.alert(`Endpoint "${update.Name}" updated`))
-      .catch(err => this.toaster.alert('Problem updating endpoints', err.toString()));
+      .catch(err => {
+        this.toaster.alert([
+          'Problem updating endpoints, restoring state (you may lose some changes)',
+          err.toString(),
+        ]);
+        return this.restore();
+      });
   }
 
   openEditor(endpointName) {
     this.setState({
-      endpointService: this.state.endpointService.selectEndpoint(endpointName)
+      endpointService: this.state.endpointService.selectEndpoint(endpointName),
     });
   }
 

@@ -110,6 +110,7 @@ func (s *Server) getResponse(r Request) *response {
 	return newNotFound(r, s.Endpoints)
 }
 
+//todo: sad path tests
 func (s *Server) handleEndpoints(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPut {
@@ -121,12 +122,14 @@ func (s *Server) handleEndpoints(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 
-		updatedEndpoints, err = NewFakeEndpoints(endpointBody)
+		updatedEndpoints, err = NewFakeEndpointsFromJSON(endpointBody)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 
 		s.Endpoints = updatedEndpoints
@@ -135,6 +138,7 @@ func (s *Server) handleEndpoints(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	}
 

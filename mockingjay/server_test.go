@@ -172,35 +172,12 @@ func TestItReturnsListOfEndpointsAndUpdates(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, endpointResponse[0], endpoint, "The endpoint returned doesnt match what the server was set up with")
 
-	updateBody := `[{
-	"name": "Test endpoint updated",
-	"cdcdisabled": false,
-	"request": {
-		"uri": "/hello",
-		"regexuri": null,
-		"method": get,
-		"body": ""
-	},
-	"response": {
-		"code": 200,
-		"body": "{\"message\": \"hello, world\"}"
-	}
-}, {
-	"name": "New endpoint",
-	"cdcdisabled": false,
-	"request": {
-		"uri": "/world",
-		"regexuri": null,
-		"method": get,
-		"body": ""
-	},
-	"response": {
-		"code": 200,
-		"body": "hello, world"
-	}
-
-}]`
-	updateRequest, _ := http.NewRequest(http.MethodPut, endpointsURL, strings.NewReader(updateBody))
+	//todo: euuugh so bad
+	endpoint.Request.Method = http.MethodPost
+	anotherEndpoint := FakeEndpoint{"foobar", cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
+	editedEndpoints := []FakeEndpoint{endpoint, anotherEndpoint}
+	editedBody, _ := json.Marshal(editedEndpoints)
+	updateRequest, _ := http.NewRequest(http.MethodPut, endpointsURL, bytes.NewReader(editedBody))
 	updateResponseReader := httptest.NewRecorder()
 
 	server.ServeHTTP(updateResponseReader, updateRequest)

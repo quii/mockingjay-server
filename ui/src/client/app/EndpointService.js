@@ -20,6 +20,7 @@ class EndpointService {
   init() {
     return this.api.getEndpoints()
       .then(endpoints => {
+        this.selectedEndpointIndex = null;
         this.endpoints = endpoints;
       })
       .then(() => this);

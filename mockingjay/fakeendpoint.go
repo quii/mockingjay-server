@@ -1,6 +1,7 @@
 package mockingjay
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"gopkg.in/yaml.v2"
@@ -41,6 +42,29 @@ func errDuplicateRequestsError(duplicates []string) error {
 // NewFakeEndpoints returns an array of Endpoints from a YAML byte array. Returns an error if YAML cannot be parsed or there are validation concerns
 func NewFakeEndpoints(data []byte) (endpoints []FakeEndpoint, err error) {
 	err = yaml.Unmarshal(data, &endpoints)
+
+	if err != nil {
+		return nil, fmt.Errorf(
+			"The structure of the supplied YAML is wrong, please refer to https://github.com/quii/mockingjay-server for an example [%v]",
+			err)
+	}
+
+	for _, endPoint := range endpoints {
+		if endpointErr := endPoint.isValid(); endpointErr != nil {
+			return nil, endpointErr
+		}
+	}
+
+	if duplicates := findDuplicates(endpoints); len(duplicates) > 0 {
+		return nil, errDuplicateRequestsError(duplicates)
+	}
+
+	return
+}
+
+//todo: this is basically the above function copy and pasted
+func NewFakeEndpointsFromJSON(data []byte) (endpoints []FakeEndpoint, err error) {
+	err = json.Unmarshal(data, &endpoints)
 
 	if err != nil {
 		return nil, fmt.Errorf(
