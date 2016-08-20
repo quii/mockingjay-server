@@ -21,6 +21,8 @@ class UI extends React.Component {
     this.renderCurrentEndpoint = this.renderCurrentEndpoint.bind(this);
     this.currentEndpointName = this.currentEndpointName.bind(this);
     this.endpoints = this.endpoints.bind(this);
+    this.setCDCRef = this.setCDCRef.bind(this);
+    this.setToasterRef = this.setToasterRef.bind(this);
   }
 
   componentDidMount() {
@@ -95,6 +97,14 @@ class UI extends React.Component {
     return [];
   }
 
+  setToasterRef(ref) {
+    this.toaster = ref;
+  }
+
+  setCDCRef(ref) {
+    this.cdc = ref;
+  }
+
   renderCurrentEndpoint() {
     const endpoint = this.state.endpointService.getEndpoint();
     if (endpoint) {
@@ -126,12 +136,7 @@ class UI extends React.Component {
     return (
       <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
 
-        <CDC
-          ref={r => {
-            this.cdc = r;
-          }}
-          url="/mj-check-compatability"
-        />
+        <CDC ref={this.setCDCRef} url="/mj-check-compatability"/>
 
         <div className="mdl-layout__drawer">
           <h1 className="mdl-layout-title mdl-color-text--primary">mockingjay server</h1>
@@ -149,16 +154,16 @@ class UI extends React.Component {
           </div>
         </main>
 
-        <Toaster
-          ref={r => {
-            this.toaster = r;
-          }}
-        />
+        <Toaster ref={this.setToasterRef}/>
 
       </div>
 
     );
   }
 }
+
+UI.propTypes = {
+  service: React.PropTypes.object,
+};
 
 export default UI;

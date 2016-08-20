@@ -48485,6 +48485,8 @@
 	    _this.renderCurrentEndpoint = _this.renderCurrentEndpoint.bind(_this);
 	    _this.currentEndpointName = _this.currentEndpointName.bind(_this);
 	    _this.endpoints = _this.endpoints.bind(_this);
+	    _this.setCDCRef = _this.setCDCRef.bind(_this);
+	    _this.setToasterRef = _this.setToasterRef.bind(_this);
 	    return _this;
 	  }
 	
@@ -48585,6 +48587,16 @@
 	      return [];
 	    }
 	  }, {
+	    key: 'setToasterRef',
+	    value: function setToasterRef(ref) {
+	      this.toaster = ref;
+	    }
+	  }, {
+	    key: 'setCDCRef',
+	    value: function setCDCRef(ref) {
+	      this.cdc = ref;
+	    }
+	  }, {
 	    key: 'renderCurrentEndpoint',
 	    value: function renderCurrentEndpoint() {
 	      var _this6 = this;
@@ -48616,17 +48628,10 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this7 = this;
-	
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'mdl-layout mdl-js-layout mdl-layout--fixed-drawer' },
-	        _react2.default.createElement(_CDC2.default, {
-	          ref: function ref(r) {
-	            _this7.cdc = r;
-	          },
-	          url: '/mj-check-compatability'
-	        }),
+	        _react2.default.createElement(_CDC2.default, { ref: this.setCDCRef, url: '/mj-check-compatability' }),
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'mdl-layout__drawer' },
@@ -48651,17 +48656,17 @@
 	            this.renderCurrentEndpoint()
 	          )
 	        ),
-	        _react2.default.createElement(_Toaster2.default, {
-	          ref: function ref(r) {
-	            _this7.toaster = r;
-	          }
-	        })
+	        _react2.default.createElement(_Toaster2.default, { ref: this.setToasterRef })
 	      );
 	    }
 	  }]);
 	
 	  return UI;
 	}(_react2.default.Component);
+	
+	UI.propTypes = {
+	  service: _react2.default.PropTypes.object
+	};
 	
 	exports.default = UI;
 
