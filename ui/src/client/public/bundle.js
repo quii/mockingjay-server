@@ -48457,6 +48457,10 @@
 	
 	var _Toaster2 = _interopRequireDefault(_Toaster);
 	
+	var _ServicePropValidator = __webpack_require__(/*! ./propValidators/ServicePropValidator */ 213);
+	
+	var _ServicePropValidator2 = _interopRequireDefault(_ServicePropValidator);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -48665,10 +48669,45 @@
 	}(_react2.default.Component);
 	
 	UI.propTypes = {
-	  service: _react2.default.PropTypes.object
+	  service: _ServicePropValidator2.default
 	};
 	
 	exports.default = UI;
+
+/***/ },
+/* 212 */,
+/* 213 */
+/*!***************************************************************!*\
+  !*** ./src/client/app/propValidators/ServicePropValidator.js ***!
+  \***************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _lodash = __webpack_require__(/*! lodash */ 35);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var requiredFunctions = ['init', 'getEndpoint', 'getEndpoints', 'addNewEndpoint', 'updateEndpoint', 'selectEndpoint', 'deleteEndpoint'];
+	
+	function ServiceProp(props, propName, componentName) {
+	
+	  var functionsMissing = _lodash2.default.filter(requiredFunctions, function (f) {
+	    return props[propName][f] === undefined;
+	  });
+	
+	  if (functionsMissing.length > 0) {
+	    return new Error('Invalid prop ' + propName + ' for ' + componentName + ' - missing functions [' + functionsMissing + ']');
+	  }
+	}
+	
+	exports.default = ServiceProp;
 
 /***/ }
 /******/ ]);

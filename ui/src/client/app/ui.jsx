@@ -3,6 +3,7 @@ import Endpoint from './endpoint/endpoint.jsx';
 import CDC from './cdc/CDC.jsx';
 import Navigation from './navigation.jsx';
 import Toaster from './Toaster.jsx';
+import ServiceProp from './propValidators/ServicePropValidator';
 
 class UI extends React.Component {
 
@@ -163,7 +164,7 @@ class UI extends React.Component {
 }
 
 UI.propTypes = {
-  service: React.PropTypes.object,
+  service: ServiceProp,
 };
 
 export default UI;
