@@ -65,25 +65,3 @@ func TestItSendsForms(t *testing.T) {
 
 	handler.ServeHTTP(rec, req)
 }
-
-func TestItValidatesRequests(t *testing.T) {
-	noURIRequest := Request{
-		URI:    "",
-		Method: "POST"}
-
-	assert.Equal(t, noURIRequest.errors(), errEmptyURI)
-
-	noMethodRequest := Request{
-		URI:    "/",
-		Method: ""}
-
-	assert.Equal(t, noMethodRequest.errors(), errEmptyMethod)
-
-	validRequest := Request{
-		URI:    "/",
-		Method: "POST",
-	}
-
-	assert.Nil(t, validRequest.errors())
-
-}

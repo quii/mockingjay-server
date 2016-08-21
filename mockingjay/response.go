@@ -13,7 +13,7 @@ type response struct {
 }
 
 func (r response) isValid() bool {
-	return r.Code != 0
+	return r.Code > 99 && r.Code < 600
 }
 
 type notFoundResponse struct {
