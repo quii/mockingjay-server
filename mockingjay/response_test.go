@@ -6,6 +6,10 @@ import (
 )
 
 func TestItValidatesResponses(t *testing.T) {
+
+	spaceyHeaders := make(map[string]string)
+	spaceyHeaders["hello world"] = "l o l"
+
 	tests := []struct {
 		Description string
 		Response    response
@@ -20,6 +24,13 @@ func TestItValidatesResponses(t *testing.T) {
 			Description: "Response codes must be < 600 ish",
 			Response: response{
 				Code: 600,
+			},
+		},
+		{
+			Description: "Headers cannot have spaces",
+			Response: response{
+				Code:    200,
+				Headers: spaceyHeaders,
 			},
 		},
 	}

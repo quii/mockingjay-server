@@ -13,7 +13,7 @@ type response struct {
 }
 
 func (r response) isValid() bool {
-	return r.Code > 99 && r.Code < 600
+	return r.Code > 99 && r.Code < 600 && httpHeadersValid(r.Headers)
 }
 
 type notFoundResponse struct {

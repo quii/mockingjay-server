@@ -7,6 +7,9 @@ import (
 
 func TestItValidatesRequests(t *testing.T) {
 
+	spaceyHeaders := make(map[string]string)
+	spaceyHeaders["hello world"] = "l o l"
+
 	tests := []struct {
 		Description   string
 		Request       Request
@@ -27,6 +30,15 @@ func TestItValidatesRequests(t *testing.T) {
 				Method: "",
 			},
 			ExpectedError: errEmptyMethod,
+		},
+		{
+			Description: "Headers cant have spaces",
+			Request: Request{
+				URI:     "/",
+				Method:  "POST",
+				Headers: spaceyHeaders,
+			},
+			ExpectedError: errBadHeaders,
 		},
 	}
 	for _, test := range tests {

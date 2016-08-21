@@ -28,6 +28,7 @@ var (
 	errBadRegex    = errors.New("A regex defined in the request does not pass against it's defined URI")
 	errEmptyURI    = errors.New("Cannot have an empty URI")
 	errEmptyMethod = errors.New("Cannot have an empty HTTP method")
+	errBadHeaders  = errors.New("Headers are bad (no spaces please, each key must have a value")
 )
 
 func (r Request) errors() error {
@@ -43,6 +44,11 @@ func (r Request) errors() error {
 	if r.Method == "" {
 		return errEmptyMethod
 	}
+
+	if !httpHeadersValid(r.Headers) {
+		return errBadHeaders
+	}
+
 	return nil
 }
 
