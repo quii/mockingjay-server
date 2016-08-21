@@ -162,7 +162,6 @@ HttpDataEditor.propTypes = {
   name: React.PropTypes.string.isRequired,
   items: React.PropTypes.object,
   onChange: React.PropTypes.func.isRequired,
-  servce: React.PropTypes.object.isRequired,
   keyPattern: React.PropTypes.string,
   valPattern: React.PropTypes.string,
 };

@@ -15,7 +15,7 @@ class Form extends React.Component {
     ultraProps.onChange = this.props.onChange;
     ultraProps.onCheckboxChange = this.props.onCheckboxChange;
     ultraProps.name = this.props.name;
-
+    
     return (
       <div>
         {requestEditor(ultraProps)}
