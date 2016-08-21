@@ -22277,6 +22277,8 @@
 	  value: true
 	});
 	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
 	var _react = __webpack_require__(/*! react */ 1);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -22293,72 +22295,107 @@
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
-	var Endpoint = _react2.default.createClass({
-	  displayName: 'Endpoint',
-	  getInitialState: function getInitialState() {
-	    return {
-	      index: this.props.index,
-	      cdcDisabled: this.props.cdcDisabled,
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Endpoint = function (_React$Component) {
+	  _inherits(Endpoint, _React$Component);
+	
+	  function Endpoint(props) {
+	    _classCallCheck(this, Endpoint);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Endpoint).call(this, props));
+	
+	    _this.setState({
+	      index: _this.props.index,
+	      cdcDisabled: _this.props.cdcDisabled,
 	      isEditing: false,
-	      name: this.props.name,
-	      method: this.props.method,
-	      uri: this.props.uri,
-	      regex: this.props.regex,
-	      reqBody: this.props.reqBody,
-	      form: this.props.form,
-	      reqHeaders: this.props.reqHeaders,
-	      code: this.props.code,
-	      body: this.props.body,
-	      resHeaders: this.props.resHeaders
-	    };
-	  },
-	  startEditing: function startEditing() {
-	    this.setState({
-	      isEditing: true
+	      name: _this.props.name,
+	      method: _this.props.method,
+	      uri: _this.props.uri,
+	      regex: _this.props.regex,
+	      reqBody: _this.props.reqBody,
+	      form: _this.props.form,
+	      reqHeaders: _this.props.reqHeaders,
+	      code: _this.props.code,
+	      body: _this.props.body,
+	      resHeaders: _this.props.resHeaders
 	    });
-	  },
-	  delete: function _delete() {
-	    this.props.delete();
-	  },
-	  finishEditing: function finishEditing() {
-	    this.setState({
-	      isEditing: false
-	    });
-	    this.props.updateServer();
-	  },
-	  updateValue: function updateValue(e) {
-	    this.setState(_defineProperty({}, e.target.name, e.target.value));
-	  },
-	  updateCheckbox: function updateCheckbox(e) {
-	    this.setState(_defineProperty({}, e.target.name, e.target.value === 'on'));
-	  },
-	  render: function render() {
-	    if (this.state.isEditing) {
-	      return _react2.default.createElement(_form2.default, {
-	        name: this.state.name,
-	        finishEditing: this.finishEditing,
-	        originalValues: this.state,
-	        onChange: this.updateValue,
-	        onCheckboxChange: this.updateCheckbox
+	
+	    _this.startEditing = _this.startEditing.bind(_this);
+	    _this.delete = _this.delete.bind(_this);
+	    _this.finishEditing = _this.finishEditing.bind(_this);
+	    _this.updateValue = _this.updateValue.bind(_this);
+	    _this.updateCheckbox = _this.updateCheckbox.bind(_this);
+	    _this.render = _this.render.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(Endpoint, [{
+	    key: 'startEditing',
+	    value: function startEditing() {
+	      this.setState({
+	        isEditing: true
 	      });
 	    }
+	  }, {
+	    key: 'delete',
+	    value: function _delete() {
+	      this.props.delete();
+	    }
+	  }, {
+	    key: 'finishEditing',
+	    value: function finishEditing() {
+	      this.setState({
+	        isEditing: false
+	      });
+	      this.props.updateServer();
+	    }
+	  }, {
+	    key: 'updateValue',
+	    value: function updateValue(e) {
+	      this.setState(_defineProperty({}, e.target.name, e.target.value));
+	    }
+	  }, {
+	    key: 'updateCheckbox',
+	    value: function updateCheckbox(e) {
+	      this.setState(_defineProperty({}, e.target.name, e.target.value === 'on'));
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      if (this.state.isEditing) {
+	        return _react2.default.createElement(_form2.default, {
+	          name: this.state.name,
+	          finishEditing: this.finishEditing,
+	          originalValues: this.state,
+	          onChange: this.updateValue,
+	          onCheckboxChange: this.updateCheckbox
+	        });
+	      }
 	
-	    return _react2.default.createElement(_view2.default, {
-	      method: this.state.method,
-	      uri: this.state.uri,
-	      regex: this.state.regex,
-	      reqBody: this.state.reqBody,
-	      reqHeaders: this.state.reqHeaders,
-	      form: this.state.form,
-	      code: this.state.code.toString(),
-	      body: this.state.body,
-	      resHeaders: this.state.resHeaders,
-	      name: this.state.name,
-	      startEditing: this.startEditing,
-	      deleteEndpoint: this.delete
-	    });
-	  }
-	});
+	      return _react2.default.createElement(_view2.default, {
+	        method: this.state.method,
+	        uri: this.state.uri,
+	        regex: this.state.regex,
+	        reqBody: this.state.reqBody,
+	        reqHeaders: this.state.reqHeaders,
+	        form: this.state.form,
+	        code: this.state.code.toString(),
+	        body: this.state.body,
+	        resHeaders: this.state.resHeaders,
+	        name: this.state.name,
+	        startEditing: this.startEditing,
+	        deleteEndpoint: this.delete
+	      });
+	    }
+	  }]);
+	
+	  return Endpoint;
+	}(_react2.default.Component);
 	
 	exports.default = Endpoint;
 

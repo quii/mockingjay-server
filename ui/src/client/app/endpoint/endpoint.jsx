@@ -3,9 +3,11 @@ import React from 'react';
 import View from './view.jsx';
 import Form from './form.jsx';
 
-const Endpoint = React.createClass({
-  getInitialState() {
-    return {
+class Endpoint extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.setState({
       index: this.props.index,
       cdcDisabled: this.props.cdcDisabled,
       isEditing: false,
@@ -19,32 +21,45 @@ const Endpoint = React.createClass({
       code: this.props.code,
       body: this.props.body,
       resHeaders: this.props.resHeaders,
-    };
-  },
+    });
+
+    this.startEditing = this.startEditing.bind(this);
+    this.delete = this.delete.bind(this);
+    this.finishEditing = this.finishEditing.bind(this);
+    this.updateValue = this.updateValue.bind(this);
+    this.updateCheckbox = this.updateCheckbox.bind(this);
+    this.render = this.render.bind(this);
+  }
+
   startEditing() {
     this.setState({
       isEditing: true,
     });
-  },
+  }
+
   delete() {
     this.props.delete();
-  },
+  }
+
   finishEditing() {
     this.setState({
       isEditing: false,
     });
     this.props.updateServer();
-  },
+  }
+
   updateValue(e) {
     this.setState({
       [e.target.name]: e.target.value,
     });
-  },
+  }
+
   updateCheckbox(e) {
     this.setState({
       [e.target.name]: e.target.value === 'on',
     });
-  },
+  }
+
   render() {
     if (this.state.isEditing) {
       return (<Form
@@ -72,7 +87,7 @@ const Endpoint = React.createClass({
         deleteEndpoint={this.delete}
       />
     );
-  },
-});
+  }
+}
 
 export default Endpoint;
