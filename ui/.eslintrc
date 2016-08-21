@@ -3,5 +3,8 @@
     "browser": true,
     "node": true
   },
-  "extends": "airbnb"
+  "extends": "airbnb",
+  "globals": {
+    "componentHandler": true
+  }
 }
