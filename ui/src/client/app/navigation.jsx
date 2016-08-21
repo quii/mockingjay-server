@@ -5,6 +5,7 @@ function makeAddButton(onClick) {
   return (
     <a
       key={guid()}
+      style={{ 'padding-left': '30px' }}
       onClick={onClick}
       className="mdl-navigation__link mdl-color-text--primary-dark"
     ><i className="material-icons md-32">add</i>Add new endoint</a>

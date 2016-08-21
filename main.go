@@ -1,4 +1,4 @@
-//go:generate go-bindata-assetfs -ignore=node_modules -pkg $GOPACKAGE ui/...
+//go:generate go-bindata-assetfs -ignore=node_modules -pkg $GOPACKAGE ui/src/client/public/...
 package main
 
 import (
@@ -40,7 +40,7 @@ func main() {
 func getUIServer() http.Handler {
 	if os.Getenv("ENV") == "LOCAL" {
 		log.Println("Detected local dev mode, serving files from /ui")
-		return http.FileServer(http.Dir("./ui"))
+		return http.FileServer(http.Dir("./ui/src/client/public"))
 	}
 	return http.FileServer(assetFS())
 }
