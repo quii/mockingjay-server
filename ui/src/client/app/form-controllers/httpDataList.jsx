@@ -1,6 +1,6 @@
 import React from 'react';
-import { rand } from '../util';
 import _ from 'lodash';
+import { rand } from '../util';
 
 function mapKeyVals(items, f) {
   if (items) {
@@ -29,10 +29,10 @@ export function HttpDataList({ items, label, name }) {
       </div>
       <table className="mdl-data-table mdl-js-data-table mdl-data-table">
         <thead>
-        <tr>
-          <th className="mdl-data-table__cell--non-numeric">Name</th>
-          <th className="mdl-data-table__cell--non-numeric">Value</th>
-        </tr>
+          <tr>
+            <th className="mdl-data-table__cell--non-numeric">Name</th>
+            <th className="mdl-data-table__cell--non-numeric">Value</th>
+          </tr>
         </thead>
         <tbody>
         {itemRows}
@@ -63,6 +63,11 @@ export class HttpDataEditor extends React.Component {
     this.updateMap = this.updateMap.bind(this);
     this.createInput = this.createInput.bind(this);
     this.render = this.render.bind(this);
+    this.addKeyFieldRef = this.addKeyFieldRef.bind(this);
+    this.addValFieldRef = this.addValFieldRef.bind(this);
+
+    this.fieldNames = new Set();
+    this.fields = {};
   }
 
   addItem() {
@@ -71,20 +76,31 @@ export class HttpDataEditor extends React.Component {
     });
   }
 
+  addKeyFieldRef(name, ref) {
+    this.fieldNames.add(name);
+    this.fields[name] = this.fields[name] || {};
+    this.fields[name].keyRef = ref;
+  }
+
+  addValFieldRef(name, ref) {
+    this.fieldNames.add(name);
+    this.fields[name] = this.fields[name] || {};
+    this.fields[name].valRef = ref;
+  }
+
   updateMap() {
     const newState = {};
-    for (let i = 0; i < Object.keys(this.refs).length; i += 2) {
-      const keyName = Object.keys(this.refs)[i];
-      const valueName = Object.keys(this.refs)[i + 1];
 
+    this.fieldNames.forEach(f => {
+      if (this.fields[f] && this.fields[f].keyRef) {
+        const k = this.fields[f].keyRef.value;
+        const v = this.fields[f].valRef.value;
 
-      const k = this.refs[keyName].value;
-      const v = this.refs[valueName].value;
-
-      if (k !== '' || v !== '') {
-        newState[k] = v;
+        if (k !== '' || v !== '') {
+          newState[k] = v;
+        }
       }
-    }
+    });
 
     const change = _.isEmpty(newState) ? null : newState;
 
@@ -96,14 +112,11 @@ export class HttpDataEditor extends React.Component {
     });
   }
 
-  createInput(ref, key, val) {
-    const keyRef = `${this.props.name}${ref}key`;
-    const valRef = `${this.props.name}${ref}val`;
-
+  createInput(name, key, val) {
     return (
       <div className="mdl-textfield mdl-js-textfield">
         <input
-          ref={keyRef}
+          ref={ref => this.addKeyFieldRef(name, ref)}
           pattern={this.props.keyPattern}
           className="mdl-textfield__input"
           type="text"
@@ -112,7 +125,7 @@ export class HttpDataEditor extends React.Component {
         />
         <i className="material-icons">chevron_right</i>
         <input
-          ref={valRef}
+          ref={ref => this.addValFieldRef(name, ref)}
           pattern={this.props.valPattern}
           className="mdl-textfield__input"
           type="text"
@@ -124,6 +137,7 @@ export class HttpDataEditor extends React.Component {
   }
 
   render() {
+    this.fieldNames = new Set();
     const label = this.props.label || this.props.name;
     const items = mapKeyVals(this.props.items, (key, val, i) => this.createInput(i, key, val));
     items.push(this.createInput(items.length + 1, '', ''));

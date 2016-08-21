@@ -24386,11 +24386,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _util = __webpack_require__(/*! ../util */ 185);
-	
 	var _lodash = __webpack_require__(/*! lodash */ 188);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _util = __webpack_require__(/*! ../util */ 185);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -24508,6 +24508,11 @@
 	    _this.updateMap = _this.updateMap.bind(_this);
 	    _this.createInput = _this.createInput.bind(_this);
 	    _this.render = _this.render.bind(_this);
+	    _this.addKeyFieldRef = _this.addKeyFieldRef.bind(_this);
+	    _this.addValFieldRef = _this.addValFieldRef.bind(_this);
+	
+	    _this.fieldNames = new Set();
+	    _this.fields = {};
 	    return _this;
 	  }
 	
@@ -24519,20 +24524,36 @@
 	      });
 	    }
 	  }, {
+	    key: 'addKeyFieldRef',
+	    value: function addKeyFieldRef(name, ref) {
+	      this.fieldNames.add(name);
+	      this.fields[name] = this.fields[name] || {};
+	      this.fields[name].keyRef = ref;
+	    }
+	  }, {
+	    key: 'addValFieldRef',
+	    value: function addValFieldRef(name, ref) {
+	      this.fieldNames.add(name);
+	      this.fields[name] = this.fields[name] || {};
+	      this.fields[name].valRef = ref;
+	    }
+	  }, {
 	    key: 'updateMap',
 	    value: function updateMap() {
+	      var _this2 = this;
+	
 	      var newState = {};
-	      for (var i = 0; i < Object.keys(this.refs).length; i += 2) {
-	        var keyName = Object.keys(this.refs)[i];
-	        var valueName = Object.keys(this.refs)[i + 1];
 	
-	        var k = this.refs[keyName].value;
-	        var v = this.refs[valueName].value;
+	      this.fieldNames.forEach(function (f) {
+	        if (_this2.fields[f] && _this2.fields[f].keyRef) {
+	          var k = _this2.fields[f].keyRef.value;
+	          var v = _this2.fields[f].valRef.value;
 	
-	        if (k !== '' || v !== '') {
-	          newState[k] = v;
+	          if (k !== '' || v !== '') {
+	            newState[k] = v;
+	          }
 	        }
-	      }
+	      });
 	
 	      var change = _lodash2.default.isEmpty(newState) ? null : newState;
 	
@@ -24545,15 +24566,16 @@
 	    }
 	  }, {
 	    key: 'createInput',
-	    value: function createInput(ref, key, val) {
-	      var keyRef = '' + this.props.name + ref + 'key';
-	      var valRef = '' + this.props.name + ref + 'val';
+	    value: function createInput(name, key, val) {
+	      var _this3 = this;
 	
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'mdl-textfield mdl-js-textfield' },
 	        _react2.default.createElement('input', {
-	          ref: keyRef,
+	          ref: function ref(_ref2) {
+	            return _this3.addKeyFieldRef(name, _ref2);
+	          },
 	          pattern: this.props.keyPattern,
 	          className: 'mdl-textfield__input',
 	          type: 'text',
@@ -24566,7 +24588,9 @@
 	          'chevron_right'
 	        ),
 	        _react2.default.createElement('input', {
-	          ref: valRef,
+	          ref: function ref(_ref3) {
+	            return _this3.addValFieldRef(name, _ref3);
+	          },
 	          pattern: this.props.valPattern,
 	          className: 'mdl-textfield__input',
 	          type: 'text',
@@ -24578,11 +24602,12 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this2 = this;
+	      var _this4 = this;
 	
+	      this.fieldNames = new Set();
 	      var label = this.props.label || this.props.name;
 	      var items = mapKeyVals(this.props.items, function (key, val, i) {
-	        return _this2.createInput(i, key, val);
+	        return _this4.createInput(i, key, val);
 	      });
 	      items.push(this.createInput(items.length + 1, '', ''));
 	
