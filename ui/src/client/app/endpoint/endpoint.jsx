@@ -7,24 +7,25 @@ class Endpoint extends React.Component {
   constructor(props) {
     super(props);
 
-    this.setState({
-      index: this.props.index,
-      cdcDisabled: this.props.cdcDisabled,
+    this.state = {
+      cdcDisabled: props.endpoint.CDCDisabled,
       isEditing: false,
-      name: this.props.name,
-      method: this.props.method,
-      uri: this.props.uri,
-      regex: this.props.regex,
-      reqBody: this.props.reqBody,
-      form: this.props.form,
-      reqHeaders: this.props.reqHeaders,
-      code: this.props.code,
-      body: this.props.body,
-      resHeaders: this.props.resHeaders,
-    });
+      name: props.endpoint.Name,
+      method: props.endpoint.Request.Method,
+      uri: props.endpoint.Request.URI,
+      regex: props.endpoint.Request.RegexURI,
+      reqBody: props.endpoint.Request.Body,
+      form: props.endpoint.Request.Form,
+      reqHeaders: props.endpoint.Request.Headers,
+      code: props.endpoint.Response.Code,
+      body: props.endpoint.Response.Body,
+      resHeaders: props.endpoint.Response.Headers,
+    };
+
+    this.updateServer = props.updateServer;
+    this.delete = props.delete;
 
     this.startEditing = this.startEditing.bind(this);
-    this.delete = this.delete.bind(this);
     this.finishEditing = this.finishEditing.bind(this);
     this.updateValue = this.updateValue.bind(this);
     this.updateCheckbox = this.updateCheckbox.bind(this);
@@ -37,15 +38,11 @@ class Endpoint extends React.Component {
     });
   }
 
-  delete() {
-    this.props.delete();
-  }
-
   finishEditing() {
     this.setState({
       isEditing: false,
     });
-    this.props.updateServer();
+    this.updateServer();
   }
 
   updateValue(e) {
@@ -89,5 +86,11 @@ class Endpoint extends React.Component {
     );
   }
 }
+
+Endpoint.propTypes = {
+  endpoint: React.PropTypes.object,
+  delete: React.PropTypes.func,
+  updateServer: React.PropTypes.func,
+};
 
 export default Endpoint;

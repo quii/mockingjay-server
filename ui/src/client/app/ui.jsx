@@ -24,6 +24,7 @@ class UI extends React.Component {
     this.endpoints = this.endpoints.bind(this);
     this.setCDCRef = this.setCDCRef.bind(this);
     this.setToasterRef = this.setToasterRef.bind(this);
+    this.setActiveEndpointRef = this.setActiveEndpointRef.bind(this);
     this.restore = this.restore.bind(this);
   }
 
@@ -37,6 +38,10 @@ class UI extends React.Component {
 
   setCDCRef(ref) {
     this.cdc = ref;
+  }
+
+  setActiveEndpointRef(ref) {
+    this.activeEndpoint = ref;
   }
 
   openEditor(endpointName) {
@@ -136,21 +141,8 @@ class UI extends React.Component {
         <Endpoint
           delete={this.deleteEndpoint}
           key={endpoint.Name}
-          ref={r => {
-            this.activeEndpoint = r;
-          }}
-          cdcDisabled={endpoint.CDCDisabled}
-          updateServer={this.updateEndpoint}
-          name={endpoint.Name}
-          method={endpoint.Request.Method}
-          reqBody={endpoint.Request.Body}
-          uri={endpoint.Request.URI}
-          regex={endpoint.Request.RegexURI}
-          reqHeaders={endpoint.Request.Headers}
-          form={endpoint.Request.Form}
-          code={endpoint.Response.Code}
-          body={endpoint.Response.Body}
-          resHeaders={endpoint.Response.Headers}
+          ref={this.setActiveEndpointRef}
+          endpoint={endpoint}
         />);
     }
     return null;

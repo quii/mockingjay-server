@@ -22072,6 +22072,7 @@
 	    _this.endpoints = _this.endpoints.bind(_this);
 	    _this.setCDCRef = _this.setCDCRef.bind(_this);
 	    _this.setToasterRef = _this.setToasterRef.bind(_this);
+	    _this.setActiveEndpointRef = _this.setActiveEndpointRef.bind(_this);
 	    _this.restore = _this.restore.bind(_this);
 	    return _this;
 	  }
@@ -22090,6 +22091,11 @@
 	    key: 'setCDCRef',
 	    value: function setCDCRef(ref) {
 	      this.cdc = ref;
+	    }
+	  }, {
+	    key: 'setActiveEndpointRef',
+	    value: function setActiveEndpointRef(ref) {
+	      this.activeEndpoint = ref;
 	    }
 	  }, {
 	    key: 'openEditor',
@@ -22193,28 +22199,13 @@
 	  }, {
 	    key: 'renderCurrentEndpoint',
 	    value: function renderCurrentEndpoint() {
-	      var _this6 = this;
-	
 	      var endpoint = this.state.endpointService.getEndpoint();
 	      if (endpoint) {
 	        return _react2.default.createElement(_endpoint2.default, {
 	          'delete': this.deleteEndpoint,
 	          key: endpoint.Name,
-	          ref: function ref(r) {
-	            _this6.activeEndpoint = r;
-	          },
-	          cdcDisabled: endpoint.CDCDisabled,
-	          updateServer: this.updateEndpoint,
-	          name: endpoint.Name,
-	          method: endpoint.Request.Method,
-	          reqBody: endpoint.Request.Body,
-	          uri: endpoint.Request.URI,
-	          regex: endpoint.Request.RegexURI,
-	          reqHeaders: endpoint.Request.Headers,
-	          form: endpoint.Request.Form,
-	          code: endpoint.Response.Code,
-	          body: endpoint.Response.Body,
-	          resHeaders: endpoint.Response.Headers
+	          ref: this.setActiveEndpointRef,
+	          endpoint: endpoint
 	        });
 	      }
 	      return null;
@@ -22309,24 +22300,25 @@
 	
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Endpoint).call(this, props));
 	
-	    _this.setState({
-	      index: _this.props.index,
-	      cdcDisabled: _this.props.cdcDisabled,
+	    _this.state = {
+	      cdcDisabled: props.endpoint.CDCDisabled,
 	      isEditing: false,
-	      name: _this.props.name,
-	      method: _this.props.method,
-	      uri: _this.props.uri,
-	      regex: _this.props.regex,
-	      reqBody: _this.props.reqBody,
-	      form: _this.props.form,
-	      reqHeaders: _this.props.reqHeaders,
-	      code: _this.props.code,
-	      body: _this.props.body,
-	      resHeaders: _this.props.resHeaders
-	    });
+	      name: props.endpoint.Name,
+	      method: props.endpoint.Request.Method,
+	      uri: props.endpoint.Request.URI,
+	      regex: props.endpoint.Request.RegexURI,
+	      reqBody: props.endpoint.Request.Body,
+	      form: props.endpoint.Request.Form,
+	      reqHeaders: props.endpoint.Request.Headers,
+	      code: props.endpoint.Response.Code,
+	      body: props.endpoint.Response.Body,
+	      resHeaders: props.endpoint.Response.Headers
+	    };
+	
+	    _this.updateServer = props.updateServer;
+	    _this.delete = props.delete;
 	
 	    _this.startEditing = _this.startEditing.bind(_this);
-	    _this.delete = _this.delete.bind(_this);
 	    _this.finishEditing = _this.finishEditing.bind(_this);
 	    _this.updateValue = _this.updateValue.bind(_this);
 	    _this.updateCheckbox = _this.updateCheckbox.bind(_this);
@@ -22342,17 +22334,12 @@
 	      });
 	    }
 	  }, {
-	    key: 'delete',
-	    value: function _delete() {
-	      this.props.delete();
-	    }
-	  }, {
 	    key: 'finishEditing',
 	    value: function finishEditing() {
 	      this.setState({
 	        isEditing: false
 	      });
-	      this.props.updateServer();
+	      this.updateServer();
 	    }
 	  }, {
 	    key: 'updateValue',
@@ -22396,6 +22383,12 @@
 	
 	  return Endpoint;
 	}(_react2.default.Component);
+	
+	Endpoint.propTypes = {
+	  endpoint: _react2.default.PropTypes.object,
+	  delete: _react2.default.PropTypes.func,
+	  updateServer: _react2.default.PropTypes.func
+	};
 	
 	exports.default = Endpoint;
 
