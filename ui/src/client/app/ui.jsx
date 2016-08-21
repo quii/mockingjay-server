@@ -91,7 +91,7 @@ class UI extends React.Component {
 
     return this.state.endpointService.updateEndpoint(update)
       .tap(endpointService => this.setState({ endpointService }))
-      .tap(() => this.toaster.alert(`Endpoint "${update.Name}" updated`))
+      .tap(() => this.toaster.alert(`Endpoint "${update.name}" updated`))
       .catch(err => {
         this.toaster.alert([
           'Problem updating endpoints, restoring state (you may lose some changes)',
@@ -143,6 +143,7 @@ class UI extends React.Component {
           key={endpoint.Name}
           ref={this.setActiveEndpointRef}
           endpoint={endpoint}
+          updateServer={this.updateEndpoint}
         />);
     }
     return null;

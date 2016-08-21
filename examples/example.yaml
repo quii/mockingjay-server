@@ -1,49 +1,47 @@
----
- - name: Test endpoint
-   request:
-     uri: /hello
-     method: GET
-   response:
-     code: 200
-     body: '{"message": "hello, world"}'
-     headers:
-       content-type: text/json
-
- - name: Test endpoint 2
-   request:
-     uri: /world
-     method: DELETE
-   response:
-     code: 200
-     body: hello, world
-
- - name: Failing endpoint
-   request:
-     uri: /card
-     method: POST
-     body: Greetings
-   response:
-     code: 500
-     body: Oh bugger
-
- - name: Endpoint not used for CDC
-   cdcdisabled: true
-   request:
-     uri: /burp
-     method: POST
-     body: Belch
-   response:
-     code: 500
-     body: Oh no
-
- - name: Posting forms
-   cdcdisabled: false
-   request:
-     uri: /cats
-     method: POST
-     form:
-      age: 10
+- name: Test endpoint
+  cdcdisabled: false
+  request:
+    uri: /hello
+    method: GET
+  response:
+    code: 200
+    body: '{"message": "hello, world"}'
+    headers:
+      content-type: text/json
+- name: Test endpoint 2
+  cdcdisabled: false
+  request:
+    uri: /world
+    method: DELETE
+  response:
+    code: 200
+    body: hello, world
+- name: Failing endpoint
+  cdcdisabled: false
+  request:
+    uri: /card
+    method: POST
+    body: Greetings
+  response:
+    code: 500
+    body: Oh bugger
+- name: Endpoint not used for CDC
+  cdcdisabled: true
+  request:
+    uri: /burp
+    method: POST
+    body: Belch
+  response:
+    code: 500
+    body: Oh no
+- name: Posting forms
+  cdcdisabled: false
+  request:
+    uri: /cats
+    method: POST
+    form:
+      age: "10"
       name: Hudson
-   response:
-     code: 201
-     body: Created
+  response:
+    code: 201
+    body: Created
