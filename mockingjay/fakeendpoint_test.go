@@ -38,7 +38,6 @@ const testYAML = `
      form:
        age: 10
        name: Hudson
-     body: Greetings
    response:
      code: 500
      body: Oh bugger

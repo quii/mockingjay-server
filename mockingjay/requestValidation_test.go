@@ -10,6 +10,9 @@ func TestItValidatesRequests(t *testing.T) {
 	spaceyHeaders := make(map[string]string)
 	spaceyHeaders["hello world"] = "l o l"
 
+	aForm := make(map[string]string)
+	aForm["name"] = "Hudson"
+
 	tests := []struct {
 		Description   string
 		Request       Request
@@ -39,6 +42,16 @@ func TestItValidatesRequests(t *testing.T) {
 				Headers: spaceyHeaders,
 			},
 			ExpectedError: errBadHeaders,
+		},
+		{
+			Description: "Cant have both form and a body",
+			Request: Request{
+				URI:    "/",
+				Method: "POST",
+				Body:   "hi",
+				Form:   aForm,
+			},
+			ExpectedError: errBodyAndForm,
 		},
 	}
 	for _, test := range tests {

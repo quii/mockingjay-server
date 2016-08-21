@@ -29,6 +29,7 @@ var (
 	errEmptyURI    = errors.New("Cannot have an empty URI")
 	errEmptyMethod = errors.New("Cannot have an empty HTTP method")
 	errBadHeaders  = errors.New("Headers are bad (no spaces please, each key must have a value")
+	errBodyAndForm = errors.New("Cannot have a request with both a body and a form defined")
 )
 
 func (r Request) errors() error {
@@ -47,6 +48,10 @@ func (r Request) errors() error {
 
 	if !httpHeadersValid(r.Headers) {
 		return errBadHeaders
+	}
+
+	if r.Form != nil && len(r.Body) > 0 {
+		return errBodyAndForm
 	}
 
 	return nil
