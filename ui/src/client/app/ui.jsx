@@ -31,37 +31,25 @@ class UI extends React.Component {
     return this.restore();
   }
 
-  restore() {
-    return this.state.endpointService.init()
-      .tap(endpointService => this.setState({ endpointService }))
-      .catch(err => {
-        this.toaster.alert(
-          ['Problem getting MJ endpoints', err.toString()],
-          Toaster.ErrorDisplayTime);
-      });
+  setToasterRef(ref) {
+    this.toaster = ref;
   }
 
-  currentEndpointName() {
-    if (this.state) {
-      const currentEndpoint = this.state.endpointService.getEndpoint();
-      return currentEndpoint ? currentEndpoint.Name : '';
+  setCDCRef(ref) {
+    this.cdc = ref;
+  }
+
+  openEditor(endpointName) {
+    this.setState({
+      endpointService: this.state.endpointService.selectEndpoint(endpointName),
+    });
+  }
+
+  endpoints() {
+    if (this.state.endpointService) {
+      return this.state.endpointService.getEndpoints();
     }
-
-    return '';
-  }
-
-  add() {
-    return this.state.endpointService.addNewEndpoint()
-      .tap(endpointService => this.setState({ endpointService }))
-      .tap((endpointService) => {
-        this.toaster.alert(`Endpoint "${endpointService.getEndpoint().Name}" added`);
-      })
-      .catch(err => {
-        this.toaster.alert(
-          ['Problem creating new endpoint', err.toString()],
-          Toaster.ErrorDisplayTime);
-        return this.restore();
-      });
+    return [];
   }
 
   deleteEndpoint() {
@@ -108,25 +96,37 @@ class UI extends React.Component {
       });
   }
 
-  openEditor(endpointName) {
-    this.setState({
-      endpointService: this.state.endpointService.selectEndpoint(endpointName),
-    });
+  add() {
+    return this.state.endpointService.addNewEndpoint()
+      .tap(endpointService => this.setState({ endpointService }))
+      .tap((endpointService) => {
+        this.toaster.alert(`Endpoint "${endpointService.getEndpoint().Name}" added`);
+      })
+      .catch(err => {
+        this.toaster.alert(
+          ['Problem creating new endpoint', err.toString()],
+          Toaster.ErrorDisplayTime);
+        return this.restore();
+      });
   }
 
-  endpoints() {
-    if (this.state.endpointService) {
-      return this.state.endpointService.getEndpoints();
+  currentEndpointName() {
+    if (this.state) {
+      const currentEndpoint = this.state.endpointService.getEndpoint();
+      return currentEndpoint ? currentEndpoint.Name : '';
     }
-    return [];
+
+    return '';
   }
 
-  setToasterRef(ref) {
-    this.toaster = ref;
-  }
-
-  setCDCRef(ref) {
-    this.cdc = ref;
+  restore() {
+    return this.state.endpointService.init()
+      .tap(endpointService => this.setState({ endpointService }))
+      .catch(err => {
+        this.toaster.alert(
+          ['Problem getting MJ endpoints', err.toString()],
+          Toaster.ErrorDisplayTime);
+      });
   }
 
   renderCurrentEndpoint() {

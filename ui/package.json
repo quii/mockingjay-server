@@ -28,7 +28,7 @@
   "scripts": {
     "dev": "webpack -d --watch",
     "build": "npm run lint && webpack -p",
-    "lint": "eslint --ext .js --ext .jsx --cache --ignore-path .gitignore --fix src/*"
+    "lint": "eslint --ext .js --ext .jsx --cache --ignore-path .gitignore --fix src/client/app/*"
   },
   "author": "Chris James",
   "license": "ISC"
