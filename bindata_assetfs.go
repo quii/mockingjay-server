@@ -128,7 +128,7 @@ func publicJsBundleJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/js/bundle.js", size: 431486, mode: os.FileMode(436), modTime: time.Unix(1471790846, 0)}
+	info := bindataFileInfo{name: "public/js/bundle.js", size: 431486, mode: os.FileMode(436), modTime: time.Unix(1471884700, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -148,7 +148,7 @@ func publicJsBundleJsMap() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/js/bundle.js.map", size: 1865929, mode: os.FileMode(436), modTime: time.Unix(1471777805, 0)}
+	info := bindataFileInfo{name: "public/js/bundle.js.map", size: 1865929, mode: os.FileMode(436), modTime: time.Unix(1471884684, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

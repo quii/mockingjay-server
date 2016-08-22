@@ -101,14 +101,12 @@ func (r Request) AsHTTPRequest(baseURL string) (req *http.Request, err error) {
 // NewRequest creates a mockingjay request from a http request
 func NewRequest(httpRequest *http.Request) (req Request) {
 
-	//todo: Test me with the form stuff
-
 	req.URI = httpRequest.URL.String()
 	req.Method = httpRequest.Method
 
 	req.Headers = make(map[string]string)
 	for header, values := range httpRequest.Header {
-		req.Headers[header] = strings.Join(values, ",")
+		req.Headers[strings.ToLower(header)] = strings.Join(values, ",")
 	}
 
 	if httpRequest.Header.Get("content-type") == "application/x-www-form-urlencoded" {

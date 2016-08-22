@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 )
 
@@ -34,9 +36,29 @@ func TestItCreatesHTTPRequests(t *testing.T) {
 }
 
 func TestItMapsHTTPRequestsToMJRequests(t *testing.T) {
-	req, _ := http.NewRequest(http.MethodPost, "/foo", nil)
+	req, _ := http.NewRequest(http.MethodPost, "/foo", strings.NewReader("body"))
+	req.Header.Add("foo", "bar")
+
 	mjRequest := NewRequest(req)
+
 	assert.Equal(t, mjRequest.Method, http.MethodPost)
+	assert.Equal(t, mjRequest.Headers["foo"], "bar")
+	assert.Equal(t, mjRequest.Body, "body")
+}
+
+func TestItMapsHTTPRequestsWithFormsToMJRequests(t *testing.T) {
+	form := url.Values{}
+	form.Add("age", "10")
+	form.Add("name", "Hudson")
+	body := form.Encode()
+
+	req, _ := http.NewRequest(http.MethodPost, "/foo", strings.NewReader(body))
+	req.Header.Add("content-type", "application/x-www-form-urlencoded")
+
+	mjRequest := NewRequest(req)
+
+	assert.Equal(t, mjRequest.Form["age"], "10")
+	assert.Equal(t, mjRequest.Form["name"], "Hudson")
 }
 
 func TestItSendsForms(t *testing.T) {
