@@ -131,14 +131,34 @@ func NewRequest(httpRequest *http.Request) (req Request) {
 	return
 }
 
-const stringerFormat = "%s %s Form: %s Headers: %s"
-
 func (r Request) String() string {
-	return fmt.Sprintf(stringerFormat, r.Method, r.URI, r.Form, r.Headers)
+	base := fmt.Sprintf("%s %s", r.Method, r.URI)
+
+	if r.Headers != nil {
+		headersAsString := stringifyMap(r.Headers)
+		base = fmt.Sprintf("%s Headers: [%s]", base, headersAsString)
+	}
+
+	if r.Form != nil {
+		headersAsString := stringifyMap(r.Form)
+		base = fmt.Sprintf("%s Form: [%s]", base, headersAsString)
+	}
+
+	if len(r.Body) > 0 && len(r.Body) > 50 {
+		base = fmt.Sprintf("%s Body: [%s...]", base, r.Body[:50])
+	} else if len(r.Body) > 0 {
+		base = fmt.Sprintf("%s Body: [%s]", base, r.Body)
+	}
+
+	return base
 }
 
-func (r Request) hash() string {
-	return fmt.Sprintf("URI: %v | METHOD: %v | HEADERS: %v | BODY: %v", r.URI, r.Method, r.Headers, r.Body)
+func stringifyMap(m map[string]string) string {
+	var headerStrings []string
+	for k, v := range m {
+		headerStrings = append(headerStrings, fmt.Sprintf("%s->%s", k, v))
+	}
+	return strings.Join(headerStrings, ", ")
 }
 
 func requestMatches(expected, incoming Request, endpointName string, logger mjLogger) bool {

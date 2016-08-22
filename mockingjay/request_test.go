@@ -86,4 +86,61 @@ func TestItSendsForms(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	handler.ServeHTTP(rec, req)
+
+	//todo: ?? did i just stop bothering with the test here?
+}
+
+func TestItHasPrettyString(t *testing.T) {
+	mapOfThings := make(map[string]string)
+	mapOfThings["A"] = "B"
+
+	longBody := "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi interdum consectetur diam, sed rhoncus tortor dapibus eget. Mauris lacus metus, laoreet in nunc at, ullamcorper tincidunt turpis. Duis maximus cursus mi, a luctus eros posuere a. In laoreet neque sit amet metus vestibulum porta. Nulla quam eros, pretium at scelerisque et, mattis euismod est. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer id odio lorem."
+
+	tests := []struct {
+		Request        Request
+		ExpectedString string
+	}{
+		{
+			Request: Request{
+				URI:    "/hello-world",
+				Method: http.MethodGet,
+			},
+			ExpectedString: "GET /hello-world",
+		},
+		{
+			Request: Request{
+				URI:     "/hello-world",
+				Method:  http.MethodGet,
+				Headers: mapOfThings,
+			},
+			ExpectedString: "GET /hello-world Headers: [A->B]",
+		},
+		{
+			Request: Request{
+				URI:    "/hello-world",
+				Method: http.MethodGet,
+				Form:   mapOfThings,
+			},
+			ExpectedString: "GET /hello-world Form: [A->B]",
+		},
+		{
+			Request: Request{
+				URI:    "/hello-world",
+				Method: http.MethodGet,
+				Body:   longBody,
+			},
+			ExpectedString: "GET /hello-world Body: [Lorem ipsum dolor sit amet, consectetur adipiscing...]",
+		},
+		{
+			Request: Request{
+				URI:    "/hello-world",
+				Method: http.MethodGet,
+				Body:   "short stuff",
+			},
+			ExpectedString: "GET /hello-world Body: [short stuff]",
+		},
+	}
+	for _, test := range tests {
+		assert.Equal(t, test.ExpectedString, test.Request.String())
+	}
 }

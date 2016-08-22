@@ -18,7 +18,7 @@ type FakeEndpoint struct {
 const fakeEndpointStringerFormat = "%s (%s)"
 
 func (f *FakeEndpoint) String() string {
-	return fmt.Sprintf(fakeEndpointStringerFormat, f.Name, f.Request)
+	return fmt.Sprintf(fakeEndpointStringerFormat, f.Name, f.Request.String())
 }
 
 func (f FakeEndpoint) isValid() error {
@@ -75,7 +75,7 @@ func findDuplicates(endpoints []FakeEndpoint) []string {
 	requests := make(map[string]int)
 
 	for _, e := range endpoints {
-		requests[e.Request.hash()] = requests[e.Request.hash()] + 1
+		requests[e.Request.String()] = requests[e.Request.String()] + 1
 	}
 
 	var duplicates []string

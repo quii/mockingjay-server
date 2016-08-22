@@ -3,12 +3,12 @@ package mockingjay
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
-	"io/ioutil"
 )
 
 var (
