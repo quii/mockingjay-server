@@ -219,7 +219,6 @@ func (s *Server) createEndpoint(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-//todo: test me
 func (s *Server) curl(w http.ResponseWriter, endpointName string, baseURL string) {
 	if endpointName == "" || baseURL == "" {
 		http.Error(w, "Please provide both [name] and [baseURL] querystring parameters", http.StatusBadRequest)

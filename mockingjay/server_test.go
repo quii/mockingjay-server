@@ -224,7 +224,7 @@ func TestItCanCheckCompatability(t *testing.T) {
 	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
 	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff, ioutil.Discard)
 
-	t.Run("cdc failing", func(t *testing.T){
+	t.Run("cdc failing", func(t *testing.T) {
 		failingServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Not found", http.StatusNotFound)
 		}))
@@ -245,7 +245,7 @@ func TestItCanCheckCompatability(t *testing.T) {
 		assert.NotEmpty(t, result.Messages, "Should be some messages about failure")
 	})
 
-	t.Run("cdc passing", func(t *testing.T){
+	t.Run("cdc passing", func(t *testing.T) {
 		passingServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			t.Log("Got request", r.URL.RequestURI())
 			if r.URL.Path == endpoint.Request.URI {
@@ -273,7 +273,7 @@ func TestItCanCheckCompatability(t *testing.T) {
 	})
 }
 
-func TestItCanListRequestsReceived(t *testing.T){
+func TestItCanListRequestsReceived(t *testing.T) {
 	server := NewServer([]FakeEndpoint{}, debugModeOff, ioutil.Discard)
 	reqGet, _ := http.NewRequest(http.MethodGet, "/foo", nil)
 	reqPost, _ := http.NewRequest(http.MethodPost, "/bar", nil)
@@ -297,9 +297,62 @@ func TestItCanListRequestsReceived(t *testing.T){
 
 	err := json.Unmarshal(listRecorder.Body.Bytes(), &requests)
 
-	if err != nil{
+	if err != nil {
 		t.Fatal("Couldn't unmarshal list requests body", listRecorder.Body.String())
 	}
 
 	assert.Len(t, requests, 3, listRecorder.Body.String())
+}
+
+func TestItCanMakeCurls(t *testing.T) {
+	mjReq := Request{URI: "/hello-world", Method: "GET", Form: nil}
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
+	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff, ioutil.Discard)
+
+	t.Run("valid request", func(t *testing.T) {
+		url := curlMJURL + "?name=" + endpoint.Name + "&baseURL=http://google.com"
+		curlReq, _ := http.NewRequest(http.MethodGet, url, nil)
+
+		rec := httptest.NewRecorder()
+
+		server.ServeHTTP(rec, curlReq)
+
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "curl -X GET -d  'http://google.com/hello-world'", rec.Body.String())
+	})
+
+	t.Run("mj endpoint doesnt exist", func(t *testing.T) {
+		url := curlMJURL + "?name=doesntExist&baseURL=http://google.com"
+		curlReq, _ := http.NewRequest(http.MethodGet, url, nil)
+
+		rec := httptest.NewRecorder()
+
+		server.ServeHTTP(rec, curlReq)
+
+		assert.Equal(t, http.StatusNotFound, rec.Code)
+	})
+
+	t.Run("missing name querystring", func(t *testing.T) {
+		url := curlMJURL + "?nombre=" + endpoint.Name + "&baseURL=http://google.com"
+
+		curlReq, _ := http.NewRequest(http.MethodGet, url, nil)
+
+		rec := httptest.NewRecorder()
+
+		server.ServeHTTP(rec, curlReq)
+
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
+	})
+
+	t.Run("missing baseURL querystring", func(t *testing.T) {
+		url := curlMJURL + "?name=" + endpoint.Name + "&aceUrl=http://google.com"
+
+		curlReq, _ := http.NewRequest(http.MethodGet, url, nil)
+
+		rec := httptest.NewRecorder()
+
+		server.ServeHTTP(rec, curlReq)
+
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
+	})
 }

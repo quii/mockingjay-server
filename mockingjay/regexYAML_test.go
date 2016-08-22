@@ -22,7 +22,7 @@ func TestItCanUnmarshalRegex(t *testing.T) {
 	assert.NotNil(t, d.Regex)
 }
 
-func TestItReturnsErrorFoorInvalidRegex(t *testing.T){
+func TestItReturnsErrorFoorInvalidRegex(t *testing.T) {
 	rawYAML := `regex: "//!"!"£11\\/la%%\\/[a-z]+"`
 
 	var d testRegexDataType
