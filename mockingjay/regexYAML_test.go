@@ -21,3 +21,12 @@ func TestItCanUnmarshalRegex(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, d.Regex)
 }
+
+func TestItReturnsErrorFoorInvalidRegex(t *testing.T){
+	rawYAML := `regex: "//!"!"£11\\/la%%\\/[a-z]+"`
+
+	var d testRegexDataType
+	err := yaml.Unmarshal([]byte(rawYAML), &d)
+
+	assert.Error(t, err)
+}
