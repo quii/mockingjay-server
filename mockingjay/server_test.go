@@ -150,7 +150,7 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 	assert.Equal(t, server.requests[0].Method, "POST")
 }
 
-func TestItReturnsListOfEndpointsAndUpdates(t *testing.T) {
+func TestMJEndpoints(t *testing.T) {
 
 	var newConfigBuffer bytes.Buffer
 
@@ -158,40 +158,64 @@ func TestItReturnsListOfEndpointsAndUpdates(t *testing.T) {
 	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
 	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff, &newConfigBuffer)
 
-	request, _ := http.NewRequest("GET", endpointsURL, nil)
-	responseReader := httptest.NewRecorder()
+	t.Run("get endpoints", func(t *testing.T) {
+		request, _ := http.NewRequest("GET", endpointsURL, nil)
+		responseReader := httptest.NewRecorder()
 
-	server.ServeHTTP(responseReader, request)
+		server.ServeHTTP(responseReader, request)
 
-	assert.Equal(t, responseReader.Code, http.StatusOK)
-	assert.Equal(t, responseReader.HeaderMap["Content-Type"][0], "application/json")
+		assert.Equal(t, responseReader.Code, http.StatusOK)
+		assert.Equal(t, responseReader.HeaderMap["Content-Type"][0], "application/json")
 
-	var endpointResponse []FakeEndpoint
-	err := json.Unmarshal(responseReader.Body.Bytes(), &endpointResponse)
+		var endpointResponse []FakeEndpoint
+		err := json.Unmarshal(responseReader.Body.Bytes(), &endpointResponse)
 
-	assert.Nil(t, err)
-	assert.Equal(t, endpointResponse[0], endpoint, "The endpoint returned doesnt match what the server was set up with")
+		assert.Nil(t, err)
+		assert.Equal(t, endpointResponse[0], endpoint, "The endpoint returned doesnt match what the server was set up with")
 
-	//todo: euuugh so bad
-	endpoint.Request.Method = http.MethodPost
-	anotherEndpoint := FakeEndpoint{"foobar", cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
-	editedEndpoints := []FakeEndpoint{endpoint, anotherEndpoint}
-	editedBody, _ := json.Marshal(editedEndpoints)
-	updateRequest, _ := http.NewRequest(http.MethodPut, endpointsURL, bytes.NewReader(editedBody))
-	updateResponseReader := httptest.NewRecorder()
+	})
 
-	server.ServeHTTP(updateResponseReader, updateRequest)
+	t.Run("update endpoints", func(t *testing.T) {
+		newEndpointName := testEndpointName + "changed"
+		updatedEndpoint := FakeEndpoint{newEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
 
-	assert.Equal(t, http.StatusOK, updateResponseReader.Code, "Didnt work!", updateResponseReader.Body.String())
-	assert.Equal(t, updateResponseReader.HeaderMap["Content-Type"][0], "application/json")
+		editedBody, _ := json.Marshal([]FakeEndpoint{updatedEndpoint})
+		updateRequest, _ := http.NewRequest(http.MethodPut, endpointsURL, bytes.NewReader(editedBody))
+		updateResponseReader := httptest.NewRecorder()
 
-	var updatedEndpoints []FakeEndpoint
+		server.ServeHTTP(updateResponseReader, updateRequest)
 
-	err = yaml.Unmarshal(newConfigBuffer.Bytes(), &updatedEndpoints)
+		assert.Equal(t, http.StatusOK, updateResponseReader.Code, "Didnt work!", updateResponseReader.Body.String())
+		assert.Equal(t, updateResponseReader.HeaderMap["Content-Type"][0], "application/json")
 
-	assert.NoError(t, err)
-	assert.Equal(t, updatedEndpoints, server.Endpoints) //todo: fix me!
-	assert.Len(t, server.Endpoints, 2)
+		var updatedEndpoints []FakeEndpoint
+
+		err := yaml.Unmarshal(newConfigBuffer.Bytes(), &updatedEndpoints)
+
+		assert.NoError(t, err)
+		assert.Equal(t, updatedEndpoints, server.Endpoints)
+		assert.Equal(t, newEndpointName, server.Endpoints[0].Name)
+	})
+
+	t.Run("rejects bad updates", func(t *testing.T) {
+		badUpdate := `{"bad": "config"}`
+		updateRequest, _ := http.NewRequest(http.MethodPut, endpointsURL, strings.NewReader(badUpdate))
+		updateResponseReader := httptest.NewRecorder()
+
+		server.ServeHTTP(updateResponseReader, updateRequest)
+
+		assert.Equal(t, http.StatusBadRequest, updateResponseReader.Code, updateResponseReader.Body.String())
+	})
+
+	t.Run("rejects bad JSON", func(t *testing.T) {
+		notJSON := `not json`
+		updateRequest, _ := http.NewRequest(http.MethodPut, endpointsURL, strings.NewReader(notJSON))
+		updateResponseReader := httptest.NewRecorder()
+
+		server.ServeHTTP(updateResponseReader, updateRequest)
+
+		assert.Equal(t, http.StatusBadRequest, updateResponseReader.Code, updateResponseReader.Body.String())
+	})
 }
 
 //todo: Refactor to use nice new nested test thing from 1.7?

@@ -110,7 +110,6 @@ func (s *Server) getResponse(r Request) *response {
 	return newNotFound(r, s.Endpoints)
 }
 
-//todo: sad path tests
 func (s *Server) handleEndpoints(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPut {
