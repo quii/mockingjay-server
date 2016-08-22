@@ -70,7 +70,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case newEndpointURL:
 		s.createEndpoint(w, r)
 	case requestsURL:
-		s.listAvailableRequests(w)
+		s.listRequestsMade(w)
 	case checkcompatabilityURL:
 		s.checkCompatability(r.URL.Query().Get("url"), w)
 	case curlMJURL:
@@ -87,7 +87,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) listAvailableRequests(w http.ResponseWriter) {
+func (s *Server) listRequestsMade(w http.ResponseWriter) {
 	payload, err := json.Marshal(s.requests)
 
 	if err != nil {

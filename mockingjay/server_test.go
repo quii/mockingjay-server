@@ -271,5 +271,35 @@ func TestItCanCheckCompatability(t *testing.T) {
 		assert.True(t, result.Passed, "Compatability check should be passing on compat server")
 
 	})
+}
 
+func TestItCanListRequestsReceived(t *testing.T){
+	server := NewServer([]FakeEndpoint{}, debugModeOff, ioutil.Discard)
+	reqGet, _ := http.NewRequest(http.MethodGet, "/foo", nil)
+	reqPost, _ := http.NewRequest(http.MethodPost, "/bar", nil)
+	reqPut, _ := http.NewRequest(http.MethodPut, "/fizz", nil)
+
+	rec := httptest.NewRecorder()
+
+	server.ServeHTTP(rec, reqGet)
+	server.ServeHTTP(rec, reqPost)
+	server.ServeHTTP(rec, reqPut)
+
+	listRequestsReq, _ := http.NewRequest(http.MethodGet, requestsURL, nil)
+
+	listRecorder := httptest.NewRecorder()
+
+	server.ServeHTTP(listRecorder, listRequestsReq)
+
+	assert.Equal(t, http.StatusOK, listRecorder.Code)
+
+	var requests []Request
+
+	err := json.Unmarshal(listRecorder.Body.Bytes(), &requests)
+
+	if err != nil{
+		t.Fatal("Couldn't unmarshal list requests body", listRecorder.Body.String())
+	}
+
+	assert.Len(t, requests, 3, listRecorder.Body.String())
 }
