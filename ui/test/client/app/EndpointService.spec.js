@@ -1,17 +1,18 @@
-import { expect } from 'chai';
+import {expect} from 'chai';
 import _ from 'lodash';
 import Promise from 'bluebird';
 import sinon from 'sinon';
 
-import EndpointService from '../../../src/client/app/EndpointService'
+import EndpointService from '../../../src/client/app/EndpointService';
 
 const api = {
-  getEndpoints: () => {},
-  updateEndpoints: () => {},
+  getEndpoints: () => {
+  },
+  updateEndpoints: () => {
+  },
 };
 
 describe('Endpoint serverice', () => {
-
   let sandbox;
 
   beforeEach(() => {
@@ -24,17 +25,16 @@ describe('Endpoint serverice', () => {
 
 
   it('gets endpoints and then you can select them', () => {
-
     const service = new EndpointService(api);
 
     const someEndpoints = [
       {
-        Name: "123",
-        Value: "cat"
+        Name: '123',
+        Value: 'cat',
       },
       {
-        Name: "456",
-        Value: "dog"
+        Name: '456',
+        Value: 'dog',
       },
     ];
 
@@ -42,28 +42,27 @@ describe('Endpoint serverice', () => {
 
     return service.init()
       .then(() => expect(api.getEndpoints.calledOnce).to.be.true)
-      .then(() => service.selectEndpoint("123"))
+      .then(() => service.selectEndpoint('123'))
       .then(() => service.getEndpoint())
-      .then(endpoint => expect(endpoint.Value).to.equal("cat"))
-
+      .then(endpoint => expect(endpoint.Value).to.equal('cat'));
   });
 
   it('adding a new endpoint stores it and sets it as the current endpoint', () => {
-
-    const newEndpoint = { Name: "789", Value: "sheep" };
+    const newEndpoint = { Name: '789', Value: 'sheep' };
 
     const someEndpoints = [
       {
-        Name: "123",
-        Value: "cat"
+        Name: '123',
+        Value: 'cat',
       },
       {
-        Name: "456",
-        Value: "dog"
+        Name: '456',
+        Value: 'dog',
       },
     ];
 
-    const service = new EndpointService(api, () => newEndpoint);
+    const newEndpointCreator = () => newEndpoint;
+    const service = new EndpointService(api, newEndpointCreator);
 
     const mergedEndpoints = _.concat([newEndpoint], someEndpoints);
 
@@ -72,11 +71,41 @@ describe('Endpoint serverice', () => {
 
 
     return service.init()
-      .then(() => service.selectEndpoint("123"))
+      .then(() => service.selectEndpoint('123'))
       .then(() => service.addNewEndpoint())
       .then(() => expect(api.updateEndpoints.calledWith(JSON.stringify(mergedEndpoints))).to.be.true)
       .then(() => expect(service.endpoints).to.have.lengthOf(3))
       .then(() => service.getEndpoint())
-      .then(endpoint => expect(endpoint).to.eql(newEndpoint))
-  })
-})
+      .then(endpoint => expect(endpoint).to.eql(newEndpoint));
+  });
+
+  it('sets currently selected to null when deleting', () => {
+
+    const someEndpoints = [
+      {
+        Name: '123',
+        Value: 'cat',
+      },
+      {
+        Name: '456',
+        Value: 'dog',
+      },
+    ];
+
+    const service = new EndpointService(api);
+
+    const deletedEndpoints = [someEndpoints[0]];
+
+    sandbox.stub(api, 'getEndpoints').returns(Promise.resolve(someEndpoints));
+    sandbox.stub(api, 'updateEndpoints').returns(Promise.resolve(deletedEndpoints));
+
+
+    return service.init()
+      .then(() => service.selectEndpoint("456"))
+      .then(() => service.deleteEndpoint())
+      .then(() => expect(api.updateEndpoints.calledWith(JSON.stringify(deletedEndpoints))).to.be.true)
+      .then(() => expect(service.endpoints).to.have.lengthOf(1))
+      .then(() => service.getEndpoint())
+      .then(endpoint => expect(endpoint).to.be.an('undefined'));
+  });
+});
