@@ -29,7 +29,7 @@
   "scripts": {
     "dev": "webpack -d --watch",
     "test": "mocha --compilers js:babel-core/register --recursive ./test/**/*.spec.js",
-    "build": "npm run lint && webpack -p",
+    "build": "npm run lint && npm test && webpack -p",
     "lint": "eslint --ext .js --ext .jsx --cache --ignore-path .gitignore --fix src/client/app/*"
   },
   "author": "Chris James",
