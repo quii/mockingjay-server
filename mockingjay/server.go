@@ -161,7 +161,7 @@ func (s *Server) writeUpdatedConfig() error {
 		return err
 	}
 
-	fmt.Fprint(s.newConfigStateWriter, string(newYAML))
+	fmt.Fprint(s.newConfigStateWriter, string(addNewLinesToConfig(newYAML)))
 
 	return nil
 }
