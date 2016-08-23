@@ -2,10 +2,11 @@ import _ from 'lodash';
 import { guid } from './util';
 
 class EndpointService {
-  constructor(api) {
+  constructor(api, createNewEndpoint) {
     this.endpoints = [];
     this.selectedEndpointIndex = null;
     this.api = api;
+    this.createNewEndpoint = createNewEndpoint;
 
     this.selectEndpoint = this.selectEndpoint.bind(this);
     this.getEndpoint = this.getEndpoint.bind(this);
@@ -48,7 +49,7 @@ class EndpointService {
   }
 
   addNewEndpoint() {
-    const newEndpoint = {
+    const newEndpoint = this.createNewEndpoint() || {
       Name: guid(),
       CDCDisabled: false,
       Request: {
@@ -63,7 +64,6 @@ class EndpointService {
 
     this.endpoints.unshift(newEndpoint);
     this.selectedEndpointIndex = 0;
-
     return this.sendUpdateToServer();
   }
 
