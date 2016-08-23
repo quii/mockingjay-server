@@ -247,7 +247,6 @@ func TestItCanCheckCompatability(t *testing.T) {
 
 	t.Run("cdc passing", func(t *testing.T) {
 		passingServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			t.Log("Got request", r.URL.RequestURI())
 			if r.URL.Path == endpoint.Request.URI {
 				w.WriteHeader(endpoint.Response.Code)
 				w.Write([]byte(endpoint.Response.Body))

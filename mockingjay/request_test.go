@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"fmt"
 )
 
 func TestItCreatesHTTPRequests(t *testing.T) {
@@ -70,9 +71,12 @@ func TestItSendsForms(t *testing.T) {
 
 	mjReq.Form["name"] = "Hudson"
 
+	expectedBody := "Hi Hudson"
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
-		if r.PostForm.Get("name") != "Hudson" {
+		if r.PostForm.Get("name") == "Hudson" {
+			fmt.Fprint(w, expectedBody)
+		}else{
 			t.Error("Did not get expected form value from request", r.PostForm)
 		}
 	})
@@ -87,7 +91,8 @@ func TestItSendsForms(t *testing.T) {
 
 	handler.ServeHTTP(rec, req)
 
-	//todo: ?? did i just stop bothering with the test here?
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Equal(t, expectedBody, rec.Body.String())
 }
 
 func TestItHasPrettyString(t *testing.T) {

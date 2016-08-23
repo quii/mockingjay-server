@@ -19,7 +19,6 @@ func TestCompatabilityWithWildcards(t *testing.T) {
 
 	app := defaultApplication(log.New(ioutil.Discard, "", log.Ldate|log.Ltime), 1)
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		t.Log("Got request", r.URL)
 		if r.URL.String() == "/hello" {
 			fmt.Fprint(w, "world")
 		} else {
