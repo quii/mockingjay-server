@@ -48738,7 +48738,7 @@
 	  }, {
 	    key: 'addNewEndpoint',
 	    value: function addNewEndpoint() {
-	      var newEndpoint = this.createNewEndpoint() || {
+	      var newEndpoint = this.createNewEndpoint ? this.createNewEndpoint() : {
 	        Name: (0, _util.guid)(),
 	        CDCDisabled: false,
 	        Request: {

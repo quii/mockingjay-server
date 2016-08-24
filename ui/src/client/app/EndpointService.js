@@ -49,7 +49,7 @@ class EndpointService {
   }
 
   addNewEndpoint() {
-    const newEndpoint = this.createNewEndpoint() || {
+    const newEndpoint = this.createNewEndpoint ? this.createNewEndpoint() : {
       Name: guid(),
       CDCDisabled: false,
       Request: {

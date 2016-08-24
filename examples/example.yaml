@@ -1,4 +1,13 @@
 
+- name: 8255-cc96-e841-e239
+  cdcdisabled: false
+  request:
+    uri: /hello
+    method: GET
+  response:
+    code: 200
+    body: World!
+
 - name: Test endpoint
   cdcdisabled: false
   request:
