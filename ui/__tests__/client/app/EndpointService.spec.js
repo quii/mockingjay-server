@@ -1,9 +1,12 @@
-import {expect} from 'chai';
+jest.unmock('lodash');
+jest.unmock('bluebird');
+jest.unmock('sinon');
+jest.unmock('../../../src/client/app/EndpointService');
+
+import EndpointService from '../../../src/client/app/EndpointService';
 import _ from 'lodash';
 import Promise from 'bluebird';
 import sinon from 'sinon';
-
-import EndpointService from '../../../src/client/app/EndpointService';
 
 const api = {
   getEndpoints: () => {
@@ -41,10 +44,10 @@ describe('Endpoint serverice', () => {
     sandbox.stub(api, 'getEndpoints').returns(Promise.resolve(someEndpoints));
 
     return service.init()
-      .then(() => expect(api.getEndpoints.calledOnce).to.be.true)
+      .then(() => expect(api.getEndpoints.calledOnce).toBe(true))
       .then(() => service.selectEndpoint('123'))
       .then(() => service.getEndpoint())
-      .then(endpoint => expect(endpoint.Value).to.equal('cat'));
+      .then(endpoint => expect(endpoint.Value).toBe('cat'));
   });
 
   it('adding a new endpoint stores it and sets it as the current endpoint', () => {
@@ -73,10 +76,10 @@ describe('Endpoint serverice', () => {
     return service.init()
       .then(() => service.selectEndpoint('123'))
       .then(() => service.addNewEndpoint())
-      .then(() => expect(api.updateEndpoints.calledWith(JSON.stringify(mergedEndpoints))).to.be.true)
-      .then(() => expect(service.endpoints).to.have.lengthOf(3))
+      .then(() => expect(api.updateEndpoints.calledWith(JSON.stringify(mergedEndpoints))).toBe(true))
+      .then(() => expect(service.endpoints.length).toBe(3))
       .then(() => service.getEndpoint())
-      .then(endpoint => expect(endpoint).to.eql(newEndpoint));
+      .then(endpoint => expect(endpoint).toBe(newEndpoint));
   });
 
   it('sets currently selected to null when deleting', () => {
@@ -103,9 +106,9 @@ describe('Endpoint serverice', () => {
     return service.init()
       .then(() => service.selectEndpoint("456"))
       .then(() => service.deleteEndpoint())
-      .then(() => expect(api.updateEndpoints.calledWith(JSON.stringify(endpointsWithItemDeleted))).to.be.true)
-      .then(() => expect(service.endpoints).to.have.lengthOf(1))
+      .then(() => expect(api.updateEndpoints.calledWith(JSON.stringify(endpointsWithItemDeleted))).toBe(true))
+      .then(() => expect(service.endpoints.length).toBe(1))
       .then(() => service.getEndpoint())
-      .then(endpoint => expect(endpoint).to.be.an('undefined'));
+      .then(endpoint => expect(endpoint).toBe(undefined));
   });
 });

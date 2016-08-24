@@ -19,18 +19,19 @@
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
-    "chai": "^3.5.0",
+    "babel-jest": "^14.1.0",
+    "babel-polyfill": "^6.13.0",
     "eslint": "^3.3.1",
     "eslint-config-airbnb": "^10.0.1",
     "eslint-plugin-import": "^1.13.0",
     "eslint-plugin-jsx-a11y": "^2.1.0",
     "eslint-plugin-react": "^6.1.2",
-    "mocha": "^3.0.2",
+    "jest-cli": "^14.1.0",
     "sinon": "^1.17.5"
   },
   "scripts": {
     "dev": "webpack -d --watch",
-    "test": "mocha --compilers js:babel-core/register --recursive ./test/**/*.spec.js",
+    "test": "jest",
     "build": "npm run lint && npm test && webpack -p",
     "lint": "eslint --ext .js --ext .jsx --cache --ignore-path .gitignore --fix src/client/app/*"
   },
