@@ -94,16 +94,16 @@ describe('Endpoint serverice', () => {
 
     const service = new EndpointService(api);
 
-    const deletedEndpoints = [someEndpoints[0]];
+    const endpointsWithItemDeleted = [someEndpoints[0]];
 
     sandbox.stub(api, 'getEndpoints').returns(Promise.resolve(someEndpoints));
-    sandbox.stub(api, 'updateEndpoints').returns(Promise.resolve(deletedEndpoints));
+    sandbox.stub(api, 'updateEndpoints').returns(Promise.resolve(endpointsWithItemDeleted));
 
 
     return service.init()
       .then(() => service.selectEndpoint("456"))
       .then(() => service.deleteEndpoint())
-      .then(() => expect(api.updateEndpoints.calledWith(JSON.stringify(deletedEndpoints))).to.be.true)
+      .then(() => expect(api.updateEndpoints.calledWith(JSON.stringify(endpointsWithItemDeleted))).to.be.true)
       .then(() => expect(service.endpoints).to.have.lengthOf(1))
       .then(() => service.getEndpoint())
       .then(endpoint => expect(endpoint).to.be.an('undefined'));
