@@ -27,7 +27,6 @@
     "eslint-plugin-jsx-a11y": "^2.1.0",
     "eslint-plugin-react": "^6.1.2",
     "jest-cli": "^14.1.0",
-    "sinon": "^1.17.5"
   },
   "scripts": {
     "dev": "webpack -d --watch",
