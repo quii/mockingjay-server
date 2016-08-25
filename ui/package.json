@@ -33,6 +33,7 @@
       "<rootDir>/node_modules/react-dom/",
       "<rootDir>/node_modules/react-test-renderer/",
       "<rootDir>/node_modules/react-addons-test-utils/",
+      "<rootDir>/node_modules/react-shallow-render/",
       "<rootDir>/node_modules/bluebird/",
       "<rootDir>/node_modules/lodash/"
     ]

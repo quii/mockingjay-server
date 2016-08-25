@@ -6,19 +6,18 @@ import ReactDOM from 'react-dom';
 import TestUtils from 'react-addons-test-utils';
 
 describe('Method switcher', () => {
+
+  let onChange, component, renderedDOM;
+
+  beforeEach(() => {
+    onChange = jest.fn();
+    component = TestUtils.renderIntoDocument(<MethodSwitcher selected="POST" onChange={onChange} />);
+  });
+
   it('changes the highlight as users click', () => {
 
-    const onChange = jest.fn();
-
-    const methodSwitcher = TestUtils.renderIntoDocument(
-      <MethodSwitcher selected="POST" onChange={onChange} />
-    );
-
-    const methodSwitcherNode = ReactDOM.findDOMNode(methodSwitcher);
-
-    console.log('method switcher node', methodSwitcherNode);
-
-    expect(1).toEqual(1);
-
+    let renderedButtons = TestUtils.scryRenderedDOMComponentsWithTag(component, "button");
+    expect(renderedButtons.length).toEqual(MethodSwitcher.methods.length);
+    
   });
 });

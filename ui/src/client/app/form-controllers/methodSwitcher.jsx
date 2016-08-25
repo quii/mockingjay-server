@@ -3,7 +3,6 @@ import { rand } from '../util';
 
 const selectedCSS = 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent';
 const notSelectedCSS = 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored';
-const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
 
 class MethodSwitcher extends React.Component {
 
@@ -35,7 +34,7 @@ class MethodSwitcher extends React.Component {
   }
 
   render() {
-    const buttons = methods.map(m => this.createButton(m, this.props.selected));
+    const buttons = MethodSwitcher.methods.map(m => this.createButton(m, this.props.selected));
     return <div className="method-switcher">{buttons}</div>;
   }
 }
@@ -44,5 +43,7 @@ MethodSwitcher.propTypes = {
   onChange: React.PropTypes.func.isRequired,
   selected: React.PropTypes.string.isRequired,
 };
+
+MethodSwitcher.methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
 
 export default MethodSwitcher;
