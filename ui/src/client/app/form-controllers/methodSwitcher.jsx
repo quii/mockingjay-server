@@ -1,9 +1,6 @@
 import React from 'react';
 import { rand } from '../util';
 
-const selectedCSS = 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent';
-const notSelectedCSS = 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored';
-
 class MethodSwitcher extends React.Component {
 
   constructor(props) {
@@ -23,7 +20,7 @@ class MethodSwitcher extends React.Component {
   }
 
   createButton(methodName, selectedMethod) {
-    const clz = methodName === selectedMethod ? selectedCSS : notSelectedCSS;
+    const clz = methodName === selectedMethod ? MethodSwitcher.selectedCSS : MethodSwitcher.notSelectedCSS;
     return (
       <button
         key={rand()}
@@ -45,5 +42,7 @@ MethodSwitcher.propTypes = {
 };
 
 MethodSwitcher.methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
+MethodSwitcher.selectedCSS = 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent';
+MethodSwitcher.notSelectedCSS = 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored';
 
 export default MethodSwitcher;
