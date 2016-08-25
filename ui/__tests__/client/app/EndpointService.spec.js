@@ -1,5 +1,3 @@
-jest.unmock('lodash');
-jest.unmock('bluebird');
 jest.unmock('../../../src/client/app/EndpointService');
 
 import EndpointService from '../../../src/client/app/EndpointService';

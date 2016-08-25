@@ -27,6 +27,16 @@
     "react-addons-test-utils": "^15.3.1",
     "webpack": "^1.13.1"
   },
+  "jest": {
+    "unmockedModulePathPatterns": [
+      "<rootDir>/node_modules/react/",
+      "<rootDir>/node_modules/react-dom/",
+      "<rootDir>/node_modules/react-test-renderer/",
+      "<rootDir>/node_modules/react-addons-test-utils/",
+      "<rootDir>/node_modules/bluebird/",
+      "<rootDir>/node_modules/lodash/"
+    ]
+  },
   "scripts": {
     "dev": "webpack -d --watch",
     "test": "jest",

@@ -1,7 +1,4 @@
 jest.unmock('../../../../src/client/app/form-controllers/methodSwitcher.jsx');
-jest.unmock('react');
-jest.unmock('react-dom');
-jest.unmock('react-addons-test-utils');
 import MethodSwitcher from '../../../../src/client/app/form-controllers/methodSwitcher.jsx';
 
 import React from 'react';
