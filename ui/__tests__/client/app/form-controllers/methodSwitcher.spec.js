@@ -7,7 +7,7 @@ import TestUtils from 'react-addons-test-utils';
 
 describe('Method switcher', () => {
 
-    it('changes the highlights the selected method', () => {
+    it('highlights selected method and sends correct data on clicks', () => {
 
         const initiallySelectedMethod = "POST";
         const onChange = jest.fn();
