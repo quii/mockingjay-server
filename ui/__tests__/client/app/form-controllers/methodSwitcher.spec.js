@@ -16,8 +16,12 @@ describe('Method switcher', () => {
 
   it('changes the highlight as users click', () => {
 
-    let renderedButtons = TestUtils.scryRenderedDOMComponentsWithTag(component, "button");
-    expect(renderedButtons.length).toEqual(MethodSwitcher.methods.length);
-    
+    const renderedButtons = TestUtils.scryRenderedDOMComponentsWithTag(component, "button");
+    const buttonNames = renderedButtons.map(b => b.textContent);
+
+    console.log(buttonNames);
+
+    expect(buttonNames).toEqual(MethodSwitcher.methods);
+
   });
 });
