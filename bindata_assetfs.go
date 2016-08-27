@@ -88,7 +88,7 @@ func publicCssMockingMlCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/css/mocking-ml.css", size: 172549, mode: os.FileMode(436), modTime: time.Unix(1471369551, 0)}
+	info := bindataFileInfo{name: "public/css/mocking-ml.css", size: 172549, mode: os.FileMode(436), modTime: time.Unix(1472294175, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -108,7 +108,7 @@ func publicIndexHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/index.html", size: 2955, mode: os.FileMode(436), modTime: time.Unix(1471777024, 0)}
+	info := bindataFileInfo{name: "public/index.html", size: 2955, mode: os.FileMode(436), modTime: time.Unix(1472294175, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -128,7 +128,7 @@ func publicJsBundleJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/js/bundle.js", size: 1646632, mode: os.FileMode(436), modTime: time.Unix(1472066137, 0)}
+	info := bindataFileInfo{name: "public/js/bundle.js", size: 1646632, mode: os.FileMode(436), modTime: time.Unix(1472294175, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -148,7 +148,7 @@ func publicJsBundleJsMap() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/js/bundle.js.map", size: 1864318, mode: os.FileMode(436), modTime: time.Unix(1472066137, 0)}
+	info := bindataFileInfo{name: "public/js/bundle.js.map", size: 1864318, mode: os.FileMode(436), modTime: time.Unix(1472294175, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -168,7 +168,7 @@ func publicJsMaterialMinJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/js/material.min.js", size: 67820, mode: os.FileMode(420), modTime: time.Unix(1471596122, 0)}
+	info := bindataFileInfo{name: "public/js/material.min.js", size: 67820, mode: os.FileMode(436), modTime: time.Unix(1472294175, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
