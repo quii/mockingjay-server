@@ -12,7 +12,8 @@ import (
 )
 
 var (
-	checker = NewCompatabilityChecker(log.New(ioutil.Discard, "mocking-jay: ", log.Ldate|log.Ltime), DefaultHTTPTimeoutSeconds)
+	noopLogger = log.New(ioutil.Discard, "mocking-jay: ", log.Ldate|log.Ltime)
+	checker    = NewCompatabilityChecker(noopLogger, DefaultHTTPTimeoutSeconds)
 )
 
 func TestItIgnoresEndpointsNotSetToCDC(t *testing.T) {
@@ -161,13 +162,6 @@ func TestItIsIncompatibleWhenRealServerIsntReachable(t *testing.T) {
 	endpoints := makeEndpoints(body)
 
 	assert.False(t, checker.CheckCompatibility(endpoints, "http://localhost:12344"))
-}
-
-func TestItHandlesBadURLsInConfig(t *testing.T) {
-	yaml := fmt.Sprintf(yamlFormat, "not a real url", "foobar")
-	fakeEndPoints, _ := NewFakeEndpoints([]byte(yaml))
-
-	assert.False(t, checker.CheckCompatibility(fakeEndPoints, "also not a real url"))
 }
 
 func TestItFailsWhenExpectedJSONButGotSomethingElse(t *testing.T) {

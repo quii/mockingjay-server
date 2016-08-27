@@ -27,6 +27,7 @@ type Request struct {
 var (
 	errBadRegex    = errors.New("A regex defined in the request does not pass against it's defined URI")
 	errEmptyURI    = errors.New("Cannot have an empty URI")
+	errBadURI      = errors.New("URI should start with a slash")
 	errEmptyMethod = errors.New("Cannot have an empty HTTP method")
 	errBadHeaders  = errors.New("Headers are bad (no spaces please, each key must have a value")
 	errBodyAndForm = errors.New("Cannot have a request with both a body and a form defined")
@@ -40,6 +41,10 @@ func (r Request) errors() error {
 
 	if r.URI == "" {
 		return errEmptyURI
+	}
+
+	if r.URI[0] != '/' {
+		return errBadURI
 	}
 
 	if r.Method == "" {

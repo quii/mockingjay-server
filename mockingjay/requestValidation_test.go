@@ -27,6 +27,14 @@ func TestItValidatesRequests(t *testing.T) {
 			ExpectedError: errEmptyURI,
 		},
 		{
+			Description: "URIs not starting with slash are not valid",
+			Request: Request{
+				URI:    "hello",
+				Method: "POST",
+			},
+			ExpectedError: errBadURI,
+		},
+		{
 			Description: "Empty methods are not valid",
 			Request: Request{
 				URI:    "/",

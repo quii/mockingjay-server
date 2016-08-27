@@ -1,6 +1,7 @@
 package mockingjay
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http"
@@ -8,7 +9,6 @@ import (
 	"net/url"
 	"strings"
 	"testing"
-	"fmt"
 )
 
 func TestItCreatesHTTPRequests(t *testing.T) {
@@ -76,7 +76,7 @@ func TestItSendsForms(t *testing.T) {
 		r.ParseForm()
 		if r.PostForm.Get("name") == "Hudson" {
 			fmt.Fprint(w, expectedBody)
-		}else{
+		} else {
 			t.Error("Did not get expected form value from request", r.PostForm)
 		}
 	})
