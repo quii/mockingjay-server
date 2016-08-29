@@ -2,116 +2,11 @@
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="css/mocking-ml.css">
+    <link rel="stylesheet" href="css/alterations.css">
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
     <script defer src="js/material.min.js" async="true"></script>
     <meta charset="utf-8">
     <title>Mockingjay server</title>
-    <style>
-        .mdl-layout__drawer{
-            width:300px;
-        }
-        .mdl-layout--fixed-drawer > .mdl-layout__content{
-            margin-left:300px;
-        }
-        .mdl-textfield{
-            width:96%;
-        }
-        .mdl-textfield__input{
-            font-family: Courier;
-        }
-        .mdl-textfield__input, .mdl-textfield__label, .list-editor label, .method-switcher, .mdl-textfield__error, .mdl-checkbox{
-            margin-left:15px;
-        }
-        .is-active{
-            font-weight:bold;
-        }
-        .material-icons{
-            line-height: 1.25;
-        }
-        .mdl-card{
-            width:auto;
-            margin:3%;
-            padding:1%;
-            min-height:0;
-        }
-        code{
-            font-size:1.5em;
-        }
-        .hint code{
-            font-size:1em;
-        }
-        pre{
-            font-size:1.4em;
-            line-height: 1.3em;
-            margin:0;
-        }
-        .material-icons.md-18 { font-size: 18px; }
-        .material-icons.md-24 { font-size: 24px; }
-        .material-icons.md-36 { font-size: 36px; }
-        .material-icons.md-48 { font-size: 48px; }
-
-        .list-editor{
-            position: relative;
-            padding-top:35px;
-        }
-
-        .list-editor h4{
-            color: rgb(63, 81, 181);
-            font-size: 12px;
-            top: 4px;
-            visibility: visible;
-            left: 0;
-            right: 0;
-            pointer-events: none;
-            position: absolute;
-            display: block;
-            cursor: default;
-            margin:0 0 0 15px;
-        }
-
-        .list-editor li {
-            list-style: none;
-        }
-
-        .list-editor .mdl-textfield{
-            width:100%;
-        }
-
-        .list-editor i, .list-editor input{
-            float:left;
-            margin:0 2% 0 0
-        }
-
-        .list-editor input{
-            width:45%;
-        }
-
-        textarea.mdl-textfield__input{
-            width:96%;
-        }
-
-        .mdl-checkbox__label{
-            color: rgb(63, 81, 181);
-        }
-
-        abbr{
-            border-bottom:1px dashed rgb(63, 81, 181);
-        }
-
-        .cdc i, .cdc label, .cdc input, .cdc div{
-            display: block;
-            float:right;
-        }
-
-        .cdc label, .cdc input{
-            padding: 20px 5px 0 0;
-            font-size:18px;
-        }
-
-        .mdl-data-table{
-          margin:15px 0 15px 15px;
-        }
-    </style>
 </head>
 <body>
     <div id="app" />
