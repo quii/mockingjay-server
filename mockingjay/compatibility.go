@@ -12,11 +12,12 @@ import (
 
 	"github.com/johnmuth/xmlcompare"
 	"github.com/quii/jsonequaliser"
+	"net"
 )
 
 // CompatibilityChecker is responsible for checking endpoints are compatible
 type CompatibilityChecker struct {
-	client *http.Client
+	client http.RoundTripper
 	logger *log.Logger
 }
 
@@ -26,9 +27,14 @@ const DefaultHTTPTimeoutSeconds = 5
 // NewCompatabilityChecker creates a new CompatabilityChecker. The httpTimeout refers to the http timeout when making requests to the real server
 func NewCompatabilityChecker(logger *log.Logger, httpTimeout time.Duration) *CompatibilityChecker {
 	c := new(CompatibilityChecker)
-	c.client = &http.Client{}
+
+	c.client = &http.Transport{
+		Dial: (&net.Dialer{
+			Timeout: httpTimeout * time.Second,
+		}).Dial,
+	}
+
 	c.logger = logger
-	c.client.Timeout = httpTimeout * time.Second
 	return c
 }
 
@@ -84,7 +90,7 @@ func (c *CompatibilityChecker) check(endpoint *FakeEndpoint, realURL string) (er
 		return
 	}
 
-	response, err := c.client.Do(request)
+	response, err := c.client.RoundTrip(request)
 
 	if err != nil {
 		errMsg := fmt.Sprintf("Couldn't reach real server: %v", err)

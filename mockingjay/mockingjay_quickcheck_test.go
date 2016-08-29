@@ -15,11 +15,11 @@ func (r FakeEndpoint) Generate(rand *rand.Rand, size int) reflect.Value {
 
 	req := Request{
 		Method: randomMethod,
-		URI:    "/" + randomURL(rand.Intn(maxURLLen)),
+		URI:    "/" + randomURL(rand.Intn(10)),
 	}
 
 	res := response{
-		Code: rand.Intn(599-100) + 100,
+		Code: rand.Intn(599-300) + 300,
 	}
 
 	return reflect.ValueOf(FakeEndpoint{
@@ -31,7 +31,7 @@ func (r FakeEndpoint) Generate(rand *rand.Rand, size int) reflect.Value {
 
 func TestItIsAlwaysCompatibleWithItself(t *testing.T) {
 
-	compatabilityChecker := NewCompatabilityChecker(noopLogger, 2)
+	compatabilityChecker := NewCompatabilityChecker(noopLogger, 1)
 
 	assertion := func(endpoint FakeEndpoint) bool {
 
@@ -44,14 +44,13 @@ func TestItIsAlwaysCompatibleWithItself(t *testing.T) {
 		errors := compatabilityChecker.check(&endpoint, svr.URL)
 
 		if len(errors) > 0 {
-			t.Log("wARNING!!!! It wasn't compatible with itself")
+			t.Logf("Not compatible with itself %+v", endpoint)
 			for _, err := range errors {
 				t.Log(err)
 			}
 		}
 
-		return true // just always pass for now
-		//return len(errors) == 0
+		return len(errors) == 0
 	}
 
 	config := quick.Config{
