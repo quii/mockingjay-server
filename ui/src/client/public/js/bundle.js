@@ -21992,7 +21992,7 @@
 	  function UI(props) {
 	    _classCallCheck(this, UI);
 	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(UI).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (UI.__proto__ || Object.getPrototypeOf(UI)).call(this, props));
 	
 	    _this.state = {
 	      endpointService: props.service
@@ -22235,7 +22235,7 @@
 	  function Endpoint(props) {
 	    _classCallCheck(this, Endpoint);
 	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Endpoint).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (Endpoint.__proto__ || Object.getPrototypeOf(Endpoint)).call(this, props));
 	
 	    _this.state = {
 	      cdcDisabled: props.endpoint.CDCDisabled,
@@ -22501,7 +22501,7 @@
 	  function Curl() {
 	    _classCallCheck(this, Curl);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Curl).apply(this, arguments));
+	    return _possibleConstructorReturn(this, (Curl.__proto__ || Object.getPrototypeOf(Curl)).apply(this, arguments));
 	  }
 	
 	  _createClass(Curl, [{
@@ -24435,7 +24435,7 @@
 	  function HttpDataEditor(props) {
 	    _classCallCheck(this, HttpDataEditor);
 	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(HttpDataEditor).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (HttpDataEditor.__proto__ || Object.getPrototypeOf(HttpDataEditor)).call(this, props));
 	
 	    _this.state = {
 	      numberOfItems: _this.props.items ? Object.keys(_this.props.items).length : 0
@@ -41395,7 +41395,7 @@
 	  function Form() {
 	    _classCallCheck(this, Form);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Form).apply(this, arguments));
+	    return _possibleConstructorReturn(this, (Form.__proto__ || Object.getPrototypeOf(Form)).apply(this, arguments));
 	  }
 	
 	  _createClass(Form, [{
@@ -41681,17 +41681,13 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var selectedCSS = 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent';
-	var notSelectedCSS = 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored';
-	var methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
-	
 	var MethodSwitcher = function (_React$Component) {
 	  _inherits(MethodSwitcher, _React$Component);
 	
 	  function MethodSwitcher(props) {
 	    _classCallCheck(this, MethodSwitcher);
 	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(MethodSwitcher).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (MethodSwitcher.__proto__ || Object.getPrototypeOf(MethodSwitcher)).call(this, props));
 	
 	    _this.handleClick = _this.handleClick.bind(_this);
 	    _this.createButton = _this.createButton.bind(_this);
@@ -41704,14 +41700,14 @@
 	      this.props.onChange({
 	        target: {
 	          name: 'method',
-	          value: e.target.innerText
+	          value: e.currentTarget.textContent
 	        }
 	      });
 	    }
 	  }, {
 	    key: 'createButton',
 	    value: function createButton(methodName, selectedMethod) {
-	      var clz = methodName === selectedMethod ? selectedCSS : notSelectedCSS;
+	      var clz = methodName === selectedMethod ? MethodSwitcher.selectedCSS : MethodSwitcher.notSelectedCSS;
 	      return _react2.default.createElement(
 	        'button',
 	        {
@@ -41728,7 +41724,7 @@
 	    value: function render() {
 	      var _this2 = this;
 	
-	      var buttons = methods.map(function (m) {
+	      var buttons = MethodSwitcher.methods.map(function (m) {
 	        return _this2.createButton(m, _this2.props.selected);
 	      });
 	      return _react2.default.createElement(
@@ -41746,6 +41742,10 @@
 	  onChange: _react2.default.PropTypes.func.isRequired,
 	  selected: _react2.default.PropTypes.string.isRequired
 	};
+	
+	MethodSwitcher.methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
+	MethodSwitcher.selectedCSS = 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent';
+	MethodSwitcher.notSelectedCSS = 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored';
 	
 	exports.default = MethodSwitcher;
 
@@ -41954,7 +41954,7 @@
 	  function CDC(props) {
 	    _classCallCheck(this, CDC);
 	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CDC).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (CDC.__proto__ || Object.getPrototypeOf(CDC)).call(this, props));
 	
 	    _this.api = new _API2.default(_this.props.url);
 	
@@ -42161,7 +42161,7 @@
 	  function Dialog(props) {
 	    _classCallCheck(this, Dialog);
 	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Dialog).call(this, props));
+	    var _this = _possibleConstructorReturn(this, (Dialog.__proto__ || Object.getPrototypeOf(Dialog)).call(this, props));
 	
 	    _this.showModal = _this.showModal.bind(_this);
 	    return _this;
@@ -42913,7 +42913,7 @@
 	 * 
 	 */
 	/**
-	 * bluebird build version 3.4.1
+	 * bluebird build version 3.4.3
 	 * Features enabled: core, race, call_get, generators, map, nodeify, promisify, props, reduce, settle, some, using, timers, filter, any, each
 	*/
 	!function(e){if(true)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Promise=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
@@ -43327,7 +43327,7 @@
 	
 	    var promise = this;
 	    var child = promise;
-	    while (promise.isCancellable()) {
+	    while (promise._isCancellable()) {
 	        if (!promise._cancelBy(child)) {
 	            if (child._isFollowing()) {
 	                child._followee().cancel();
@@ -43338,7 +43338,7 @@
 	        }
 	
 	        var parent = promise._cancellationParent;
-	        if (parent == null || !parent.isCancellable()) {
+	        if (parent == null || !parent._isCancellable()) {
 	            if (promise._isFollowing()) {
 	                promise._followee().cancel();
 	            } else {
@@ -43347,6 +43347,7 @@
 	            break;
 	        } else {
 	            if (promise._isFollowing()) promise._followee().cancel();
+	            promise._setWillBeCancelled();
 	            child = promise;
 	            promise = parent;
 	        }
@@ -43384,8 +43385,7 @@
 	};
 	
 	Promise.prototype._cancel = function() {
-	    if (!this.isCancellable()) return;
-	
+	    if (!this._isCancellable()) return;
 	    this._setCancelled();
 	    async.invoke(this._cancelPromises, this, undefined);
 	};
@@ -43396,6 +43396,10 @@
 	
 	Promise.prototype._unsetOnCancel = function() {
 	    this._onCancelField = undefined;
+	};
+	
+	Promise.prototype._isCancellable = function() {
+	    return this.isPending() && !this._isCancelled();
 	};
 	
 	Promise.prototype.isCancellable = function() {
@@ -43429,7 +43433,7 @@
 	};
 	
 	Promise.prototype._invokeInternalOnCancel = function() {
-	    if (this.isCancellable()) {
+	    if (this._isCancellable()) {
 	        this._doInvokeOnCancel(this._onCancel(), true);
 	        this._unsetOnCancel();
 	    }
@@ -43568,6 +43572,8 @@
 	var possiblyUnhandledRejection;
 	var bluebirdFramePattern =
 	    /[\\\/]bluebird[\\\/]js[\\\/](release|debug|instrumented)/;
+	var nodeFramePattern = /\((?:timers\.js):\d+:\d+\)/;
+	var parseLinePattern = /[\/<\(](.+?):(\d+):(\d+)\)?\s*$/;
 	var stackFramePattern = null;
 	var formatStack = null;
 	var indentStackFrames = false;
@@ -43698,14 +43704,24 @@
 	
 	var fireDomEvent = (function() {
 	    try {
-	        var event = document.createEvent("CustomEvent");
-	        event.initCustomEvent("testingtheevent", false, true, {});
-	        util.global.dispatchEvent(event);
-	        return function(name, event) {
-	            var domEvent = document.createEvent("CustomEvent");
-	            domEvent.initCustomEvent(name.toLowerCase(), false, true, event);
-	            return !util.global.dispatchEvent(domEvent);
-	        };
+	        if (typeof CustomEvent === "function") {
+	            var event = new CustomEvent("CustomEvent");
+	            util.global.dispatchEvent(event);
+	            return function(name, event) {
+	                var domEvent = new CustomEvent(name.toLowerCase(), event);
+	                return !util.global.dispatchEvent(domEvent);
+	            };
+	        } else {
+	            var event = document.createEvent("CustomEvent");
+	            event.initCustomEvent("testingtheevent", false, true, {});
+	            util.global.dispatchEvent(event);
+	            return function(name, event) {
+	                var domEvent = document.createEvent("CustomEvent");
+	                domEvent.initCustomEvent(name.toLowerCase(), false, true,
+	                    event);
+	                return !util.global.dispatchEvent(domEvent);
+	            };
+	        }
 	    } catch (e) {}
 	    return function() {
 	        return false;
@@ -43862,7 +43878,7 @@
 	}
 	
 	function cancellationAttachCancellationCallback(onCancel) {
-	    if (!this.isCancellable()) return this;
+	    if (!this._isCancellable()) return this;
 	
 	    var previousOnCancel = this._onCancel();
 	    if (previousOnCancel !== undefined) {
@@ -43953,8 +43969,41 @@
 	        if ((promise._bitField & 65535) === 0) return;
 	
 	        if (name) name = name + " ";
+	        var handlerLine = "";
+	        var creatorLine = "";
+	        if (promiseCreated._trace) {
+	            var traceLines = promiseCreated._trace.stack.split("\n");
+	            var stack = cleanStack(traceLines);
+	            for (var i = stack.length - 1; i >= 0; --i) {
+	                var line = stack[i];
+	                if (!nodeFramePattern.test(line)) {
+	                    var lineMatches = line.match(parseLinePattern);
+	                    if (lineMatches) {
+	                        handlerLine  = "at " + lineMatches[1] +
+	                            ":" + lineMatches[2] + ":" + lineMatches[3] + " ";
+	                    }
+	                    break;
+	                }
+	            }
+	
+	            if (stack.length > 0) {
+	                var firstUserLine = stack[0];
+	                for (var i = 0; i < traceLines.length; ++i) {
+	
+	                    if (traceLines[i] === firstUserLine) {
+	                        if (i > 0) {
+	                            creatorLine = "\n" + traceLines[i - 1];
+	                        }
+	                        break;
+	                    }
+	                }
+	
+	            }
+	        }
 	        var msg = "a promise was created in a " + name +
-	            "handler but was not returned from it";
+	            "handler " + handlerLine + "but was not returned from it, " +
+	            "see http://goo.gl/rRqMUw" +
+	            creatorLine;
 	        promise._warn(msg, true, promiseCreated);
 	    }
 	}
@@ -44415,7 +44464,7 @@
 	
 	},{"./errors":12,"./util":36}],10:[function(_dereq_,module,exports){
 	"use strict";
-	module.exports = function(Promise) {
+	module.exports = function(Promise, tryConvertToPromise) {
 	function returner() {
 	    return this.value;
 	}
@@ -44425,6 +44474,7 @@
 	
 	Promise.prototype["return"] =
 	Promise.prototype.thenReturn = function (value) {
+	    value = tryConvertToPromise(value);
 	    if (value instanceof Promise) value.suppressUnhandledRejections();
 	    return this._then(
 	        returner, undefined, undefined, {value: value}, undefined);
@@ -44449,11 +44499,13 @@
 	
 	Promise.prototype.catchReturn = function (value) {
 	    if (arguments.length <= 1) {
+	        value = tryConvertToPromise(value);
 	        if (value instanceof Promise) value.suppressUnhandledRejections();
 	        return this._then(
 	            undefined, returner, undefined, {value: value}, undefined);
 	    } else {
 	        var _value = arguments[1];
+	        _value = tryConvertToPromise(_value);
 	        if (_value instanceof Promise) _value.suppressUnhandledRejections();
 	        var handler = function() {return _value;};
 	        return this.caught(value, handler);
@@ -44768,7 +44820,7 @@
 	            var maybePromise = tryConvertToPromise(ret, promise);
 	            if (maybePromise instanceof Promise) {
 	                if (this.cancelPromise != null) {
-	                    if (maybePromise.isCancelled()) {
+	                    if (maybePromise._isCancelled()) {
 	                        var reason =
 	                            new CancellationError("late cancellation observer");
 	                        promise._attachExtraTrace(reason);
@@ -44994,9 +45046,13 @@
 	            this._yieldedPromise = maybePromise;
 	            maybePromise._proxy(this, null);
 	        } else if (((bitField & 33554432) !== 0)) {
-	            this._promiseFulfilled(maybePromise._value());
+	            Promise._async.invoke(
+	                this._promiseFulfilled, this, maybePromise._value()
+	            );
 	        } else if (((bitField & 16777216) !== 0)) {
-	            this._promiseRejected(maybePromise._reason());
+	            Promise._async.invoke(
+	                this._promiseRejected, this, maybePromise._reason()
+	            );
 	        } else {
 	            this._promiseCancelled();
 	        }
@@ -45624,7 +45680,8 @@
 	            if (util.isObject(item)) {
 	                catchInstances[j++] = item;
 	            } else {
-	                return apiRejection("expecting an object but got " + util.classString(item));
+	                return apiRejection("expecting an object but got " +
+	                    "A catch statement predicate " + util.classString(item));
 	            }
 	        }
 	        catchInstances.length = j;
@@ -45847,6 +45904,10 @@
 	Promise.prototype._setCancelled = function() {
 	    this._bitField = this._bitField | 65536;
 	    this._fireEvent("promiseCancelled", this);
+	};
+	
+	Promise.prototype._setWillBeCancelled = function() {
+	    this._bitField = this._bitField | 8388608;
 	};
 	
 	Promise.prototype._setAsyncGuaranteed = function() {
@@ -46250,12 +46311,12 @@
 	    debug);
 	_dereq_("./bind")(Promise, INTERNAL, tryConvertToPromise, debug);
 	_dereq_("./cancel")(Promise, PromiseArray, apiRejection, debug);
-	_dereq_("./direct_resolve")(Promise);
+	_dereq_("./direct_resolve")(Promise, tryConvertToPromise);
 	_dereq_("./synchronous_inspection")(Promise);
 	_dereq_("./join")(
 	    Promise, PromiseArray, tryConvertToPromise, INTERNAL, debug);
 	Promise.Promise = Promise;
-	Promise.version = "3.4.0";
+	Promise.version = "3.4.3";
 	_dereq_('./map.js')(Promise, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug);
 	_dereq_('./call_get.js')(Promise);
 	_dereq_('./using.js')(Promise, apiRejection, tryConvertToPromise, createContext, INTERNAL, debug);
@@ -46425,7 +46486,7 @@
 	};
 	
 	PromiseArray.prototype._cancel = function() {
-	    if (this._isResolved() || !this._promise.isCancellable()) return;
+	    if (this._isResolved() || !this._promise._isCancellable()) return;
 	    this._values = null;
 	    this._promise._cancel();
 	};
@@ -47239,7 +47300,8 @@
 	    schedule = util.isRecentNode
 	                ? function(fn) { GlobalSetImmediate.call(global, fn); }
 	                : function(fn) { ProcessNextTick.call(process, fn); };
-	} else if (typeof NativePromise === "function") {
+	} else if (typeof NativePromise === "function" &&
+	           typeof NativePromise.resolve === "function") {
 	    var nativePromise = NativePromise.resolve();
 	    schedule = function(fn) {
 	        nativePromise.then(fn);
@@ -47533,13 +47595,20 @@
 	    return (this._bitField & 50331648) !== 0;
 	};
 	
-	PromiseInspection.prototype.isCancelled =
-	Promise.prototype._isCancelled = function() {
+	PromiseInspection.prototype.isCancelled = function() {
+	    return (this._bitField & 8454144) !== 0;
+	};
+	
+	Promise.prototype.__isCancelled = function() {
 	    return (this._bitField & 65536) === 65536;
 	};
 	
+	Promise.prototype._isCancelled = function() {
+	    return this._target().__isCancelled();
+	};
+	
 	Promise.prototype.isCancelled = function() {
-	    return this._target()._isCancelled();
+	    return (this._target()._bitField & 8454144) !== 0;
 	};
 	
 	Promise.prototype.isPending = function() {
@@ -47698,6 +47767,7 @@
 	        if (debug.cancellation()) {
 	            ret._setOnCancel(new HandleWrapper(handle));
 	        }
+	        ret._captureStackTrace();
 	    }
 	    ret._setAsyncGuaranteed();
 	    return ret;
@@ -48578,7 +48648,7 @@
 	  function Toaster() {
 	    _classCallCheck(this, Toaster);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Toaster).apply(this, arguments));
+	    return _possibleConstructorReturn(this, (Toaster.__proto__ || Object.getPrototypeOf(Toaster)).apply(this, arguments));
 	  }
 	
 	  _createClass(Toaster, [{

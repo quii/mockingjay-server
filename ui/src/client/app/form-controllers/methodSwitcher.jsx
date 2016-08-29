@@ -14,7 +14,7 @@ class MethodSwitcher extends React.Component {
     this.props.onChange({
       target: {
         name: 'method',
-        value: e.target.innerText,
+        value: e.currentTarget.textContent,
       },
     });
   }
