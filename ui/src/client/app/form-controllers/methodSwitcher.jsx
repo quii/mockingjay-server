@@ -19,15 +19,15 @@ class MethodSwitcher extends React.Component {
     });
   }
 
-  createButton(methodName, selectedMethod) {
-    const clz = methodName === selectedMethod ? MethodSwitcher.selectedCSS : MethodSwitcher.notSelectedCSS;
+  createButton(name, selectedName) {
+    const clz = name === selectedName ? MethodSwitcher.selectedCSS : MethodSwitcher.notSelectedCSS;
     return (
       <button
         key={rand()}
         style={{ marginRight: '10px' }}
         className={clz}
         onClick={this.handleClick}
-      >{methodName}</button>);
+      >{name}</button>);
   }
 
   render() {
