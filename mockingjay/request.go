@@ -17,7 +17,7 @@ import (
 // Request is a simplified version of a http.Request
 type Request struct {
 	URI      string            `yaml:"uri"`
-	RegexURI *RegexField        `yaml:"regexuri,omitempty" json:"regexuri,omitempty"`
+	RegexURI *RegexField       `yaml:"regexuri,omitempty" json:"RegexURI,omitempty"`
 	Method   string            `yaml:"method"`
 	Headers  map[string]string `yaml:"headers,omitempty"`
 	Body     string            `yaml:"body,omitempty"`
@@ -35,6 +35,8 @@ var (
 
 func (r Request) errors() error {
 	regexPassed := r.RegexURI == nil || r.RegexURI.MatchString(r.URI)
+
+	log.Println("xxx", r.RegexURI)
 	if !regexPassed {
 		return errBadRegex
 	}

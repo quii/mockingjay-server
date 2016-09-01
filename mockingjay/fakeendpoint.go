@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"gopkg.in/yaml.v2"
+	"log"
 )
 
 // FakeEndpoint represents the information required to listen to a particular request and respond to it
@@ -52,9 +53,13 @@ func NewFakeEndpointsFromJSON(data []byte) ([]FakeEndpoint, error) {
 func generateEndpoints(data []byte, unmarshall func([]byte, interface{}) error) (endpoints []FakeEndpoint, err error) {
 	err = unmarshall(data, &endpoints)
 
+	if yeah, isYeah := err.(*json.InvalidUnmarshalError); isYeah {
+		log.Println("wtf mate", yeah.Type, yeah.Error())
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf(
-			"The structure of the supplied YAML is wrong, please refer to https://github.com/quii/mockingjay-server for an example [%v]",
+			"The structure of the supplied config is wrong, please refer to https://github.com/quii/mockingjay-server for an example [%v]",
 			err)
 	}
 
