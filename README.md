@@ -96,6 +96,8 @@ $ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-
 - Go 1.3+ installed ($GOPATH set, et al)
 - Node 4.2.x (for the frontend)
 - golint https://github.com/golang/lint
+- `$ go get github.com/jteeuwen/go-bindata/...`
+- `$ go get github.com/elazarl/go-bindata-assetfs/...`
 
 ### Build application
 

@@ -127,6 +127,7 @@ func (s *Server) handleEndpoints(w http.ResponseWriter, r *http.Request) {
 		updatedEndpoints, err = NewFakeEndpointsFromJSON(endpointBody)
 
 		if err != nil {
+			s.logger.Println("Couldn't update endpoints from JSON", string(endpointBody), err.Error())
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}

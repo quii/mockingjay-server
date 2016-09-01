@@ -1,5 +1,7 @@
 # MJ frontend todo
 
+- Doesn't work when config has regex because it doesnt know how to parse it.
+
 ## make the structure of the front end suck less
 - Learn webpack :/
 - dont commit generated code, obviously

@@ -1,5 +1,5 @@
 
-- name: 8255-cc96-e841-e239
+- name: 0ca9-2e96-f7f1-5e91
   cdcdisabled: false
   request:
     uri: /hello
@@ -7,17 +7,6 @@
   response:
     code: 200
     body: World!
-
-- name: Test endpoint
-  cdcdisabled: false
-  request:
-    uri: /hello
-    method: POST
-  response:
-    code: 200
-    body: '{"message": "hello, world"}'
-    headers:
-      content-type: text/json
 
 - name: Test endpoint 2
   cdcdisabled: false
