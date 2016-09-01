@@ -164,7 +164,7 @@ func TestItDoesntCrashOnNonJSONAndAssumesNotMatch(t *testing.T) {
 func TestMatchingWithRegex(t *testing.T) {
 
 	uriPathRegex, err := regexp.Compile(`\/hello\/[a-z]+`)
-	regexURI := &RegexYAML{Regexp: uriPathRegex}
+	regexURI := &RegexField{Regexp: uriPathRegex}
 
 	assert.Nil(t, err)
 

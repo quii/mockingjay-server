@@ -160,3 +160,30 @@ func TestItReturnsErrorWhenRegexDoesntMatchURI(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errBadRegex)
 }
+
+func TestItLoadsFromJSONWhenItHasRegex(t *testing.T){
+	// https://regex101.com/r/xX9sO3/1 wtf?
+	jsonConfig := `
+	[{
+	"Name": "getLatestIntel endpoint",
+	"CDCDisabled": false,
+	"Request": {
+		"URI": "/v2/intelligence/latest?entitlements=8_1:8_2",
+		"RegexURI": "\/v2\/intelligence\/latest.*",
+		"Method": "GET",
+		"Headers": null,
+		"Body": "",
+		"Form": null
+	},
+	"Response": {
+		"Code": 200,
+		"Body": "[{ \"headline\":\"some headline\" }] ",
+		"Headers": null
+	}
+}]
+	`
+
+	_, err := NewFakeEndpointsFromJSON([]byte(jsonConfig))
+
+	assert.Nil(t, err, "Shouldn't get an error")
+}

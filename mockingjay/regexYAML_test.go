@@ -9,7 +9,7 @@ import (
 )
 
 type testRegexDataType struct {
-	Regex *RegexYAML
+	Regex *RegexField
 }
 
 func TestItCanUnmarshalRegex(t *testing.T) {

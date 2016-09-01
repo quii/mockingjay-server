@@ -17,7 +17,7 @@ import (
 // Request is a simplified version of a http.Request
 type Request struct {
 	URI      string            `yaml:"uri"`
-	RegexURI *RegexYAML        `yaml:"regexuri,omitempty"`
+	RegexURI *RegexField        `yaml:"regexuri,omitempty" json:"regexuri,omitempty"`
 	Method   string            `yaml:"method"`
 	Headers  map[string]string `yaml:"headers,omitempty"`
 	Body     string            `yaml:"body,omitempty"`
@@ -239,7 +239,7 @@ func matchHeaders(expected, incoming map[string]string) bool {
 	return true
 }
 
-func matchURI(serverURI string, serverRegex *RegexYAML, incomingURI string) bool {
+func matchURI(serverURI string, serverRegex *RegexField, incomingURI string) bool {
 	if serverURI == incomingURI {
 		return true
 	} else if serverRegex != nil {
