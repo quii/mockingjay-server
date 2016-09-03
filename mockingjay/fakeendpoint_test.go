@@ -161,31 +161,3 @@ func TestItReturnsErrorWhenRegexDoesntMatchURI(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errBadRegex)
 }
-
-//todo: Lets replace this with some property tests where we marhsal and unmarshal to/from json, should always equal
-func TestItLoadsFromJSONWhenItHasRegex(t *testing.T) {
-
-	jsonConfig := `
-	[{
-	"Name": "getLatestIntel endpoint",
-	"CDCDisabled": false,
-	"Request": {
-		"URI": "/hello/chris",
-		"RegexURI": "\/hello\/[a-z]+",
-		"Method": "GET",
-		"Headers": null,
-		"Body": "",
-		"Form": null
-	},
-	"Response": {
-		"Code": 200,
-		"Body": "[{ \"headline\":\"some headline\" }] ",
-		"Headers": null
-	}
-}]
-	`
-
-	_, err := NewFakeEndpointsFromJSON([]byte(jsonConfig))
-
-	assert.Nil(t, err, "Shouldn't get an error")
-}

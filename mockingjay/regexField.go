@@ -3,7 +3,6 @@ package mockingjay
 import (
 	"fmt"
 	"regexp"
-	"log"
 )
 
 // RegexYAML allows you to work with regex fields in YAML
@@ -28,9 +27,7 @@ func (r *RegexField) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 // UnmarshalYAML will unhmarshal a YAML field into regexp
 func (r *RegexField) UnmarshalJSON(data []byte) error {
-	str := string(data)[1:len(data)-1]
-	log.Println("Compiling", str)
-
+	str := string(data)[1 : len(data)-1]
 	reg, err := regexp.Compile(str)
 
 	if err != nil {
@@ -42,6 +39,11 @@ func (r *RegexField) UnmarshalJSON(data []byte) error {
 
 // MarshalJSON returns a string for the regex
 func (r *RegexField) MarshalJSON() ([]byte, error) {
-	asString := fmt.Sprintf(`"%s"`, r.Regexp.String())
+	asString := fmt.Sprintf(`"%v"`, r.Regexp.String())
 	return []byte(asString), nil
+}
+
+// MarshalYAML returns the string of the regex
+func (r *RegexField) MarshalYAML() (interface{}, error) {
+	return r.Regexp.String(), nil
 }

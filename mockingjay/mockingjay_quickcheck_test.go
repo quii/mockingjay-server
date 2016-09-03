@@ -1,8 +1,9 @@
 package mockingjay
 
 import (
+	"encoding/json"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"math/rand"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -10,23 +11,60 @@ import (
 	"testing/quick"
 )
 
-func (r FakeEndpoint) Generate(rand *rand.Rand, size int) reflect.Value {
-	randomMethod := httpMethods[rand.Intn(len(httpMethods))]
+func TestItMarshalsAndUnmarshalsJSONCorrectly(t *testing.T) {
+	assertion := func(endpoint FakeEndpoint) bool {
+		data, err := json.Marshal(endpoint)
 
-	req := Request{
-		Method: randomMethod,
-		URI:    "/" + randomURL(rand.Intn(10)),
+		if err != nil {
+			t.Log("Had a problem marshalling config into JSON", err)
+			return false
+		}
+
+		var parsed FakeEndpoint
+		err = json.Unmarshal(data, &parsed)
+
+		if err != nil {
+			t.Log("Couldn't re-parse JSON into the config", err)
+		}
+
+		return reflect.DeepEqual(endpoint, parsed)
 	}
 
-	res := response{
-		Code: rand.Intn(599-300) + 300,
+	config := quick.Config{
+		MaxCount: 1000,
 	}
 
-	return reflect.ValueOf(FakeEndpoint{
-		Name:     "Generated",
-		Request:  req,
-		Response: res,
-	})
+	if err := quick.Check(assertion, &config); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestItMarshalsAndUnmarshalsYAMLCorrectly(t *testing.T) {
+	assertion := func(endpoint FakeEndpoint) bool {
+		data, err := yaml.Marshal(endpoint)
+
+		if err != nil {
+			t.Log("Had a problem marshalling config into JSON", err)
+			return false
+		}
+
+		var parsed FakeEndpoint
+		err = yaml.Unmarshal(data, &parsed)
+
+		if err != nil {
+			t.Log("Couldn't re-parse JSON into the config", err)
+		}
+
+		return reflect.DeepEqual(endpoint, parsed)
+	}
+
+	config := quick.Config{
+		MaxCount: 1000,
+	}
+
+	if err := quick.Check(assertion, &config); err != nil {
+		t.Error(err)
+	}
 }
 
 func TestItIsAlwaysCompatibleWithItself(t *testing.T) {

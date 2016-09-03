@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"log"
+	"math/rand"
+	"reflect"
+	"regexp"
 )
 
 // FakeEndpoint represents the information required to listen to a particular request and respond to it
@@ -92,4 +95,32 @@ func findDuplicates(endpoints []FakeEndpoint) []string {
 	}
 
 	return duplicates
+}
+
+func (r FakeEndpoint) Generate(rand *rand.Rand, size int) reflect.Value {
+	randomMethod := httpMethods[rand.Intn(len(httpMethods))]
+
+	//todo: Creation of random URL and corresponding regex is a bit naff, needs improvement
+	randomUrl := "/" + randomURL(rand.Intn(10))
+	regexUri, err := regexp.Compile(`\` + randomUrl)
+
+	if err != nil {
+		return reflect.ValueOf(err)
+	}
+
+	req := Request{
+		Method:   randomMethod,
+		URI:      randomUrl,
+		RegexURI: &RegexField{regexUri},
+	}
+
+	res := response{
+		Code: rand.Intn(599-300) + 300,
+	}
+
+	return reflect.ValueOf(FakeEndpoint{
+		Name:     "Generated",
+		Request:  req,
+		Response: res,
+	})
 }

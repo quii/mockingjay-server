@@ -36,7 +36,6 @@ var (
 func (r Request) errors() error {
 	regexPassed := r.RegexURI == nil || r.RegexURI.MatchString(r.URI)
 
-	log.Println("xxx", r.RegexURI)
 	if !regexPassed {
 		return errBadRegex
 	}

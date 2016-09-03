@@ -5,8 +5,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"gopkg.in/yaml.v2"
 	"encoding/json"
+	"gopkg.in/yaml.v2"
+	"regexp"
+	"strings"
 )
 
 type testRegexDataType struct {
@@ -40,4 +42,40 @@ func TestItCanUnmarshalRegexFromJSON(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.NotNil(t, d.Regex)
+}
+
+func TestItCanMarshalBackToJSON(t *testing.T) {
+	regexUri, err := regexp.Compile(`\/hello\/[a-z]+`)
+
+	if err != nil {
+		t.Fatal("Cant compile regex", err)
+	}
+
+	field := testRegexDataType{&RegexField{regexUri}}
+
+	data, err := json.Marshal(field)
+
+	if err != nil {
+		t.Error("Couldn't marshal into JSON", err)
+	}
+
+	assert.Equal(t, `{"Regex":"\/hello\/[a-z]+"}`, string(data))
+}
+
+func TestItCanMarshalBackToYAML(t *testing.T) {
+	regexUri, err := regexp.Compile(`\/hello\/[a-z]+`)
+
+	if err != nil {
+		t.Fatal("Cant compile regex", err)
+	}
+
+	field := testRegexDataType{&RegexField{regexUri}}
+
+	data, err := yaml.Marshal(field)
+
+	if err != nil {
+		t.Error("Couldn't marshal into JSON", err)
+	}
+
+	assert.Equal(t, `regex: \/hello\/[a-z]+`, strings.Replace(string(data), "\n", "", -1))
 }
