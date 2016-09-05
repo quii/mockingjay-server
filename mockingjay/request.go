@@ -117,7 +117,7 @@ func (r Request) String() string {
 }
 
 func (r Request) hash() string {
-	return fmt.Sprintf("URI: %v | METHOD: %v | HEADERS: %v | BODY: %v", r.URI, r.Method, r.Headers, r.Body)
+	return fmt.Sprintf("URI: %v | METHOD: %v | HEADERS: %v | BODY: %v | FORM: %v", r.URI, r.Method, r.Headers, r.Body, r.Form)
 }
 
 func requestMatches(expected, incoming Request, endpointName string, logger mjLogger) bool {
