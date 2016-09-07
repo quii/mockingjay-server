@@ -52,8 +52,7 @@ class UI extends React.Component {
 
   endpoints() {
     if (this.state.endpointService) {
-      const wee = this.state.endpointService.getEndpoints();
-      return wee;
+      return this.state.endpointService.getEndpoints();
     }
     return [];
   }

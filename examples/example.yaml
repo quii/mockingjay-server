@@ -6,7 +6,7 @@
     method: GET
   response:
     code: 200
-    body: World!
+    body: Phil is poo
 
 - name: Test endpoint 2
   cdcdisabled: false
