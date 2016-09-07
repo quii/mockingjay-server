@@ -25,6 +25,7 @@ describe('Endpoint serverice', () => {
 
     expect(service.getEndpoints).toBeCalled();
     expect(ui.find(Navigation).length).toEqual(1);
+    expect(ui.find(Navigation).prop('endpoints')).toEqual(endpoints);
 
   });
 
