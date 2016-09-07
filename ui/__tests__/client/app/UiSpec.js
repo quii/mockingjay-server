@@ -8,7 +8,7 @@ import Promise from 'bluebird';
 import EndpointService from '../../../src/client/app/EndpointService'
 import React from 'react';
 
-describe('Endpoint serverice', () => {
+describe('Endpoint service', () => {
 
   it('gets endpoints and then you can select them', () => {
     const service = new EndpointService();
@@ -23,7 +23,6 @@ describe('Endpoint serverice', () => {
 
     const ui = shallow(<UI service={service} />);
 
-    expect(service.getEndpoints).toBeCalled();
     expect(ui.find(Navigation).length).toEqual(1);
     expect(ui.find(Navigation).prop('endpoints')).toEqual(endpoints);
 
