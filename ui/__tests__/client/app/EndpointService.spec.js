@@ -1,13 +1,11 @@
-jest.unmock('../../../src/client/app/EndpointService');
-
-import EndpointService from '../../../src/client/app/EndpointService';
 import _ from 'lodash';
 import Promise from 'bluebird';
-import API from '../../../src/client/app/API'
+import API from '../../../src/client/app/API';
+import EndpointService from '../../../src/client/app/EndpointService';
+
+jest.unmock('../../../src/client/app/EndpointService');
 
 describe('Endpoint serverice', () => {
-
-
   it('gets endpoints and then you can select them', () => {
     const api = new API();
     const service = new EndpointService(api);
@@ -66,7 +64,6 @@ describe('Endpoint serverice', () => {
   });
 
   it('sets currently selected to null when deleting', () => {
-
     const someEndpoints = [
       {
         Name: '123',
@@ -82,15 +79,15 @@ describe('Endpoint serverice', () => {
     const service = new EndpointService(api);
 
     const endpointsWithItemDeleted = [someEndpoints[0]];
+    const endpointsPayload = JSON.stringify(endpointsWithItemDeleted);
 
     api.getEndpoints.mockReturnValueOnce(Promise.resolve(someEndpoints));
     api.updateEndpoints.mockReturnValueOnce(Promise.resolve(endpointsWithItemDeleted));
 
-
     return service.init()
-      .then(() => service.selectEndpoint("456"))
+      .then(() => service.selectEndpoint('456'))
       .then(() => service.deleteEndpoint())
-      .then(() => expect(api.updateEndpoints).toBeCalledWith(JSON.stringify(endpointsWithItemDeleted)))
+      .then(() => expect(api.updateEndpoints).toBeCalledWith(endpointsPayload))
       .then(() => expect(service.endpoints.length).toBe(1))
       .then(() => service.getEndpoint())
       .then(endpoint => expect(endpoint).toBe(undefined));
