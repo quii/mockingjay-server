@@ -23,7 +23,7 @@ class MethodSwitcher extends React.Component {
     const clz = name === selectedName ? MethodSwitcher.selectedCSS : MethodSwitcher.notSelectedCSS;
     return (
       <button
-        key={rand()}
+        key={name}
         style={{ marginRight: '10px' }}
         className={clz}
         onClick={this.handleClick}

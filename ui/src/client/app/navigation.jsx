@@ -24,7 +24,7 @@ function Navigation({ addEndpoint, endpoints, activeEndpoint, openEditor }) {
 
     return (
       <a
-        key={guid()}
+        key={endpoint.Name}
         className={cssClass}
         onClick={(event) => openEditor(endpoint.Name, event)}
       >{name}</a>

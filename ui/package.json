@@ -43,7 +43,7 @@
   "scripts": {
     "dev": "webpack -d --watch",
     "minify-css": "cat src/client/css/mocking-ml.css src/client/css/alterations.css | cleancss -o src/client/public/css/mj.css",
-    "test": "jest",
+    "test": "jest --coverage",
     "build": "npm run minify-css && npm run lint && npm test && webpack -p",
     "lint": "eslint --ext .js --ext .jsx --cache --ignore-path .gitignore --fix src/client/app/*"
   },
