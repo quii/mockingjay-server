@@ -10,7 +10,7 @@ Mockingjay lets you define the contract between a consumer and producer and with
 
 **Mockingjay makes it really easy to check your HTTP integration points**. It's fast, requires no coding and is better than other solutions because it will ensure your mock servers and real integration points are consistent so that you never have a green build but failing software.
 
-- [Installation](https://github.com/quii/mockingjay-server/wiki/Installing) - [Download a binary](https://github.com/quii/mockingjay-server/releases/latest), [use a Docker image](https://hub.docker.com/r/quii/mockingjay-server/) or `go get`)
+- [Installation](https://github.com/quii/mockingjay-server/wiki/Installing) - [Download a binary](https://github.com/quii/mockingjay-server/releases/latest), [use a Docker image](https://hub.docker.com/r/quii/mockingjay-server/) or `go get`
 - [Rationale](https://github.com/quii/mockingjay-server/wiki/Rationale)
 - [See how mockingjay can easily fit into your workflow to make integration testing really easy and robust](https://github.com/quii/mockingjay-server/wiki/Suggested-workflow)
 
