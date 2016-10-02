@@ -35,9 +35,7 @@ type Server struct {
 	newConfigStateWriter io.Writer
 }
 
-/* NewServer creates a new Server instance. debugMode will log additional info at runtime and newConfigStateWriter will
-write out the new state of the config if it gets changed at runtime
-*/
+// NewServer creates a new Server instance. debugMode will log additional info at runtime and newConfigStateWriter will write out the new state of the config if it gets changed at runtime
 func NewServer(endpoints []FakeEndpoint, debugMode bool, newConfigStateWriter io.Writer) *Server {
 	s := new(Server)
 	s.Endpoints = endpoints

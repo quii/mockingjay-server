@@ -5,7 +5,7 @@ import (
 	"regexp"
 )
 
-// RegexYAML allows you to work with regex fields in YAML
+// RegexField allows you to work with regex fields in YAML
 type RegexField struct {
 	*regexp.Regexp
 }
@@ -25,7 +25,7 @@ func (r *RegexField) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	return nil
 }
 
-// UnmarshalYAML will unhmarshal a YAML field into regexp
+// UnmarshalJSON will unhmarshal a JSON field into regexp
 func (r *RegexField) UnmarshalJSON(data []byte) error {
 	str := string(data)[1 : len(data)-1]
 	reg, err := regexp.Compile(str)

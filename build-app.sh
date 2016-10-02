@@ -1,9 +1,9 @@
 #!/bin/bash
 
 go generate
-go list ./... | grep -v /vendor/ | grep -v binddata.go | xargs -L1 golint
+golint ./... | grep -v bindata_assetfs | grep -v vendor
 go list ./... | grep -v /vendor/ | grep -v binddata.go | xargs -L1 go vet
 go list ./... | grep -v /vendor/ | grep -v binddata.go | xargs -L1 go vet
 go fmt ./...
-go test -v ./... --cover
+go test ./... --cover
 go install

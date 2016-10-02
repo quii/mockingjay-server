@@ -45,13 +45,13 @@ func TestItCanUnmarshalRegexFromJSON(t *testing.T) {
 }
 
 func TestItCanMarshalBackToJSON(t *testing.T) {
-	regexUri, err := regexp.Compile(`\/hello\/[a-z]+`)
+	regexURI, err := regexp.Compile(`\/hello\/[a-z]+`)
 
 	if err != nil {
 		t.Fatal("Cant compile regex", err)
 	}
 
-	field := testRegexDataType{&RegexField{regexUri}}
+	field := testRegexDataType{&RegexField{regexURI}}
 
 	data, err := json.Marshal(field)
 
@@ -63,13 +63,13 @@ func TestItCanMarshalBackToJSON(t *testing.T) {
 }
 
 func TestItCanMarshalBackToYAML(t *testing.T) {
-	regexUri, err := regexp.Compile(`\/hello\/[a-z]+`)
+	regexURI, err := regexp.Compile(`\/hello\/[a-z]+`)
 
 	if err != nil {
 		t.Fatal("Cant compile regex", err)
 	}
 
-	field := testRegexDataType{&RegexField{regexUri}}
+	field := testRegexDataType{&RegexField{regexURI}}
 
 	data, err := yaml.Marshal(field)
 

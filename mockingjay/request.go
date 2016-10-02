@@ -63,14 +63,15 @@ func (r Request) errors() error {
 	return nil
 }
 
+// AsCURL returns a string which is the curl command to match the reqquest
 func (r Request) AsCURL(baseURL string) (string, error) {
-	asHttpReq, err := r.AsHTTPRequest(baseURL)
+	asHTTPReq, err := r.AsHTTPRequest(baseURL)
 
 	if err != nil {
 		return "", err
 	}
 
-	curl, err := http2curl.GetCurlCommand(asHttpReq)
+	curl, err := http2curl.GetCurlCommand(asHTTPReq)
 
 	return curl.String(), err
 }

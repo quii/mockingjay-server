@@ -10,12 +10,6 @@
 - This? https://github.com/yelouafi/redux-saga
 
 ## Tech debt
-- No tests at all around the react stuff!
+- UI isn't fully tested
   - Proved basic unit test so now lets test the UI layer in terms of stuff appearing and its interactions with the API first
 - CSS is a mess, needs to be tidied. Is there a tool to remove unused things because there will be loads
-- It seems a bit abdsurd to me that such a basic thing takes > 500 ms to page load. 
-- Check perf, it might be a bit broken `2016/08/31 16:52:24 open intelv2.yaml: too many open files`
-
-### useful links
-
-http://ricostacruz.com/cheatsheets/react.html

@@ -97,12 +97,13 @@ func findDuplicates(endpoints []FakeEndpoint) []string {
 	return duplicates
 }
 
-func (r FakeEndpoint) Generate(rand *rand.Rand, size int) reflect.Value {
+// Generate creates a random endpoint typically used for testing
+func (f FakeEndpoint) Generate(rand *rand.Rand, size int) reflect.Value {
 	randomMethod := httpMethods[rand.Intn(len(httpMethods))]
 
 	//todo: Creation of random URL and corresponding regex is a bit naff, needs improvement
-	randomUrl := "/" + randomURL(rand.Intn(10))
-	regexUri, err := regexp.Compile(`\` + randomUrl)
+	uri := "/" + randomURL(rand.Intn(10))
+	regexURI, err := regexp.Compile(`\` + uri)
 
 	if err != nil {
 		return reflect.ValueOf(err)
@@ -110,8 +111,8 @@ func (r FakeEndpoint) Generate(rand *rand.Rand, size int) reflect.Value {
 
 	req := Request{
 		Method:   randomMethod,
-		URI:      randomUrl,
-		RegexURI: &RegexField{regexUri},
+		URI:      uri,
+		RegexURI: &RegexField{regexURI},
 	}
 
 	res := response{
