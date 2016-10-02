@@ -2,7 +2,6 @@
 
 ## make the structure of the front end suck less
 - Learn webpack :/
-- dont commit generated code, obviously
 
 ## Further improvements
 - The UI currently implies you can have both a request body and a form, but that doesn't really make sense. Make the UI force user to fill one or the other.

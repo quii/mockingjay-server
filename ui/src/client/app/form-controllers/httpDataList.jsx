@@ -1,6 +1,5 @@
 import React from 'react';
 import _ from 'lodash';
-import { rand } from '../util';
 
 function mapKeyVals(items, f) {
   if (items) {
@@ -17,7 +16,7 @@ function mapKeyVals(items, f) {
 }
 
 export function HttpDataList({ items, label, name }) {
-  const itemRows = mapKeyVals(items, (key, val) => <tr key={key+val}>
+  const itemRows = mapKeyVals(items, (key, val) => <tr key={key + val}>
     <td className="mdl-data-table__cell--non-numeric">{key}</td>
     <td className="mdl-data-table__cell--non-numeric">{val}</td>
   </tr>);

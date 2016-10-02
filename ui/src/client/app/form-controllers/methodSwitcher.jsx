@@ -1,5 +1,4 @@
 import React from 'react';
-import { rand } from '../util';
 
 class MethodSwitcher extends React.Component {
 

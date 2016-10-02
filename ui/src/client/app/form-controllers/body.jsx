@@ -7,7 +7,7 @@ function Body({ value, label }) {
   if (value && value !== '') {
     let text = value;
     if (isJSON(value)) {
-      textClassName = textClassName + ' json';
+      textClassName += ' json';
       text = JSON.stringify(JSON.parse(value), null, 2);
     }
 
