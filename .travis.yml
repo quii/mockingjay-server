@@ -1,6 +1,8 @@
 # another try!
 # https://raw.githubusercontent.com/kofj/travis-golang/master/.travis.yml
 language: go
+node_js:
+  - 4.2.6
 go:
   - 1.7
 env:
