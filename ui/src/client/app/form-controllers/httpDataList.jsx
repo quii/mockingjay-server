@@ -34,7 +34,7 @@ export function HttpDataList({ items, label, name }) {
           </tr>
         </thead>
         <tbody>
-        {itemRows}
+          {itemRows}
         </tbody>
       </table>
     </div>);
