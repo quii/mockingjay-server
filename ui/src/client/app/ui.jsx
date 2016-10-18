@@ -92,6 +92,7 @@ class UI extends React.Component {
     return this.state.endpointService.updateEndpoint(update)
       .tap(endpointService => this.setState({ endpointService }))
       .tap(() => this.toaster.alert(`Endpoint "${update.name}" updated`))
+      .tap(() => this.cdc.checkCompatability())
       .catch(err => {
         this.toaster.alert([
           'Problem updating endpoints, restoring state (you may lose some changes)',

@@ -1,14 +1,14 @@
 import React from 'react';
 
-import Curl from './curl.jsx';
+// import Curl from './curl.jsx';
 import Body from '../form-controllers/body.jsx';
 import Code from '../form-controllers/code.jsx';
 import { HttpDataList } from '../form-controllers/httpDataList.jsx';
 
-function couldBeDodgyCurlFormStuff(reqHeaders, reqBody) {
-  const noHeaders = !reqHeaders || Object.keys(reqHeaders).length === 0;
-  return reqBody !== '' && noHeaders;
-}
+// function couldBeDodgyCurlFormStuff(reqHeaders, reqBody) {
+//   const noHeaders = !reqHeaders || Object.keys(reqHeaders).length === 0;
+//   return reqBody !== '' && noHeaders;
+// }
 
 function View({
   method,
@@ -20,7 +20,7 @@ function View({
   code,
   body,
   resHeaders,
-  name,
+  // name,
   startEditing,
   deleteEndpoint,
 }) {
@@ -47,11 +47,11 @@ function View({
         <HttpDataList name="Headers" items={resHeaders} />
       </div>
 
-      <Curl
-        baseURL={location.origin}
-        name={name}
-        showPostHint={couldBeDodgyCurlFormStuff(reqHeaders, reqBody)}
-      />
+      {/* <Curl*/}
+      {/* baseURL={location.origin}*/}
+      {/* name={name}*/}
+      {/* showPostHint={couldBeDodgyCurlFormStuff(reqHeaders, reqBody)}*/}
+      {/* />*/}
 
       <div style={{ margin: '2% 2% 2% 3%' }}>
         <button
