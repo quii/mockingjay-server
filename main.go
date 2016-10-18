@@ -26,7 +26,7 @@ func main() {
 			log.Fatal(err)
 		} else {
 			config.logger.Printf("Listening on port %d", config.port)
-			config.logger.Printf("Admin on http://localhost:%d/mj-admin", config.port)
+			config.logger.Printf("Admin on http://localhost:%d/mj-admin (only works on Chrome, sorry!)", config.port)
 
 			err = http.ListenAndServe(fmt.Sprintf(":%d", config.port), svr)
 			if err != nil {
