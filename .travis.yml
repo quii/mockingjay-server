@@ -1,13 +1,16 @@
 # another try!
 # https://raw.githubusercontent.com/kofj/travis-golang/master/.travis.yml
 language: go
-node_js:
-  - 4.2.6
+
 go:
   - 1.7
 env:
   - "PATH=/home/travis/gopath/bin:$PATH"
 install:
+  - . $HOME/.nvm/nvm.sh
+  - nvm install stable
+  - nvm use stable
+  - npm install
   - go get github.com/mitchellh/gox
   - go get github.com/tcnksm/ghr
   - go get -u github.com/golang/lint/golint
