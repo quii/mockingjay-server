@@ -8,8 +8,8 @@ var (
 	urlLetterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 )
 
-func randomURL(n int) string {
-	b := make([]rune, n)
+func randomURL(length int) string {
+	b := make([]rune, length)
 	for i := range b {
 		b[i] = urlLetterRunes[rand.Intn(len(urlLetterRunes))]
 	}
