@@ -25,11 +25,12 @@
     "eslint-plugin-import": "^1.13.0",
     "eslint-plugin-jsx-a11y": "^2.1.0",
     "eslint-plugin-react": "^6.1.2",
-    "jest-cli": "^14.1.0",
+    "jest-cli": "^16.0.1",
     "react-addons-test-utils": "^15.3.1",
     "webpack": "^1.13.1"
   },
   "jest": {
+    "automock": true,
     "unmockedModulePathPatterns": [
       "<rootDir>/node_modules/react/",
       "<rootDir>/node_modules/react-dom/",
