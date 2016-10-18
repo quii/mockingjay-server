@@ -1,0 +1,6 @@
+node_modules/
+*.log
+.eslintcache
+/coverage/
+/src/client/public/js/bundle.js
+/src/client/public/js/bundle.js.map

@@ -12,7 +12,7 @@ const testYAML = `
    request:
      uri: /hello/chris
      method: GET
-     regexuri: "\\/hello\\/[a-z]+"
+     regexuri: \/hello\/[a-z]+
      headers:
        content-type: application/json
      body: foobar
@@ -38,7 +38,6 @@ const testYAML = `
      form:
        age: 10
        name: Hudson
-     body: Greetings
    response:
      code: 500
      body: Oh bugger
@@ -62,6 +61,7 @@ func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 	assert.Equal(t, firstEndpoint.Response.Body, `{"message": "hello, world"}`)
 	assert.False(t, firstEndpoint.CDCDisabled)
 	assert.NotNil(t, firstEndpoint.Request.RegexURI)
+	assert.Nil(t, firstEndpoint.Request.errors())
 
 	endpoint2 := endpoints[1]
 
@@ -76,7 +76,7 @@ func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 func TestItReturnsAnErrorWhenNotValidYAML(t *testing.T) {
 	_, err := NewFakeEndpoints([]byte("not real YAML"))
 	assert.NotNil(t, err, "Expected an error to be returned because the YAML is bad")
-	assert.Contains(t, err.Error(), "The structure of the supplied YAML is wrong")
+	assert.Contains(t, err.Error(), "The structure of the supplied config is wrong")
 }
 
 const badYAML = `

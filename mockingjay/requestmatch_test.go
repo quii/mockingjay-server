@@ -24,8 +24,11 @@ func TestItMatchesRequests(t *testing.T) {
 	requiredHeaders := make(map[string]string)
 	requiredHeaders["Content-Type"] = "application/json"
 
+	wrongHeaderValues := make(map[string]string)
+	wrongHeaderValues["Content-Type"] = "text/html"
+
 	wrongHeaders := make(map[string]string)
-	wrongHeaders["Content-Type"] = "text/html"
+	wrongHeaders["Accept"] = "text/html"
 
 	form := make(map[string]string)
 	form["name"] = "Hudson"
@@ -58,6 +61,16 @@ func TestItMatchesRequests(t *testing.T) {
 				URI:     "/cats",
 				Method:  "GET",
 				Headers: requiredHeaders,
+				Body:    `123`,
+				Form:    form,
+			},
+		},
+		{
+			"Incorrect header values",
+			Request{
+				URI:     "/cats",
+				Method:  "POST",
+				Headers: wrongHeaderValues,
 				Body:    `123`,
 				Form:    form,
 			},
@@ -151,7 +164,7 @@ func TestItDoesntCrashOnNonJSONAndAssumesNotMatch(t *testing.T) {
 func TestMatchingWithRegex(t *testing.T) {
 
 	uriPathRegex, err := regexp.Compile(`\/hello\/[a-z]+`)
-	regexURI := &RegexYAML{Regexp: uriPathRegex}
+	regexURI := &RegexField{Regexp: uriPathRegex}
 
 	assert.Nil(t, err)
 

@@ -1,4 +1,4 @@
-package main
+package mockingjay
 
 import (
 	"encoding/json"
@@ -12,28 +12,34 @@ import (
 
 	"github.com/johnmuth/xmlcompare"
 	"github.com/quii/jsonequaliser"
-	"github.com/quii/mockingjay-server/mockingjay"
+	"net"
 )
 
 // CompatibilityChecker is responsible for checking endpoints are compatible
 type CompatibilityChecker struct {
-	client *http.Client
+	client http.RoundTripper
 	logger *log.Logger
 }
 
-const defaultHTTPTimeoutSeconds = 5
+// DefaultHTTPTimeoutSeconds is the default http timeout for compatability checks
+const DefaultHTTPTimeoutSeconds = 5
 
 // NewCompatabilityChecker creates a new CompatabilityChecker. The httpTimeout refers to the http timeout when making requests to the real server
 func NewCompatabilityChecker(logger *log.Logger, httpTimeout time.Duration) *CompatibilityChecker {
 	c := new(CompatibilityChecker)
-	c.client = &http.Client{}
+
+	c.client = &http.Transport{
+		Dial: (&net.Dialer{
+			Timeout: httpTimeout * time.Second,
+		}).Dial,
+	}
+
 	c.logger = logger
-	c.client.Timeout = httpTimeout * time.Second
 	return c
 }
 
 // CheckCompatibility checks the endpoints against a "real" URL
-func (c *CompatibilityChecker) CheckCompatibility(endpoints []mockingjay.FakeEndpoint, realURL string) bool {
+func (c *CompatibilityChecker) CheckCompatibility(endpoints []FakeEndpoint, realURL string) bool {
 
 	numberOfEndpoints := len(endpoints)
 
@@ -60,7 +66,7 @@ func (c *CompatibilityChecker) CheckCompatibility(endpoints []mockingjay.FakeEnd
 	return allCompatible
 }
 
-func (c *CompatibilityChecker) compatabilityWorker(endpoint mockingjay.FakeEndpoint, realURL string, results chan<- bool) {
+func (c *CompatibilityChecker) compatabilityWorker(endpoint FakeEndpoint, realURL string, results chan<- bool) {
 	errorMessages := c.check(&endpoint, realURL)
 
 	if len(errorMessages) > 0 {
@@ -75,7 +81,7 @@ func (c *CompatibilityChecker) compatabilityWorker(endpoint mockingjay.FakeEndpo
 	}
 }
 
-func (c *CompatibilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL string) (errors []string) {
+func (c *CompatibilityChecker) check(endpoint *FakeEndpoint, realURL string) (errors []string) {
 
 	request, err := endpoint.Request.AsHTTPRequest(realURL)
 
@@ -84,7 +90,7 @@ func (c *CompatibilityChecker) check(endpoint *mockingjay.FakeEndpoint, realURL 
 		return
 	}
 
-	response, err := c.client.Do(request)
+	response, err := c.client.RoundTrip(request)
 
 	if err != nil {
 		errMsg := fmt.Sprintf("Couldn't reach real server: %v", err)

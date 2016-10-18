@@ -1,9 +1,11 @@
+//go:generate go-bindata-assetfs -ignore=node_modules -prefix "ui/src/client/" -pkg $GOPACKAGE ui/src/client/public/...
 package main
 
 import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -18,12 +20,14 @@ func main() {
 			log.Fatal(err)
 		}
 	} else {
-		svr, err := app.CreateServer(config.configPath, config.monkeyConfigPath, config.debugMode)
+		svr, err := app.CreateServer(config.configPath, config.monkeyConfigPath, config.debugMode, getUIServer())
 
 		if err != nil {
 			log.Fatal(err)
 		} else {
 			config.logger.Printf("Listening on port %d", config.port)
+			config.logger.Printf("Admin on http://localhost:%d/mj-admin (only works on Chrome, sorry!)", config.port)
+
 			err = http.ListenAndServe(fmt.Sprintf(":%d", config.port), svr)
 			if err != nil {
 				msg := fmt.Sprintf("There was a problem starting the mockingjay server on port %d: %s", config.port, err.Error())
@@ -31,4 +35,12 @@ func main() {
 			}
 		}
 	}
+}
+
+func getUIServer() http.Handler {
+	if os.Getenv("ENV") == "LOCAL" {
+		log.Println("Detected local dev mode, serving files from /ui")
+		return http.FileServer(http.Dir("./ui/src/client/public"))
+	}
+	return http.FileServer(assetFS())
 }

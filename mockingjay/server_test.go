@@ -9,6 +9,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
 )
 
 var (
@@ -56,7 +58,7 @@ func TestItReturnsCannedResponses(t *testing.T) {
 		},
 	}
 
-	server := NewServer([]FakeEndpoint{endpoint, secondEndpoint}, debugModeOff)
+	server := NewServer([]FakeEndpoint{endpoint, secondEndpoint}, debugModeOff, ioutil.Discard)
 
 	request, _ := http.NewRequest("GET", testURL, nil)
 	responseReader := httptest.NewRecorder()
@@ -76,7 +78,7 @@ func TestItReturnsCannedResponses(t *testing.T) {
 }
 
 func TestItCanCreateNewEndpointsOverHTTP(t *testing.T) {
-	server := NewServer([]FakeEndpoint{}, debugModeOff)
+	server := NewServer([]FakeEndpoint{}, debugModeOff, ioutil.Discard)
 
 	newEndpoint := FakeEndpoint{
 		Name: "New endpoint",
@@ -103,7 +105,7 @@ func TestItCanCreateNewEndpointsOverHTTP(t *testing.T) {
 }
 
 func TestItReturnsBadRequestWhenMakingABadNewEndpoint(t *testing.T) {
-	server := NewServer([]FakeEndpoint{}, debugModeOff)
+	server := NewServer([]FakeEndpoint{}, debugModeOff, ioutil.Discard)
 
 	badBody := []byte("blah")
 	req, _ := http.NewRequest("POST", newEndpointURL, bytes.NewReader(badBody))
@@ -119,7 +121,7 @@ func TestItReturns404WhenRequestCannotBeMatched(t *testing.T) {
 		return false
 	}
 
-	server := NewServer([]FakeEndpoint{}, debugModeOff)
+	server := NewServer([]FakeEndpoint{}, debugModeOff, ioutil.Discard)
 	server.requestMatcher = alwaysNotMatching
 
 	req, _ := http.NewRequest("POST", "doesnt-matter", nil)
@@ -137,7 +139,7 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 
 	mjReq := Request{URI: testURL, Method: "POST", Body: wildcardBody, Form: nil}
 	config := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{expectedStatus, "", nil}}
-	server := NewServer([]FakeEndpoint{config}, debugModeOff)
+	server := NewServer([]FakeEndpoint{config}, debugModeOff, ioutil.Discard)
 
 	requestWithDifferentBody, _ := http.NewRequest("POST", testURL, strings.NewReader("This body isnt what we said but it should match"))
 	responseReader := httptest.NewRecorder()
@@ -148,22 +150,208 @@ func TestItRecordsIncomingRequests(t *testing.T) {
 	assert.Equal(t, server.requests[0].Method, "POST")
 }
 
-func TestItReturnsListOfEndpoints(t *testing.T) {
+func TestMJEndpoints(t *testing.T) {
+
+	var newConfigBuffer bytes.Buffer
+
 	mjReq := Request{URI: testURL, Method: "GET", Form: nil}
 	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
-	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff)
+	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff, &newConfigBuffer)
 
-	request, _ := http.NewRequest("GET", endpointsURL, nil)
-	responseReader := httptest.NewRecorder()
+	t.Run("get endpoints", func(t *testing.T) {
+		request, _ := http.NewRequest("GET", endpointsURL, nil)
+		responseReader := httptest.NewRecorder()
 
-	server.ServeHTTP(responseReader, request)
+		server.ServeHTTP(responseReader, request)
 
-	assert.Equal(t, responseReader.Code, http.StatusOK)
-	assert.Equal(t, responseReader.HeaderMap["Content-Type"][0], "application/json")
+		assert.Equal(t, responseReader.Code, http.StatusOK)
+		assert.Equal(t, responseReader.HeaderMap["Content-Type"][0], "application/json")
 
-	var endpointResponse []FakeEndpoint
-	err := json.Unmarshal(responseReader.Body.Bytes(), &endpointResponse)
+		var endpointResponse []FakeEndpoint
+		err := json.Unmarshal(responseReader.Body.Bytes(), &endpointResponse)
 
-	assert.Nil(t, err)
-	assert.Equal(t, endpointResponse[0], endpoint, "The endpoint returned doesnt match what the server was set up with")
+		assert.Nil(t, err)
+		assert.Equal(t, endpointResponse[0], endpoint, "The endpoint returned doesnt match what the server was set up with")
+
+	})
+
+	t.Run("update endpoints", func(t *testing.T) {
+		newEndpointName := testEndpointName + "changed"
+		updatedEndpoint := FakeEndpoint{newEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
+
+		editedBody, _ := json.Marshal([]FakeEndpoint{updatedEndpoint})
+		updateRequest, _ := http.NewRequest(http.MethodPut, endpointsURL, bytes.NewReader(editedBody))
+		updateResponseReader := httptest.NewRecorder()
+
+		server.ServeHTTP(updateResponseReader, updateRequest)
+
+		assert.Equal(t, http.StatusOK, updateResponseReader.Code, "Didnt work!", updateResponseReader.Body.String())
+		assert.Equal(t, updateResponseReader.HeaderMap["Content-Type"][0], "application/json")
+
+		var updatedEndpoints []FakeEndpoint
+
+		err := yaml.Unmarshal(newConfigBuffer.Bytes(), &updatedEndpoints)
+
+		assert.NoError(t, err)
+		assert.Equal(t, updatedEndpoints, server.Endpoints)
+		assert.Equal(t, newEndpointName, server.Endpoints[0].Name)
+	})
+
+	t.Run("rejects bad updates", func(t *testing.T) {
+		badUpdate := `{"bad": "config"}`
+		updateRequest, _ := http.NewRequest(http.MethodPut, endpointsURL, strings.NewReader(badUpdate))
+		updateResponseReader := httptest.NewRecorder()
+
+		server.ServeHTTP(updateResponseReader, updateRequest)
+
+		assert.Equal(t, http.StatusBadRequest, updateResponseReader.Code, updateResponseReader.Body.String())
+	})
+
+	t.Run("rejects bad JSON", func(t *testing.T) {
+		notJSON := `not json`
+		updateRequest, _ := http.NewRequest(http.MethodPut, endpointsURL, strings.NewReader(notJSON))
+		updateResponseReader := httptest.NewRecorder()
+
+		server.ServeHTTP(updateResponseReader, updateRequest)
+
+		assert.Equal(t, http.StatusBadRequest, updateResponseReader.Code, updateResponseReader.Body.String())
+	})
+}
+
+func TestItCanCheckCompatability(t *testing.T) {
+
+	mjReq := Request{URI: testURL, Method: "GET", Form: nil}
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
+	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff, ioutil.Discard)
+
+	t.Run("cdc failing", func(t *testing.T) {
+		failingServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			http.Error(w, "Not found", http.StatusNotFound)
+		}))
+		defer failingServer.Close()
+		request, _ := http.NewRequest("GET", checkcompatabilityURL+"?url="+failingServer.URL, nil)
+		failingResponseReader := httptest.NewRecorder()
+
+		server.ServeHTTP(failingResponseReader, request)
+
+		assert.Equal(t, failingResponseReader.Code, http.StatusOK)
+
+		var result compatCheckResult
+
+		err := json.Unmarshal(failingResponseReader.Body.Bytes(), &result)
+
+		assert.NoError(t, err, "Shouldn't get an error parsing compatability result")
+		assert.False(t, result.Passed, "Compatability check should be fail on failing server")
+		assert.NotEmpty(t, result.Messages, "Should be some messages about failure")
+	})
+
+	t.Run("cdc passing", func(t *testing.T) {
+		passingServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path == endpoint.Request.URI {
+				w.WriteHeader(endpoint.Response.Code)
+				w.Write([]byte(endpoint.Response.Body))
+			} else {
+				http.Error(w, "Not found", http.StatusNotFound)
+			}
+		}))
+		defer passingServer.Close()
+
+		passingRequest, _ := http.NewRequest("GET", checkcompatabilityURL+"?url="+passingServer.URL, nil)
+		passingResponseReader := httptest.NewRecorder()
+		server.ServeHTTP(passingResponseReader, passingRequest)
+
+		assert.Equal(t, passingResponseReader.Code, http.StatusOK)
+
+		var result compatCheckResult
+
+		err := json.Unmarshal(passingResponseReader.Body.Bytes(), &result)
+
+		assert.NoError(t, err, "Shouldn't get an error parsing compatability result")
+		assert.True(t, result.Passed, "Compatability check should be passing on compat server")
+
+	})
+}
+
+func TestItCanListRequestsReceived(t *testing.T) {
+	server := NewServer([]FakeEndpoint{}, debugModeOff, ioutil.Discard)
+	reqGet, _ := http.NewRequest(http.MethodGet, "/foo", nil)
+	reqPost, _ := http.NewRequest(http.MethodPost, "/bar", nil)
+	reqPut, _ := http.NewRequest(http.MethodPut, "/fizz", nil)
+
+	rec := httptest.NewRecorder()
+
+	server.ServeHTTP(rec, reqGet)
+	server.ServeHTTP(rec, reqPost)
+	server.ServeHTTP(rec, reqPut)
+
+	listRequestsReq, _ := http.NewRequest(http.MethodGet, requestsURL, nil)
+
+	listRecorder := httptest.NewRecorder()
+
+	server.ServeHTTP(listRecorder, listRequestsReq)
+
+	assert.Equal(t, http.StatusOK, listRecorder.Code)
+
+	var requests []Request
+
+	err := json.Unmarshal(listRecorder.Body.Bytes(), &requests)
+
+	if err != nil {
+		t.Fatal("Couldn't unmarshal list requests body", listRecorder.Body.String())
+	}
+
+	assert.Len(t, requests, 3, listRecorder.Body.String())
+}
+
+func TestItCanMakeCurls(t *testing.T) {
+	mjReq := Request{URI: "/hello-world", Method: "GET", Form: nil}
+	endpoint := FakeEndpoint{testEndpointName, cdcDisabled, mjReq, response{http.StatusCreated, cannedResponse, nil}}
+	server := NewServer([]FakeEndpoint{endpoint}, debugModeOff, ioutil.Discard)
+
+	t.Run("valid request", func(t *testing.T) {
+		url := curlMJURL + "?name=" + endpoint.Name + "&baseURL=http://google.com"
+		curlReq, _ := http.NewRequest(http.MethodGet, url, nil)
+
+		rec := httptest.NewRecorder()
+
+		server.ServeHTTP(rec, curlReq)
+
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "curl -X GET -d  'http://google.com/hello-world'", rec.Body.String())
+	})
+
+	t.Run("mj endpoint doesnt exist", func(t *testing.T) {
+		url := curlMJURL + "?name=doesntExist&baseURL=http://google.com"
+		curlReq, _ := http.NewRequest(http.MethodGet, url, nil)
+
+		rec := httptest.NewRecorder()
+
+		server.ServeHTTP(rec, curlReq)
+
+		assert.Equal(t, http.StatusNotFound, rec.Code)
+	})
+
+	t.Run("missing name querystring", func(t *testing.T) {
+		url := curlMJURL + "?nombre=" + endpoint.Name + "&baseURL=http://google.com"
+
+		curlReq, _ := http.NewRequest(http.MethodGet, url, nil)
+
+		rec := httptest.NewRecorder()
+
+		server.ServeHTTP(rec, curlReq)
+
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
+	})
+
+	t.Run("missing baseURL querystring", func(t *testing.T) {
+		url := curlMJURL + "?name=" + endpoint.Name + "&aceUrl=http://google.com"
+
+		curlReq, _ := http.NewRequest(http.MethodGet, url, nil)
+
+		rec := httptest.NewRecorder()
+
+		server.ServeHTTP(rec, curlReq)
+
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
+	})
 }

@@ -9,11 +9,11 @@ import (
 type response struct {
 	Code    int
 	Body    string
-	Headers map[string]string
+	Headers map[string]string `yaml:"headers,omitempty"`
 }
 
 func (r response) isValid() bool {
-	return r.Code != 0
+	return r.Code > 99 && r.Code < 600 && httpHeadersValid(r.Headers)
 }
 
 type notFoundResponse struct {

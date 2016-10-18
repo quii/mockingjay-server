@@ -1,8 +1,10 @@
 #!/bin/bash
 
-go list ./... | grep -v /vendor/ | xargs -L1 golint
-go list ./... | grep -v /vendor/ | xargs -L1 go vet
-go list ./... | grep -v /vendor/ | xargs -L1 go vet
-go fmt ./...
-go test ./...
-go install
+echo "Building frontend assets"
+cd ui
+npm install
+npm run build
+cd ..
+
+echo "Building application"
+time ./build-app.sh

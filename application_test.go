@@ -19,7 +19,6 @@ func TestCompatabilityWithWildcards(t *testing.T) {
 
 	app := defaultApplication(log.New(ioutil.Discard, "", log.Ldate|log.Ltime), 1)
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		t.Log("Got request", r.URL)
 		if r.URL.String() == "/hello" {
 			fmt.Fprint(w, "world")
 		} else {
@@ -44,7 +43,7 @@ func TestItFailsWhenTheConfigFileCantBeLoaded(t *testing.T) {
 	app.configLoader = failingIOUtil
 
 	configPath := "mockingjay config path"
-	_, err := app.CreateServer(configPath, "", false)
+	_, err := app.CreateServer(configPath, "", false, nil)
 
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errIOError)
@@ -58,7 +57,7 @@ func TestItFailsWhenTheConfigIsInvalid(t *testing.T) {
 	app := testApplication()
 	app.mockingjayLoader = failingMockingjayLoader
 
-	_, err := app.CreateServer("mockingjay config path", "", false)
+	_, err := app.CreateServer("mockingjay config path", "", false, nil)
 
 	assert.NotNil(t, err, "Didnt get an error when the mockingjay config failed to load")
 	assert.Equal(t, err, errMJLoaderError)
@@ -77,7 +76,7 @@ func TestCompatFailsWhenConfigIsInvalid(t *testing.T) {
 func TestItFailsWhenTheMonkeyConfigIsInvalid(t *testing.T) {
 	app := testApplication()
 
-	_, err := app.CreateServer("mockingjay config path", "monkey config path", false)
+	_, err := app.CreateServer("mockingjay config path", "monkey config path", false, nil)
 
 	assert.NotNil(t, err, "Didnt get an error when the monkey config failed to load")
 	assert.Equal(t, err, errMonkeyLoadError)
@@ -109,7 +108,18 @@ func testApplication() *application {
 
 func testMockingJayConfig() []mockingjay.FakeEndpoint {
 
-	m, err := mockingjay.NewFakeEndpoints([]byte(testYAML("hello, world")))
+	yaml := `
+---
+ - name: Test endpoint
+   request:
+     uri: /hello
+     method: GET
+   response:
+     code: 200
+     body: 'hello, world'
+`
+
+	m, err := mockingjay.NewFakeEndpoints([]byte(yaml))
 
 	if err != nil {
 		log.Fatal(err)

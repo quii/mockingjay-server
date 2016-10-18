@@ -1,7 +1,12 @@
 package mockingjay
 
 import (
+	"bufio"
+	"bytes"
 	"encoding/json"
+	"fmt"
+	"gopkg.in/yaml.v2"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -14,19 +19,28 @@ type mjLogger interface {
 	Println(...interface{})
 }
 
-// Server allows you to configure a HTTP server for a slice of fake endpoints
-type Server struct {
-	Endpoints      []FakeEndpoint
-	requests       []Request
-	requestMatcher func(a, b Request, endpointName string) bool
-	logger         mjLogger
+type endpointValidatorError struct {
+	EndpointName string
+	Message      string
 }
 
-// NewServer creates a new Server instance
-func NewServer(endpoints []FakeEndpoint, debugMode bool) *Server {
+type endpointsValidator func([]FakeEndpoint) []endpointValidatorError
+
+// Server allows you to configure a HTTP server for a slice of fake endpoints
+type Server struct {
+	Endpoints            []FakeEndpoint
+	requests             []Request
+	requestMatcher       func(a, b Request, endpointName string) bool
+	logger               mjLogger
+	newConfigStateWriter io.Writer
+}
+
+// NewServer creates a new Server instance. debugMode will log additional info at runtime and newConfigStateWriter will write out the new state of the config if it gets changed at runtime
+func NewServer(endpoints []FakeEndpoint, debugMode bool, newConfigStateWriter io.Writer) *Server {
 	s := new(Server)
 	s.Endpoints = endpoints
 	s.requests = make([]Request, 0)
+	s.newConfigStateWriter = newConfigStateWriter
 
 	if debugMode {
 		s.logger = log.New(os.Stdout, "mocking-jay", log.Ldate|log.Ltime)
@@ -44,15 +58,21 @@ func NewServer(endpoints []FakeEndpoint, debugMode bool) *Server {
 const requestsURL = "/requests"
 const endpointsURL = "/mj-endpoints"
 const newEndpointURL = "/mj-new-endpoint"
+const checkcompatabilityURL = "/mj-check-compatability"
+const curlMJURL = "/mj-curl"
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.URL.String() {
+	switch r.URL.Path {
 	case endpointsURL:
-		s.serveEndpoints(w)
+		s.handleEndpoints(w, r)
 	case newEndpointURL:
 		s.createEndpoint(w, r)
 	case requestsURL:
-		s.listAvailableRequests(w)
+		s.listRequestsMade(w)
+	case checkcompatabilityURL:
+		s.checkCompatability(r.URL.Query().Get("url"), w)
+	case curlMJURL:
+		s.curl(w, r.URL.Query().Get("name"), r.URL.Query().Get("baseURL"))
 	default:
 		mjRequest := NewRequest(r)
 
@@ -65,7 +85,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) listAvailableRequests(w http.ResponseWriter) {
+func (s *Server) listRequestsMade(w http.ResponseWriter) {
 	payload, err := json.Marshal(s.requests)
 
 	if err != nil {
@@ -88,7 +108,38 @@ func (s *Server) getResponse(r Request) *response {
 	return newNotFound(r, s.Endpoints)
 }
 
-func (s *Server) serveEndpoints(w http.ResponseWriter) {
+func (s *Server) handleEndpoints(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == http.MethodPut {
+		var updatedEndpoints []FakeEndpoint
+
+		defer r.Body.Close()
+
+		endpointBody, err := ioutil.ReadAll(r.Body)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		updatedEndpoints, err = NewFakeEndpointsFromJSON(endpointBody)
+
+		if err != nil {
+			s.logger.Println("Couldn't update endpoints from JSON", string(endpointBody), err.Error())
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		s.Endpoints = updatedEndpoints
+
+		err = s.writeUpdatedConfig()
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
 	endpointsBody, err := json.Marshal(s.Endpoints)
 
 	if err != nil {
@@ -96,6 +147,52 @@ func (s *Server) serveEndpoints(w http.ResponseWriter) {
 	}
 
 	w.Write(endpointsBody)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+}
+
+func (s *Server) writeUpdatedConfig() error {
+	newYAML, err := yaml.Marshal(s.Endpoints)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Fprint(s.newConfigStateWriter, string(addNewLinesToConfig(newYAML)))
+
+	return nil
+}
+
+type compatCheckResult struct {
+	Passed   bool
+	Messages []string
+}
+
+func (s *Server) checkCompatability(url string, w http.ResponseWriter) {
+
+	msgBuffer := new(bytes.Buffer)
+
+	compatLogger := log.New(msgBuffer, "", 0)
+	compatChecker := NewCompatabilityChecker(compatLogger, DefaultHTTPTimeoutSeconds)
+
+	compatible := compatChecker.CheckCompatibility(s.Endpoints, url)
+
+	scanner := bufio.NewScanner(msgBuffer)
+	var messages []string
+	for scanner.Scan() {
+		messages = append(messages, scanner.Text())
+	}
+	if err := scanner.Err(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	result := compatCheckResult{compatible, messages}
+
+	resJSON, _ := json.Marshal(result)
+
+	w.Write(resJSON)
 	w.Header().Set("Content-Type", "application/json")
 }
 
@@ -119,4 +216,26 @@ func (s *Server) createEndpoint(w http.ResponseWriter, r *http.Request) {
 	s.Endpoints = append(s.Endpoints, newEndpoint)
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (s *Server) curl(w http.ResponseWriter, endpointName string, baseURL string) {
+	if endpointName == "" || baseURL == "" {
+		http.Error(w, "Please provide both [name] and [baseURL] querystring parameters", http.StatusBadRequest)
+		return
+	}
+
+	for _, endpoint := range s.Endpoints {
+		if endpoint.Name == endpointName {
+			curl, err := endpoint.Request.AsCURL(baseURL)
+
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+
+			fmt.Fprint(w, curl)
+			return
+		}
+	}
+
+	http.Error(w, "Couldn't find endpoint", http.StatusNotFound)
 }

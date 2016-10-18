@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"github.com/quii/mockingjay-server/mockingjay"
 	"github.com/quii/mockingjay-server/monkey"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"time"
 )
@@ -26,7 +28,7 @@ type compatabilityChecker interface {
 	CheckCompatibility(endpoints []mockingjay.FakeEndpoint, realURL string) bool
 }
 
-type serverMaker func([]mockingjay.FakeEndpoint, bool) *mockingjay.Server
+type serverMaker func([]mockingjay.FakeEndpoint, bool, io.Writer) *mockingjay.Server
 type monkeyServerMaker func(http.Handler, string) (http.Handler, error)
 
 type application struct {
@@ -46,7 +48,7 @@ func defaultApplication(logger *log.Logger, httpTimeout time.Duration) (app *app
 	app = new(application)
 	app.configLoader = globFileLoader
 	app.mockingjayLoader = mockingjay.NewFakeEndpoints
-	app.compatabilityChecker = NewCompatabilityChecker(logger, httpTimeout)
+	app.compatabilityChecker = mockingjay.NewCompatabilityChecker(logger, httpTimeout)
 	app.mockingjayServerMaker = mockingjay.NewServer
 	app.monkeyServerMaker = monkey.NewServer
 	app.logger = logger
@@ -67,7 +69,7 @@ func (a *application) PollConfig() {
 }
 
 // CreateServer will create a fake server from the configuration found in configPath with optional performance constraints from configutation found in monkeyConfigPath
-func (a *application) CreateServer(configPath string, monkeyConfigPath string, debugMode bool) (server http.Handler, err error) {
+func (a *application) CreateServer(configPath string, monkeyConfigPath string, debugMode bool, ui http.Handler) (server http.Handler, err error) {
 	a.configPath = configPath
 	a.monkeyConfigPath = monkeyConfigPath
 	endpoints, err := a.loadConfig()
@@ -76,7 +78,7 @@ func (a *application) CreateServer(configPath string, monkeyConfigPath string, d
 		return
 	}
 
-	return a.createFakeServer(endpoints, debugMode)
+	return a.createFakeServer(endpoints, debugMode, ui)
 }
 
 // CheckCompatibility will run a MJ config against a realURL to see if it's compatible
@@ -121,9 +123,38 @@ func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err err
 	return
 }
 
-func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debugMode bool) (server http.Handler, err error) {
+/*
+Giovanni Bajo [5:09 PM]
+it doesn't respect the semantics of io.Writer
+
+[5:09]
+like you wouldn’t be able to compose it with a gzip.Writer
+
+[5:10]
+so I’m not sure you’re doing yourself a favor in implementing the io.Writer interface, it’s prone to mistakes
+*/
+type fileUpdater struct {
+	path string
+}
+
+func (fu *fileUpdater) Write(p []byte) (n int, err error) {
+	f, err := os.Create(fu.path)
+
+	if err != nil {
+		return 0, err
+	}
+
+	n, err = f.Write(p)
+	f.Sync()
+	return
+}
+
+func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debugMode bool, ui http.Handler) (server http.Handler, err error) {
 	go a.PollConfig()
-	a.mjServer = a.mockingjayServerMaker(endpoints, debugMode)
+
+	configFile := fileUpdater{a.configPath}
+
+	a.mjServer = a.mockingjayServerMaker(endpoints, debugMode, &configFile)
 	monkeyServer, err := a.monkeyServerMaker(a.mjServer, a.monkeyConfigPath)
 
 	if err != nil {
@@ -131,6 +162,11 @@ func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debu
 	}
 
 	router := http.NewServeMux()
+
+	if ui != nil {
+		router.Handle("/mj-admin/", http.StripPrefix("/mj-admin", ui))
+	}
+
 	router.Handle("/", monkeyServer)
 
 	return router, nil

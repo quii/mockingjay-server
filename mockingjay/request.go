@@ -1,10 +1,10 @@
 package mockingjay
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/moul/http2curl"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -16,22 +16,26 @@ import (
 
 // Request is a simplified version of a http.Request
 type Request struct {
-	URI      string
-	RegexURI *RegexYAML
-	Method   string
-	Headers  map[string]string
-	Body     string
-	Form     map[string]string
+	URI      string            `yaml:"uri"`
+	RegexURI *RegexField       `yaml:"regexuri,omitempty" json:"RegexURI,omitempty"`
+	Method   string            `yaml:"method"`
+	Headers  map[string]string `yaml:"headers,omitempty"`
+	Body     string            `yaml:"body,omitempty"`
+	Form     map[string]string `yaml:"form,omitempty"`
 }
 
 var (
 	errBadRegex    = errors.New("A regex defined in the request does not pass against it's defined URI")
 	errEmptyURI    = errors.New("Cannot have an empty URI")
+	errBadURI      = errors.New("URI should start with a slash")
 	errEmptyMethod = errors.New("Cannot have an empty HTTP method")
+	errBadHeaders  = errors.New("Headers are bad (no spaces please, each key must have a value")
+	errBodyAndForm = errors.New("Cannot have a request with both a body and a form defined")
 )
 
 func (r Request) errors() error {
 	regexPassed := r.RegexURI == nil || r.RegexURI.MatchString(r.URI)
+
 	if !regexPassed {
 		return errBadRegex
 	}
@@ -40,10 +44,36 @@ func (r Request) errors() error {
 		return errEmptyURI
 	}
 
+	if r.URI[0] != '/' {
+		return errBadURI
+	}
+
 	if r.Method == "" {
 		return errEmptyMethod
 	}
+
+	if !httpHeadersValid(r.Headers) {
+		return errBadHeaders
+	}
+
+	if r.Form != nil && len(r.Body) > 0 {
+		return errBodyAndForm
+	}
+
 	return nil
+}
+
+// AsCURL returns a string which is the curl command to match the reqquest
+func (r Request) AsCURL(baseURL string) (string, error) {
+	asHTTPReq, err := r.AsHTTPRequest(baseURL)
+
+	if err != nil {
+		return "", err
+	}
+
+	curl, err := http2curl.GetCurlCommand(asHTTPReq)
+
+	return curl.String(), err
 }
 
 // AsHTTPRequest tries to create a http.Request from a given baseURL
@@ -58,7 +88,7 @@ func (r Request) AsHTTPRequest(baseURL string) (req *http.Request, err error) {
 		body = form.Encode()
 	}
 
-	req, err = http.NewRequest(r.Method, baseURL+r.URI, ioutil.NopCloser(bytes.NewBufferString(body)))
+	req, err = http.NewRequest(r.Method, baseURL+r.URI, strings.NewReader(body))
 
 	if err != nil {
 		return
@@ -78,14 +108,12 @@ func (r Request) AsHTTPRequest(baseURL string) (req *http.Request, err error) {
 // NewRequest creates a mockingjay request from a http request
 func NewRequest(httpRequest *http.Request) (req Request) {
 
-	//todo: Test me with the form stuff
-
 	req.URI = httpRequest.URL.String()
 	req.Method = httpRequest.Method
 
 	req.Headers = make(map[string]string)
 	for header, values := range httpRequest.Header {
-		req.Headers[header] = strings.Join(values, ",")
+		req.Headers[strings.ToLower(header)] = strings.Join(values, ",")
 	}
 
 	if httpRequest.Header.Get("content-type") == "application/x-www-form-urlencoded" {
@@ -110,14 +138,34 @@ func NewRequest(httpRequest *http.Request) (req Request) {
 	return
 }
 
-const stringerFormat = "%s %s Form: %s Headers: %s"
-
 func (r Request) String() string {
-	return fmt.Sprintf(stringerFormat, r.Method, r.URI, r.Form, r.Headers)
+	base := fmt.Sprintf("%s %s", r.Method, r.URI)
+
+	if r.Headers != nil {
+		headersAsString := stringifyMap(r.Headers)
+		base = fmt.Sprintf("%s Headers: [%s]", base, headersAsString)
+	}
+
+	if r.Form != nil {
+		headersAsString := stringifyMap(r.Form)
+		base = fmt.Sprintf("%s Form: [%s]", base, headersAsString)
+	}
+
+	if len(r.Body) > 0 && len(r.Body) > 50 {
+		base = fmt.Sprintf("%s Body: [%s...]", base, r.Body[:50])
+	} else if len(r.Body) > 0 {
+		base = fmt.Sprintf("%s Body: [%s]", base, r.Body)
+	}
+
+	return base
 }
 
-func (r Request) hash() string {
-	return fmt.Sprintf("URI: %v | METHOD: %v | HEADERS: %v | BODY: %v | FORM: %v", r.URI, r.Method, r.Headers, r.Body, r.Form)
+func stringifyMap(m map[string]string) string {
+	var headerStrings []string
+	for k, v := range m {
+		headerStrings = append(headerStrings, fmt.Sprintf("%s->%s", k, v))
+	}
+	return strings.Join(headerStrings, ", ")
 }
 
 func requestMatches(expected, incoming Request, endpointName string, logger mjLogger) bool {
@@ -193,7 +241,7 @@ func matchHeaders(expected, incoming map[string]string) bool {
 	return true
 }
 
-func matchURI(serverURI string, serverRegex *RegexYAML, incomingURI string) bool {
+func matchURI(serverURI string, serverRegex *RegexField, incomingURI string) bool {
 	if serverURI == incomingURI {
 		return true
 	} else if serverRegex != nil {
