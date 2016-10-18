@@ -2,4 +2,4 @@ coverage.out
 .idea
 mockingjay-server.iml
 *.out
-/bindata_assetfs.go
+bindata_assetfs.go

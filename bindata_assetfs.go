@@ -88,7 +88,7 @@ func publicCssMjCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/css/mj.css", size: 138659, mode: os.FileMode(436), modTime: time.Unix(1475392946, 0)}
+	info := bindataFileInfo{name: "public/css/mj.css", size: 138659, mode: os.FileMode(436), modTime: time.Unix(1476779115, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -128,7 +128,7 @@ func publicJsBundleJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/js/bundle.js", size: 430812, mode: os.FileMode(436), modTime: time.Unix(1475392960, 0)}
+	info := bindataFileInfo{name: "public/js/bundle.js", size: 430812, mode: os.FileMode(436), modTime: time.Unix(1476779137, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
