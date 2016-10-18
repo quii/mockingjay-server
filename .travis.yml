@@ -10,7 +10,6 @@ install:
   - . $HOME/.nvm/nvm.sh
   - nvm install stable
   - nvm use stable
-  - npm install
   - go get github.com/mitchellh/gox
   - go get github.com/tcnksm/ghr
   - go get -u github.com/golang/lint/golint
