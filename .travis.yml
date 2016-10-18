@@ -15,9 +15,7 @@ before_install:
   - go get github.com/jteeuwen/go-bindata/...
   - go get github.com/elazarl/go-bindata-assetfs/...
 script:
-  - golint .
-  - go generate
-  - go test ./...
+  - ./build.sh
 before_deploy:
   - gox -output "dist/{{.OS}}_{{.Arch}}_{{.Dir}}" -ldflags="-w"
 
