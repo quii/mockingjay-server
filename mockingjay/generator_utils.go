@@ -50,3 +50,36 @@ func randomPath(length uint8) (path string) {
 
 	return string(p)
 }
+
+func randomQueryString(length uint8) (path string) {
+	var p []rune
+	p = append(p, '?')
+
+	for i := 0; i < rand.Intn(int(length/4)+1); i++ {
+		p = append(p, urlRunes[rand.Intn(len(urlRunes))])
+	}
+	p = append(p, '=')
+	for i := 0; i < rand.Intn(int(length/4)+1); i++ {
+		p = append(p, urlRunes[rand.Intn(len(urlRunes))])
+	}
+
+	for len(p) < int(length) {
+		if len(p)+2 >= int(length) {
+			return string(p)
+		}
+		p = append(p, '&')
+		for i := 0; i < rand.Intn((int(length)-len(p))/2); i++ {
+			p = append(p, urlRunes[rand.Intn(len(urlRunes))])
+		}
+		p = append(p, '=')
+		for i := 0; i < rand.Intn(int(length)-len(p)); i++ {
+			p = append(p, urlRunes[rand.Intn(len(urlRunes))])
+		}
+	}
+
+	for len(p) < int(length) {
+		p = append(p, urlRunes[rand.Intn(len(urlRunes))])
+	}
+
+	return string(p)
+}
