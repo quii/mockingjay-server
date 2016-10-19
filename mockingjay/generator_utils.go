@@ -1,17 +1,19 @@
 package mockingjay
 
-import "net/http"
-import "math/rand"
-
-var (
-	httpMethods    = getHTTPMethods()
-	urlLetterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+import (
+	"math/rand"
+	"net/http"
 )
 
-func randomURL(length int) string {
+var (
+	httpMethods = getHTTPMethods()
+	urlRunes    = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")
+)
+
+func randomURL(length uint8) string {
 	b := make([]rune, length)
 	for i := range b {
-		b[i] = urlLetterRunes[rand.Intn(len(urlLetterRunes))]
+		b[i] = urlRunes[rand.Intn(len(urlRunes))]
 	}
 	return string(b)
 }
@@ -30,4 +32,21 @@ func getHTTPMethods() []string {
 		http.MethodOptions,
 		http.MethodTrace,
 	}
+}
+
+func randomPath(length uint8) (path string) {
+	var p []rune
+
+	for len(p) < int(length) {
+		for i := 0; i < rand.Intn(int(length)-len(p)); i++ {
+			p = append(p, urlRunes[rand.Intn(len(urlRunes))])
+		}
+		p = append(p, '/')
+	}
+
+	for len(p) < int(length) {
+		p = append(p, urlRunes[rand.Intn(len(urlRunes))])
+	}
+
+	return string(p)
 }
