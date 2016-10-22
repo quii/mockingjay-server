@@ -15,12 +15,15 @@ var (
 	urlRunes    = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")
 )
 
-func randomURL(length uint16) string {
-	b := make([]rune, length)
-	for i := range b {
-		b[i] = urlRunes[rand.Intn(len(urlRunes))]
+func randomURL(length uint16) (string, error) {
+	pathLength := length / 2
+	queryLength := length - pathLength
+	path := randomPath(pathLength)
+	query, err := randomQueryString(queryLength)
+	if err != nil {
+		return "", err
 	}
-	return string(b)
+	return path + query, nil
 }
 
 func getHTTPMethods() []string {
@@ -43,16 +46,19 @@ func randomPath(length uint16) (path string) {
 
 	for len(p) < int(length) {
 		for i := 0; i < rand.Intn(int(length)-len(p)); i++ {
-			p = append(p, urlRunes[rand.Intn(len(urlRunes))])
+			p = append(p, randomRune())
 		}
 		p = append(p, '/')
 	}
 
 	for len(p) < int(length) {
-		p = append(p, urlRunes[rand.Intn(len(urlRunes))])
+		p = append(p, randomRune())
 	}
 
 	return string(p)
+}
+func randomRune() rune {
+	return urlRunes[rand.Intn(len(urlRunes))]
 }
 
 func randomQueryString(length uint16) (path string, err error) {
@@ -92,11 +98,9 @@ func randomQueryStringParameter(length int) (qsp queryStringParameter) {
 
 func fillWithRandomRunes(slice []rune) {
 	for i := range slice {
-		slice[i] = urlRunes[rand.Intn(len(urlRunes))]
+		slice[i] = randomRune()
 	}
 }
-
-type path []string
 
 type queryStringParameter struct {
 	key   string

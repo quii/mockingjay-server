@@ -8,7 +8,7 @@ import (
 
 func TestRandomURL(t *testing.T) {
 	f := func(n uint16) bool {
-		path := randomURL(n)
+		path, _ := randomURL(n)
 		_, err := url.Parse(path)
 		return err == nil
 	}
@@ -23,15 +23,27 @@ func TestRandomPath(t *testing.T) {
 		n += 1
 		path := randomPath(n)
 		_, err := url.Parse(path)
-		startsWithSlash := path[:1] == "/"
 
-		return err == nil &&
-			startsWithSlash &&
-			len(path) == int(n)
+		if err != nil {
+			t.Log(err)
+			return false
+		}
+
+		if path[:1] != "/" {
+			t.Log("First character of path is not /")
+			return false
+		}
+
+		if len(path) == int(n) {
+			t.Log("Wrong length of path returned")
+			return false
+		}
+
+		return true
 	}
 
 	if err := quick.Check(f, nil); err != nil {
-		t.Error("randomPath did not did not return a valid path")
+		t.Error(err)
 	}
 }
 
@@ -41,24 +53,29 @@ func TestRandomQueryString(t *testing.T) {
 
 		qs, err := randomQueryString(n)
 		if err != nil {
+			t.Log(err)
 			return true
 		}
 
 		if len(qs) != int(n) {
+			t.Log("Wrong length of query string returned")
 			return false
 		}
 
 		_, err = url.Parse(qs)
 
 		if err != nil {
+			t.Log(err)
 			return false
 		}
 
 		if qs[:1] != "?" {
+			t.Log("Query string doesn't start with a ?")
 			return false
 		}
 
 		if !contains('=', qs) {
+			t.Log("Query string has no =")
 			return false
 		}
 
@@ -66,7 +83,7 @@ func TestRandomQueryString(t *testing.T) {
 	}
 
 	if err := quick.Check(f, nil); err != nil {
-		t.Error("randomQueryString did not did not return a valid queryString")
+		t.Error(err)
 	}
 }
 

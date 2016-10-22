@@ -6,9 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"encoding/json"
-	"gopkg.in/yaml.v2"
 	"regexp"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
 type testRegexDataType struct {
@@ -59,7 +60,7 @@ func TestItCanMarshalBackToJSON(t *testing.T) {
 		t.Error("Couldn't marshal into JSON", err)
 	}
 
-	assert.Equal(t, `{"Regex":"\/hello\/[a-z]+"}`, string(data))
+	assert.Equal(t, `{"Regex":"\\/hello\\/[a-z]+"}`, string(data))
 }
 
 func TestItCanMarshalBackToYAML(t *testing.T) {
