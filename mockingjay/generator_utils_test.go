@@ -36,9 +36,18 @@ func TestRandomPath(t *testing.T) {
 
 func TestRandomQueryString(t *testing.T) {
 	f := func(n uint8) bool {
-		n = n + 2
-		qs := randomQueryString(n)
-		_, err := url.Parse(qs)
+		n = (n % 101) + 5
+
+		qs, err := randomQueryString(n)
+		if err != nil {
+			return true
+		}
+
+		if len(qs) != int(n) {
+			return false
+		}
+
+		_, err = url.Parse(qs)
 
 		if err != nil {
 			return false
@@ -57,6 +66,38 @@ func TestRandomQueryString(t *testing.T) {
 
 	if err := quick.Check(f, nil); err != nil {
 		t.Error("randomQueryString did not did not return a valid queryString")
+	}
+}
+
+func TestQueryStringParameter(t *testing.T) {
+	qs := queryStringParameter{"hello", "world"}
+
+	if qs.length() != 11 {
+		t.Error("Unexpected length ", qs.length())
+	}
+
+	if qs.join() != "hello=world" {
+		t.Error("Unexpected join value", qs.join())
+	}
+}
+
+func TestQueryStringParameters(t *testing.T) {
+	qsp := queryStringParameters{}
+	if qsp.length() != 0 {
+		t.Error("Unexpected length", qsp.length())
+	}
+
+	qsp.add(queryStringParameter{"hello", "world"})
+	qsp.add(queryStringParameter{"goodbye", "piccadilly"})
+
+	if qsp.length() != 31 {
+		t.Error("Unexpected length", qsp.length())
+	}
+
+	qsp.add(queryStringParameter{"a", "b"})
+
+	if qsp.join() != "?hello=world&goodbye=piccadilly&a=b" {
+		t.Error("Unexpected join value", qsp.join())
 	}
 }
 
