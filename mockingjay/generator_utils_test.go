@@ -7,7 +7,7 @@ import (
 )
 
 func TestRandomURL(t *testing.T) {
-	f := func(n uint8) bool {
+	f := func(n uint16) bool {
 		path := randomURL(n)
 		_, err := url.Parse(path)
 		return err == nil
@@ -19,7 +19,7 @@ func TestRandomURL(t *testing.T) {
 }
 
 func TestRandomPath(t *testing.T) {
-	f := func(n uint8) bool {
+	f := func(n uint16) bool {
 		path := randomPath(n)
 		_, err := url.Parse(path)
 		hasSlash := contains('/', path)
@@ -35,7 +35,7 @@ func TestRandomPath(t *testing.T) {
 }
 
 func TestRandomQueryString(t *testing.T) {
-	f := func(n uint8) bool {
+	f := func(n uint16) bool {
 		n = (n % 101) + 5
 
 		qs, err := randomQueryString(n)
@@ -66,6 +66,23 @@ func TestRandomQueryString(t *testing.T) {
 
 	if err := quick.Check(f, nil); err != nil {
 		t.Error("randomQueryString did not did not return a valid queryString")
+	}
+}
+
+func TestRandomQueryStringError(t *testing.T) {
+	f := func(n uint16) bool {
+		n %= 5
+		_, err := randomQueryString(n)
+
+		if err == nil {
+			return false
+		}
+
+		return true
+	}
+
+	if err := quick.Check(f, nil); err != nil {
+		t.Error("randomQueryString did not produce an error with invalid input")
 	}
 }
 

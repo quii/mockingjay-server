@@ -103,7 +103,7 @@ func (f FakeEndpoint) Generate(rand *rand.Rand, size int) reflect.Value {
 	randomMethod := httpMethods[rand.Intn(len(httpMethods))]
 
 	//todo: Creation of random URL and corresponding regex is a bit naff, needs improvement
-	uri := "/" + randomURL(uint8(rand.Intn(10)))
+	uri := "/" + randomURL(uint16(rand.Intn(10)))
 	regexURI, err := regexp.Compile(`\` + uri)
 
 	if err != nil {

@@ -13,7 +13,7 @@ var (
 	urlRunes    = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")
 )
 
-func randomURL(length uint8) string {
+func randomURL(length uint16) string {
 	b := make([]rune, length)
 	for i := range b {
 		b[i] = urlRunes[rand.Intn(len(urlRunes))]
@@ -37,7 +37,7 @@ func getHTTPMethods() []string {
 	}
 }
 
-func randomPath(length uint8) (path string) {
+func randomPath(length uint16) (path string) {
 	var p []rune
 
 	for len(p) < int(length) {
@@ -124,39 +124,39 @@ func (qsps queryStringParameters) join() string {
 	return b.String()
 }
 
-func randomQueryString(length uint8) (path string, err error) {
-	qsps := queryStringParameters{targetLength: int(length)}
+func randomQueryString(length uint16) (path string, err error) {
+	if length < 5 {
+		return path, errors.New("query string must be at least 5 characters long")
+	}
 
+	qsps := queryStringParameters{targetLength: int(length)}
 	if length <= 10 {
-		qsp, _ := randomQueryStringParameter(int(length - 2))
+		qsp := randomQueryStringParameter(int(length - 2))
 		qsps.add(qsp)
 		return qsps.join(), err
 	}
 
 	for int(length)-qsps.length() > 10 {
-		qsp, _ := randomQueryStringParameter(9)
+		qsp := randomQueryStringParameter(9)
 		qsps.add(qsp)
 	}
 
 	qsps.padFinalQueryString()
-
-	return qsps.join(), err
+	path = qsps.join()
+	return
 }
 
-func randomQueryStringParameter(length int) (qsp queryStringParameter, err error) {
-	if length < 3 {
-		return qsp, errors.New("Minimum length is 3")
-	}
-	key := make([]rune, rand.Intn(length/2)+1)
+func randomQueryStringParameter(length int) (qsp queryStringParameter) {
+	key := make([]rune, rand.Intn(length/2))
 	value := make([]rune, length-len(key))
+	fillWithRandomRunes(key)
+	fillWithRandomRunes(value)
 
-	for i := range key {
-		key[i] = urlRunes[rand.Intn(len(urlRunes))]
+	return queryStringParameter{string(key), string(value)}
+}
+
+func fillWithRandomRunes(slice []rune) {
+	for i := range slice {
+		slice[i] = urlRunes[rand.Intn(len(urlRunes))]
 	}
-
-	for i := range value {
-		value[i] = urlRunes[rand.Intn(len(urlRunes))]
-	}
-
-	return queryStringParameter{string(key), string(value)}, nil
 }
