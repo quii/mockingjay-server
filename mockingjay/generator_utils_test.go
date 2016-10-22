@@ -20,12 +20,13 @@ func TestRandomURL(t *testing.T) {
 
 func TestRandomPath(t *testing.T) {
 	f := func(n uint16) bool {
+		n += 1
 		path := randomPath(n)
 		_, err := url.Parse(path)
-		hasSlash := contains('/', path)
+		startsWithSlash := path[:1] == "/"
 
 		return err == nil &&
-			hasSlash &&
+			startsWithSlash &&
 			len(path) == int(n)
 	}
 
