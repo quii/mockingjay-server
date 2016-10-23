@@ -34,7 +34,7 @@ func TestRandomPath(t *testing.T) {
 			return false
 		}
 
-		if len(path) == int(n) {
+		if len(path) != int(n) {
 			t.Log("Wrong length of path returned")
 			return false
 		}
