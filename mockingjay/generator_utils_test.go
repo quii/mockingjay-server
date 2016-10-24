@@ -6,6 +6,12 @@ import (
 	"testing/quick"
 )
 
+var (
+	quickCheckConfig = &quick.Config{
+		MaxCount: 50,
+	}
+)
+
 func TestRandomURL(t *testing.T) {
 	f := func(n uint16) bool {
 		path, _ := randomURL(n)
@@ -13,7 +19,7 @@ func TestRandomURL(t *testing.T) {
 		return err == nil
 	}
 
-	if err := quick.Check(f, nil); err != nil {
+	if err := quick.Check(f, quickCheckConfig); err != nil {
 		t.Error("randomUrl did not return a valid URL")
 	}
 }
@@ -42,7 +48,7 @@ func TestRandomPath(t *testing.T) {
 		return true
 	}
 
-	if err := quick.Check(f, nil); err != nil {
+	if err := quick.Check(f, quickCheckConfig); err != nil {
 		t.Error(err)
 	}
 }
@@ -82,7 +88,7 @@ func TestRandomQueryString(t *testing.T) {
 		return true
 	}
 
-	if err := quick.Check(f, nil); err != nil {
+	if err := quick.Check(f, quickCheckConfig); err != nil {
 		t.Error(err)
 	}
 }
@@ -99,7 +105,7 @@ func TestRandomQueryStringError(t *testing.T) {
 		return true
 	}
 
-	if err := quick.Check(f, nil); err != nil {
+	if err := quick.Check(f, quickCheckConfig); err != nil {
 		t.Error("randomQueryString did not produce an error with invalid input")
 	}
 }
