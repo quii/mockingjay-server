@@ -1,8 +1,10 @@
 package mockingjay
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 // RegexField allows you to work with regex fields in YAML
@@ -27,8 +29,10 @@ func (r *RegexField) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 // UnmarshalJSON will unhmarshal a JSON field into regexp
 func (r *RegexField) UnmarshalJSON(data []byte) error {
-	str := string(data)[1 : len(data)-1]
-	reg, err := regexp.Compile(str)
+	var str string
+	json.Unmarshal(data, &str)
+	unescapeTheEscapes := strings.Replace(str, `\\`, `\`, -1)
+	reg, err := regexp.Compile(unescapeTheEscapes)
 
 	if err != nil {
 		return err
@@ -39,7 +43,8 @@ func (r *RegexField) UnmarshalJSON(data []byte) error {
 
 // MarshalJSON returns a string for the regex
 func (r *RegexField) MarshalJSON() ([]byte, error) {
-	asString := fmt.Sprintf(`"%v"`, r.Regexp.String())
+	escapeTheEscapes := strings.Replace(r.String(), `\`, `\\`, -1)
+	asString := fmt.Sprintf(`"%v"`, escapeTheEscapes)
 	return []byte(asString), nil
 }
 

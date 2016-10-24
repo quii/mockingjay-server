@@ -2,13 +2,14 @@ package mockingjay
 
 import (
 	"encoding/json"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
 	"testing/quick"
+
+	"gopkg.in/yaml.v2"
 )
 
 func TestItMarshalsAndUnmarshalsJSONCorrectly(t *testing.T) {
@@ -24,6 +25,8 @@ func TestItMarshalsAndUnmarshalsJSONCorrectly(t *testing.T) {
 		err = json.Unmarshal(data, &parsed)
 
 		if err != nil {
+			t.Log(string(data))
+			t.Log(parsed)
 			t.Log("Couldn't re-parse JSON into the config", err)
 		}
 
