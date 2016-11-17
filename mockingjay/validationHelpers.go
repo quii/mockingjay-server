@@ -4,7 +4,7 @@ import "strings"
 
 func httpHeadersValid(headers map[string]string) bool {
 	for k, v := range headers {
-		if containsSpace(k) || containsSpace(v) || strings.TrimSpace(v) == "" {
+		if containsSpace(k) || strings.TrimSpace(v) == "" {
 			return false
 		}
 	}
