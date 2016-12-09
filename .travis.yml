@@ -8,8 +8,8 @@ env:
   - "PATH=/home/travis/gopath/bin:$PATH"
 install:
   - . $HOME/.nvm/nvm.sh
-  - nvm install stable
-  - nvm use stable
+  - nvm install 4.2.6
+  - nvm use 4.2.6
   - go get github.com/mitchellh/gox
   - go get github.com/tcnksm/ghr
   - go get -u github.com/golang/lint/golint
