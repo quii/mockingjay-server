@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/quii/mockingjay-server.svg?branch=master)](https://travis-ci.org/quii/mockingjay-server)[![Coverage Status](https://coveralls.io/repos/quii/mockingjay-server/badge.svg?branch=master)](https://coveralls.io/r/quii/mockingjay-server?branch=master)[![GoDoc](https://godoc.org/github.com/quii/mockingjay-server?status.svg)](https://godoc.org/github.com/quii/mockingjay-server)
 
-![mj example](http://imgur.com/a/jirql)
+![mj example](http://i.imgur.com/ZtI1Q39.gif)
 
 Mockingjay lets you define the contract between a consumer and producer and with just a configuration file you get:
 
