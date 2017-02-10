@@ -2,8 +2,11 @@
 - name: 0ca9-2e96-f7f1-5e91
   cdcdisabled: false
   request:
-    uri: /hello
-    method: GET
+    uri: /hichris
+    method: POST
+    headers:
+      content-type: application/json
+    body: poo
   response:
     code: 201
     body: |-

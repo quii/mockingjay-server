@@ -317,7 +317,7 @@ func TestItCanMakeCurls(t *testing.T) {
 		server.ServeHTTP(rec, curlReq)
 
 		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.Equal(t, "curl -X GET -d  'http://google.com/hello-world'", rec.Body.String())
+		assert.Equal(t, "curl -X 'GET' -d '' 'http://google.com/hello-world'", rec.Body.String())
 	})
 
 	t.Run("mj endpoint doesnt exist", func(t *testing.T) {
