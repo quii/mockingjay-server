@@ -11,7 +11,19 @@ func getJSONNodeFromString(data string) (node jsonNode, err error) {
 		if err = json.Unmarshal([]byte(data), &anArr); err != nil {
 			return
 		}
-		node = anArr[0]
+
+		if len(anArr) > 0 {
+			node = anArr[0]
+		} else {
+			err = new(emptyJSONArrayError)
+		}
+
 	}
 	return
+}
+
+type emptyJSONArrayError struct{}
+
+func (e *emptyJSONArrayError) Error() string {
+	return "Empty arrays are not suitable for comparison"
 }

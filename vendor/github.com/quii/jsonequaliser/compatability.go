@@ -7,19 +7,6 @@ import (
 
 type jsonNode map[string]interface{}
 
-// IsCompatible checks that two json strings are structurally the same so that they are compatible. The first string should be your "correct" json, if there are extra fields in B then they will still be seen as compatible
-func IsCompatible(a, b string) (messages map[string]string, err error) {
-
-	aMap, err := getJSONNodeFromString(a)
-	bMap, err := getJSONNodeFromString(b)
-
-	if err != nil {
-		return
-	}
-
-	return isStructurallyTheSame(aMap, bMap, make(map[string]string), "")
-}
-
 var (
 	msgFieldMissing       = "Missing field"
 	msgNotString          = "Field is not a string in other JSON"
@@ -28,7 +15,35 @@ var (
 	msgEmptyArray         = "Array in other JSON is empty so I cant check"
 	msgNotMap             = "Not a map in other JSON"
 	msgDifferentArrayType = "Type of array is different"
+	msgEmptyRootArray     = "Empty arrays are not suitable for comparison"
 )
+
+func emptyJSONArrayHandler(parseError error) (errorMessages map[string]string, err error) {
+	if _, ok := parseError.(*emptyJSONArrayError); ok {
+		errorMessages = make(map[string]string)
+		errorMessages["rootArray"] = msgEmptyRootArray
+		return
+	}
+
+	return errorMessages, parseError
+}
+
+// IsCompatible checks that two json strings are structurally the same so that they are compatible. The first string should be your "correct" json, if there are extra fields in B then they will still be seen as compatible
+func IsCompatible(a, b string) (errorMessages map[string]string, err error) {
+	aMap, err := getJSONNodeFromString(a)
+
+	if err != nil {
+		return emptyJSONArrayHandler(err)
+	}
+
+	bMap, err := getJSONNodeFromString(b)
+
+	if err != nil {
+		return emptyJSONArrayHandler(err)
+	}
+
+	return isStructurallyTheSame(aMap, bMap, make(map[string]string), "")
+}
 
 func isStructurallyTheSame(a, b jsonNode, messages map[string]string, baseNode string) (map[string]string, error) {
 	for jsonFieldName, v := range a {

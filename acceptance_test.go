@@ -42,7 +42,11 @@ func TestIssue42(t *testing.T) {
 	req.Header["Content-Butt"] = []string{"application/json"}
 
 	client := http.Client{}
-	res, _ := client.Do(req)
+	res, err := client.Do(req)
+
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	defer res.Body.Close()
 
