@@ -81,17 +81,19 @@ func generateEndpoints(data []byte, unmarshall func([]byte, interface{}) error) 
 }
 
 func findDuplicates(endpoints []FakeEndpoint) []string {
-	requests := make(map[string]int)
+	request := make(map[string]string)
+	requestHashes := make(map[string]int)
 
 	for _, e := range endpoints {
-		requests[e.Request.String()] = requests[e.Request.String()] + 1
+		request[e.Request.Hash()] = e.Request.String()
+		requestHashes[e.Request.Hash()] = requestHashes[e.Request.Hash()] + 1
 	}
 
 	var duplicates []string
 
-	for k, v := range requests {
+	for k, v := range requestHashes {
 		if v > 1 {
-			duplicates = append(duplicates, k)
+			duplicates = append(duplicates, request[k])
 		}
 	}
 
