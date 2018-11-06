@@ -95,7 +95,7 @@ func TestItSendsForms(t *testing.T) {
 	assert.Equal(t, expectedBody, rec.Body.String())
 }
 
-func TestItHasPrettyString(t *testing.T) {
+func TestItHasPrettyStringAndHash(t *testing.T) {
 	mapOfThings := make(map[string]string)
 	mapOfThings["A"] = "B"
 
@@ -104,6 +104,7 @@ func TestItHasPrettyString(t *testing.T) {
 	tests := []struct {
 		Request        Request
 		ExpectedString string
+		ExpectedHash   string
 	}{
 		{
 			Request: Request{
@@ -111,6 +112,7 @@ func TestItHasPrettyString(t *testing.T) {
 				Method: http.MethodGet,
 			},
 			ExpectedString: "GET /hello-world",
+			ExpectedHash:   "04e0e523f5073b5a242a8177a30dfb158325724f",
 		},
 		{
 			Request: Request{
@@ -119,6 +121,7 @@ func TestItHasPrettyString(t *testing.T) {
 				Headers: mapOfThings,
 			},
 			ExpectedString: "GET /hello-world Headers: [A->B]",
+			ExpectedHash:   "a3ec00716bcfb498e477e05791b0b1a7241e117e",
 		},
 		{
 			Request: Request{
@@ -127,14 +130,16 @@ func TestItHasPrettyString(t *testing.T) {
 				Form:   mapOfThings,
 			},
 			ExpectedString: "GET /hello-world Form: [A->B]",
+			ExpectedHash:   "7adb665c90fc7de541911d5a3e54a082f8672f09",
 		},
 		{
 			Request: Request{
 				URI:    "/hello-world",
-				Method: http.MethodGet,
+				Method: http.MethodPost,
 				Body:   longBody,
 			},
-			ExpectedString: "GET /hello-world Body: [Lorem ipsum dolor sit amet, consectetur adipiscing...]",
+			ExpectedString: "POST /hello-world Body: [Lorem ipsum dolor sit amet, consectetur adipiscing...]",
+			ExpectedHash:   "717940029370135c2fff785a2567715f36a266f8",
 		},
 		{
 			Request: Request{
@@ -143,9 +148,11 @@ func TestItHasPrettyString(t *testing.T) {
 				Body:   "short stuff",
 			},
 			ExpectedString: "GET /hello-world Body: [short stuff]",
+			ExpectedHash:   "c6997cc3b3973d28e3da221e17c03ef23fdca54f",
 		},
 	}
 	for _, test := range tests {
 		assert.Equal(t, test.ExpectedString, test.Request.String())
+		assert.Equal(t, test.ExpectedHash, test.Request.Hash())
 	}
 }

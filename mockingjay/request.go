@@ -1,6 +1,7 @@
 package mockingjay
 
 import (
+	"crypto/sha1"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -158,6 +159,26 @@ func (r Request) String() string {
 	}
 
 	return base
+}
+
+func (r Request) Hash() string {
+	base := fmt.Sprintf("%s %s", r.Method, r.URI)
+
+	if r.Headers != nil {
+		headersAsString := stringifyMap(r.Headers)
+		base = fmt.Sprintf("%s Headers: [%s]", base, headersAsString)
+	}
+
+	if r.Form != nil {
+		headersAsString := stringifyMap(r.Form)
+		base = fmt.Sprintf("%s Form: [%s]", base, headersAsString)
+	}
+
+	if len(r.Body) > 0 {
+		base = fmt.Sprintf("%s Body: [%s]", base, r.Body)
+	}
+
+	return fmt.Sprintf("%x", sha1.Sum([]byte(base)))
 }
 
 func stringifyMap(m map[string]string) string {
