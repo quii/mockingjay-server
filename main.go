@@ -1,4 +1,3 @@
-//go:generate go-bindata-assetfs -ignore=node_modules -prefix "ui/src/client/" -pkg $GOPACKAGE ui/src/client/public/...
 package main
 
 import (
