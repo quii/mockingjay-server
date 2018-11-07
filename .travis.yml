@@ -26,7 +26,8 @@ before_deploy:
 deploy:
   provider: releases
   file_glob: true
-  api_key: $GITHUB_TOKEN
+  api_key:
+    secure: HQCPUQJD8RmYYTzLmHW81mIS/veji+Kxkml23ik/lFx8pREOhJZi8NnI6asjvyQyHvNb2S8jwMxIJWF/IAoJp9dGEbV62hHPuEIHdl8Jhhwr4mbr0MVwsma7rjEFhnRchXkWHuUGDfv3jbp8BmRYg85cqZC8/WfNoJ0m8i24kz8=
   file: "dist/*"
   skip_cleanup: true
   on:
