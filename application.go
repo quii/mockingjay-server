@@ -18,7 +18,7 @@ import (
 
 var (
 	// ErrCDCFail describes when a fake server is not compatible with a given URL
-	ErrCDCFail = fmt.Errorf("At least one endpoint was incompatible with the real URL supplied")
+	ErrCDCFail = fmt.Errorf("at least one endpoint was incompatible with the real URL supplied")
 )
 
 type configLoader func(string) ([][]byte, []string, error)
@@ -69,7 +69,7 @@ func (a *application) PollConfig() {
 }
 
 // CreateServer will create a fake server from the configuration found in configPath with optional performance constraints from configutation found in monkeyConfigPath
-func (a *application) CreateServer(configPath string, monkeyConfigPath string, debugMode bool, ui http.Handler) (server http.Handler, err error) {
+func (a *application) CreateServer(configPath string, monkeyConfigPath string, debugMode bool) (server http.Handler, err error) {
 	a.configPath = configPath
 	a.monkeyConfigPath = monkeyConfigPath
 	endpoints, err := a.loadConfig()
@@ -78,7 +78,7 @@ func (a *application) CreateServer(configPath string, monkeyConfigPath string, d
 		return
 	}
 
-	return a.createFakeServer(endpoints, debugMode, ui)
+	return a.createFakeServer(endpoints, debugMode)
 }
 
 // CheckCompatibility will run a MJ config against a realURL to see if it's compatible
@@ -149,7 +149,7 @@ func (fu *fileUpdater) Write(p []byte) (n int, err error) {
 	return
 }
 
-func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debugMode bool, ui http.Handler) (server http.Handler, err error) {
+func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debugMode bool) (server http.Handler, err error) {
 	go a.PollConfig()
 
 	configFile := fileUpdater{a.configPath}
@@ -163,10 +163,6 @@ func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debu
 
 	router := http.NewServeMux()
 
-	if ui != nil {
-		router.Handle("/mj-admin/", http.StripPrefix("/mj-admin", ui))
-	}
-
 	router.Handle("/", monkeyServer)
 
 	return router, nil
@@ -176,11 +172,11 @@ func globFileLoader(path string) (data [][]byte, paths []string, err error) {
 	files, err := filepath.Glob(path)
 
 	if err != nil {
-		return nil, nil, fmt.Errorf("Failed to get files from file path (glob) %s, %v", path, err)
+		return nil, nil, fmt.Errorf("failed to get files from file path (glob) %s, %v", path, err)
 	}
 
 	if len(files) == 0 {
-		return nil, nil, fmt.Errorf("No files found in path %s", path)
+		return nil, nil, fmt.Errorf("no files found in path %s", path)
 	}
 
 	var configs [][]byte

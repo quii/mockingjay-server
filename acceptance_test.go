@@ -21,7 +21,7 @@ const testYAMLPath = "examples/example.yaml"
 
 func init() {
 	app = defaultApplication(log.New(ioutil.Discard, "", 0), mockingjay.DefaultHTTPTimeoutSeconds)
-	svr, err := app.CreateServer(testYAMLPath, "", false, nil)
+	svr, err := app.CreateServer(testYAMLPath, "", false)
 
 	if err != nil {
 		log.Fatal("Couldn't load MJ config from", testYAMLPath)
@@ -32,7 +32,7 @@ func init() {
 
 func TestIssue42(t *testing.T) {
 	failApp := defaultApplication(log.New(ioutil.Discard, "", 0), mockingjay.DefaultHTTPTimeoutSeconds)
-	failSvr, _ := failApp.CreateServer("examples/issue42.yaml", "", false, nil)
+	failSvr, _ := failApp.CreateServer("examples/issue42.yaml", "", false)
 	svr := httptest.NewServer(failSvr)
 	defer svr.Close()
 

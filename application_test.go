@@ -43,7 +43,7 @@ func TestItFailsWhenTheConfigFileCantBeLoaded(t *testing.T) {
 	app.configLoader = failingIOUtil
 
 	configPath := "mockingjay config path"
-	_, err := app.CreateServer(configPath, "", false, nil)
+	_, err := app.CreateServer(configPath, "", false)
 
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errIOError)
@@ -57,7 +57,7 @@ func TestItFailsWhenTheConfigIsInvalid(t *testing.T) {
 	app := testApplication()
 	app.mockingjayLoader = failingMockingjayLoader
 
-	_, err := app.CreateServer("mockingjay config path", "", false, nil)
+	_, err := app.CreateServer("mockingjay config path", "", false)
 
 	assert.NotNil(t, err, "Didnt get an error when the mockingjay config failed to load")
 	assert.Equal(t, err, errMJLoaderError)
@@ -76,7 +76,7 @@ func TestCompatFailsWhenConfigIsInvalid(t *testing.T) {
 func TestItFailsWhenTheMonkeyConfigIsInvalid(t *testing.T) {
 	app := testApplication()
 
-	_, err := app.CreateServer("mockingjay config path", "monkey config path", false, nil)
+	_, err := app.CreateServer("mockingjay config path", "monkey config path", false)
 
 	assert.NotNil(t, err, "Didnt get an error when the monkey config failed to load")
 	assert.Equal(t, err, errMonkeyLoadError)
@@ -133,13 +133,13 @@ func passingIOUtil(path string) ([][]byte, []string, error) {
 	return [][]byte{monkeyConfigBytes}, []string{"lol.yaml"}, nil
 }
 
-var errIOError = errors.New("Couldn't load err from FS")
+var errIOError = errors.New("couldn't load err from FS")
 
 func failingIOUtil(path string) ([][]byte, []string, error) {
 	return nil, nil, errIOError
 }
 
-var errMJLoaderError = errors.New("Couldnt load mj file")
+var errMJLoaderError = errors.New("couldnt load mj file")
 
 func failingMockingjayLoader([]byte) ([]mockingjay.FakeEndpoint, error) {
 	return nil, errMJLoaderError
@@ -149,7 +149,7 @@ func passingMockingjayLoader([]byte) ([]mockingjay.FakeEndpoint, error) {
 	return testMockingJayConfig(), nil
 }
 
-var errMonkeyLoadError = errors.New("Couldn't load monkey file")
+var errMonkeyLoadError = errors.New("couldn't load monkey file")
 
 func failingMonkeyServerMaker(http.Handler, string) (http.Handler, error) {
 	return nil, errMonkeyLoadError

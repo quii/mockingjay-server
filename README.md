@@ -97,10 +97,7 @@ $ mockingjay-server -config=examples/example.yaml -monkeyConfig=examples/monkey-
 ### Requirements
 
 - Go 1.3+ installed ($GOPATH set, et al)
-- Node 4.2.x (for the frontend)
 - golint https://github.com/golang/lint
-- `$ go get github.com/jteeuwen/go-bindata/...`
-- `$ go get github.com/elazarl/go-bindata-assetfs/...`
 
 ### Build application
 
@@ -109,18 +106,5 @@ $ go get github.com/quii/mockingjay-server
 $ cd $GOPATH/src/github.com/quii/mockingjay-server
 $ ./build.sh
 ````
-
-### Working with the frontend
-````bash
-$ cd ui/
-$ npm install
-$ npm run dev
-````
-This will rebuild the frontend assets on file changes. Then in another terminal:
-````bash
-$ ENV=LOCAL mockingjay-server -config=$PATH-TO-CONFIG
-````
-
-The env local ensures the web server serves your constantly building assets, rather than the bundled ones made on `build.sh`.
 
 MIT license

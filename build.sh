@@ -2,11 +2,10 @@
 
 set -e
 
-#echo "Building frontend assets"
-#cd ui
-#npm install
-#npm run build
-#cd ..
-
 echo "Building application"
-./build-app.sh
+go list ./... | grep -v /vendor/ | grep -v bindata_assetfs.go | xargs -L1 go vet
+go list ./... | grep -v /vendor/ | grep -v bindata_assetfs.go | xargs -L1 go vet
+go fmt ./...
+go test ./... --cover
+go install
+
