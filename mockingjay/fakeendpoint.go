@@ -57,8 +57,8 @@ func NewFakeEndpointsFromJSON(data []byte) ([]FakeEndpoint, error) {
 func generateEndpoints(data []byte, unmarshall func([]byte, interface{}) error) (endpoints []FakeEndpoint, err error) {
 	err = unmarshall(data, &endpoints)
 
-	if yeah, isYeah := err.(*json.InvalidUnmarshalError); isYeah {
-		log.Println("wtf mate", yeah.Type, yeah.Error())
+	if jsonErr, isJsonErr := err.(*json.InvalidUnmarshalError); isJsonErr {
+		log.Println("problem unmarshalling JSON", jsonErr.Type, jsonErr.Error())
 	}
 
 	if err != nil {
