@@ -55,10 +55,11 @@ func defaultApplication(logger *log.Logger, httpTimeout time.Duration, configPat
 	app.configPath = configPath
 
 	if isURL(configPath) {
-		log.Println("i should see a url loader")
+		app.configLoader = urlLoader{}
+	} else {
+		app.configLoader = globFileLoader{}
 	}
 
-	app.configLoader = globFileLoader{}
 	app.mockingjayLoader = mockingjay.NewFakeEndpoints
 	app.compatabilityChecker = mockingjay.NewCompatabilityChecker(logger, httpTimeout)
 	app.mockingjayServerMaker = mockingjay.NewServer

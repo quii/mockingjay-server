@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 )
@@ -50,3 +51,19 @@ func (globFileLoader) Load(path string) (data []io.ReadCloser, paths []string, e
 }
 
 func (globFileLoader) Poll() {}
+
+type urlLoader struct{}
+
+func (urlLoader) Load(uri string) ([]io.ReadCloser, []string, error) {
+	res, err := http.Get(uri)
+
+	if err != nil {
+		return nil, nil, fmt.Errorf("couldn't load config from %s, %v", uri, err)
+	}
+
+	if res.StatusCode != http.StatusOK {
+		return nil, nil, fmt.Errorf("did not get 200 from %s, got %d", uri, res.StatusCode)
+	}
+
+	return []io.ReadCloser{res.Body}, []string{uri}, nil
+}
