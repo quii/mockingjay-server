@@ -28,7 +28,7 @@ func TestItIgnoresEndpointsNotSetToCDC(t *testing.T) {
      code: 200
      body: 'ok'
 `
-	endpoints, _ := NewFakeEndpoints([]byte(yaml))
+	endpoints, _ := NewFakeEndpoints(yamlToReadCloser(yaml))
 
 	realServerThatsNotCompatible := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, ":(")
@@ -51,9 +51,10 @@ func TestItMatchesHeaders(t *testing.T) {
      headers:
        content-type: text/json
 `
-	endpoints, err := NewFakeEndpoints([]byte(yaml))
+	endpoints, err := NewFakeEndpoints(yamlToReadCloser(yaml))
 
 	assert.Nil(t, err)
+	assert.Equal(t, 1, len(endpoints))
 
 	realServerWithoutHeaders := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "ok")
@@ -187,7 +188,7 @@ func TestWhitespaceSensitivity(t *testing.T) {
     code: 200
     body: '{"token": "1234abc"}'
         `
-	fakeEndPoints, _ := NewFakeEndpoints([]byte(y))
+	fakeEndPoints, _ := NewFakeEndpoints(yamlToReadCloser(y))
 	realServer := makeFakeDownstreamServer(`{"token":    "1234abc"}`, noSleep)
 
 	assert.True(t, checker.CheckCompatibility(fakeEndPoints, realServer.URL))
@@ -220,7 +221,7 @@ func makeFakeDownstreamServer(responseBody string, sleepTime time.Duration) *htt
 }
 
 func makeEndpoints(body string) []FakeEndpoint {
-	e, _ := NewFakeEndpoints([]byte(makeTestYAML(body)))
+	e, _ := NewFakeEndpoints(yamlToReadCloser(makeTestYAML(body)))
 	return e
 }
 

@@ -1,18 +1,15 @@
 package main
 
 import (
-	"bytes"
 	"crypto/md5"
 	_ "expvar"
 	"fmt"
 	"github.com/quii/mockingjay-server/mockingjay"
 	"github.com/quii/mockingjay-server/monkey"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"time"
 )
 
@@ -21,8 +18,7 @@ var (
 	ErrCDCFail = fmt.Errorf("at least one endpoint was incompatible with the real URL supplied")
 )
 
-type configLoader func(string) ([][]byte, []string, error)
-type mockingjayLoader func([]byte) ([]mockingjay.FakeEndpoint, error)
+type mockingjayLoader func(closer io.ReadCloser) ([]mockingjay.FakeEndpoint, error)
 
 type compatabilityChecker interface {
 	CheckCompatibility(endpoints []mockingjay.FakeEndpoint, realURL string) bool
@@ -46,7 +42,7 @@ type application struct {
 
 func defaultApplication(logger *log.Logger, httpTimeout time.Duration) (app *application) {
 	app = new(application)
-	app.configLoader = globFileLoader
+	app.configLoader = globFileLoader{}
 	app.mockingjayLoader = mockingjay.NewFakeEndpoints
 	app.compatabilityChecker = mockingjay.NewCompatabilityChecker(logger, httpTimeout)
 	app.mockingjayServerMaker = mockingjay.NewServer
@@ -57,14 +53,17 @@ func defaultApplication(logger *log.Logger, httpTimeout time.Duration) (app *app
 }
 
 func (a *application) PollConfig() {
-	for range time.Tick(time.Millisecond * 500) {
-		endpoints, err := a.loadConfig()
-		if err != nil {
-			log.Println(err)
-		} else if len(endpoints) > 0 {
-			a.logger.Println("Reloaded config")
-			a.mjServer.Endpoints = endpoints
+	if _, pollable := a.configLoader.(pollable); pollable {
+		for range time.Tick(time.Millisecond * 500) {
+			endpoints, err := a.loadConfig()
+			if err != nil {
+				log.Println(err)
+			} else {
+				a.mjServer.Endpoints = endpoints
+			}
 		}
+	} else {
+		a.logger.Println("config loader is not pollable, restart app to update config")
 	}
 }
 
@@ -100,24 +99,20 @@ func (a *application) CheckCompatibility(configPath string, realURL string) erro
 
 func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err error) {
 
-	configs, _, err := a.configLoader(a.configPath)
+	configs, _, err := a.configLoader.Load(a.configPath)
 
 	if err != nil {
 		return
 	}
 
-	if newMD5 := md5.Sum(bytes.Join(configs, []byte{})); newMD5 != a.yamlMD5 {
-		a.yamlMD5 = newMD5
+	for _, conf := range configs {
+		mjEndpoint, err := a.mockingjayLoader(conf)
 
-		for _, configData := range configs {
-			mjEndpoint, err := a.mockingjayLoader(configData)
-
-			if err != nil {
-				return nil, err
-			}
-
-			endpoints = append(endpoints, mjEndpoint...)
+		if err != nil {
+			return nil, err
 		}
+
+		endpoints = append(endpoints, mjEndpoint...)
 	}
 
 	return
@@ -145,7 +140,7 @@ func (fu *fileUpdater) Write(p []byte) (n int, err error) {
 	}
 
 	n, err = f.Write(p)
-	f.Sync()
+	_ = f.Sync()
 	return
 }
 
@@ -166,30 +161,4 @@ func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debu
 	router.Handle("/", monkeyServer)
 
 	return router, nil
-}
-
-func globFileLoader(path string) (data [][]byte, paths []string, err error) {
-	files, err := filepath.Glob(path)
-
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to get files from file path (glob) %s, %v", path, err)
-	}
-
-	if len(files) == 0 {
-		return nil, nil, fmt.Errorf("no files found in path %s", path)
-	}
-
-	var configs [][]byte
-	for _, file := range files {
-
-		configData, err := ioutil.ReadFile(file)
-
-		if err != nil {
-			return nil, nil, err
-		}
-
-		configs = append(configs, configData)
-	}
-
-	return configs, files, nil
 }

@@ -44,7 +44,7 @@ const testYAML = `
  `
 
 func TestItCreatesAServerConfigFromYAML(t *testing.T) {
-	endpoints, err := NewFakeEndpoints([]byte(testYAML))
+	endpoints, err := NewFakeEndpoints(yamlToReadCloser(testYAML))
 
 	assert.Nil(t, err, "Shouldn't have got an error for valid YAML")
 	assert.Len(t, endpoints, 3, "There should be 3 endpoints found in YAML")
@@ -74,7 +74,7 @@ func TestItCreatesAServerConfigFromYAML(t *testing.T) {
 }
 
 func TestItReturnsAnErrorWhenNotValidYAML(t *testing.T) {
-	_, err := NewFakeEndpoints([]byte("not real YAML"))
+	_, err := NewFakeEndpoints(yamlToReadCloser("not real YAML"))
 	assert.NotNil(t, err, "Expected an error to be returned because the YAML is bad")
 	assert.Contains(t, err.Error(), "The structure of the supplied config is wrong")
 }
@@ -98,7 +98,7 @@ const badYAML = `
  `
 
 func TestItReturnsAnErrorWhenStructureOfYAMLIsWrong(t *testing.T) {
-	_, err := NewFakeEndpoints([]byte(badYAML))
+	_, err := NewFakeEndpoints(yamlToReadCloser(badYAML))
 	assert.NotNil(t, err, "Expected an error to be returned because the YAML is bad")
 	assert.Equal(t, err, errEmptyURI)
 }
@@ -114,7 +114,7 @@ const incompleteYAML = `
  `
 
 func TestItReturnsAnErrorWhenYAMLIsIncomplete(t *testing.T) {
-	_, err := NewFakeEndpoints([]byte(incompleteYAML))
+	_, err := NewFakeEndpoints(yamlToReadCloser(incompleteYAML))
 	assert.NotNil(t, err, "Expected an error to be returned because the YAML has missing fields")
 	assert.Equal(t, err, errResponseInvalid)
 }
@@ -138,7 +138,7 @@ const duplicatedRequest = `
  `
 
 func TestItReturnsErrorWhenRequestsAreDuplicated(t *testing.T) {
-	_, err := NewFakeEndpoints([]byte(duplicatedRequest))
+	_, err := NewFakeEndpoints(yamlToReadCloser(duplicatedRequest))
 	assert.NotNil(t, err)
 	assert.Contains(t, err.Error(), "duplicated")
 }
@@ -168,7 +168,7 @@ const duplicatedLongBodyRequest = `
  `
 
 func TestItReturnsErrorWhenRequestsHaveALongBodyAndAreDuplicated(t *testing.T) {
-	_, err := NewFakeEndpoints([]byte(duplicatedLongBodyRequest))
+	_, err := NewFakeEndpoints(yamlToReadCloser(duplicatedLongBodyRequest))
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), "There were duplicated requests found [POST /hello Body: [{ \"title\": \"Lorem Ipsum is simply dummy text of th...]]")
 }
@@ -187,7 +187,7 @@ const badRegex = `
 `
 
 func TestItReturnsErrorWhenRegexDoesntMatchURI(t *testing.T) {
-	_, err := NewFakeEndpoints([]byte(badRegex))
+	_, err := NewFakeEndpoints(yamlToReadCloser(badRegex))
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errBadRegex)
 }

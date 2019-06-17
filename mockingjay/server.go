@@ -115,17 +115,10 @@ func (s *Server) handleEndpoints(w http.ResponseWriter, r *http.Request) {
 
 		defer r.Body.Close()
 
-		endpointBody, err := ioutil.ReadAll(r.Body)
+		updatedEndpoints, err := NewFakeEndpointsFromJSON(r.Body)
 
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		updatedEndpoints, err = NewFakeEndpointsFromJSON(endpointBody)
-
-		if err != nil {
-			s.logger.Println("Couldn't update endpoints from JSON", string(endpointBody), err.Error())
+			s.logger.Println("Couldn't update endpoints from JSON", err.Error())
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}

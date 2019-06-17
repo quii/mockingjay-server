@@ -2,13 +2,20 @@ package mockingjay
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"testing"
 )
 
 const sleepyTime = 500
 const numberOfEndpoints = 3
+
+func yamlToReadCloser(yaml string) io.ReadCloser {
+	return ioutil.NopCloser(strings.NewReader(yaml))
+}
 
 // 503439778 ns with 3 endpoints
 // 522222809 ns with 100 endpoints (surely we will never see a config that big)
@@ -16,7 +23,7 @@ func BenchmarkCompatabilityChecking(b *testing.B) {
 	body := "hello, world"
 	realServer := makeFakeDownstreamServer(body, sleepyTime)
 	checker := NewCompatabilityChecker(log.New(os.Stdout, "mocking-jay: ", log.Ldate|log.Ltime), DefaultHTTPTimeoutSeconds)
-	endpoints, err := NewFakeEndpoints([]byte(multipleEndpointYAML(numberOfEndpoints)))
+	endpoints, err := NewFakeEndpoints(yamlToReadCloser(multipleEndpointYAML(numberOfEndpoints)))
 
 	if err != nil {
 		b.Fatalf("Unable to create checker from YAML %v", err)

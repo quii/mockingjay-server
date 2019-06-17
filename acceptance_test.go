@@ -31,8 +31,7 @@ func init() {
 }
 
 func TestIssue42(t *testing.T) {
-	failApp := defaultApplication(log.New(ioutil.Discard, "", 0), mockingjay.DefaultHTTPTimeoutSeconds)
-	failSvr, _ := failApp.CreateServer("examples/issue42.yaml", "", false)
+	failSvr, _ := app.CreateServer("examples/issue42.yaml", "", false)
 	svr := httptest.NewServer(failSvr)
 	defer svr.Close()
 

@@ -4,12 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"math/rand"
 	"reflect"
 	"regexp"
-
-	"gopkg.in/yaml.v2"
 )
 
 // FakeEndpoint represents the information required to listen to a particular request and respond to it
@@ -45,17 +44,18 @@ func errDuplicateRequestsError(duplicates []string) error {
 }
 
 // NewFakeEndpoints returns an array of Endpoints from a YAML byte array. Returns an error if YAML cannot be parsed or there are validation concerns
-func NewFakeEndpoints(data []byte) (endpoints []FakeEndpoint, err error) {
-	return generateEndpoints(data, yaml.Unmarshal)
+func NewFakeEndpoints(data io.ReadCloser) (endpoints []FakeEndpoint, err error) {
+	return generateEndpoints(mjYAMLDecoder(data))
 }
 
 // NewFakeEndpointsFromJSON returns an array of Endpoints from a JSON byte array. Returns an error if JSON cannot be parsed or there are validation concerns
-func NewFakeEndpointsFromJSON(data []byte) ([]FakeEndpoint, error) {
-	return generateEndpoints(data, json.Unmarshal)
+func NewFakeEndpointsFromJSON(data io.ReadCloser) ([]FakeEndpoint, error) {
+	return generateEndpoints(json.NewDecoder(data))
 }
 
-func generateEndpoints(data []byte, unmarshall func([]byte, interface{}) error) (endpoints []FakeEndpoint, err error) {
-	err = unmarshall(data, &endpoints)
+func generateEndpoints(decoder MJDecoder) (endpoints []FakeEndpoint, err error) {
+
+	err = decoder.Decode(&endpoints)
 
 	if jsonErr, isJsonErr := err.(*json.InvalidUnmarshalError); isJsonErr {
 		log.Println("problem unmarshalling JSON", jsonErr.Type, jsonErr.Error())

@@ -2,8 +2,10 @@ package main
 
 import (
 	"errors"
+	"io"
 	"log"
 	"net/http"
+	"strings"
 	"testing"
 
 	"fmt"
@@ -40,7 +42,7 @@ func TestCompatabilityWithWildcards(t *testing.T) {
 
 func TestItFailsWhenTheConfigFileCantBeLoaded(t *testing.T) {
 	app := testApplication()
-	app.configLoader = failingIOUtil
+	app.configLoader = failingIOUtil()
 
 	configPath := "mockingjay config path"
 	_, err := app.CreateServer(configPath, "", false)
@@ -84,7 +86,7 @@ func TestItFailsWhenTheMonkeyConfigIsInvalid(t *testing.T) {
 
 func TestItReturnsCDCErrorIfCompatabilityFails(t *testing.T) {
 	app := new(application)
-	app.configLoader = passingIOUtil
+	app.configLoader = passingIOUtil()
 	app.mockingjayLoader = passingMockingjayLoader
 	app.logger = log.New(ioutil.Discard, "", 0)
 
@@ -98,7 +100,7 @@ func TestItReturnsCDCErrorIfCompatabilityFails(t *testing.T) {
 
 func testApplication() *application {
 	app := new(application)
-	app.configLoader = passingIOUtil
+	app.configLoader = passingIOUtil()
 	app.mockingjayLoader = passingMockingjayLoader
 	app.mockingjayServerMaker = mockingjay.NewServer
 	app.monkeyServerMaker = failingMonkeyServerMaker
@@ -119,7 +121,7 @@ func testMockingJayConfig() []mockingjay.FakeEndpoint {
      body: 'hello, world'
 `
 
-	m, err := mockingjay.NewFakeEndpoints([]byte(yaml))
+	m, err := mockingjay.NewFakeEndpoints(ioutil.NopCloser(strings.NewReader(yaml)))
 
 	if err != nil {
 		log.Fatal(err)
@@ -128,24 +130,29 @@ func testMockingJayConfig() []mockingjay.FakeEndpoint {
 	return m
 }
 
-func passingIOUtil(path string) ([][]byte, []string, error) {
-	monkeyConfigBytes := []byte(someMonkeyConfigString)
-	return [][]byte{monkeyConfigBytes}, []string{"lol.yaml"}, nil
+func passingIOUtil() configLoaderFunc {
+	return func(path string) ([]io.ReadCloser, []string, error) {
+		return []io.ReadCloser{ioutil.NopCloser(strings.NewReader(someMonkeyConfigString))},
+			[]string{"lol.yaml"},
+			nil
+	}
 }
 
 var errIOError = errors.New("couldn't load err from FS")
 
-func failingIOUtil(path string) ([][]byte, []string, error) {
-	return nil, nil, errIOError
+func failingIOUtil() configLoaderFunc {
+	return func(s string) (closers []io.ReadCloser, i []string, e error) {
+		return nil, nil, errIOError
+	}
 }
 
 var errMJLoaderError = errors.New("couldnt load mj file")
 
-func failingMockingjayLoader([]byte) ([]mockingjay.FakeEndpoint, error) {
+func failingMockingjayLoader(io.ReadCloser) ([]mockingjay.FakeEndpoint, error) {
 	return nil, errMJLoaderError
 }
 
-func passingMockingjayLoader([]byte) ([]mockingjay.FakeEndpoint, error) {
+func passingMockingjayLoader(closer io.ReadCloser) ([]mockingjay.FakeEndpoint, error) {
 	return testMockingJayConfig(), nil
 }
 

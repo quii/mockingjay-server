@@ -52,7 +52,7 @@ func ExampleNewServer() {
      body: Oh no
  `
 
-	endpoints, _ := NewFakeEndpoints([]byte(testYAML))
+	endpoints, _ := NewFakeEndpoints(yamlToReadCloser(testYAML))
 	server := NewServer(endpoints, false, ioutil.Discard)
 
 	// Mount it just like any other server
