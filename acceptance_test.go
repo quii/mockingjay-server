@@ -63,6 +63,21 @@ func TestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {
 	assert.Empty(t, cdcErrors, "There should be no CDC errors with itself")
 }
 
+func TestItCanReadConfigFromAURL(t *testing.T) {
+	config, _ := ioutil.ReadFile(testYAMLPath)
+
+	consumerCDCSvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write(config)
+	}))
+	producerSvr := httptest.NewServer(mjServer)
+
+	defer producerSvr.Close()
+	defer consumerCDCSvr.Close()
+
+	cdcErrors := app.CheckCompatibility(consumerCDCSvr.URL, producerSvr.URL)
+	assert.Nil(t, cdcErrors, "There should be no CDC errors with itself")
+}
+
 func TestItListsRequestsItHasReceived(t *testing.T) {
 	svr := httptest.NewServer(mjServer)
 	defer svr.Close()
