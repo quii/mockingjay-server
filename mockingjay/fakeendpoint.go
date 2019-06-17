@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"math/rand"
 	"reflect"
 	"regexp"
@@ -45,21 +44,8 @@ func errDuplicateRequestsError(duplicates []string) error {
 
 // NewFakeEndpoints returns an array of Endpoints from a YAML byte array. Returns an error if YAML cannot be parsed or there are validation concerns
 func NewFakeEndpoints(data io.ReadCloser) (endpoints []FakeEndpoint, err error) {
-	return generateEndpoints(mjYAMLDecoder(data))
-}
-
-// NewFakeEndpointsFromJSON returns an array of Endpoints from a JSON byte array. Returns an error if JSON cannot be parsed or there are validation concerns
-func NewFakeEndpointsFromJSON(data io.ReadCloser) ([]FakeEndpoint, error) {
-	return generateEndpoints(json.NewDecoder(data))
-}
-
-func generateEndpoints(decoder MJDecoder) (endpoints []FakeEndpoint, err error) {
-
-	err = decoder.Decode(&endpoints)
-
-	if jsonErr, isJsonErr := err.(*json.InvalidUnmarshalError); isJsonErr {
-		log.Println("problem unmarshalling JSON", jsonErr.Type, jsonErr.Error())
-	}
+	defer data.Close()
+	err = mjYAMLDecoder(data).Decode(&endpoints)
 
 	if err != nil {
 		return nil, fmt.Errorf(
@@ -67,17 +53,41 @@ func generateEndpoints(decoder MJDecoder) (endpoints []FakeEndpoint, err error) 
 			err)
 	}
 
+	err = validateEndpoints(endpoints)
+
+	return
+}
+
+// NewFakeEndpointsFromJSON returns an array of Endpoints from a JSON byte array. Returns an error if JSON cannot be parsed or there are validation concerns
+func NewFakeEndpointsFromJSON(data io.ReadCloser) (endpoints []FakeEndpoint, err error) {
+	defer data.Close()
+	err = json.NewDecoder(data).Decode(&endpoints)
+
+	if jsonErr, isJsonErr := err.(*json.InvalidUnmarshalError); isJsonErr {
+		return nil, fmt.Errorf("problem unmarshalling JSON %v %v", jsonErr.Type, jsonErr.Error())
+	}
+
+	if err != nil {
+		return
+	}
+
+	err = validateEndpoints(endpoints)
+
+	return
+}
+
+func validateEndpoints(endpoints []FakeEndpoint) error {
 	for _, endPoint := range endpoints {
 		if endpointErr := endPoint.isValid(); endpointErr != nil {
-			return nil, endpointErr
+			return endpointErr
 		}
 	}
 
 	if duplicates := findDuplicates(endpoints); len(duplicates) > 0 {
-		return nil, errDuplicateRequestsError(duplicates)
+		return errDuplicateRequestsError(duplicates)
 	}
 
-	return
+	return nil
 }
 
 func findDuplicates(endpoints []FakeEndpoint) []string {
