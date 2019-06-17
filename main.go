@@ -9,16 +9,16 @@ import (
 func main() {
 
 	config := loadConfig()
-	app := defaultApplication(config.logger, config.httpTimeout)
+	app := defaultApplication(config.logger, config.httpTimeout, config.configPath)
 
 	if config.realURL != "" {
-		err := app.CheckCompatibility(config.configPath, config.realURL)
+		err := app.CheckCompatibility(config.realURL)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 	} else {
-		svr, err := app.CreateServer(config.configPath, config.monkeyConfigPath, config.debugMode)
+		svr, err := app.CreateServer(config.monkeyConfigPath, config.debugMode)
 
 		if err != nil {
 			log.Fatal(err)

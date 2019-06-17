@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 )
@@ -40,9 +41,25 @@ type application struct {
 	yamlMD5               [md5.Size]byte
 }
 
-func defaultApplication(logger *log.Logger, httpTimeout time.Duration) (app *application) {
+func isURL(toTest string) bool {
+	_, err := url.ParseRequestURI(toTest)
+	if err != nil {
+		return false
+	} else {
+		return true
+	}
+}
+
+func defaultApplication(logger *log.Logger, httpTimeout time.Duration, configPath string) (app *application) {
 	app = new(application)
-	app.configLoader = globFileLoader{}
+	app.configPath = configPath
+
+	if isURL(configPath) {
+		app.configLoader = urlLoader{}
+	} else {
+		app.configLoader = globFileLoader{}
+	}
+
 	app.mockingjayLoader = mockingjay.NewFakeEndpoints
 	app.compatabilityChecker = mockingjay.NewCompatabilityChecker(logger, httpTimeout)
 	app.mockingjayServerMaker = mockingjay.NewServer
@@ -68,8 +85,7 @@ func (a *application) PollConfig() {
 }
 
 // CreateServer will create a fake server from the configuration found in configPath with optional performance constraints from configutation found in monkeyConfigPath
-func (a *application) CreateServer(configPath string, monkeyConfigPath string, debugMode bool) (server http.Handler, err error) {
-	a.configPath = configPath
+func (a *application) CreateServer(monkeyConfigPath string, debugMode bool) (server http.Handler, err error) {
 	a.monkeyConfigPath = monkeyConfigPath
 	endpoints, err := a.loadConfig()
 
@@ -81,8 +97,7 @@ func (a *application) CreateServer(configPath string, monkeyConfigPath string, d
 }
 
 // CheckCompatibility will run a MJ config against a realURL to see if it's compatible
-func (a *application) CheckCompatibility(configPath string, realURL string) error {
-	a.configPath = configPath
+func (a *application) CheckCompatibility(realURL string) error {
 	endpoints, err := a.loadConfig()
 
 	if err != nil {

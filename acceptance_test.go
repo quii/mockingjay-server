@@ -12,26 +12,11 @@ import (
 	"testing"
 )
 
-var (
-	app      *application
-	mjServer http.Handler
-)
-
 const testYAMLPath = "examples/example.yaml"
 
-func init() {
-	app = defaultApplication(log.New(ioutil.Discard, "", 0), mockingjay.DefaultHTTPTimeoutSeconds)
-	svr, err := app.CreateServer(testYAMLPath, "", false)
-
-	if err != nil {
-		log.Fatal("Couldn't load MJ config from", testYAMLPath)
-	}
-
-	mjServer = svr
-}
-
-func TestIssue42(t *testing.T) {
-	failSvr, _ := app.CreateServer("examples/issue42.yaml", "", false)
+func TestHeadersArentTooStrict(t *testing.T) {
+	app, _ := buildMJ(t, "examples/issue42.yaml")
+	failSvr, _ := app.CreateServer("", false)
 	svr := httptest.NewServer(failSvr)
 	defer svr.Close()
 
@@ -57,13 +42,32 @@ func TestIssue42(t *testing.T) {
 }
 
 func TestItLaunchesServersAndIsCompatibleWithItsOwnConfig(t *testing.T) {
+	app, mjServer := buildMJ(t, testYAMLPath)
 	svr := httptest.NewServer(mjServer)
 	defer svr.Close()
-	cdcErrors := app.CheckCompatibility(testYAMLPath, svr.URL)
+	cdcErrors := app.CheckCompatibility(svr.URL)
 	assert.Empty(t, cdcErrors, "There should be no CDC errors with itself")
 }
 
+func TestItCanReadConfigFromAURL(t *testing.T) {
+	config, _ := ioutil.ReadFile(testYAMLPath)
+	consumerCDCSvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write(config)
+	}))
+
+	app, mjServer := buildMJ(t, consumerCDCSvr.URL)
+	producerSvr := httptest.NewServer(mjServer)
+
+	defer producerSvr.Close()
+	defer consumerCDCSvr.Close()
+
+	cdcErrors := app.CheckCompatibility(producerSvr.URL)
+	assert.Nil(t, cdcErrors, "There should be no CDC errors with itself")
+}
+
 func TestItListsRequestsItHasReceived(t *testing.T) {
+	_, mjServer := buildMJ(t, testYAMLPath)
+
 	svr := httptest.NewServer(mjServer)
 	defer svr.Close()
 
@@ -76,6 +80,8 @@ func TestItListsRequestsItHasReceived(t *testing.T) {
 }
 
 func TestANewEndpointCanBeAdded(t *testing.T) {
+	_, mjServer := buildMJ(t, testYAMLPath)
+
 	svr := httptest.NewServer(mjServer)
 	defer svr.Close()
 
@@ -112,4 +118,17 @@ func TestANewEndpointCanBeAdded(t *testing.T) {
 	newEndpointBody, _ := ioutil.ReadAll(newEndPointResponse.Body)
 
 	assert.Equal(t, string(newEndpointBody), `{"message": "hello, world"}`)
+}
+
+func buildMJ(t *testing.T, config string) (app *application, mjServer http.Handler) {
+	t.Helper()
+	app = defaultApplication(log.New(ioutil.Discard, "", 0), mockingjay.DefaultHTTPTimeoutSeconds, config)
+	svr, err := app.CreateServer("", false)
+
+	if err != nil {
+		t.Fatal("Couldn't load MJ config from ", config)
+	}
+
+	mjServer = svr
+	return
 }
