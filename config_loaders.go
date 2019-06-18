@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 )
@@ -66,4 +67,9 @@ func (urlLoader) Load(uri string) ([]io.ReadCloser, []string, error) {
 	}
 
 	return []io.ReadCloser{res.Body}, []string{uri}, nil
+}
+
+func isURL(x string) bool {
+	u, err := url.Parse(x)
+	return err == nil && u.Scheme != "" && u.Host != ""
 }

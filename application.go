@@ -9,7 +9,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"time"
 )
@@ -39,15 +38,6 @@ type application struct {
 	configPath            string
 	monkeyConfigPath      string
 	yamlMD5               [md5.Size]byte
-}
-
-func isURL(toTest string) bool {
-	_, err := url.ParseRequestURI(toTest)
-	if err != nil {
-		return false
-	} else {
-		return true
-	}
 }
 
 func defaultApplication(logger *log.Logger, httpTimeout time.Duration, configPath string) (app *application) {
