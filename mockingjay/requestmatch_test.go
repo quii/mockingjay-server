@@ -230,3 +230,17 @@ func TestItIgnoresHeadersKeyCasing(t *testing.T) {
 
 	assert.True(t, requestMatches(expectedRequest, incomingRequest, endpointName, testLogger))
 }
+
+func TestItIgnoresOrderOfQueryString(t *testing.T) {
+	expectedRequest := Request{
+		URI:    "?a=1&b=2",
+		Method: "GET",
+	}
+
+	incomingRequest := Request{
+		URI:    "?b=2&a=1",
+		Method: "GET",
+	}
+
+	assert.True(t, requestMatches(expectedRequest, incomingRequest, endpointName, testLogger))
+}

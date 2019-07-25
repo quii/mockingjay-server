@@ -267,6 +267,17 @@ func matchURI(serverURI string, serverRegex *RegexField, incomingURI string) boo
 		return true
 	} else if serverRegex != nil {
 		return serverRegex.MatchString(incomingURI)
+	} else {
+		inURL, err := url.Parse(incomingURI)
+		expectedURL, err := url.Parse(serverURI)
+
+		if err != nil {
+			return false
+		}
+
+		if reflect.DeepEqual(inURL.Query(), expectedURL.Query()) {
+			return inURL.Path == expectedURL.Path
+		}
 	}
 	return false
 }
