@@ -117,6 +117,8 @@ func (a *application) loadConfig() (endpoints []mockingjay.FakeEndpoint, err err
 			return nil, err
 		}
 
+		conf.Close()
+
 		endpoints = append(endpoints, mjEndpoint...)
 	}
 
