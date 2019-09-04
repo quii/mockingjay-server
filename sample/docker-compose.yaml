@@ -1,0 +1,21 @@
+fakeAPI:
+  image: quii/mockingjay-server:1.10.7
+  volumes:
+    - .:/config
+  command: -config=/config/todo.yaml
+  ports:
+    - "9090:9090"
+
+pooAPI:
+  image: quii/mockingjay-server:1.10.7
+  volumes:
+    - .:/config
+  command: -config=/config/todo.yaml -monkeyConfig=/config/monkey.yaml
+  ports:
+    - "9090:9090"
+
+cdc:
+  image: quii/mockingjay-server:1.10.7
+  volumes:
+    - .:/config
+  command: -config=/config/todo.yaml -realURL=https://jsonplaceholder.typicode.com

@@ -1,0 +1,12 @@
+- name: Can get a TODO
+  request:
+    uri: /todos/1
+    method: GET
+  response:
+    code: 200
+    body: '{
+      "userId": 123,
+      "title": "Buy some milk",
+      "completed": false
+    }'
+
