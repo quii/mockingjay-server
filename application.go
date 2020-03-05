@@ -4,13 +4,14 @@ import (
 	"crypto/md5"
 	_ "expvar"
 	"fmt"
-	"github.com/quii/mockingjay-server/mockingjay"
-	"github.com/quii/mockingjay-server/monkey"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/quii/mockingjay-server/mockingjay"
+	"github.com/quii/mockingjay-server/monkey"
 )
 
 var (
@@ -75,7 +76,7 @@ func (a *application) PollConfig() {
 }
 
 // CreateServer will create a fake server from the configuration found in configPath with optional performance constraints from configutation found in monkeyConfigPath
-func (a *application) CreateServer(monkeyConfigPath string, debugMode bool) (server http.Handler, err error) {
+func (a *application) CreateServer(monkeyConfigPath string, debugMode bool, disablePolling bool) (server http.Handler, err error) {
 	a.monkeyConfigPath = monkeyConfigPath
 	endpoints, err := a.loadConfig()
 
@@ -83,7 +84,7 @@ func (a *application) CreateServer(monkeyConfigPath string, debugMode bool) (ser
 		return
 	}
 
-	return a.createFakeServer(endpoints, debugMode)
+	return a.createFakeServer(endpoints, debugMode, disablePolling)
 }
 
 // CheckCompatibility will run a MJ config against a realURL to see if it's compatible
@@ -151,8 +152,10 @@ func (fu *fileUpdater) Write(p []byte) (n int, err error) {
 	return
 }
 
-func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debugMode bool) (server http.Handler, err error) {
-	go a.PollConfig()
+func (a *application) createFakeServer(endpoints []mockingjay.FakeEndpoint, debugMode bool, disablePolling bool) (server http.Handler, err error) {
+	if !disablePolling {
+		go a.PollConfig()
+	}
 
 	configFile := fileUpdater{a.configPath}
 

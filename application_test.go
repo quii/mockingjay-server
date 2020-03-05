@@ -9,10 +9,11 @@ import (
 	"testing"
 
 	"fmt"
-	"github.com/quii/mockingjay-server/mockingjay"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http/httptest"
+
+	"github.com/quii/mockingjay-server/mockingjay"
+	"github.com/stretchr/testify/assert"
 )
 
 const someMonkeyConfigString = "Hello, world"
@@ -47,7 +48,7 @@ func TestItFailsWhenTheConfigFileCantBeLoaded(t *testing.T) {
 	app.configLoader = failingIOUtil()
 	app.configPath = "mockingjay config path"
 
-	_, err := app.CreateServer("", false)
+	_, err := app.CreateServer("", false, false)
 
 	assert.NotNil(t, err)
 	assert.Equal(t, err, errIOError)
@@ -61,7 +62,7 @@ func TestItFailsWhenTheConfigIsInvalid(t *testing.T) {
 	app := testApplication()
 	app.mockingjayLoader = failingMockingjayLoader
 
-	_, err := app.CreateServer("", false)
+	_, err := app.CreateServer("", false, false)
 
 	assert.NotNil(t, err, "Didnt get an error when the mockingjay config failed to load")
 	assert.Equal(t, err, errMJLoaderError)
@@ -80,7 +81,7 @@ func TestCompatFailsWhenConfigIsInvalid(t *testing.T) {
 func TestItFailsWhenTheMonkeyConfigIsInvalid(t *testing.T) {
 	app := testApplication()
 
-	_, err := app.CreateServer("monkey config path", false)
+	_, err := app.CreateServer("monkey config path", false, false)
 
 	assert.NotNil(t, err, "Didnt get an error when the monkey config failed to load")
 	assert.Equal(t, err, errMonkeyLoadError)

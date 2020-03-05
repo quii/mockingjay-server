@@ -16,11 +16,13 @@ type appConfig struct {
 	realURL          string
 	httpTimeout      time.Duration
 	debugMode        bool
+	disablePolling   bool
 }
 
 func loadConfig() *appConfig {
 	port := flag.Int("port", 9090, "Port to listen on")
 	debug := flag.Bool("debug", false, "Print debug statements")
+	disablePolling := flag.Bool("disable-polling", false, "Disable file change polling")
 	configPath := flag.String("config", "", "Path to config YAML")
 	httpTimeout := flag.Int("timeout", 5, "Optional: HTTP timeout when performing CDC")
 	monkeyConfigPath := flag.String("monkeyConfig", "", "Optional: Set this to add some monkey business")
@@ -36,6 +38,7 @@ func loadConfig() *appConfig {
 		realURL:          *realURL,
 		httpTimeout:      time.Duration(*httpTimeout),
 		debugMode:        *debug,
+		disablePolling:   *disablePolling,
 	}
 
 	if i, err := strconv.Atoi(os.Getenv("PORT")); err == nil {

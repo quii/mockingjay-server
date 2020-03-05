@@ -2,21 +2,22 @@ package main
 
 import (
 	"bytes"
-	"github.com/quii/mockingjay-server/mockingjay"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/quii/mockingjay-server/mockingjay"
+	"github.com/stretchr/testify/assert"
 )
 
 const testYAMLPath = "examples/example.yaml"
 
 func TestHeadersArentTooStrict(t *testing.T) {
 	app, _ := buildMJ(t, "examples/issue42.yaml")
-	failSvr, _ := app.CreateServer("", false)
+	failSvr, _ := app.CreateServer("", false, false)
 	svr := httptest.NewServer(failSvr)
 	defer svr.Close()
 
@@ -123,7 +124,7 @@ func TestANewEndpointCanBeAdded(t *testing.T) {
 func buildMJ(t *testing.T, config string) (app *application, mjServer http.Handler) {
 	t.Helper()
 	app = defaultApplication(log.New(ioutil.Discard, "", 0), mockingjay.DefaultHTTPTimeoutSeconds, config)
-	svr, err := app.CreateServer("", false)
+	svr, err := app.CreateServer("", false, false)
 
 	if err != nil {
 		t.Fatal("Couldn't load MJ config from ", config)
