@@ -30,7 +30,11 @@ func (r *RegexField) UnmarshalYAML(unmarshal func(interface{}) error) error {
 // UnmarshalJSON will unhmarshal a JSON field into regexp
 func (r *RegexField) UnmarshalJSON(data []byte) error {
 	var str string
-	json.Unmarshal(data, &str)
+	err := json.Unmarshal(data, &str)
+	if err != nil {
+		return err
+	}
+
 	unescapeTheEscapes := strings.Replace(str, `\\`, `\`, -1)
 	reg, err := regexp.Compile(unescapeTheEscapes)
 

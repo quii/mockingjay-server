@@ -73,6 +73,9 @@ func (r Request) AsCURL(baseURL string) (string, error) {
 	}
 
 	curl, err := http2curl.GetCurlCommand(asHTTPReq)
+	if err != nil {
+		return "", err
+	}
 
 	return curl.String(), err
 }
